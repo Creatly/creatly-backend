@@ -2,9 +2,9 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"github.com/zhashkevych/courses-backend/internal/config"
 	"github.com/zhashkevych/courses-backend/pkg/database/mongodb"
+	"github.com/zhashkevych/courses-backend/pkg/logger"
 )
 
 const configPath = "configs/main"
@@ -20,7 +20,11 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Printf("%+v\n", cfg)
+	if err := logger.Init(); err != nil {
+		panic(err)
+	}
 
-	fmt.Println(db.CreateCollection(context.Background(), "users"))
+	logger.Infof("%+v\n", cfg)
+
+	logger.Info(db.CreateCollection(context.Background(), "users"))
 }
