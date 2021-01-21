@@ -14,3 +14,7 @@ MONGO_PASS=qwerty
 PASSWORD_SALT=<any salt here>
 JWT_SIGNING_KEY=<any key here>
 ```
+
+Use `make run` to build&run project, `make lint` to check code with linter.
+
+# TODO: Describe project architecture
