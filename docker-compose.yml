@@ -1,0 +1,30 @@
+version: '3.4'
+
+services:
+  app:
+    image: courses-backend-app
+    container_name: courses-backend-app
+    build: .
+    ports:
+      - 8000:8000
+    depends_on:
+      - mongodb
+    volumes:
+      - ./.bin/:/root/
+      - ./configs/:/root/configs/
+    env_file:
+      - .env
+
+  mongodb:
+    image: mongo:4.4-bionic
+    container_name: "mongodb"
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+      - MONGODB_DATABASE=coursePlatform
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=qwerty
+    volumes:
+      - ./.data/db:/data/db
+    ports:
+      - 27018:27017
