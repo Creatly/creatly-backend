@@ -1,5 +1,5 @@
 http:
-  port: 8000
+  port: 80
   maxHeaderBytes: 1
   readTimeout: 10s
   writeTimeout: 10s
@@ -8,13 +8,13 @@ logger:
   level: 5
 
 mongo:
-  databaseName: coursePlatform
+  databaseName: testDatabase
 
 fileStorage:
-  url: ams3.digitaloceanspaces.com
-  bucket: courses
+  url: test.filestorage.com
+  bucket: test
 
 auth:
   accessTokenTTL: 15m
-  refreshTokenTTL: 43200m #30 days
+  refreshTokenTTL: 30m
 
