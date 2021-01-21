@@ -1,0 +1,18 @@
+basePath: /
+host: localhost:8000
+info:
+  contact: {}
+  description: API Server for Course Platform
+  title: Course Platform API
+  version: "1.0"
+paths: {}
+securityDefinitions:
+  AdminAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+  StudentsAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

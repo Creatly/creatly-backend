@@ -13,6 +13,21 @@ import (
 	"syscall"
 )
 
+// @title Course Platform API
+// @version 1.0
+// @description API Server for Course Platform
+
+// @host localhost:8000
+// @BasePath /
+
+// @securityDefinitions.apikey AdminAuth
+// @in header
+// @name Authorization
+
+// @securityDefinitions.apikey StudentsAuth
+// @in header
+// @name Authorization
+
 const configPath = "configs/main"
 
 func main() {
@@ -26,7 +41,6 @@ func main() {
 	}
 
 	mongoClient := mongodb.NewClient(cfg.Mongo.URI, cfg.Mongo.User, cfg.Mongo.Password)
-	defer mongoClient.Disconnect(context.Background())
 
 	_ = mongoClient.Database(cfg.Mongo.Name)
 
@@ -46,4 +60,8 @@ func main() {
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
 
 	<-quit
+
+	if err := mongoClient.Disconnect(context.Background()); err != nil {
+		logger.Error(err.Error())
+	}
 }
