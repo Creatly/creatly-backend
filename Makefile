@@ -7,8 +7,14 @@ build:
 run: build
 	docker-compose up --remove-orphans app
 
+test:
+	go test -v ./...
+
 swag:
-	swag init -g cmd/app/main.go
+	swag init -g internal/server/server.go
+
+wire:
+	cd ./internal/app/deps && wire
 
 lint:
 	golangci-lint run

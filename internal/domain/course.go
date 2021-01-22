@@ -9,13 +9,13 @@ type CourseEntity struct {
 }
 
 type Course struct {
-	ID          primitive.ObjectID `json:"id" bson:"_id"`
-	Name        string             `json:"name" bson:"name"`
-	Description string             `json:"description" bson:"description"`
-	ImageURL    string             `json:"imageUrl" bson:"imageUrl"`
-	CreatedAt   int64              `json:"createdAt" bson:"createdAt"`
-	UpdatedAt   int64              `json:"updatedAt" bson:"updatedAt"`
-	Published   bool               `json:"published" bson:"published"`
+	ID          primitive.ObjectID  `json:"id" bson:"_id"`
+	Name        string              `json:"name" bson:"name"`
+	Description string              `json:"description" bson:"description"`
+	ImageURL    string              `json:"imageUrl" bson:"imageUrl"`
+	CreatedAt   primitive.Timestamp `json:"createdAt" bson:"createdAt"`
+	UpdatedAt   primitive.Timestamp `json:"updatedAt" bson:"updatedAt"`
+	Published   bool                `json:"published" bson:"published"`
 }
 
 type Module struct {
