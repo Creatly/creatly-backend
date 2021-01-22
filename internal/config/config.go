@@ -155,7 +155,7 @@ func parseMongoEnvVariables() error {
 }
 
 func parsePasswordEnvVariables() error {
-	viper.SetEnvPrefix("password")
+	viper.SetEnvPrefix("hash")
 	return viper.BindEnv("salt")
 }
 

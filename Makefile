@@ -13,8 +13,5 @@ test:
 swag:
 	swag init -g internal/server/server.go
 
-wire:
-	cd ./internal/app/deps && wire
-
 lint:
 	golangci-lint run

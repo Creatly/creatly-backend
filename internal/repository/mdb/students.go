@@ -3,6 +3,8 @@ package mdb
 import (
 	"context"
 	"github.com/zhashkevych/courses-backend/internal/domain"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -26,5 +28,16 @@ func (r *StudentsRepo) GetByCredentials(ctx context.Context, email, password dom
 }
 
 func (r *StudentsRepo) Verify(ctx context.Context, hash string) error {
-	return nil
+	hashId, err := primitive.ObjectIDFromHex(hash)
+	if err != nil {
+		return err
+	}
+
+	_, err = r.db.UpdateOne(ctx,
+		bson.M{"verification.hash": hashId},
+		bson.M{"$set":
+			bson.M{
+				"verification.verified": true,
+			}})
+	return err
 }

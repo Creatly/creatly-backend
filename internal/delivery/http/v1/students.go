@@ -12,7 +12,7 @@ func (h *Handler) initStudentsRoutes(api *gin.RouterGroup) {
 	{
 		students.POST("/sign-up", h.studentSignUp)
 		students.POST("/sign-in")
-		students.POST("/verify/:hash")
+		students.POST("/verify/:hash", h.studentVerify)
 		students.POST("/courses")
 		students.POST("/courses/:id")
 	}
@@ -21,7 +21,7 @@ func (h *Handler) initStudentsRoutes(api *gin.RouterGroup) {
 type studentSignUpInput struct {
 	Name           string `json:"name"`
 	Email          string `json:"email"`
-	Password       string `json:"password"`
+	Password       string `json:"hash"`
 	SourceCourseId string `json:"sourceCourseId"`
 }
 
@@ -51,4 +51,20 @@ func (h *Handler) studentSignUp(c *gin.Context) {
 	}
 
 	c.Status(http.StatusCreated)
+}
+
+func (h *Handler) studentVerify(c *gin.Context) {
+	hash := c.Param("hash")
+	if hash == "" {
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	if err := h.studentsService.Verify(c.Request.Context(), hash); err != nil {
+		logger.Error(err)
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	c.Status(http.StatusOK)
 }

@@ -5,6 +5,7 @@ import (
 	"github.com/zhashkevych/courses-backend/internal/domain"
 	"github.com/zhashkevych/courses-backend/internal/repository"
 	"github.com/zhashkevych/courses-backend/pkg/cache"
+	"github.com/zhashkevych/courses-backend/pkg/hash"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -31,9 +32,9 @@ type Services struct {
 	Students Students
 }
 
-func NewServices(repos *repository.Repositories, cache cache.Cache) *Services {
+func NewServices(repos *repository.Repositories, cache cache.Cache, hasher hash.PasswordHasher) *Services {
 	return &Services{
 		Schools:  NewSchoolsService(repos.Schools, cache),
-		Students: NewStudentsService(repos.Students),
+		Students: NewStudentsService(repos.Students, hasher),
 	}
 }

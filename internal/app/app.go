@@ -10,6 +10,7 @@ import (
 	"github.com/zhashkevych/courses-backend/internal/service"
 	"github.com/zhashkevych/courses-backend/pkg/cache"
 	"github.com/zhashkevych/courses-backend/pkg/database/mongodb"
+	"github.com/zhashkevych/courses-backend/pkg/hash"
 	"github.com/zhashkevych/courses-backend/pkg/logger"
 	"os"
 	"os/signal"
@@ -38,19 +39,16 @@ func Run(configPath string) {
 		panic(err)
 	}
 
-	if err := logger.Init(); err != nil {
-		panic(err)
-	}
-
 	logger.Infof("%+v", *cfg)
 
 	mongoClient := mongodb.NewClient(cfg.Mongo.URI, cfg.Mongo.User, cfg.Mongo.Password)
 
 	db := mongoClient.Database(cfg.Mongo.Name)
 	memCache := cache.NewMemoryCache()
+	hasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
 
 	repos := repository.NewRepositories(db)
-	services := service.NewServices(repos, memCache)
+	services := service.NewServices(repos, memCache, hasher)
 
 	handlers := http.NewHandler(services.Schools, services.Students)
 
