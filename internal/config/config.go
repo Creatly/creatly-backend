@@ -194,6 +194,6 @@ func parsePasswordEnvVariables() error {
 }
 
 func parseJWTEnvVariables() error {
-	viper.SetEnvPrefix("auth")
+	viper.SetEnvPrefix("jwt")
 	return viper.BindEnv("signing_key")
 }

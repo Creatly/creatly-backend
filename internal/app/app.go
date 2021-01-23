@@ -8,6 +8,7 @@ import (
 	"github.com/zhashkevych/courses-backend/internal/repository"
 	"github.com/zhashkevych/courses-backend/internal/server"
 	"github.com/zhashkevych/courses-backend/internal/service"
+	"github.com/zhashkevych/courses-backend/pkg/auth"
 	"github.com/zhashkevych/courses-backend/pkg/cache"
 	"github.com/zhashkevych/courses-backend/pkg/database/mongodb"
 	"github.com/zhashkevych/courses-backend/pkg/email/sendpulse"
@@ -37,7 +38,8 @@ import (
 func Run(configPath string) {
 	cfg, err := config.Init(configPath)
 	if err != nil {
-		panic(err)
+		logger.Error(err)
+		return
 	}
 
 	// Dependencies
@@ -47,10 +49,16 @@ func Run(configPath string) {
 	memCache := cache.NewMemoryCache(int64(cfg.CacheTTL))
 	hasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
 	emailProvider := sendpulse.NewClient(cfg.Email.ClientID, cfg.Email.ClientSecret, memCache)
+	tokenManager, err := auth.NewManager(cfg.Auth.JWT.SigningKey)
+	if err != nil {
+		logger.Error(err)
+		return
+	}
 
 	// Services, Repos & API Handlers
 	repos := repository.NewRepositories(db)
-	services := service.NewServices(repos, memCache, hasher, emailProvider, cfg.Email.ListID)
+	services := service.NewServices(repos, memCache, hasher, tokenManager,
+		emailProvider, cfg.Email.ListID, cfg.Auth.JWT.AccessTokenTTL, cfg.Auth.JWT.RefreshTokenTTL)
 
 	handlers := http.NewHandler(services.Schools, services.Students)
 

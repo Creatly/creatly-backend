@@ -6,6 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"time"
 )
 
 type StudentsRepo struct {
@@ -23,8 +24,23 @@ func (r *StudentsRepo) Create(ctx context.Context, student domain.Student) error
 	return err
 }
 
-func (r *StudentsRepo) GetByCredentials(ctx context.Context, email, password domain.Student) error {
-	return nil
+func (r *StudentsRepo) GetByCredentials(ctx context.Context, schoolId primitive.ObjectID, email, password string) (domain.Student, error) {
+	var student domain.Student
+	err := r.db.FindOne(ctx, bson.M{"email": email, "password": password, "schoolId": schoolId, "verification.verified": true}).Decode(&student)
+	return student, err
+}
+
+func (r *StudentsRepo) GetByRefreshToken(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (domain.Student, error) {
+	var student domain.Student
+	err := r.db.FindOne(ctx, bson.M{"session.refreshToken": refreshToken, "schoolId": schoolId,
+		"session.expiresAt": bson.M{"$gt": time.Now()}}).Decode(&student)
+
+	return student, err
+}
+
+func (r *StudentsRepo) SetSession(ctx context.Context, userId primitive.ObjectID, session domain.Session) error {
+	_, err := r.db.UpdateOne(ctx, bson.M{"_id": userId}, bson.M{"$set": bson.M{"session": session}})
+	return err
 }
 
 func (r *StudentsRepo) Verify(ctx context.Context, code string) error {

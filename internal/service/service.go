@@ -4,10 +4,12 @@ import (
 	"context"
 	"github.com/zhashkevych/courses-backend/internal/domain"
 	"github.com/zhashkevych/courses-backend/internal/repository"
+	"github.com/zhashkevych/courses-backend/pkg/auth"
 	"github.com/zhashkevych/courses-backend/pkg/cache"
 	"github.com/zhashkevych/courses-backend/pkg/email"
 	"github.com/zhashkevych/courses-backend/pkg/hash"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"time"
 )
 
 type Schools interface {
@@ -22,14 +24,21 @@ type StudentSignUpInput struct {
 	RegisterSource string
 }
 
-type SignInResult struct {
-	AccessToken string
+type StudentSignInInput struct {
+	Email    string
+	Password string
+	SchoolID primitive.ObjectID
+}
+
+type Tokens struct {
+	AccessToken  string
 	RefreshToken string
 }
 
 type Students interface {
-	SignIn(ctx context.Context, email, password string) (string, error)
 	SignUp(ctx context.Context, input StudentSignUpInput) error
+	SignIn(ctx context.Context, input StudentSignInInput) (Tokens, error)
+	RefreshTokens(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (Tokens, error)
 	Verify(ctx context.Context, hash string) error
 }
 
@@ -49,10 +58,11 @@ type Services struct {
 	Students Students
 }
 
-func NewServices(repos *repository.Repositories, cache cache.Cache, hasher hash.PasswordHasher, emailProvider email.Provider, emailListID string) *Services {
+func NewServices(repos *repository.Repositories, cache cache.Cache, hasher hash.PasswordHasher, tokenManager auth.TokenManager,
+	emailProvider email.Provider, emailListID string, accessTTL, refreshTTL time.Duration) *Services {
 	emailsService := NewEmailsService(emailProvider, emailListID)
 	return &Services{
 		Schools:  NewSchoolsService(repos.Schools, cache),
-		Students: NewStudentsService(repos.Students, hasher, emailsService),
+		Students: NewStudentsService(repos.Students, hasher, tokenManager, emailsService, accessTTL, refreshTTL),
 	}
 }

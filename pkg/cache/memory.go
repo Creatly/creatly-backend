@@ -16,6 +16,7 @@ type MemoryCache struct {
 	sync.RWMutex
 }
 
+// TODO move ttl to Set()
 func NewMemoryCache(ttl int64) *MemoryCache {
 	c := &MemoryCache{cache: make(map[interface{}]*item)}
 	go c.setTtlTimer(ttl)
