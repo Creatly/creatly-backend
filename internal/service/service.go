@@ -22,6 +22,11 @@ type StudentSignUpInput struct {
 	RegisterSource string
 }
 
+type SignInResult struct {
+	AccessToken string
+	RefreshToken string
+}
+
 type Students interface {
 	SignIn(ctx context.Context, email, password string) (string, error)
 	SignUp(ctx context.Context, input StudentSignUpInput) error

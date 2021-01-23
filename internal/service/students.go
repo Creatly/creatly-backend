@@ -24,7 +24,7 @@ func (s *StudentsService) SignIn(ctx context.Context, email, password string) (s
 }
 
 func (s *StudentsService) SignUp(ctx context.Context, input StudentSignUpInput) error {
-	verificationHash := primitive.NewObjectID()
+	verificationCode := primitive.NewObjectID()
 	student := domain.Student{
 		Name:           input.Name,
 		Password:       s.hasher.Hash(input.Password),
@@ -34,7 +34,7 @@ func (s *StudentsService) SignUp(ctx context.Context, input StudentSignUpInput) 
 		SchoolID:       input.SchoolID,
 		RegisterSource: input.RegisterSource,
 		Verification: domain.Verification{
-			Hash: verificationHash,
+			Code: verificationCode,
 		},
 	}
 
@@ -47,7 +47,7 @@ func (s *StudentsService) SignUp(ctx context.Context, input StudentSignUpInput) 
 		Email:            student.Email,
 		Name:             student.Name,
 		RegisterSource:   student.RegisterSource,
-		VerificationCode: verificationHash.Hex(),
+		VerificationCode: verificationCode.Hex(),
 	})
 }
 

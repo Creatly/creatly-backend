@@ -17,6 +17,7 @@ type Student struct {
 	Orders             []Order              `json:"orders" bson:"orders,omitempty"`
 	AvailableModuleIDs []primitive.ObjectID `json:"availableModuleIds" bson:"availableModuleIds,omitempty"`
 	Verification       Verification         `json:"verification" bson:"verification"`
+	Session            Session              `json:"session" bson:"session"`
 }
 
 type Verification struct {
