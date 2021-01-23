@@ -3,15 +3,17 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/zhashkevych/courses-backend/internal/service"
+	"github.com/zhashkevych/courses-backend/pkg/auth"
 )
 
 type Handler struct {
 	schoolsService  service.Schools
 	studentsService service.Students
+	tokenManager    auth.TokenManager
 }
 
-func NewHandler(schoolsService service.Schools, studentsService service.Students) *Handler {
-	return &Handler{schoolsService: schoolsService, studentsService: studentsService}
+func NewHandler(schoolsService service.Schools, studentsService service.Students, tokenManager auth.TokenManager) *Handler {
+	return &Handler{schoolsService: schoolsService, studentsService: studentsService, tokenManager: tokenManager}
 }
 
 func (h *Handler) Init(api *gin.RouterGroup) {

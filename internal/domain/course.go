@@ -1,6 +1,9 @@
 package domain
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"time"
+)
 
 type CourseEntity struct {
 	Name      string `json:"name" bson:"name"`
@@ -9,14 +12,14 @@ type CourseEntity struct {
 }
 
 type Course struct {
-	ID          primitive.ObjectID  `json:"id" bson:"_id"`
-	Name        string              `json:"name" bson:"name"`
-	Code        string              `json:"code" bson:"code"`
-	Description string              `json:"description" bson:"description"`
-	ImageURL    string              `json:"imageUrl" bson:"imageUrl"`
-	CreatedAt   primitive.Timestamp `json:"createdAt" bson:"createdAt"`
-	UpdatedAt   primitive.Timestamp `json:"updatedAt" bson:"updatedAt"`
-	Published   bool                `json:"published" bson:"published"`
+	ID          primitive.ObjectID `json:"id" bson:"_id"`
+	Name        string             `json:"name" bson:"name"`
+	Code        string             `json:"code" bson:"code"`
+	Description string             `json:"description" bson:"description"`
+	ImageURL    string             `json:"imageUrl" bson:"imageUrl"`
+	CreatedAt   time.Time          `json:"createdAt" bson:"createdAt"`
+	UpdatedAt   time.Time          `json:"updatedAt" bson:"updatedAt"`
+	Published   bool               `json:"published" bson:"published"`
 }
 
 type Module struct {

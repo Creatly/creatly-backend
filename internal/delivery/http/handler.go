@@ -6,6 +6,7 @@ import (
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 	v1 "github.com/zhashkevych/courses-backend/internal/delivery/http/v1"
 	"github.com/zhashkevych/courses-backend/internal/service"
+	"github.com/zhashkevych/courses-backend/pkg/auth"
 	"net/http"
 
 	_ "github.com/zhashkevych/courses-backend/docs"
@@ -14,12 +15,14 @@ import (
 type Handler struct {
 	schoolsService  service.Schools
 	studentsService service.Students
+	tokenManager    auth.TokenManager
 }
 
-func NewHandler(schoolsService service.Schools, studentsService service.Students) *Handler {
+func NewHandler(schoolsService service.Schools, studentsService service.Students, tokenManager auth.TokenManager) *Handler {
 	return &Handler{
 		schoolsService:  schoolsService,
 		studentsService: studentsService,
+		tokenManager:    tokenManager,
 	}
 }
 
@@ -44,7 +47,7 @@ func (h *Handler) Init() *gin.Engine {
 }
 
 func (h *Handler) initAPI(router *gin.Engine) {
-	handlerV1 := v1.NewHandler(h.schoolsService, h.studentsService)
+	handlerV1 := v1.NewHandler(h.schoolsService, h.studentsService, h.tokenManager)
 	api := router.Group("/api")
 	{
 		handlerV1.Init(api)

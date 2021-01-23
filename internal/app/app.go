@@ -60,7 +60,7 @@ func Run(configPath string) {
 	services := service.NewServices(repos, memCache, hasher, tokenManager,
 		emailProvider, cfg.Email.ListID, cfg.Auth.JWT.AccessTokenTTL, cfg.Auth.JWT.RefreshTokenTTL)
 
-	handlers := http.NewHandler(services.Schools, services.Students)
+	handlers := http.NewHandler(services.Schools, services.Students, tokenManager)
 
 	// HTTP Server
 	srv := server.NewServer(cfg, handlers.Init())
