@@ -21,7 +21,9 @@ type (
 		HTTP        HTTPConfig
 		Auth        AuthConfig
 		FileStorage FileStorageConfig
-		LoggerLevel int `mapstructure:"level"`
+		Email       EmailConfig
+		LoggerLevel int           `mapstructure:"level"`
+		CacheTTL    time.Duration `mapstructure:"ttl"`
 	}
 
 	MongoConfig struct {
@@ -45,6 +47,12 @@ type (
 	FileStorageConfig struct {
 		URL    string `mapstructure:"url"`
 		Bucket string `mapstructure:"bucket"`
+	}
+
+	EmailConfig struct {
+		ListID       string
+		ClientID     string
+		ClientSecret string
 	}
 
 	HTTPConfig struct {
@@ -83,6 +91,10 @@ func unmarshal(cfg *Config) error {
 		return err
 	}
 
+	if err := viper.UnmarshalKey("cache.ttl", &cfg.CacheTTL); err != nil {
+		return err
+	}
+
 	if err := viper.UnmarshalKey("mongo", &cfg.Mongo); err != nil {
 		return err
 	}
@@ -106,8 +118,13 @@ func setFromEnv(cfg *Config) {
 	cfg.Mongo.URI = viper.GetString("uri")
 	cfg.Mongo.User = viper.GetString("user")
 	cfg.Mongo.Password = viper.GetString("pass")
+
 	cfg.Auth.PasswordSalt = viper.GetString("salt")
 	cfg.Auth.JWT.SigningKey = viper.GetString("signing_key")
+
+	cfg.Email.ClientSecret = viper.GetString("secret")
+	cfg.Email.ClientID = viper.GetString("id")
+	cfg.Email.ListID = viper.GetString("listid")
 }
 
 func parseConfigFile(filepath string) error {
@@ -138,6 +155,10 @@ func parseEnv() error {
 		return err
 	}
 
+	if err := parseSendPulseEnvVariables(); err != nil {
+		return err
+	}
+
 	return parsePasswordEnvVariables()
 }
 
@@ -154,8 +175,21 @@ func parseMongoEnvVariables() error {
 	return viper.BindEnv("pass")
 }
 
+func parseSendPulseEnvVariables() error {
+	viper.SetEnvPrefix("sendpulse")
+	if err := viper.BindEnv("listid"); err != nil {
+		return err
+	}
+
+	if err := viper.BindEnv("id"); err != nil {
+		return err
+	}
+
+	return viper.BindEnv("secret")
+}
+
 func parsePasswordEnvVariables() error {
-	viper.SetEnvPrefix("hash")
+	viper.SetEnvPrefix("password")
 	return viper.BindEnv("salt")
 }
 

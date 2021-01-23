@@ -9,11 +9,14 @@ import (
 
 func TestInit(t *testing.T) {
 	type env struct {
-		mongoURI      string
-		mongoUser     string
-		mongoPass     string
-		passwordSalt  string
-		jwtSigningKey string
+		mongoURI        string
+		mongoUser       string
+		mongoPass       string
+		passwordSalt    string
+		jwtSigningKey   string
+		sendpulseListId string
+		sendpulseId     string
+		sendpulseSecret string
 	}
 
 	type args struct {
@@ -27,6 +30,9 @@ func TestInit(t *testing.T) {
 		os.Setenv("MONGO_PASS", env.mongoPass)
 		os.Setenv("PASSWORD_SALT", env.passwordSalt)
 		os.Setenv("JWT_SIGNING_KEY", env.jwtSigningKey)
+		os.Setenv("SENDPULSE_LISTID", env.sendpulseListId)
+		os.Setenv("SENDPULSE_ID", env.sendpulseId)
+		os.Setenv("SENDPULSE_SECRET", env.sendpulseSecret)
 	}
 
 	tests := []struct {
@@ -40,14 +46,18 @@ func TestInit(t *testing.T) {
 			args: args{
 				path: "fixtures/test",
 				env: env{
-					mongoURI:      "mongodb://localhost:27017",
-					mongoUser:     "admin",
-					mongoPass:     "qwerty",
-					passwordSalt:  "salt",
-					jwtSigningKey: "key",
+					mongoURI:        "mongodb://localhost:27017",
+					mongoUser:       "admin",
+					mongoPass:       "qwerty",
+					passwordSalt:    "salt",
+					jwtSigningKey:   "key",
+					sendpulseSecret: "secret",
+					sendpulseId:     "id",
+					sendpulseListId: "listId",
 				}},
 			want: &Config{
 				LoggerLevel: 5,
+				CacheTTL:    time.Second * 3600,
 				HTTP: HTTPConfig{
 					MaxHeaderMegabytes: 1,
 					Port:               "80",
@@ -71,6 +81,11 @@ func TestInit(t *testing.T) {
 				FileStorage: FileStorageConfig{
 					URL:    "test.filestorage.com",
 					Bucket: "test",
+				},
+				Email: EmailConfig{
+					ListID:       "listId",
+					ClientID:     "id",
+					ClientSecret: "secret",
 				},
 			},
 		},

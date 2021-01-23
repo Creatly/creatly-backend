@@ -7,6 +7,9 @@ http:
 logger:
   level: 5
 
+cache:
+  ttl: 3600s
+
 mongo:
   databaseName: testDatabase
 

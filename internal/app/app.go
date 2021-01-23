@@ -10,6 +10,7 @@ import (
 	"github.com/zhashkevych/courses-backend/internal/service"
 	"github.com/zhashkevych/courses-backend/pkg/cache"
 	"github.com/zhashkevych/courses-backend/pkg/database/mongodb"
+	"github.com/zhashkevych/courses-backend/pkg/email/sendpulse"
 	"github.com/zhashkevych/courses-backend/pkg/hash"
 	"github.com/zhashkevych/courses-backend/pkg/logger"
 	"os"
@@ -39,19 +40,21 @@ func Run(configPath string) {
 		panic(err)
 	}
 
-	logger.Infof("%+v", *cfg)
-
+	// Dependencies
 	mongoClient := mongodb.NewClient(cfg.Mongo.URI, cfg.Mongo.User, cfg.Mongo.Password)
-
 	db := mongoClient.Database(cfg.Mongo.Name)
-	memCache := cache.NewMemoryCache()
-	hasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
 
+	memCache := cache.NewMemoryCache(int64(cfg.CacheTTL))
+	hasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
+	emailProvider := sendpulse.NewClient(cfg.Email.ClientID, cfg.Email.ClientSecret, memCache)
+
+	// Services, Repos & API Handlers
 	repos := repository.NewRepositories(db)
-	services := service.NewServices(repos, memCache, hasher)
+	services := service.NewServices(repos, memCache, hasher, emailProvider, cfg.Email.ListID)
 
 	handlers := http.NewHandler(services.Schools, services.Students)
 
+	// HTTP Server
 	srv := server.NewServer(cfg, handlers.Init())
 	go func() {
 		if err := srv.Run(); err != nil {

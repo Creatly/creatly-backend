@@ -3,22 +3,43 @@ package cache
 import (
 	"errors"
 	"sync"
+	"time"
 )
 
+type item struct {
+	value     interface{}
+	createdAt int64
+}
+
 type MemoryCache struct {
-	cache map[interface{}]interface{}
+	cache map[interface{}]*item
 	sync.RWMutex
 }
 
-func NewMemoryCache() *MemoryCache {
-	return &MemoryCache{
-		cache: make(map[interface{}]interface{}),
+func NewMemoryCache(ttl int64) *MemoryCache {
+	c := &MemoryCache{cache: make(map[interface{}]*item)}
+	go c.setTtlTimer(ttl)
+	return c
+}
+
+func (c *MemoryCache) setTtlTimer(ttl int64) {
+	for now := range time.Tick(time.Second) {
+		c.Lock()
+		for k, v := range c.cache {
+			if now.Unix()-v.createdAt > ttl {
+				delete(c.cache, k)
+			}
+		}
+		c.Unlock()
 	}
 }
 
 func (c *MemoryCache) Set(key, value interface{}) error {
 	c.Lock()
-	c.cache[key] = value
+	c.cache[key] = &item{
+		value:     value,
+		createdAt: time.Now().Unix(),
+	}
 	c.Unlock()
 
 	return nil
@@ -26,12 +47,12 @@ func (c *MemoryCache) Set(key, value interface{}) error {
 
 func (c *MemoryCache) Get(key interface{}) (interface{}, error) {
 	c.RLock()
-	value, ex := c.cache[key]
+	item, ex := c.cache[key]
 	c.RUnlock()
 
 	if !ex {
 		return nil, errors.New("not found")
 	}
 
-	return value, nil
+	return item.value, nil
 }

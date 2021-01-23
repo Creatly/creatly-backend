@@ -27,17 +27,15 @@ func (r *StudentsRepo) GetByCredentials(ctx context.Context, email, password dom
 	return nil
 }
 
-func (r *StudentsRepo) Verify(ctx context.Context, hash string) error {
-	hashId, err := primitive.ObjectIDFromHex(hash)
+func (r *StudentsRepo) Verify(ctx context.Context, code string) error {
+	codeId, err := primitive.ObjectIDFromHex(code)
 	if err != nil {
 		return err
 	}
 
 	_, err = r.db.UpdateOne(ctx,
-		bson.M{"verification.hash": hashId},
-		bson.M{"$set":
-			bson.M{
-				"verification.verified": true,
-			}})
+		bson.M{"verification.code": codeId},
+		bson.M{"$set": bson.M{"verification.verified": true}})
+
 	return err
 }

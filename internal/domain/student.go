@@ -13,13 +13,13 @@ type Student struct {
 	RegisteredAt       time.Time            `json:"registeredAt" bson:"registeredAt"`
 	LastVisitAt        time.Time            `json:"lastVisitAt" bson:"lastVisitAt"`
 	SchoolID           primitive.ObjectID   `json:"schoolId" bson:"schoolId"`
-	SourceCourseID     primitive.ObjectID   `json:"sourceCourseId" bson:"sourceCourseId,omitempty"`
+	RegisterSource     string               `json:"registerSource" bson:"registerSource,omitempty"`
 	Orders             []Order              `json:"orders" bson:"orders,omitempty"`
 	AvailableModuleIDs []primitive.ObjectID `json:"availableModuleIds" bson:"availableModuleIds,omitempty"`
 	Verification       Verification         `json:"verification" bson:"verification"`
 }
 
 type Verification struct {
-	Hash     primitive.ObjectID `json:"hash" bson:"hash"`
+	Code     primitive.ObjectID `json:"code" bson:"code"`
 	Verified bool               `json:"verified" bson:"verified"`
 }

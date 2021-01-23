@@ -14,7 +14,7 @@ type Schools interface {
 type Students interface {
 	Create(ctx context.Context, student domain.Student) error
 	GetByCredentials(ctx context.Context, email, password domain.Student) error
-	Verify(ctx context.Context, hash string) error
+	Verify(ctx context.Context, code string) error
 }
 
 type Repositories struct {

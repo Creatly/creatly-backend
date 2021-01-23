@@ -22,7 +22,7 @@ type studentSignUpInput struct {
 	Name           string `json:"name"`
 	Email          string `json:"email"`
 	Password       string `json:"hash"`
-	SourceCourseId string `json:"sourceCourseId"`
+	RegisterSource string `json:"registerSource"`
 }
 
 func (h *Handler) studentSignUp(c *gin.Context) {
@@ -42,7 +42,7 @@ func (h *Handler) studentSignUp(c *gin.Context) {
 		Name:           inp.Name,
 		Email:          inp.Email,
 		Password:       inp.Password,
-		SourceCourseID: inp.SourceCourseId,
+		RegisterSource: inp.RegisterSource,
 		SchoolID:       school.ID,
 	}); err != nil {
 		logger.Error(err)

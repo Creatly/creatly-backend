@@ -11,6 +11,7 @@ type CourseEntity struct {
 type Course struct {
 	ID          primitive.ObjectID  `json:"id" bson:"_id"`
 	Name        string              `json:"name" bson:"name"`
+	Code        string              `json:"code" bson:"code"`
 	Description string              `json:"description" bson:"description"`
 	ImageURL    string              `json:"imageUrl" bson:"imageUrl"`
 	CreatedAt   primitive.Timestamp `json:"createdAt" bson:"createdAt"`
