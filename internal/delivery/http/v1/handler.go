@@ -9,11 +9,17 @@ import (
 type Handler struct {
 	schoolsService  service.Schools
 	studentsService service.Students
+	coursesService  service.Courses
 	tokenManager    auth.TokenManager
 }
 
-func NewHandler(schoolsService service.Schools, studentsService service.Students, tokenManager auth.TokenManager) *Handler {
-	return &Handler{schoolsService: schoolsService, studentsService: studentsService, tokenManager: tokenManager}
+func NewHandler(schoolsService service.Schools, studentsService service.Students, coursesService service.Courses, tokenManager auth.TokenManager) *Handler {
+	return &Handler{
+		schoolsService:  schoolsService,
+		studentsService: studentsService,
+		coursesService:  coursesService,
+		tokenManager:    tokenManager,
+	}
 }
 
 func (h *Handler) Init(api *gin.RouterGroup) {

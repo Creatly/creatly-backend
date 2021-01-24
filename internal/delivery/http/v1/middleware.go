@@ -15,7 +15,6 @@ const (
 	schoolCtx           = "school"
 )
 
-// TODO extract domain from host logic
 func (h *Handler) setSchoolFromRequest(c *gin.Context) {
 	domainName := strings.Split(c.Request.Host, ":")[0]
 
@@ -70,6 +69,7 @@ func (h *Handler) userIdentity(c *gin.Context) {
 	c.Set(userCtx, userId)
 }
 
+// TODO is it needed?
 func getUserId(c *gin.Context) (string, error) {
 	id, ok := c.Get(userCtx)
 	if !ok {

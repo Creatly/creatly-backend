@@ -15,13 +15,15 @@ import (
 type Handler struct {
 	schoolsService  service.Schools
 	studentsService service.Students
+	coursesService  service.Courses
 	tokenManager    auth.TokenManager
 }
 
-func NewHandler(schoolsService service.Schools, studentsService service.Students, tokenManager auth.TokenManager) *Handler {
+func NewHandler(schoolsService service.Schools, studentsService service.Students, coursesService service.Courses, tokenManager auth.TokenManager) *Handler {
 	return &Handler{
 		schoolsService:  schoolsService,
 		studentsService: studentsService,
+		coursesService:  coursesService,
 		tokenManager:    tokenManager,
 	}
 }
@@ -47,7 +49,7 @@ func (h *Handler) Init() *gin.Engine {
 }
 
 func (h *Handler) initAPI(router *gin.Engine) {
-	handlerV1 := v1.NewHandler(h.schoolsService, h.studentsService, h.tokenManager)
+	handlerV1 := v1.NewHandler(h.schoolsService, h.studentsService, h.coursesService, h.tokenManager)
 	api := router.Group("/api")
 	{
 		handlerV1.Init(api)

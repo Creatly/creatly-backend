@@ -20,14 +20,20 @@ type Students interface {
 	Verify(ctx context.Context, code string) error
 }
 
+type Courses interface {
+	GetModules(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
+}
+
 type Repositories struct {
 	Schools  Schools
 	Students Students
+	Courses  Courses
 }
 
 func NewRepositories(db *mongo.Database) *Repositories {
 	return &Repositories{
 		Schools:  mdb.NewSchoolsRepo(db),
 		Students: mdb.NewStudentsRepo(db),
+		Courses:  mdb.NewCoursesRepo(db),
 	}
 }

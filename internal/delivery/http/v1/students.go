@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/zhashkevych/courses-backend/internal/domain"
 	"github.com/zhashkevych/courses-backend/internal/service"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
 )
 
@@ -14,11 +15,12 @@ func (h *Handler) initStudentsRoutes(api *gin.RouterGroup) {
 		students.POST("/sign-in", h.studentSignIn)
 		students.POST("/auth/refresh", h.studentRefresh)
 		students.POST("/verify/:hash", h.studentVerify)
+		students.GET("/courses", h.studentGetAllCourses)
+		students.GET("/courses/:id", h.studentGetCourseById)
 
-		authenticated := students.Group("/", h.userIdentity)
+		_ = students.Group("/", h.userIdentity)
 		{
-			authenticated.GET("/courses", h.studentGetAllCourses)
-			authenticated.GET("/courses/:id", h.studentGetCourseById)
+
 		}
 	}
 }
@@ -218,6 +220,51 @@ func (h *Handler) studentGetAllCourses(c *gin.Context) {
 	c.JSON(http.StatusOK, courses)
 }
 
+type getCourseByIdResponse struct {
+	Course  domain.Course `json:"course"`
+	Modules []module      `json:"modules"`
+}
+
+type module struct {
+	ID       primitive.ObjectID `json:"id" bson:"_id"`
+	Name     string             `json:"name" bson:"name"`
+	Position int                `json:"position" bson:"position"`
+	Lessons  []lesson           `json:"lessons" bson:"lessons"`
+}
+
+type lesson struct {
+	ID       primitive.ObjectID `json:"id" bson:"_id"`
+	Name     string             `json:"name" bson:"name"`
+	Position int                `json:"position" bson:"position"`
+}
+
+func newGetCourseByIdResponse(course domain.Course, courseModules []domain.Module) getCourseByIdResponse {
+	modules := make([]module, len(courseModules))
+
+	for i := range modules {
+		modules[i].Lessons = toLessons(courseModules[i].Lessons)
+	}
+
+	return getCourseByIdResponse{
+		Course:  course,
+		Modules: modules,
+	}
+}
+
+func toLessons(lessons []domain.Lesson) []lesson {
+	out := make([]lesson, 0)
+	for _, l := range lessons {
+		if l.Published {
+			out = append(out, lesson{
+				ID:       l.ID,
+				Name:     l.Name,
+				Position: l.Position,
+			})
+		}
+	}
+	return out
+}
+
 // @Summary Student Get Course By ID
 // @Tags students
 // @Description student get course by id
@@ -243,12 +290,23 @@ func (h *Handler) studentGetCourseById(c *gin.Context) {
 		return
 	}
 
+	var searchedCourse domain.Course
 	for _, course := range school.Courses {
 		if course.Published && course.ID.Hex() == id {
-			c.JSON(http.StatusOK, course)
-			return
+			searchedCourse = course
 		}
 	}
 
-	newErrorResponse(c, http.StatusBadRequest, "not found")
+	if searchedCourse.ID.IsZero() {
+		newErrorResponse(c, http.StatusBadRequest, "not found")
+		return
+	}
+
+	modules, err := h.coursesService.GetCourseModules(c.Request.Context(), searchedCourse.ID)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, newGetCourseByIdResponse(searchedCourse, modules))
 }

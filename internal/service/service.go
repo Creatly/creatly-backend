@@ -53,16 +53,23 @@ type Emails interface {
 	AddToList(AddToListInput) error
 }
 
+type Courses interface {
+	GetCourseModules(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
+}
+
 type Services struct {
 	Schools  Schools
 	Students Students
+	Courses  Courses
 }
 
 func NewServices(repos *repository.Repositories, cache cache.Cache, hasher hash.PasswordHasher, tokenManager auth.TokenManager,
 	emailProvider email.Provider, emailListID string, accessTTL, refreshTTL time.Duration) *Services {
 	emailsService := NewEmailsService(emailProvider, emailListID)
+
 	return &Services{
 		Schools:  NewSchoolsService(repos.Schools, cache),
 		Students: NewStudentsService(repos.Students, hasher, tokenManager, emailsService, accessTTL, refreshTTL),
+		Courses:  NewCoursesService(repos.Courses),
 	}
 }

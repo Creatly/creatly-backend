@@ -24,15 +24,19 @@ type Course struct {
 
 type Module struct {
 	ID        primitive.ObjectID `json:"id" bson:"_id"`
+	Name      string             `json:"name" bson:"name"`
+	Position  int                `json:"position" bson:"position"`
+	Published bool               `json:"published"`
 	CourseID  primitive.ObjectID `json:"courseId" bson:"courseId"`
 	PackageID primitive.ObjectID `json:"packageId" bson:"packageId"`
 	Lessons   []Lesson           `json:"lessons" bson:"lessons"`
-	CourseEntity
 }
 
 type Lesson struct {
-	ID primitive.ObjectID `json:"id" bson:"_id"`
-	CourseEntity
+	ID        primitive.ObjectID `json:"id" bson:"_id"`
+	Name      string             `json:"name" bson:"name"`
+	Position  int                `json:"position" bson:"position"`
+	Published bool               `json:"published"`
 }
 
 type CourseContent struct {
