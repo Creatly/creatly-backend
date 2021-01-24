@@ -70,14 +70,14 @@ jobs:
             docker rm $(echo $CONTAINER_NAME)
 
             # Set env variables
-            export MONGO_URI=${{ secrets.MONGO_URI }}
-            export MONGO_USER=${{ secrets.MONGO_USER }}
-            export MONGO_PASS=${{ secrets.MONGO_PASS }}
-            export PASSWORD_SALT=${{ secrets.PASSWORD_SALT }}
-            export JWT_SIGNING_KEY=${{ secrets.JWT_SIGNING_KEY }}
-            export SENDPULSE_LISTID=${{ secrets.SENDPULSE_LISTID }}
-            export SENDPULSE_ID=${{ secrets.SENDPULSE_ID }}
-            export SENDPULSE_SECRET=${{ secrets.SENDPULSE_SECRET }}
+            export MONGO_URI="${{ secrets.MONGO_URI }}"
+            export MONGO_USER="${{ secrets.MONGO_USER }}"
+            export MONGO_PASS="${{ secrets.MONGO_PASS }}"
+            export PASSWORD_SALT="${{ secrets.PASSWORD_SALT }}"
+            export JWT_SIGNING_KEY="${{ secrets.JWT_SIGNING_KEY }}"
+            export SENDPULSE_LISTID="${{ secrets.SENDPULSE_LISTID }}"
+            export SENDPULSE_ID="${{ secrets.SENDPULSE_ID }}"
+            export SENDPULSE_SECRET="${{ secrets.SENDPULSE_SECRET }}"
 
             # Run a new container from a new image
             docker run -e MONGO_URI -e MONGO_USER -e MONGO_PASS -e PASSWORD_SALT -e JWT_SIGNING_KEY \
