@@ -84,5 +84,6 @@ jobs:
             -e SENDPULSE_LISTID -e SENDPULSE_ID -e SENDPULSE_SECRET -d \
             --restart always \
             --publish 8000:8000 \
+            --link=mongo-courses:mongodb \
             --name $(echo $CONTAINER_NAME) \
             $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
