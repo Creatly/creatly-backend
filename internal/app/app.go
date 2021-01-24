@@ -23,6 +23,7 @@ import (
 // @version 1.0
 // @description API Server for Course Platform
 
+// TODO host based on env
 // @host localhost:8000
 // @BasePath /api/v1/
 
