@@ -46,7 +46,6 @@ type emailInfo struct {
 type Client struct {
 	id     string
 	secret string
-	//listId string
 
 	cache cache.Cache
 }
@@ -65,11 +64,6 @@ func (c *Client) AddEmailToList(input email.AddEmailInput) error {
 		Emails: []emailInfo{
 			{
 				Email: input.Email,
-				//Variables: map[string]string{
-				//	nameField:             input.Name,
-				//	registerSourceField:   input.RegisterSource,
-				//	verificationLinkField: input.VerificationCode,
-				//},
 				Variables: input.Variables,
 			},
 		},
