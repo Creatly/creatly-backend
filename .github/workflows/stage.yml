@@ -1,0 +1,88 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - develop
+
+env:
+  REGISTRY: "registry.digitalocean.com/sandbox-registry"
+  IMAGE_NAME: "courses-backend"
+  CONTAINER_NAME: "courses-api"
+
+jobs:
+  environment: stage
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.15
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Test
+        run: go test ./...
+
+  build_and_push:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@v2
+
+      - name: Build container image
+        run: docker build -f Dockerfile.prod -t $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7) .
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Log in to DigitalOcean Container Registry with short-lived credentials
+        run: doctl registry login --expiry-seconds 600
+
+      - name: Push image to DigitalOcean Container Registry
+        run: docker push $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build_and_push
+
+    steps:
+      - name: Deploy to Digital Ocean droplet via SSH action
+        uses: appleboy/ssh-action@v0.1.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSHKEY }}
+          envs: IMAGE_NAME,REGISTRY,GITHUB_SHA,,CONTAINER_NAME
+          script: |
+            # Login into Digital Ocean Registry
+            docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} $(echo $REGISTRY)
+            # Stop running container
+            docker stop $(echo $CONTAINER_NAME)
+            # Remove old container
+            docker rm $(echo $CONTAINER_NAME)
+
+            # Set env variables
+            export MONGO_URI=${{ secrets.MONGO_URI }}
+            export MONGO_USER=${{ secrets.MONGO_USER }}
+            export MONGO_PASS=${{ secrets.MONGO_PASS }}
+            export PASSWORD_SALT=${{ secrets.PASSWORD_SALT }}
+            export JWT_SIGNING_KEY=${{ secrets.JWT_SIGNING_KEY }}
+            export SENDPULSE_LISTID=${{ secrets.SENDPULSE_LISTID }}
+            export SENDPULSE_ID=${{ secrets.SENDPULSE_ID }}
+            export SENDPULSE_SECRET=${{ secrets.SENDPULSE_SECRET }}
+
+            # Run a new container from a new image
+            docker run -e MONGO_URI -e MONGO_USER -e MONGO_PASS -e PASSWORD_SALT -e JWT_SIGNING_KEY \
+            -e SENDPULSE_LISTID -e SENDPULSE_ID -e SENDPULSE_SECRET -d \
+            --restart always \
+            --publish 80:80 \
+            --name $(echo $CONTAINER_NAME) \
+            $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)

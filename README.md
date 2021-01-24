@@ -13,9 +13,9 @@ MONGO_USER=admin
 MONGO_PASS=qwerty
 PASSWORD_SALT=<any salt here>
 JWT_SIGNING_KEY=<any key here>
-SENDPULSE_LISTID=1154579
-SENDPULSE_ID=ba3789b39d2f2768353b278dd3bad9fe
-SENDPULSE_SECRET=3a955b125b089d71f26c041507310c1c
+SENDPULSE_LISTID=<list id>
+SENDPULSE_ID=<client id>
+SENDPULSE_SECRET=<client secret>
 ```
 
 Use `make run` to build&run project, `make lint` to check code with linter.
