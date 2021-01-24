@@ -4,9 +4,6 @@ http:
   readTimeout: 10s
   writeTimeout: 10s
 
-logger:
-  level: 5
-
 cache:
   ttl: 3600s
 

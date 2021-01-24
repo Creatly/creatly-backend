@@ -150,7 +150,6 @@ var doc = `{
                     "students"
                 ],
                 "summary": "Student Refresh Tokens",
-                "operationId": "studentRefresh",
                 "parameters": [
                     {
                         "description": "sign up info",

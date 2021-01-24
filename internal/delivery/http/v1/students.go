@@ -130,7 +130,6 @@ type refreshInput struct {
 // @Security StudentsAuth
 // @Tags students
 // @Description student refresh tokens
-// @ID studentRefresh
 // @Accept  json
 // @Produce  json
 // @Param input body refreshInput true "sign up info"

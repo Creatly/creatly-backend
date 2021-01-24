@@ -147,7 +147,6 @@ paths:
       consumes:
       - application/json
       description: student refresh tokens
-      operationId: studentRefresh
       parameters:
       - description: sign up info
         in: body

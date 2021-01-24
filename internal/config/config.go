@@ -10,7 +10,6 @@ const (
 	defaultHttpPort               = "8000"
 	defaultHttpRWTimeout          = 10 * time.Second
 	defaultHttpMaxHeaderMegabytes = 1
-	defaultLoggerLevel            = 5 // debug level for logrus
 	defaultAccessTokenTTL         = 15 * time.Minute
 	defaultRefreshTokenTTL        = 24 * time.Hour * 30
 )
@@ -22,7 +21,6 @@ type (
 		Auth        AuthConfig
 		FileStorage FileStorageConfig
 		Email       EmailConfig
-		LoggerLevel int           `mapstructure:"level"`
 		CacheTTL    time.Duration `mapstructure:"ttl"`
 	}
 
@@ -87,10 +85,6 @@ func Init(path string) (*Config, error) {
 }
 
 func unmarshal(cfg *Config) error {
-	if err := viper.UnmarshalKey("logger.level", &cfg.LoggerLevel); err != nil {
-		return err
-	}
-
 	if err := viper.UnmarshalKey("cache.ttl", &cfg.CacheTTL); err != nil {
 		return err
 	}
@@ -141,7 +135,6 @@ func populateDefaults() {
 	viper.SetDefault("http.max_header_megabytes", defaultHttpMaxHeaderMegabytes)
 	viper.SetDefault("http.timeouts.read", defaultHttpRWTimeout)
 	viper.SetDefault("http.timeouts.write", defaultHttpRWTimeout)
-	viper.SetDefault("logger.level", defaultLoggerLevel)
 	viper.SetDefault("auth.accessTokenTTL", defaultAccessTokenTTL)
 	viper.SetDefault("auth.refreshTokenTTL", defaultRefreshTokenTTL)
 }

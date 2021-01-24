@@ -56,7 +56,6 @@ func TestInit(t *testing.T) {
 					sendpulseListId: "listId",
 				}},
 			want: &Config{
-				LoggerLevel: 5,
 				CacheTTL:    time.Second * 3600,
 				HTTP: HTTPConfig{
 					MaxHeaderMegabytes: 1,

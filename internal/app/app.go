@@ -59,7 +59,6 @@ func Run(configPath string) {
 	repos := repository.NewRepositories(db)
 	services := service.NewServices(repos, memCache, hasher, tokenManager,
 		emailProvider, cfg.Email.ListID, cfg.Auth.JWT.AccessTokenTTL, cfg.Auth.JWT.RefreshTokenTTL)
-
 	handlers := http.NewHandler(services.Schools, services.Students, services.Courses, tokenManager)
 
 	// HTTP Server
