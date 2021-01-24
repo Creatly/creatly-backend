@@ -83,6 +83,6 @@ jobs:
             docker run -e MONGO_URI -e MONGO_USER -e MONGO_PASS -e PASSWORD_SALT -e JWT_SIGNING_KEY \
             -e SENDPULSE_LISTID -e SENDPULSE_ID -e SENDPULSE_SECRET -d \
             --restart always \
-            --publish 80:80 \
+            --publish 8000:8000 \
             --name $(echo $CONTAINER_NAME) \
             $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
