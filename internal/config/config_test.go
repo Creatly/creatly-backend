@@ -8,7 +8,7 @@ import (
 )
 
 func TestInit(t *testing.T) {
-	type env struct {
+ 	type env struct {
 		mongoURI        string
 		mongoUser       string
 		mongoPass       string
