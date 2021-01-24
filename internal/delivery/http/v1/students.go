@@ -191,7 +191,6 @@ func (h *Handler) studentVerify(c *gin.Context) {
 
 // @Summary Student Get All Courses
 // @Tags students
-// @Security StudentsAuth
 // @Description student get all courses
 // @ID studentGetAllCourses
 // @Accept  json
@@ -221,7 +220,6 @@ func (h *Handler) studentGetAllCourses(c *gin.Context) {
 
 // @Summary Student Get Course By ID
 // @Tags students
-// @Security StudentsAuth
 // @Description student get course by id
 // @ID studentGetCourseById
 // @Accept  json

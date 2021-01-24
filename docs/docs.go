@@ -26,11 +26,6 @@ var doc = `{
     "paths": {
         "/students/courses": {
             "get": {
-                "security": [
-                    {
-                        "StudentsAuth": []
-                    }
-                ],
                 "description": "student get all courses",
                 "consumes": [
                     "application/json"
@@ -82,11 +77,6 @@ var doc = `{
         },
         "/students/courses/{id}": {
             "get": {
-                "security": [
-                    {
-                        "StudentsAuth": []
-                    }
-                ],
                 "description": "student get course by id",
                 "consumes": [
                     "application/json"
