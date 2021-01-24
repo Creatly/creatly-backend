@@ -24,7 +24,7 @@ import (
 // @description API Server for Course Platform
 
 // @host localhost:8000
-// @BasePath /
+// @BasePath /api/v1/
 
 // @securityDefinitions.apikey AdminAuth
 // @in header

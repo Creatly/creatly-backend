@@ -11,7 +11,7 @@ test:
 	go test -v ./...
 
 swag:
-	swag init -g internal/server/server.go
+	swag init -g internal/app/app.go
 
 lint:
 	golangci-lint run

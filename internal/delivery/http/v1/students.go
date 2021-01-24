@@ -30,6 +30,18 @@ type studentSignUpInput struct {
 	RegisterSource string `json:"registerSource"`
 }
 
+// @Summary Student SignUp
+// @Tags students
+// @Description create student account
+// @ID studentSignUp
+// @Accept  json
+// @Produce  json
+// @Param input body studentSignUpInput true "sign up info"
+// @Success 201 {string} string "ok"
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /students/sign-up [post]
 func (h *Handler) studentSignUp(c *gin.Context) {
 	var inp studentSignUpInput
 	if err := c.BindJSON(&inp); err != nil {
@@ -67,6 +79,18 @@ type tokenResponse struct {
 	RefreshToken string `json:"refreshToken"`
 }
 
+// @Summary Student SignIn
+// @Tags students
+// @Description student sign in
+// @ID studentSignIn
+// @Accept  json
+// @Produce  json
+// @Param input body studentSignInInput true "sign up info"
+// @Success 200 {object} tokenResponse
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /students/sign-in [post]
 func (h *Handler) studentSignIn(c *gin.Context) {
 	var inp studentSignInInput
 	if err := c.BindJSON(&inp); err != nil {
@@ -100,6 +124,19 @@ type refreshInput struct {
 	Token string `json:"token" binding:"required"`
 }
 
+// @Summary Student Refresh Tokens
+// @Security StudentsAuth
+// @Tags students
+// @Description student refresh tokens
+// @ID studentRefresh
+// @Accept  json
+// @Produce  json
+// @Param input body refreshInput true "sign up info"
+// @Success 200 {object} tokenResponse
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /students/refresh [post]
 func (h *Handler) studentRefresh(c *gin.Context) {
 	var inp refreshInput
 	if err := c.BindJSON(&inp); err != nil {
@@ -125,6 +162,18 @@ func (h *Handler) studentRefresh(c *gin.Context) {
 	})
 }
 
+// @Summary Student Verify Registration
+// @Tags students
+// @Description student verify registration
+// @ID studentVerify
+// @Accept  json
+// @Produce  json
+// @Param code path string true "verification code"
+// @Success 200 {object} tokenResponse
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /students/verify/{code} [post]
 func (h *Handler) studentVerify(c *gin.Context) {
 	code := c.Param("code")
 	if code == "" {
@@ -140,6 +189,18 @@ func (h *Handler) studentVerify(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
+// @Summary Student Get All Courses
+// @Tags students
+// @Security StudentsAuth
+// @Description student get all courses
+// @ID studentGetAllCourses
+// @Accept  json
+// @Produce  json
+// @Success 200 {array} domain.Course
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /students/courses [get]
 func (h *Handler) studentGetAllCourses(c *gin.Context) {
 	school, err := getSchoolFromContext(c)
 	if err != nil {
@@ -158,6 +219,19 @@ func (h *Handler) studentGetAllCourses(c *gin.Context) {
 	c.JSON(http.StatusOK, courses)
 }
 
+// @Summary Student Get Course By ID
+// @Tags students
+// @Security StudentsAuth
+// @Description student get course by id
+// @ID studentGetCourseById
+// @Accept  json
+// @Produce  json
+// @Param id path string true "course id"
+// @Success 200 {object} domain.Course
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /students/courses/{id} [get]
 func (h *Handler) studentGetCourseById(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
