@@ -312,6 +312,10 @@ func (h *Handler) studentGetCourseById(c *gin.Context) {
 	c.JSON(http.StatusOK, newGetCourseByIdResponse(searchedCourse, modules))
 }
 
+type studentGetModuleLessonsResponse struct {
+	Lessons []domain.Lesson `json:"lessons"`
+}
+
 // @Summary Student Get Lessons By Module ID
 // @Security StudentsAuth
 // @Tags students
@@ -350,7 +354,7 @@ func (h *Handler) studentGetModuleLessons(c *gin.Context) {
 		return
 	}
 
-	module, err := h.studentsService.GetModuleWithContent(c.Request.Context(), school.ID, studentId, moduleId)
+	lessons, err := h.studentsService.GetModuleLessons(c.Request.Context(), school.ID, studentId, moduleId)
 	if err != nil {
 		if err == service.ErrModuleIsNotAvailable {
 			newErrorResponse(c, http.StatusForbidden, err.Error())
@@ -361,5 +365,7 @@ func (h *Handler) studentGetModuleLessons(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, module)
+	c.JSON(http.StatusOK, studentGetModuleLessonsResponse{
+		Lessons: lessons,
+	})
 }

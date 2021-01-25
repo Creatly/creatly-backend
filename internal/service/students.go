@@ -85,30 +85,30 @@ func (s *StudentsService) Verify(ctx context.Context, hash string) error {
 	return s.repo.Verify(ctx, hash)
 }
 
-func (s *StudentsService) GetModuleWithContent(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) (domain.Module, error) {
+func (s *StudentsService) GetModuleLessons(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) ([]domain.Lesson, error) {
 	// Get module with lessons content, check if it is available for student
 	module, err := s.coursesService.GetModuleWithContent(ctx, moduleId)
 	if err != nil {
-		return domain.Module{}, err
+		return nil, err
 	}
 
 	student, err := s.repo.GetById(ctx, studentId)
 	if err != nil {
-		return domain.Module{}, nil
+		return nil, nil
 	}
 
 	if student.IsModuleAvailable(module) {
-		return module, nil
+		return module.Lessons, nil
 	}
 
 	// Find module offers
 	offers, err := s.coursesService.GetPackageOffers(ctx, schoolId, module.PackageID)
 	if err != nil {
-		return domain.Module{}, err
+		return nil, err
 	}
 
 	if len(offers) != 0 {
-		return domain.Module{}, ErrModuleIsNotAvailable
+		return nil, ErrModuleIsNotAvailable
 	}
 
 	// If module has no offers - it's free and available to everyone
@@ -118,7 +118,7 @@ func (s *StudentsService) GetModuleWithContent(ctx context.Context, schoolId, st
 		}
 	}()
 
-	return module, nil
+	return module.Lessons, nil
 }
 
 func (s *StudentsService) createSession(ctx context.Context, studentId primitive.ObjectID) (Tokens, error) {

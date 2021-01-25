@@ -40,7 +40,7 @@ type Students interface {
 	SignIn(ctx context.Context, input StudentSignInInput) (Tokens, error)
 	RefreshTokens(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (Tokens, error)
 	Verify(ctx context.Context, hash string) error
-	GetModuleWithContent(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) (domain.Module, error)
+	GetModuleLessons(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) ([]domain.Lesson, error)
 }
 
 type AddToListInput struct {
