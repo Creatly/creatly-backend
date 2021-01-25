@@ -134,11 +134,6 @@ var doc = `{
         },
         "/students/refresh": {
             "post": {
-                "security": [
-                    {
-                        "StudentsAuth": []
-                    }
-                ],
                 "description": "student refresh tokens",
                 "consumes": [
                     "application/json"

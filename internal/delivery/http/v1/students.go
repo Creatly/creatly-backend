@@ -127,7 +127,6 @@ type refreshInput struct {
 }
 
 // @Summary Student Refresh Tokens
-// @Security StudentsAuth
 // @Tags students
 // @Description student refresh tokens
 // @Accept  json
