@@ -29,6 +29,10 @@ func (s *CoursesService) GetCourseModules(ctx context.Context, courseId primitiv
 	return modules, nil
 }
 
+func (s *CoursesService) GetModule(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error) {
+	return s.repo.GetModule(ctx, moduleId)
+}
+
 func (s *CoursesService) GetModuleWithContent(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error) {
 	return s.repo.GetModuleWithContent(ctx, moduleId)
 }
@@ -56,4 +60,13 @@ func inArray(array []primitive.ObjectID, searchedItem primitive.ObjectID) bool {
 		}
 	}
 	return false
+}
+
+func (s *CoursesService) GetModuleOffers(ctx context.Context, schoolId, moduleId primitive.ObjectID) ([]domain.Offer, error) {
+	module, err := s.GetModule(ctx, moduleId)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.GetPackageOffers(ctx, schoolId, module.PackageID)
 }

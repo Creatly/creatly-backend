@@ -24,6 +24,7 @@ type Students interface {
 
 type Courses interface {
 	GetModules(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
+	GetModule(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
 	GetModuleWithContent(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
 }
 

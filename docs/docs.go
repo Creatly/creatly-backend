@@ -164,7 +164,69 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Module"
+                            "$ref": "#/definitions/v1.studentGetModuleLessonsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/students/modules/{id}/offers": {
+            "get": {
+                "security": [
+                    {
+                        "StudentsAuth": []
+                    }
+                ],
+                "description": "student get offers by module id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "students"
+                ],
+                "summary": "Student Get Offers By Module ID",
+                "operationId": "studentGetModuleOffers",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "module id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
                         }
                     },
                     "400": {
@@ -478,35 +540,6 @@ var doc = `{
                 }
             }
         },
-        "domain.Module": {
-            "type": "object",
-            "properties": {
-                "courseId": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "lessons": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/domain.Lesson"
-                    }
-                },
-                "name": {
-                    "type": "string"
-                },
-                "packageId": {
-                    "type": "string"
-                },
-                "position": {
-                    "type": "integer"
-                },
-                "published": {
-                    "type": "boolean"
-                }
-            }
-        },
         "v1.errorResponse": {
             "type": "object",
             "properties": {
@@ -523,6 +556,17 @@ var doc = `{
             "properties": {
                 "token": {
                     "type": "string"
+                }
+            }
+        },
+        "v1.studentGetModuleLessonsResponse": {
+            "type": "object",
+            "properties": {
+                "lessons": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Lesson"
+                    }
                 }
             }
         },

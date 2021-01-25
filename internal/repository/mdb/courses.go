@@ -60,3 +60,9 @@ func (r *CoursesRepo) GetModuleWithContent(ctx context.Context, moduleId primiti
 
 	return module, nil
 }
+
+func (r *CoursesRepo) GetModule(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error) {
+	var module domain.Module
+	err := r.db.Collection(modulesCollection).FindOne(ctx, bson.M{"_id": moduleId, "published": true}).Decode(&module)
+	return module, err
+}

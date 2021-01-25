@@ -40,7 +40,7 @@ type Students interface {
 	SignIn(ctx context.Context, input StudentSignInInput) (Tokens, error)
 	RefreshTokens(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (Tokens, error)
 	Verify(ctx context.Context, hash string) error
-	GetModuleLessons(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) ([]domain.Lesson, error)
+	GetStudentModuleWithLessons(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) ([]domain.Lesson, error)
 }
 
 type AddToListInput struct {
@@ -56,7 +56,9 @@ type Emails interface {
 
 type Courses interface {
 	GetCourseModules(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
+	GetModule(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
 	GetModuleWithContent(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
+	GetModuleOffers(ctx context.Context, schoolId, moduleId primitive.ObjectID) ([]domain.Offer, error)
 	GetPackageOffers(ctx context.Context, schoolId, packageId primitive.ObjectID) ([]domain.Offer, error)
 }
 

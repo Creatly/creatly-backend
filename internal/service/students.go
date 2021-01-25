@@ -85,7 +85,7 @@ func (s *StudentsService) Verify(ctx context.Context, hash string) error {
 	return s.repo.Verify(ctx, hash)
 }
 
-func (s *StudentsService) GetModuleLessons(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) ([]domain.Lesson, error) {
+func (s *StudentsService) GetStudentModuleWithLessons(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) ([]domain.Lesson, error) {
 	// Get module with lessons content, check if it is available for student
 	module, err := s.coursesService.GetModuleWithContent(ctx, moduleId)
 	if err != nil {

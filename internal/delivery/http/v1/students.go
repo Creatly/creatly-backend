@@ -6,6 +6,7 @@ import (
 	"github.com/zhashkevych/courses-backend/internal/service"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
+	"time"
 )
 
 func (h *Handler) initStudentsRoutes(api *gin.RouterGroup) {
@@ -21,6 +22,7 @@ func (h *Handler) initStudentsRoutes(api *gin.RouterGroup) {
 		authenticated := students.Group("/", h.userIdentity)
 		{
 			authenticated.GET("/modules/:id/lessons", h.studentGetModuleLessons)
+			authenticated.GET("/modules/:id/offers", h.studentGetModuleOffers)
 		}
 	}
 }
@@ -281,7 +283,7 @@ func toLessons(lessons []domain.Lesson) []lesson {
 func (h *Handler) studentGetCourseById(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
-		newErrorResponse(c, http.StatusBadRequest, "invalid id param")
+		newErrorResponse(c, http.StatusBadRequest, "empty id param")
 		return
 	}
 
@@ -324,7 +326,7 @@ type studentGetModuleLessonsResponse struct {
 // @Accept  json
 // @Produce  json
 // @Param id path string true "module id"
-// @Success 200 {object} domain.Module
+// @Success 200 {object} studentGetModuleLessonsResponse
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
@@ -332,7 +334,7 @@ type studentGetModuleLessonsResponse struct {
 func (h *Handler) studentGetModuleLessons(c *gin.Context) {
 	moduleIdParam := c.Param("id")
 	if moduleIdParam == "" {
-		newErrorResponse(c, http.StatusBadRequest, "invalid id param")
+		newErrorResponse(c, http.StatusBadRequest, "empty id param")
 		return
 	}
 
@@ -354,7 +356,7 @@ func (h *Handler) studentGetModuleLessons(c *gin.Context) {
 		return
 	}
 
-	lessons, err := h.studentsService.GetModuleLessons(c.Request.Context(), school.ID, studentId, moduleId)
+	lessons, err := h.studentsService.GetStudentModuleWithLessons(c.Request.Context(), school.ID, studentId, moduleId)
 	if err != nil {
 		if err == service.ErrModuleIsNotAvailable {
 			newErrorResponse(c, http.StatusForbidden, err.Error())
@@ -367,5 +369,93 @@ func (h *Handler) studentGetModuleLessons(c *gin.Context) {
 
 	c.JSON(http.StatusOK, studentGetModuleLessonsResponse{
 		Lessons: lessons,
+	})
+}
+
+type studentGetModuleOffersResponse struct {
+	Offers []studentOffer `json:"offers"`
+}
+
+type studentOffer struct {
+	ID          primitive.ObjectID `json:"id" bson:"_id"`
+	Name        string             `json:"name" bson:"name"`
+	Description string             `json:"description" bson:"description"`
+	CreatedAt   time.Time          `json:"createdAt" bson:"createdAt"`
+	Price       price              `json:"price" bson:"price"`
+}
+
+type price struct {
+	Value    int    `json:"value"`
+	Currency string `json:"currency"`
+}
+
+func toStudentOffers(offers []domain.Offer) []studentOffer {
+	out := make([]studentOffer, len(offers))
+
+	for i := range offers {
+		out[i] = toStudentOffer(offers[i])
+	}
+
+	return out
+}
+
+func toStudentOffer(offer domain.Offer) studentOffer {
+	return studentOffer{
+		ID:          offer.ID,
+		Name:        offer.Name,
+		Description: offer.Description,
+		CreatedAt:   offer.CreatedAt,
+		Price: price{
+			Value:    offer.Price.Value,
+			Currency: offer.Price.Currency,
+		},
+	}
+}
+
+// @Summary Student Get Offers By Module ID
+// @Security StudentsAuth
+// @Tags students
+// @Description student get offers by module id
+// @ID studentGetModuleOffers
+// @Accept  json
+// @Produce  json
+// @Param id path string true "module id"
+// @Success 200 {string} string "ok"
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /students/modules/{id}/offers [get]
+func (h *Handler) studentGetModuleOffers(c *gin.Context) {
+	moduleIdParam := c.Param("id")
+	if moduleIdParam == "" {
+		newErrorResponse(c, http.StatusBadRequest, "empty id param")
+		return
+	}
+
+	moduleId, err := primitive.ObjectIDFromHex(moduleIdParam)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "invalid id param")
+		return
+	}
+
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	offers, err := h.coursesService.GetModuleOffers(c.Request.Context(), school.ID, moduleId)
+	if err != nil {
+		if err == service.ErrModuleIsNotAvailable {
+			newErrorResponse(c, http.StatusForbidden, err.Error())
+			return
+		}
+
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, studentGetModuleOffersResponse{
+		Offers: toStudentOffers(offers),
 	})
 }
