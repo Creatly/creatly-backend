@@ -8,11 +8,12 @@ import (
 )
 
 type CoursesService struct {
-	repo repository.Courses
+	repo       repository.Courses
+	offersRepo repository.Offers
 }
 
-func NewCoursesService(repo repository.Courses) *CoursesService {
-	return &CoursesService{repo: repo}
+func NewCoursesService(repo repository.Courses, offersRepo repository.Offers) *CoursesService {
+	return &CoursesService{repo: repo, offersRepo: offersRepo}
 }
 
 func (s *CoursesService) GetCourseModules(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error) {
@@ -26,4 +27,33 @@ func (s *CoursesService) GetCourseModules(ctx context.Context, courseId primitiv
 	}
 
 	return modules, nil
+}
+
+func (s *CoursesService) GetModuleWithContent(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error) {
+	return s.repo.GetModuleWithContent(ctx, moduleId)
+}
+
+func (s *CoursesService) GetPackageOffers(ctx context.Context, schoolId, packageId primitive.ObjectID) ([]domain.Offer, error) {
+	offers, err := s.offersRepo.GetSchoolOffers(ctx, schoolId)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]domain.Offer, 0)
+	for _, offer := range offers {
+		if inArray(offer.PackageIDs, packageId) {
+			result = append(result, offer)
+		}
+	}
+
+	return result, nil
+}
+
+func inArray(array []primitive.ObjectID, searchedItem primitive.ObjectID) bool {
+	for i := range array {
+		if array[i] == searchedItem {
+			return true
+		}
+	}
+	return false
 }

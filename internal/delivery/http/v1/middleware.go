@@ -5,13 +5,14 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/zhashkevych/courses-backend/internal/domain"
 	"github.com/zhashkevych/courses-backend/pkg/logger"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
 	"strings"
 )
 
 const (
 	authorizationHeader = "Authorization"
-	userCtx             = "userId"
+	studentCtx          = "userId"
 	schoolCtx           = "school"
 )
 
@@ -66,20 +67,24 @@ func (h *Handler) userIdentity(c *gin.Context) {
 		return
 	}
 
-	c.Set(userCtx, userId)
+	c.Set(studentCtx, userId)
 }
 
-// TODO is it needed?
-func getUserId(c *gin.Context) (string, error) {
-	id, ok := c.Get(userCtx)
+func getStudentId(c *gin.Context) (primitive.ObjectID, error) {
+	idFromCtx, ok := c.Get(studentCtx)
 	if !ok {
-		return "", errors.New("user id not found")
+		return primitive.ObjectID{}, errors.New("user idFromCtx not found")
 	}
 
-	idStr, ok := id.(string)
+	idStr, ok := idFromCtx.(string)
 	if !ok {
-		return "", errors.New("user id is of invalid type")
+		return primitive.ObjectID{}, errors.New("user idFromCtx is of invalid type")
 	}
 
-	return idStr, nil
+	id, err := primitive.ObjectIDFromHex(idStr)
+	if err != nil {
+		return primitive.ObjectID{}, nil
+	}
+
+	return id, nil
 }

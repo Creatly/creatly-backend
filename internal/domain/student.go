@@ -20,6 +20,15 @@ type Student struct {
 	Session            Session              `json:"session" bson:"session"`
 }
 
+func (s Student) IsModuleAvailable(m Module) bool {
+	for _, id := range s.AvailableModuleIDs {
+		if m.ID == id {
+			return true
+		}
+	}
+	return false
+}
+
 type Verification struct {
 	Code     primitive.ObjectID `json:"code" bson:"code"`
 	Verified bool               `json:"verified" bson:"verified"`

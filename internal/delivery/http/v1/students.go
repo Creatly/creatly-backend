@@ -18,9 +18,9 @@ func (h *Handler) initStudentsRoutes(api *gin.RouterGroup) {
 		students.GET("/courses", h.studentGetAllCourses)
 		students.GET("/courses/:id", h.studentGetCourseById)
 
-		_ = students.Group("/", h.userIdentity)
+		authenticated := students.Group("/", h.userIdentity)
 		{
-
+			authenticated.GET("/modules/:id/lessons", h.studentGetModuleLessons)
 		}
 	}
 }
@@ -239,7 +239,10 @@ type lesson struct {
 func newGetCourseByIdResponse(course domain.Course, courseModules []domain.Module) getCourseByIdResponse {
 	modules := make([]module, len(courseModules))
 
-	for i := range modules {
+	for i := range courseModules {
+		modules[i].ID = courseModules[i].ID
+		modules[i].Name = courseModules[i].Name
+		modules[i].Position = courseModules[i].Position
 		modules[i].Lessons = toLessons(courseModules[i].Lessons)
 	}
 
@@ -307,4 +310,56 @@ func (h *Handler) studentGetCourseById(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, newGetCourseByIdResponse(searchedCourse, modules))
+}
+
+// @Summary Student Get Lessons By Module ID
+// @Security StudentsAuth
+// @Tags students
+// @Description student get lessons by module id
+// @ID studentGetModuleLessons
+// @Accept  json
+// @Produce  json
+// @Param id path string true "module id"
+// @Success 200 {object} domain.Module
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /students/modules/{id}/lessons [get]
+func (h *Handler) studentGetModuleLessons(c *gin.Context) {
+	moduleIdParam := c.Param("id")
+	if moduleIdParam == "" {
+		newErrorResponse(c, http.StatusBadRequest, "invalid id param")
+		return
+	}
+
+	moduleId, err := primitive.ObjectIDFromHex(moduleIdParam)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "invalid id param")
+		return
+	}
+
+	studentId, err := getStudentId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	module, err := h.studentsService.GetModuleWithContent(c.Request.Context(), school.ID, studentId, moduleId)
+	if err != nil {
+		if err == service.ErrModuleIsNotAvailable {
+			newErrorResponse(c, http.StatusForbidden, err.Error())
+			return
+		}
+
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, module)
 }

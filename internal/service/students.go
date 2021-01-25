@@ -6,24 +6,27 @@ import (
 	"github.com/zhashkevych/courses-backend/internal/repository"
 	"github.com/zhashkevych/courses-backend/pkg/auth"
 	"github.com/zhashkevych/courses-backend/pkg/hash"
+	"github.com/zhashkevych/courses-backend/pkg/logger"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
 )
 
 type StudentsService struct {
-	repo         repository.Students
-	hasher       hash.PasswordHasher
-	tokenManager auth.TokenManager
-	emailService Emails
+	repo           repository.Students
+	coursesService Courses
+	hasher         hash.PasswordHasher
+	tokenManager   auth.TokenManager
+	emailService   Emails
 
 	accessTokenTTL  time.Duration
 	refreshTokenTTL time.Duration
 }
 
-func NewStudentsService(repo repository.Students, hasher hash.PasswordHasher, tokenManager auth.TokenManager,
+func NewStudentsService(repo repository.Students, coursesService Courses, hasher hash.PasswordHasher, tokenManager auth.TokenManager,
 	emailService Emails, accessTTL, refreshTTL time.Duration) *StudentsService {
 	return &StudentsService{
 		repo:            repo,
+		coursesService:  coursesService,
 		hasher:          hasher,
 		emailService:    emailService,
 		tokenManager:    tokenManager,
@@ -80,6 +83,42 @@ func (s *StudentsService) RefreshTokens(ctx context.Context, schoolId primitive.
 
 func (s *StudentsService) Verify(ctx context.Context, hash string) error {
 	return s.repo.Verify(ctx, hash)
+}
+
+func (s *StudentsService) GetModuleWithContent(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) (domain.Module, error) {
+	// Get module with lessons content, check if it is available for student
+	module, err := s.coursesService.GetModuleWithContent(ctx, moduleId)
+	if err != nil {
+		return domain.Module{}, err
+	}
+
+	student, err := s.repo.GetById(ctx, studentId)
+	if err != nil {
+		return domain.Module{}, nil
+	}
+
+	if student.IsModuleAvailable(module) {
+		return module, nil
+	}
+
+	// Find module offers
+	offers, err := s.coursesService.GetPackageOffers(ctx, schoolId, module.PackageID)
+	if err != nil {
+		return domain.Module{}, err
+	}
+
+	if len(offers) != 0 {
+		return domain.Module{}, ErrModuleIsNotAvailable
+	}
+
+	// If module has no offers - it's free and available to everyone
+	go func() {
+		if err := s.repo.GiveModuleAccess(ctx, studentId, moduleId); err != nil {
+			logger.Error(err)
+		}
+	}()
+
+	return module, nil
 }
 
 func (s *StudentsService) createSession(ctx context.Context, studentId primitive.ObjectID) (Tokens, error) {

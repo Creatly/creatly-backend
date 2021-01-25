@@ -19,6 +19,38 @@ definitions:
       updatedAt:
         type: string
     type: object
+  domain.Lesson:
+    properties:
+      content:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      position:
+        type: integer
+      published:
+        type: boolean
+    type: object
+  domain.Module:
+    properties:
+      courseId:
+        type: string
+      id:
+        type: string
+      lessons:
+        items:
+          $ref: '#/definitions/domain.Lesson'
+        type: array
+      name:
+        type: string
+      packageId:
+        type: string
+      position:
+        type: integer
+      published:
+        type: boolean
+    type: object
   v1.errorResponse:
     properties:
       message:
@@ -140,6 +172,46 @@ paths:
           schema:
             $ref: '#/definitions/v1.errorResponse'
       summary: Student Get Course By ID
+      tags:
+      - students
+  /students/modules/{id}/lessons:
+    get:
+      consumes:
+      - application/json
+      description: student get lessons by module id
+      operationId: studentGetModuleLessons
+      parameters:
+      - description: module id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Module'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+      security:
+      - StudentsAuth: []
+      summary: Student Get Lessons By Module ID
       tags:
       - students
   /students/refresh:
