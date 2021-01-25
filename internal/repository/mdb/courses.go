@@ -26,3 +26,37 @@ func (r *CoursesRepo) GetModules(ctx context.Context, courseId primitive.ObjectI
 	err = cur.All(ctx, &modules)
 	return modules, err
 }
+
+func (r *CoursesRepo) GetModuleWithContent(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error) {
+	var module domain.Module
+	err := r.db.Collection(modulesCollection).FindOne(ctx, bson.M{"_id": moduleId, "published": true}).Decode(&module)
+	if err != nil {
+		return module, err
+	}
+
+	lessonIds := make([]primitive.ObjectID, len(module.Lessons))
+	for _, lesson := range module.Lessons {
+		lessonIds = append(lessonIds, lesson.ID)
+	}
+
+	var content []domain.LessonContent
+	cur, err := r.db.Collection(contentCollection).Find(ctx, bson.M{"lessonId": bson.M{"$in": lessonIds}})
+	if err != nil {
+		return module, err
+	}
+
+	err = cur.All(ctx, &content)
+	if err != nil {
+		return module, err
+	}
+
+	for i := range module.Lessons {
+		for _, lessonContent := range content {
+			if module.Lessons[i].ID == lessonContent.LessonID {
+				module.Lessons[i].Content = lessonContent.Content
+			}
+		}
+	}
+
+	return module, nil
+}

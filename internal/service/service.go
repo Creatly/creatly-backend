@@ -40,6 +40,7 @@ type Students interface {
 	SignIn(ctx context.Context, input StudentSignInInput) (Tokens, error)
 	RefreshTokens(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (Tokens, error)
 	Verify(ctx context.Context, hash string) error
+	GetModuleWithContent(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) (domain.Module, error)
 }
 
 type AddToListInput struct {
@@ -55,6 +56,8 @@ type Emails interface {
 
 type Courses interface {
 	GetCourseModules(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
+	GetModuleWithContent(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
+	GetPackageOffers(ctx context.Context, schoolId, packageId primitive.ObjectID) ([]domain.Offer, error)
 }
 
 type Services struct {
@@ -67,9 +70,11 @@ func NewServices(repos *repository.Repositories, cache cache.Cache, hasher hash.
 	emailProvider email.Provider, emailListID string, accessTTL, refreshTTL time.Duration) *Services {
 	emailsService := NewEmailsService(emailProvider, emailListID)
 
+	coursesService := NewCoursesService(repos.Courses, repos.Offers)
+
 	return &Services{
 		Schools:  NewSchoolsService(repos.Schools, cache),
-		Students: NewStudentsService(repos.Students, hasher, tokenManager, emailsService, accessTTL, refreshTTL),
-		Courses:  NewCoursesService(repos.Courses),
+		Students: NewStudentsService(repos.Students, coursesService, hasher, tokenManager, emailsService, accessTTL, refreshTTL),
+		Courses:  coursesService,
 	}
 }

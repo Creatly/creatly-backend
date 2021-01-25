@@ -37,9 +37,10 @@ type Lesson struct {
 	Name      string             `json:"name" bson:"name"`
 	Position  int                `json:"position" bson:"position"`
 	Published bool               `json:"published"`
+	Content   string             `json:"content,omitempty"`
 }
 
-type CourseContent struct {
+type LessonContent struct {
 	LessonID primitive.ObjectID `json:"lessonId" bson:"lessonId"`
 	Content  string             `json:"content" bson:"content"`
 }

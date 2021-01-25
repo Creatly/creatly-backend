@@ -6,21 +6,6 @@ import (
 	"net/http"
 )
 
-// @title Course Platform API
-// @version 1.0
-// @description API Server for Course Platform
-
-// @host localhost:8000
-// @BasePath /
-
-// @securityDefinitions.apikey AdminAuth
-// @in header
-// @name Authorization
-
-// @securityDefinitions.apikey StudentsAuth
-// @in header
-// @name Authorization
-
 type Server struct {
 	httpServer *http.Server
 }

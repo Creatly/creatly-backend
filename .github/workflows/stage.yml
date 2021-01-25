@@ -78,10 +78,11 @@ jobs:
             export SENDPULSE_LISTID="${{ secrets.SENDPULSE_LISTID }}"
             export SENDPULSE_ID="${{ secrets.SENDPULSE_ID }}"
             export SENDPULSE_SECRET="${{ secrets.SENDPULSE_SECRET }}"
+            export HTTP_HOST="${{secrets.HTTP_HOST}}"
 
             # Run a new container from a new image
             docker run -e MONGO_URI -e MONGO_USER -e MONGO_PASS -e PASSWORD_SALT -e JWT_SIGNING_KEY \
-            -e SENDPULSE_LISTID -e SENDPULSE_ID -e SENDPULSE_SECRET -d \
+            -e SENDPULSE_LISTID -e SENDPULSE_ID -e SENDPULSE_SECRET -e HTTP_HOST -d \
             --restart always \
             --publish 8000:8000 \
             --link=mongo-courses:mongodb \

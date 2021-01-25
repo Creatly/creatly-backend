@@ -1,9 +1,11 @@
 package http
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
+	"github.com/zhashkevych/courses-backend/docs"
 	v1 "github.com/zhashkevych/courses-backend/internal/delivery/http/v1"
 	"github.com/zhashkevych/courses-backend/internal/service"
 	"github.com/zhashkevych/courses-backend/pkg/auth"
@@ -28,13 +30,15 @@ func NewHandler(schoolsService service.Schools, studentsService service.Students
 	}
 }
 
-func (h *Handler) Init() *gin.Engine {
+func (h *Handler) Init(host, port string) *gin.Engine {
 	// Init gin handler
 	router := gin.Default()
 	router.Use(
 		gin.Recovery(),
 		gin.Logger(),
 	)
+
+	docs.SwaggerInfo.Host = fmt.Sprintf("%s:%s", host, port)
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 

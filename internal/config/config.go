@@ -54,6 +54,7 @@ type (
 	}
 
 	HTTPConfig struct {
+		Host               string        `mapstructure:"host"`
 		Port               string        `mapstructure:"port"`
 		ReadTimeout        time.Duration `mapstructure:"readTimeout"`
 		WriteTimeout       time.Duration `mapstructure:"writeTimeout"`
@@ -119,6 +120,8 @@ func setFromEnv(cfg *Config) {
 	cfg.Email.ClientSecret = viper.GetString("secret")
 	cfg.Email.ClientID = viper.GetString("id")
 	cfg.Email.ListID = viper.GetString("listid")
+
+	cfg.HTTP.Host = viper.GetString("host")
 }
 
 func parseConfigFile(filepath string) error {
@@ -144,7 +147,7 @@ func parseEnv() error {
 		return err
 	}
 
-	if err := parseJWTEnvVariables(); err != nil {
+	if err := parseJWTFromEnv(); err != nil {
 		return err
 	}
 
@@ -152,7 +155,11 @@ func parseEnv() error {
 		return err
 	}
 
-	return parsePasswordEnvVariables()
+	if err := parseHostFromEnv(); err != nil {
+		return err
+	}
+
+	return parsePasswordFromEnv()
 }
 
 func parseMongoEnvVariables() error {
@@ -181,12 +188,17 @@ func parseSendPulseEnvVariables() error {
 	return viper.BindEnv("secret")
 }
 
-func parsePasswordEnvVariables() error {
+func parsePasswordFromEnv() error {
 	viper.SetEnvPrefix("password")
 	return viper.BindEnv("salt")
 }
 
-func parseJWTEnvVariables() error {
+func parseJWTFromEnv() error {
 	viper.SetEnvPrefix("jwt")
 	return viper.BindEnv("signing_key")
+}
+
+func parseHostFromEnv() error {
+	viper.SetEnvPrefix("http")
+	return viper.BindEnv("host")
 }
