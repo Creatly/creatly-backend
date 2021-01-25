@@ -63,7 +63,7 @@ func Run(configPath string) {
 	handlers := http.NewHandler(services.Schools, services.Students, services.Courses, tokenManager)
 
 	// HTTP Server
-	srv := server.NewServer(cfg, handlers.Init())
+	srv := server.NewServer(cfg, handlers.Init(cfg.HTTP.Host, cfg.HTTP.Port))
 	go func() {
 		if err := srv.Run(); err != nil {
 			logrus.Errorf("error occurred while running http server: %s\n", err.Error())

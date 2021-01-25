@@ -8,7 +8,7 @@ import (
 )
 
 func TestInit(t *testing.T) {
- 	type env struct {
+	type env struct {
 		mongoURI        string
 		mongoUser       string
 		mongoPass       string
@@ -17,6 +17,7 @@ func TestInit(t *testing.T) {
 		sendpulseListId string
 		sendpulseId     string
 		sendpulseSecret string
+		host            string
 	}
 
 	type args struct {
@@ -33,6 +34,7 @@ func TestInit(t *testing.T) {
 		os.Setenv("SENDPULSE_LISTID", env.sendpulseListId)
 		os.Setenv("SENDPULSE_ID", env.sendpulseId)
 		os.Setenv("SENDPULSE_SECRET", env.sendpulseSecret)
+		os.Setenv("HTTP_HOST", env.host)
 	}
 
 	tests := []struct {
@@ -54,10 +56,12 @@ func TestInit(t *testing.T) {
 					sendpulseSecret: "secret",
 					sendpulseId:     "id",
 					sendpulseListId: "listId",
+					host:            "localhost",
 				}},
 			want: &Config{
-				CacheTTL:    time.Second * 3600,
+				CacheTTL: time.Second * 3600,
 				HTTP: HTTPConfig{
+					Host:               "localhost",
 					MaxHeaderMegabytes: 1,
 					Port:               "80",
 					ReadTimeout:        time.Second * 10,
