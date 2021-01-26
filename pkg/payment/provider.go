@@ -1,7 +1,5 @@
 package payment
 
-import "github.com/zhashkevych/courses-backend/pkg/logger"
-
 type GeneratePaymentLinkInput struct {
 	OrderId string
 	Amount int
@@ -13,13 +11,4 @@ type GeneratePaymentLinkInput struct {
 
 type Provider interface {
 	GeneratePaymentLink(input GeneratePaymentLinkInput) (string, error)
-}
-
-type MockProvider struct {
-
-}
-
-func (p MockProvider) GeneratePaymentLink(input GeneratePaymentLinkInput) (string, error) {
-	logger.Info(input)
-	return "paymentLink", nil
 }
