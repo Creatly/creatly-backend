@@ -51,25 +51,25 @@ var doc = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "404": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "default": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     }
                 }
@@ -108,25 +108,25 @@ var doc = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "404": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "default": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     }
                 }
@@ -170,25 +170,25 @@ var doc = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "404": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "default": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     }
                 }
@@ -232,25 +232,87 @@ var doc = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "404": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "default": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/students/promocodes/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "StudentsAuth": []
+                    }
+                ],
+                "description": "student get promocode by code",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "students"
+                ],
+                "summary": "Student Get Promocode By Code",
+                "operationId": "studentGetPromocode",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Promocode"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
                         }
                     }
                 }
@@ -290,25 +352,25 @@ var doc = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "404": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "default": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     }
                 }
@@ -349,25 +411,25 @@ var doc = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "404": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "default": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     }
                 }
@@ -408,25 +470,25 @@ var doc = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "404": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "default": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     }
                 }
@@ -465,25 +527,25 @@ var doc = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "404": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "default": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     }
                 }
@@ -540,11 +602,26 @@ var doc = `{
                 }
             }
         },
-        "v1.errorResponse": {
+        "domain.Promocode": {
             "type": "object",
             "properties": {
-                "message": {
+                "code": {
                     "type": "string"
+                },
+                "discountPercentage": {
+                    "type": "integer"
+                },
+                "expiresAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "offerIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
@@ -555,6 +632,14 @@ var doc = `{
             ],
             "properties": {
                 "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.response": {
+            "type": "object",
+            "properties": {
+                "message": {
                     "type": "string"
                 }
             }

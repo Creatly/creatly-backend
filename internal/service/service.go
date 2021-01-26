@@ -60,6 +60,7 @@ type Courses interface {
 	GetModuleWithContent(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
 	GetModuleOffers(ctx context.Context, schoolId, moduleId primitive.ObjectID) ([]domain.Offer, error)
 	GetPackageOffers(ctx context.Context, schoolId, packageId primitive.ObjectID) ([]domain.Offer, error)
+	GetPromocode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.Promocode, error)
 }
 
 type Services struct {
@@ -72,7 +73,7 @@ func NewServices(repos *repository.Repositories, cache cache.Cache, hasher hash.
 	emailProvider email.Provider, emailListID string, accessTTL, refreshTTL time.Duration) *Services {
 	emailsService := NewEmailsService(emailProvider, emailListID)
 
-	coursesService := NewCoursesService(repos.Courses, repos.Offers)
+	coursesService := NewCoursesService(repos.Courses, repos.Offers, repos.Promocodes)
 
 	return &Services{
 		Schools:  NewSchoolsService(repos.Schools, cache),

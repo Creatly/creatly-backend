@@ -29,21 +29,27 @@ type Courses interface {
 }
 
 type Offers interface {
-	GetSchoolOffers(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Offer, error)
+	GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Offer, error)
+}
+
+type Promocodes interface {
+	GetByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.Promocode, error)
 }
 
 type Repositories struct {
-	Schools  Schools
-	Students Students
-	Courses  Courses
-	Offers   Offers
+	Schools    Schools
+	Students   Students
+	Courses    Courses
+	Offers     Offers
+	Promocodes Promocodes
 }
 
 func NewRepositories(db *mongo.Database) *Repositories {
 	return &Repositories{
-		Schools:  mdb.NewSchoolsRepo(db),
-		Students: mdb.NewStudentsRepo(db),
-		Courses:  mdb.NewCoursesRepo(db),
-		Offers:   mdb.NewOffersRepo(db),
+		Schools:    mdb.NewSchoolsRepo(db),
+		Students:   mdb.NewStudentsRepo(db),
+		Courses:    mdb.NewCoursesRepo(db),
+		Offers:     mdb.NewOffersRepo(db),
+		Promocodes: mdb.NewPromocodeRepo(db),
 	}
 }

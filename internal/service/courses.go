@@ -10,10 +10,11 @@ import (
 type CoursesService struct {
 	repo       repository.Courses
 	offersRepo repository.Offers
+	promoRepo  repository.Promocodes
 }
 
-func NewCoursesService(repo repository.Courses, offersRepo repository.Offers) *CoursesService {
-	return &CoursesService{repo: repo, offersRepo: offersRepo}
+func NewCoursesService(repo repository.Courses, offersRepo repository.Offers, promoRepo repository.Promocodes) *CoursesService {
+	return &CoursesService{repo: repo, offersRepo: offersRepo, promoRepo: promoRepo}
 }
 
 func (s *CoursesService) GetCourseModules(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error) {
@@ -38,7 +39,7 @@ func (s *CoursesService) GetModuleWithContent(ctx context.Context, moduleId prim
 }
 
 func (s *CoursesService) GetPackageOffers(ctx context.Context, schoolId, packageId primitive.ObjectID) ([]domain.Offer, error) {
-	offers, err := s.offersRepo.GetSchoolOffers(ctx, schoolId)
+	offers, err := s.offersRepo.GetBySchool(ctx, schoolId)
 	if err != nil {
 		return nil, err
 	}
@@ -69,4 +70,8 @@ func (s *CoursesService) GetModuleOffers(ctx context.Context, schoolId, moduleId
 	}
 
 	return s.GetPackageOffers(ctx, schoolId, module.PackageID)
+}
+
+func (s *CoursesService) GetPromocode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.Promocode, error) {
+	return s.promoRepo.GetByCode(ctx, schoolId, code)
 }

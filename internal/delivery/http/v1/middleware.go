@@ -46,24 +46,24 @@ func getSchoolFromContext(c *gin.Context) (domain.School, error) {
 func (h *Handler) userIdentity(c *gin.Context) {
 	header := c.GetHeader(authorizationHeader)
 	if header == "" {
-		newErrorResponse(c, http.StatusUnauthorized, "empty auth header")
+		newResponse(c, http.StatusUnauthorized, "empty auth header")
 		return
 	}
 
 	headerParts := strings.Split(header, " ")
 	if len(headerParts) != 2 || headerParts[0] != "Bearer" {
-		newErrorResponse(c, http.StatusUnauthorized, "invalid auth header")
+		newResponse(c, http.StatusUnauthorized, "invalid auth header")
 		return
 	}
 
 	if len(headerParts[1]) == 0 {
-		newErrorResponse(c, http.StatusUnauthorized, "token is empty")
+		newResponse(c, http.StatusUnauthorized, "token is empty")
 		return
 	}
 
 	userId, err := h.tokenManager.Parse(headerParts[1])
 	if err != nil {
-		newErrorResponse(c, http.StatusUnauthorized, err.Error())
+		newResponse(c, http.StatusUnauthorized, err.Error())
 		return
 	}
 
