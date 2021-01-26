@@ -128,20 +128,9 @@ func (s *StudentsService) GetStudentModuleWithLessons(ctx context.Context, schoo
 }
 
 func (s *StudentsService) CreateOrder(ctx context.Context, studentId, offerId, promocodeId primitive.ObjectID) (string, error) {
-	var (
-		promocode domain.Promocode
-		err       error
-	)
-
-	if !promocodeId.IsZero() {
-		promocode, err = s.coursesService.GetPromocodeById(ctx, promocodeId)
-		if err != nil {
-			return "", err
-		}
-
-		if promocode.ExpiresAt.Unix() < time.Now().Unix() {
-			return "", ErrPromocodeExpired
-		}
+	promocode, err := s.getOrderPromocode(ctx, promocodeId)
+	if err != nil {
+		return "", err
 	}
 
 	offer, err := s.coursesService.GetOfferById(ctx, offerId)
@@ -149,24 +138,19 @@ func (s *StudentsService) CreateOrder(ctx context.Context, studentId, offerId, p
 		return "", err
 	}
 
-	var amount int
-	if promocode.ID.IsZero() {
-		amount = offer.Price.Value
-	} else {
-		amount = (offer.Price.Value * (100 - promocode.DiscountPercentage)) / 100
-	}
+	orderAmount := s.calculateOrderPrice(offer.Price.Value, promocode)
 
 	id, err := s.repo.CreateOrder(ctx, studentId, domain.Order{
 		OfferID: offerId,
 		PromoID: promocodeId,
-		Amount:  amount,
+		Amount:  orderAmount,
 		Status:  domain.OrderStatusCreated,
 	})
 
 	// TODO what if it fails?
 	return s.paymentProvider.GeneratePaymentLink(payment.GeneratePaymentLinkInput{
 		OrderId:     id.Hex(),
-		Amount:      amount,
+		Amount:      orderAmount,
 		Currency:    offer.Price.Currency,
 		OrderDesc:   offer.Description, // TODO proper order description
 		CallbackURL: s.callbackURL,
@@ -197,4 +181,32 @@ func (s *StudentsService) createSession(ctx context.Context, studentId primitive
 
 	err = s.repo.SetSession(ctx, studentId, session)
 	return res, err
+}
+
+func (s *StudentsService) getOrderPromocode(ctx context.Context, promocodeId primitive.ObjectID) (domain.Promocode, error) {
+	var (
+		promocode domain.Promocode
+		err       error
+	)
+
+	if !promocodeId.IsZero() {
+		promocode, err = s.coursesService.GetPromocodeById(ctx, promocodeId)
+		if err != nil {
+			return promocode, err
+		}
+
+		if promocode.ExpiresAt.Unix() < time.Now().Unix() {
+			return promocode, ErrPromocodeExpired
+		}
+	}
+
+	return promocode, nil
+}
+
+func (s *StudentsService) calculateOrderPrice(price int, promocode domain.Promocode) int {
+	if promocode.ID.IsZero() {
+		return price
+	} else {
+		return (price * (100 - promocode.DiscountPercentage)) / 100
+	}
 }
