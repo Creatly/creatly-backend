@@ -14,8 +14,9 @@ import (
 // failure card - 4444111166665555
 
 const (
-	checkoutUrl      = "https://pay.fondy.eu/api/checkout/url/"
-	languageRU       = "ru"
+	checkoutUrl   = "https://pay.fondy.eu/api/checkout/url/"
+	languageRU    = "ru"
+	statusSuccess = "success"
 )
 
 type apiRequest struct {
@@ -41,9 +42,10 @@ type checkoutRequest struct {
 }
 
 type interimResponse struct {
-	Status      string `json:"response_status"`
-	CheckoutURL string `json:"checkout_url"`
-	PaymentId   string `json:"payment_id"`
+	Status       string `json:"response_status"`
+	CheckoutURL  string `json:"checkout_url"`
+	PaymentId    string `json:"payment_id"`
+	ErrorMessage string `json:"error_message"`
 }
 
 type callbackResponse struct {
@@ -99,5 +101,3 @@ func generateSignature(values []string, password string) string {
 
 	return fmt.Sprintf("%x", hash.Sum(nil))
 }
-
-

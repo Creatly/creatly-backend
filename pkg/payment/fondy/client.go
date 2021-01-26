@@ -3,6 +3,7 @@ package fondy
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/zhashkevych/courses-backend/pkg/payment"
 	"io/ioutil"
@@ -53,5 +54,9 @@ func (c *Client) GeneratePaymentLink(input payment.GeneratePaymentLinkInput) (st
 		return "", err
 	}
 
-	return apiResp.Response.CheckoutURL, nil
+	if apiResp.Response.Status == statusSuccess {
+		return apiResp.Response.CheckoutURL, nil
+	}
+
+	return "", errors.New(apiResp.Response.ErrorMessage)
 }
