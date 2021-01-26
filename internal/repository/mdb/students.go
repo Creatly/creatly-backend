@@ -67,3 +67,9 @@ func (r *StudentsRepo) Verify(ctx context.Context, code string) error {
 
 	return err
 }
+
+func (r *StudentsRepo) CreateOrder(ctx context.Context, studentId primitive.ObjectID, order domain.Order) (primitive.ObjectID, error) {
+	order.ID = primitive.NewObjectID()
+	res := r.db.FindOneAndUpdate(ctx, bson.M{"_id": studentId}, bson.M{"$push": bson.M{"orders": order}})
+	return order.ID, res.Err()
+}

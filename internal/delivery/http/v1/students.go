@@ -24,6 +24,7 @@ func (h *Handler) initStudentsRoutes(api *gin.RouterGroup) {
 			authenticated.GET("/modules/:id/lessons", h.studentGetModuleLessons)
 			authenticated.GET("/modules/:id/offers", h.studentGetModuleOffers)
 			authenticated.GET("/promocodes/:code", h.studentGetPromocode)
+			authenticated.POST("/order", h.studentCreateOrder)
 		}
 	}
 }
@@ -487,11 +488,72 @@ func (h *Handler) studentGetPromocode(c *gin.Context) {
 		return
 	}
 
-	promocode, err := h.coursesService.GetPromocode(c.Request.Context(), school.ID, code)
+	promocode, err := h.coursesService.GetPromocodeByCode(c.Request.Context(), school.ID, code)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	c.JSON(http.StatusOK, promocode)
+}
+
+type createOrderInput struct {
+	OfferId string `json:"offerId"`
+	PromoId string `json:"promoId"`
+}
+
+type createOrderResponse struct {
+	PaymentLink string `json:"paymentLink"`
+}
+
+// @Summary Student CreateOrder
+// @Security StudentsAuth
+// @Tags students
+// @Description student create order
+// @ID studentCreateOrder
+// @Accept  json
+// @Produce  json
+// @Param input body createOrderInput true "order info"
+// @Success 200 {object} createOrderResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /students/order [post]
+func (h *Handler) studentCreateOrder(c *gin.Context) {
+	var inp createOrderInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+
+	offerId, err := primitive.ObjectIDFromHex(inp.OfferId)
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid offer id")
+		return
+	}
+
+	var promoId primitive.ObjectID
+
+	if inp.PromoId != "" {
+		var err error
+		promoId, err = primitive.ObjectIDFromHex(inp.PromoId)
+		if err != nil {
+			newResponse(c, http.StatusBadRequest, "invalid promo id")
+			return
+		}
+	}
+
+	studentId, err := getStudentId(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	paymentLink, err := h.studentsService.CreateOrder(c.Request.Context(), studentId, offerId, promoId)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, createOrderResponse{paymentLink})
 }

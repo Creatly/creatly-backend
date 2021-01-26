@@ -14,6 +14,7 @@ import (
 	"github.com/zhashkevych/courses-backend/pkg/email/sendpulse"
 	"github.com/zhashkevych/courses-backend/pkg/hash"
 	"github.com/zhashkevych/courses-backend/pkg/logger"
+	"github.com/zhashkevych/courses-backend/pkg/payment"
 	"os"
 	"os/signal"
 	"syscall"
@@ -59,7 +60,7 @@ func Run(configPath string) {
 	// Services, Repos & API Handlers
 	repos := repository.NewRepositories(db)
 	services := service.NewServices(repos, memCache, hasher, tokenManager,
-		emailProvider, cfg.Email.ListID, cfg.Auth.JWT.AccessTokenTTL, cfg.Auth.JWT.RefreshTokenTTL)
+		emailProvider, cfg.Email.ListID, payment.MockProvider{}, cfg.Auth.JWT.AccessTokenTTL, cfg.Auth.JWT.RefreshTokenTTL)
 	handlers := http.NewHandler(services.Schools, services.Students, services.Courses, tokenManager)
 
 	// HTTP Server

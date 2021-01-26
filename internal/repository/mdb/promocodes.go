@@ -21,3 +21,9 @@ func (r *PromocodesRepo) GetByCode(ctx context.Context, schoolId primitive.Objec
 	err := r.db.FindOne(ctx, bson.M{"schoolId": schoolId, "code": code}).Decode(&promocode)
 	return promocode, err
 }
+
+func (r *PromocodesRepo) GetById(ctx context.Context, id primitive.ObjectID) (domain.Promocode, error) {
+	var promocode domain.Promocode
+	err := r.db.FindOne(ctx, bson.M{"_id": id}).Decode(&promocode)
+	return promocode, err
+}

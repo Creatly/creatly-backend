@@ -8,6 +8,7 @@ import (
 	"github.com/zhashkevych/courses-backend/pkg/cache"
 	"github.com/zhashkevych/courses-backend/pkg/email"
 	"github.com/zhashkevych/courses-backend/pkg/hash"
+	"github.com/zhashkevych/courses-backend/pkg/payment"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
 )
@@ -41,6 +42,7 @@ type Students interface {
 	RefreshTokens(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (Tokens, error)
 	Verify(ctx context.Context, hash string) error
 	GetStudentModuleWithLessons(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) ([]domain.Lesson, error)
+	CreateOrder(ctx context.Context, studentId, offerId, promocodeId primitive.ObjectID) (string, error)
 }
 
 type AddToListInput struct {
@@ -60,7 +62,9 @@ type Courses interface {
 	GetModuleWithContent(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
 	GetModuleOffers(ctx context.Context, schoolId, moduleId primitive.ObjectID) ([]domain.Offer, error)
 	GetPackageOffers(ctx context.Context, schoolId, packageId primitive.ObjectID) ([]domain.Offer, error)
-	GetPromocode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.Promocode, error)
+	GetPromocodeByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.Promocode, error)
+	GetPromocodeById(ctx context.Context, id primitive.ObjectID) (domain.Promocode, error)
+	GetOfferById(ctx context.Context, id primitive.ObjectID) (domain.Offer, error)
 }
 
 type Services struct {
@@ -70,14 +74,14 @@ type Services struct {
 }
 
 func NewServices(repos *repository.Repositories, cache cache.Cache, hasher hash.PasswordHasher, tokenManager auth.TokenManager,
-	emailProvider email.Provider, emailListID string, accessTTL, refreshTTL time.Duration) *Services {
-	emailsService := NewEmailsService(emailProvider, emailListID)
+	emailProvider email.Provider, emailListID string, paymentProvider payment.Provider, accessTTL, refreshTTL time.Duration) *Services {
 
+	emailsService := NewEmailsService(emailProvider, emailListID)
 	coursesService := NewCoursesService(repos.Courses, repos.Offers, repos.Promocodes)
 
 	return &Services{
 		Schools:  NewSchoolsService(repos.Schools, cache),
-		Students: NewStudentsService(repos.Students, coursesService, hasher, tokenManager, emailsService, accessTTL, refreshTTL),
+		Students: NewStudentsService(repos.Students, coursesService, hasher, tokenManager, emailsService, paymentProvider, accessTTL, refreshTTL),
 		Courses:  coursesService,
 	}
 }

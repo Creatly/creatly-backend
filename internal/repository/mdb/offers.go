@@ -28,3 +28,9 @@ func (r *OffersRepo) GetBySchool(ctx context.Context, schoolId primitive.ObjectI
 	err = cur.All(ctx, &offers)
 	return offers, err
 }
+
+func (r *OffersRepo) GetById(ctx context.Context, id primitive.ObjectID) (domain.Offer, error) {
+	var offer domain.Offer
+	err := r.db.FindOne(ctx, bson.M{"_id": id}).Decode(&offer)
+	return offer, err
+}

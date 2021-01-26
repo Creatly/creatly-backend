@@ -20,6 +20,7 @@ type Students interface {
 	SetSession(ctx context.Context, studentId primitive.ObjectID, session domain.Session) error
 	GiveModuleAccess(ctx context.Context, studentId, moduleId primitive.ObjectID) error
 	Verify(ctx context.Context, code string) error
+	CreateOrder(ctx context.Context, studentId primitive.ObjectID, order domain.Order) (primitive.ObjectID, error)
 }
 
 type Courses interface {
@@ -30,10 +31,12 @@ type Courses interface {
 
 type Offers interface {
 	GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Offer, error)
+	GetById(ctx context.Context, id primitive.ObjectID) (domain.Offer, error)
 }
 
 type Promocodes interface {
 	GetByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.Promocode, error)
+	GetById(ctx context.Context, id primitive.ObjectID) (domain.Promocode, error)
 }
 
 type Repositories struct {

@@ -72,6 +72,14 @@ func (s *CoursesService) GetModuleOffers(ctx context.Context, schoolId, moduleId
 	return s.GetPackageOffers(ctx, schoolId, module.PackageID)
 }
 
-func (s *CoursesService) GetPromocode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.Promocode, error) {
+func (s *CoursesService) GetPromocodeByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.Promocode, error) {
 	return s.promoRepo.GetByCode(ctx, schoolId, code)
+}
+
+func (s *CoursesService) GetPromocodeById(ctx context.Context, id primitive.ObjectID) (domain.Promocode, error) {
+	return s.promoRepo.GetById(ctx, id)
+}
+
+func (s *CoursesService) GetOfferById(ctx context.Context, id primitive.ObjectID) (domain.Offer, error) {
+	return s.offersRepo.GetById(ctx, id)
 }

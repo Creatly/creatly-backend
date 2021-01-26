@@ -47,6 +47,18 @@ definitions:
           type: string
         type: array
     type: object
+  v1.createOrderInput:
+    properties:
+      offerId:
+        type: string
+      promoId:
+        type: string
+    type: object
+  v1.createOrderResponse:
+    properties:
+      paymentLink:
+        type: string
+    type: object
   v1.refreshInput:
     properties:
       token:
@@ -255,6 +267,47 @@ paths:
       security:
       - StudentsAuth: []
       summary: Student Get Offers By Module ID
+      tags:
+      - students
+  /students/order:
+    post:
+      consumes:
+      - application/json
+      description: student create order
+      operationId: studentCreateOrder
+      parameters:
+      - description: order info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.createOrderInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.createOrderResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - StudentsAuth: []
+      summary: Student CreateOrder
       tags:
       - students
   /students/promocodes/{code}:
