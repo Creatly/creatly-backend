@@ -14,7 +14,7 @@ import (
 	"github.com/zhashkevych/courses-backend/pkg/email/sendpulse"
 	"github.com/zhashkevych/courses-backend/pkg/hash"
 	"github.com/zhashkevych/courses-backend/pkg/logger"
-	"github.com/zhashkevych/courses-backend/pkg/payment"
+	"github.com/zhashkevych/courses-backend/pkg/payment/fondy"
 	"os"
 	"os/signal"
 	"syscall"
@@ -24,7 +24,6 @@ import (
 // @version 1.0
 // @description API Server for Course Platform
 
-// TODO host based on env
 // @host localhost:8000
 // @BasePath /api/v1/
 
@@ -51,6 +50,7 @@ func Run(configPath string) {
 	memCache := cache.NewMemoryCache(int64(cfg.CacheTTL))
 	hasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
 	emailProvider := sendpulse.NewClient(cfg.Email.ClientID, cfg.Email.ClientSecret, memCache)
+	paymentProvider := fondy.NewClient(cfg.Payment.Fondy.MerchantId, cfg.Payment.Fondy.MerchantPassword)
 	tokenManager, err := auth.NewManager(cfg.Auth.JWT.SigningKey)
 	if err != nil {
 		logger.Error(err)
@@ -59,8 +59,19 @@ func Run(configPath string) {
 
 	// Services, Repos & API Handlers
 	repos := repository.NewRepositories(db)
-	services := service.NewServices(repos, memCache, hasher, tokenManager,
-		emailProvider, cfg.Email.ListID, payment.MockProvider{}, cfg.Auth.JWT.AccessTokenTTL, cfg.Auth.JWT.RefreshTokenTTL)
+	services := service.NewServices(service.ServicesDeps{
+		Repos:              repos,
+		Cache:              memCache,
+		Hasher:             hasher,
+		TokenManager:       tokenManager,
+		EmailProvider:      emailProvider,
+		EmailListId:        cfg.Email.ListID,
+		PaymentProvider:    paymentProvider,
+		AccessTokenTTL:     cfg.Auth.JWT.AccessTokenTTL,
+		RefreshTokenTTL:    cfg.Auth.JWT.RefreshTokenTTL,
+		PaymentResponseURL: cfg.Payment.ResponseURL,
+		PaymentCallbackURL: cfg.Payment.CallbackURL,
+	})
 	handlers := http.NewHandler(services.Schools, services.Students, services.Courses, tokenManager)
 
 	// HTTP Server

@@ -28,7 +28,7 @@ type StudentsService struct {
 }
 
 func NewStudentsService(repo repository.Students, coursesService Courses, hasher hash.PasswordHasher, tokenManager auth.TokenManager,
-	emailService Emails, paymentProvider payment.Provider, accessTTL, refreshTTL time.Duration) *StudentsService {
+	emailService Emails, paymentProvider payment.Provider, accessTTL, refreshTTL time.Duration, callbackURL, responseURL string) *StudentsService {
 	return &StudentsService{
 		repo:            repo,
 		coursesService:  coursesService,
@@ -38,6 +38,8 @@ func NewStudentsService(repo repository.Students, coursesService Courses, hasher
 		paymentProvider: paymentProvider,
 		accessTokenTTL:  accessTTL,
 		refreshTokenTTL: refreshTTL,
+		callbackURL:     callbackURL,
+		responseURL:     responseURL,
 	}
 }
 

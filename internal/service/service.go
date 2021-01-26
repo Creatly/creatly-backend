@@ -73,15 +73,28 @@ type Services struct {
 	Courses  Courses
 }
 
-func NewServices(repos *repository.Repositories, cache cache.Cache, hasher hash.PasswordHasher, tokenManager auth.TokenManager,
-	emailProvider email.Provider, emailListID string, paymentProvider payment.Provider, accessTTL, refreshTTL time.Duration) *Services {
+type ServicesDeps struct {
+	Repos              *repository.Repositories
+	Cache              cache.Cache
+	Hasher             hash.PasswordHasher
+	TokenManager       auth.TokenManager
+	EmailProvider      email.Provider
+	EmailListId        string
+	PaymentProvider    payment.Provider
+	AccessTokenTTL     time.Duration
+	RefreshTokenTTL    time.Duration
+	PaymentCallbackURL string
+	PaymentResponseURL string
+}
 
-	emailsService := NewEmailsService(emailProvider, emailListID)
-	coursesService := NewCoursesService(repos.Courses, repos.Offers, repos.Promocodes)
+func NewServices(deps ServicesDeps) *Services {
+	emailsService := NewEmailsService(deps.EmailProvider, deps.EmailListId)
+	coursesService := NewCoursesService(deps.Repos.Courses, deps.Repos.Offers, deps.Repos.Promocodes)
 
 	return &Services{
-		Schools:  NewSchoolsService(repos.Schools, cache),
-		Students: NewStudentsService(repos.Students, coursesService, hasher, tokenManager, emailsService, paymentProvider, accessTTL, refreshTTL),
-		Courses:  coursesService,
+		Schools: NewSchoolsService(deps.Repos.Schools, deps.Cache),
+		Students: NewStudentsService(deps.Repos.Students, coursesService, deps.Hasher, deps.TokenManager,
+			emailsService, deps.PaymentProvider, deps.AccessTokenTTL, deps.RefreshTokenTTL, deps.PaymentCallbackURL, deps.PaymentResponseURL),
+		Courses: coursesService,
 	}
 }
