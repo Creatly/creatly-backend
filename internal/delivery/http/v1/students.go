@@ -549,7 +549,7 @@ func (h *Handler) studentCreateOrder(c *gin.Context) {
 		return
 	}
 
-	paymentLink, err := h.studentsService.CreateOrder(c.Request.Context(), studentId, offerId, promoId)
+	paymentLink, err := h.ordersService.Create(c.Request.Context(), studentId, offerId, promoId)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return

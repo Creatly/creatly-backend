@@ -42,7 +42,6 @@ type Students interface {
 	RefreshTokens(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (Tokens, error)
 	Verify(ctx context.Context, hash string) error
 	GetStudentModuleWithLessons(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) ([]domain.Lesson, error)
-	CreateOrder(ctx context.Context, studentId, offerId, promocodeId primitive.ObjectID) (string, error)
 }
 
 type AddToListInput struct {
@@ -67,10 +66,21 @@ type Courses interface {
 	GetOfferById(ctx context.Context, id primitive.ObjectID) (domain.Offer, error)
 }
 
+type Orders interface {
+	Create(ctx context.Context, studentId, offerId, promocodeId primitive.ObjectID) (string, error)
+	AddTransaction(ctx context.Context, id primitive.ObjectID, transaction domain.Transaction) error
+}
+
+type Payments interface {
+	ProcessTransaction(ctx context.Context, callbackData payment.Callback) error
+}
+
 type Services struct {
 	Schools  Schools
 	Students Students
 	Courses  Courses
+	Payments Payments
+	Orders   Orders
 }
 
 type ServicesDeps struct {
@@ -80,7 +90,7 @@ type ServicesDeps struct {
 	TokenManager       auth.TokenManager
 	EmailProvider      email.Provider
 	EmailListId        string
-	PaymentProvider    payment.Provider
+	PaymentProvider    payment.FondyProvider
 	AccessTokenTTL     time.Duration
 	RefreshTokenTTL    time.Duration
 	PaymentCallbackURL string
@@ -90,11 +100,14 @@ type ServicesDeps struct {
 func NewServices(deps ServicesDeps) *Services {
 	emailsService := NewEmailsService(deps.EmailProvider, deps.EmailListId)
 	coursesService := NewCoursesService(deps.Repos.Courses, deps.Repos.Offers, deps.Repos.Promocodes)
+	ordersService := NewOrdersService(deps.Repos.Orders, coursesService, deps.PaymentProvider, deps.PaymentCallbackURL, deps.PaymentResponseURL)
 
 	return &Services{
 		Schools: NewSchoolsService(deps.Repos.Schools, deps.Cache),
-		Students: NewStudentsService(deps.Repos.Students, coursesService, deps.Hasher, deps.TokenManager,
-			emailsService, deps.PaymentProvider, deps.AccessTokenTTL, deps.RefreshTokenTTL, deps.PaymentCallbackURL, deps.PaymentResponseURL),
-		Courses: coursesService,
+		Students: NewStudentsService(deps.Repos.Students, coursesService, deps.Hasher,
+			deps.TokenManager, emailsService, deps.AccessTokenTTL, deps.RefreshTokenTTL),
+		Courses:  coursesService,
+		Payments: NewPaymentsService(deps.PaymentProvider, ordersService),
+		Orders:   ordersService,
 	}
 }

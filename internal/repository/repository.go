@@ -20,7 +20,6 @@ type Students interface {
 	SetSession(ctx context.Context, studentId primitive.ObjectID, session domain.Session) error
 	GiveModuleAccess(ctx context.Context, studentId, moduleId primitive.ObjectID) error
 	Verify(ctx context.Context, code string) error
-	CreateOrder(ctx context.Context, studentId primitive.ObjectID, order domain.Order) (primitive.ObjectID, error)
 }
 
 type Courses interface {
@@ -39,12 +38,18 @@ type Promocodes interface {
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.Promocode, error)
 }
 
+type Orders interface {
+	Create(ctx context.Context, order domain.Order) error
+	AddTransaction(ctx context.Context, id primitive.ObjectID, transaction domain.Transaction) error
+}
+
 type Repositories struct {
 	Schools    Schools
 	Students   Students
 	Courses    Courses
 	Offers     Offers
 	Promocodes Promocodes
+	Orders     Orders
 }
 
 func NewRepositories(db *mongo.Database) *Repositories {
@@ -54,5 +59,6 @@ func NewRepositories(db *mongo.Database) *Repositories {
 		Courses:    mdb.NewCoursesRepo(db),
 		Offers:     mdb.NewOffersRepo(db),
 		Promocodes: mdb.NewPromocodeRepo(db),
+		Orders:     mdb.NewOrdersRepo(db),
 	}
 }

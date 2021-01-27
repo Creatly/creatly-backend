@@ -7,39 +7,31 @@ import (
 	"github.com/zhashkevych/courses-backend/pkg/auth"
 	"github.com/zhashkevych/courses-backend/pkg/hash"
 	"github.com/zhashkevych/courses-backend/pkg/logger"
-	"github.com/zhashkevych/courses-backend/pkg/payment"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
 )
 
 type StudentsService struct {
-	repo            repository.Students
-	coursesService  Courses
-	hasher          hash.PasswordHasher
-	tokenManager    auth.TokenManager
-	emailService    Emails
-	paymentProvider payment.Provider
+	repo           repository.Students
+	coursesService Courses
+	hasher         hash.PasswordHasher
+	tokenManager   auth.TokenManager
+	emailService   Emails
 
 	accessTokenTTL  time.Duration
 	refreshTokenTTL time.Duration
-
-	callbackURL string
-	responseURL string
 }
 
 func NewStudentsService(repo repository.Students, coursesService Courses, hasher hash.PasswordHasher, tokenManager auth.TokenManager,
-	emailService Emails, paymentProvider payment.Provider, accessTTL, refreshTTL time.Duration, callbackURL, responseURL string) *StudentsService {
+	emailService Emails, accessTTL, refreshTTL time.Duration) *StudentsService {
 	return &StudentsService{
 		repo:            repo,
 		coursesService:  coursesService,
 		hasher:          hasher,
 		emailService:    emailService,
 		tokenManager:    tokenManager,
-		paymentProvider: paymentProvider,
 		accessTokenTTL:  accessTTL,
 		refreshTokenTTL: refreshTTL,
-		callbackURL:     callbackURL,
-		responseURL:     responseURL,
 	}
 }
 
@@ -129,37 +121,6 @@ func (s *StudentsService) GetStudentModuleWithLessons(ctx context.Context, schoo
 	return module.Lessons, nil
 }
 
-func (s *StudentsService) CreateOrder(ctx context.Context, studentId, offerId, promocodeId primitive.ObjectID) (string, error) {
-	promocode, err := s.getOrderPromocode(ctx, promocodeId)
-	if err != nil {
-		return "", err
-	}
-
-	offer, err := s.coursesService.GetOfferById(ctx, offerId)
-	if err != nil {
-		return "", err
-	}
-
-	orderAmount := s.calculateOrderPrice(offer.Price.Value, promocode)
-
-	id, err := s.repo.CreateOrder(ctx, studentId, domain.Order{
-		OfferID: offerId,
-		PromoID: promocodeId,
-		Amount:  orderAmount,
-		Status:  domain.OrderStatusCreated,
-	})
-
-	// TODO what if it fails?
-	return s.paymentProvider.GeneratePaymentLink(payment.GeneratePaymentLinkInput{
-		OrderId:     id.Hex(),
-		Amount:      orderAmount,
-		Currency:    offer.Price.Currency,
-		OrderDesc:   offer.Description, // TODO proper order description
-		CallbackURL: s.callbackURL,
-		ResponseURL: s.responseURL,
-	})
-}
-
 func (s *StudentsService) createSession(ctx context.Context, studentId primitive.ObjectID) (Tokens, error) {
 	var (
 		res Tokens
@@ -183,32 +144,4 @@ func (s *StudentsService) createSession(ctx context.Context, studentId primitive
 
 	err = s.repo.SetSession(ctx, studentId, session)
 	return res, err
-}
-
-func (s *StudentsService) getOrderPromocode(ctx context.Context, promocodeId primitive.ObjectID) (domain.Promocode, error) {
-	var (
-		promocode domain.Promocode
-		err       error
-	)
-
-	if !promocodeId.IsZero() {
-		promocode, err = s.coursesService.GetPromocodeById(ctx, promocodeId)
-		if err != nil {
-			return promocode, err
-		}
-
-		if promocode.ExpiresAt.Unix() < time.Now().Unix() {
-			return promocode, ErrPromocodeExpired
-		}
-	}
-
-	return promocode, nil
-}
-
-func (s *StudentsService) calculateOrderPrice(price int, promocode domain.Promocode) int {
-	if promocode.ID.IsZero() {
-		return price
-	} else {
-		return (price * (100 - promocode.DiscountPercentage)) / 100
-	}
 }

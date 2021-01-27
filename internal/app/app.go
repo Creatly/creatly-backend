@@ -14,7 +14,7 @@ import (
 	"github.com/zhashkevych/courses-backend/pkg/email/sendpulse"
 	"github.com/zhashkevych/courses-backend/pkg/hash"
 	"github.com/zhashkevych/courses-backend/pkg/logger"
-	"github.com/zhashkevych/courses-backend/pkg/payment/fondy"
+	"github.com/zhashkevych/courses-backend/pkg/payment"
 	"os"
 	"os/signal"
 	"syscall"
@@ -50,7 +50,7 @@ func Run(configPath string) {
 	memCache := cache.NewMemoryCache(int64(cfg.CacheTTL))
 	hasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
 	emailProvider := sendpulse.NewClient(cfg.Email.ClientID, cfg.Email.ClientSecret, memCache)
-	paymentProvider := fondy.NewClient(cfg.Payment.Fondy.MerchantId, cfg.Payment.Fondy.MerchantPassword)
+	paymentProvider := payment.NewFondyClient(cfg.Payment.Fondy.MerchantId, cfg.Payment.Fondy.MerchantPassword)
 	tokenManager, err := auth.NewManager(cfg.Auth.JWT.SigningKey)
 	if err != nil {
 		logger.Error(err)
@@ -72,7 +72,7 @@ func Run(configPath string) {
 		PaymentResponseURL: cfg.Payment.ResponseURL,
 		PaymentCallbackURL: cfg.Payment.CallbackURL,
 	})
-	handlers := http.NewHandler(services.Schools, services.Students, services.Courses, tokenManager)
+	handlers := http.NewHandler(services.Schools, services.Students, services.Courses, services.Orders, services.Payments, tokenManager)
 
 	// HTTP Server
 	srv := server.NewServer(cfg, handlers.Init(cfg.HTTP.Host, cfg.HTTP.Port))
