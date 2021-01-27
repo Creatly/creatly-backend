@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/zhashkevych/courses-backend/internal/domain"
-	"github.com/zhashkevych/courses-backend/pkg/logger"
 	"github.com/zhashkevych/courses-backend/pkg/payment"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
@@ -13,10 +12,12 @@ import (
 type PaymentsService struct {
 	paymentProvider payment.FondyProvider
 	ordersService   Orders
+	coursesService  Courses
+	studentsService Students
 }
 
-func NewPaymentsService(paymentProvider payment.FondyProvider, ordersService Orders) *PaymentsService {
-	return &PaymentsService{paymentProvider: paymentProvider, ordersService: ordersService}
+func NewPaymentsService(paymentProvider payment.FondyProvider, ordersService Orders, coursesService Courses, studentsService Students) *PaymentsService {
+	return &PaymentsService{paymentProvider: paymentProvider, ordersService: ordersService, coursesService: coursesService, studentsService: studentsService}
 }
 
 // TODO groom code, add modules, decide with callback validation
@@ -31,15 +32,21 @@ func (s *PaymentsService) ProcessTransaction(ctx context.Context, callbackData p
 		return err
 	}
 
-	if err := s.ordersService.AddTransaction(ctx, orderId, transaction); err != nil {
+	order, err := s.ordersService.AddTransaction(ctx, orderId, transaction)
+	if err != nil {
 		return err
 	}
 
-	if transaction.Status == domain.OrderStatusPaid {
-		logger.Info("TOOD: Add modules")
+	if transaction.Status != domain.OrderStatusPaid {
+		return nil
 	}
 
-	return nil
+	offer, err := s.coursesService.GetOfferById(ctx, order.OfferID)
+	if err != nil {
+		return err
+	}
+
+	return s.studentsService.GiveAccessToPackages(ctx, order.StudentID, offer.PackageIDs)
 }
 
 func createTransaction(callbackData payment.Callback) (domain.Transaction, error) {

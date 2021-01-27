@@ -92,14 +92,21 @@ func (s *StudentsService) GetStudentModuleWithLessons(ctx context.Context, schoo
 		return nil, err
 	}
 
+	logger.Info(module)
+
 	student, err := s.repo.GetById(ctx, studentId)
 	if err != nil {
-		return nil, nil
+		return nil, err
 	}
 
+	logger.Info(student)
+
 	if student.IsModuleAvailable(module) {
+		logger.Info("Module is available")
 		return module.Lessons, nil
 	}
+
+	logger.Info("Ooops")
 
 	// Find module offers
 	offers, err := s.coursesService.GetPackageOffers(ctx, schoolId, module.PackageID)
@@ -113,12 +120,30 @@ func (s *StudentsService) GetStudentModuleWithLessons(ctx context.Context, schoo
 
 	// If module has no offers - it's free and available to everyone
 	go func() {
-		if err := s.repo.GiveModuleAccess(ctx, studentId, moduleId); err != nil {
+		if err := s.repo.GiveAccessToModules(ctx, studentId, []primitive.ObjectID{moduleId}); err != nil {
 			logger.Error(err)
 		}
 	}()
 
 	return module.Lessons, nil
+}
+
+func (s *StudentsService) GiveAccessToModules(ctx context.Context, studentId primitive.ObjectID, moduleIds []primitive.ObjectID) error {
+	return s.repo.GiveAccessToModules(ctx, studentId, moduleIds)
+}
+
+func (s *StudentsService) GiveAccessToPackages(ctx context.Context, studentId primitive.ObjectID, packageIds []primitive.ObjectID) error {
+	modules, err := s.coursesService.GetPackagesModules(ctx, packageIds)
+	if err != nil {
+		return err
+	}
+
+	ids := make([]primitive.ObjectID, len(modules))
+	for i := range modules {
+		ids[i] = modules[i].ID
+	}
+
+	return s.repo.GiveAccessToModules(ctx, studentId, ids)
 }
 
 func (s *StudentsService) createSession(ctx context.Context, studentId primitive.ObjectID) (Tokens, error) {

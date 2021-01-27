@@ -54,6 +54,10 @@ func (s *CoursesService) GetPackageOffers(ctx context.Context, schoolId, package
 	return result, nil
 }
 
+func (s *CoursesService) GetPackagesModules(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Module, error) {
+	return s.repo.GetPackagesModules(ctx, packageIds)
+}
+
 func inArray(array []primitive.ObjectID, searchedItem primitive.ObjectID) bool {
 	for i := range array {
 		if array[i] == searchedItem {

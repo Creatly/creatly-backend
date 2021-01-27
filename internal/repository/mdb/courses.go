@@ -66,3 +66,14 @@ func (r *CoursesRepo) GetModule(ctx context.Context, moduleId primitive.ObjectID
 	err := r.db.Collection(modulesCollection).FindOne(ctx, bson.M{"_id": moduleId, "published": true}).Decode(&module)
 	return module, err
 }
+
+func (r *CoursesRepo) GetPackagesModules(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Module, error) {
+	var modules []domain.Module
+	cur, err := r.db.Collection(modulesCollection).Find(ctx, bson.M{"packageId": bson.M{"$in": packageIds}})
+	if err != nil {
+		return nil, err
+	}
+
+	err = cur.All(ctx, &modules)
+	return modules, err
+}

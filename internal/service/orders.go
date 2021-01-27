@@ -64,7 +64,7 @@ func (s *OrdersService) Create(ctx context.Context, studentId, offerId, promocod
 	})
 }
 
-func (s *OrdersService) AddTransaction(ctx context.Context, id primitive.ObjectID, transaction domain.Transaction) error {
+func (s *OrdersService) AddTransaction(ctx context.Context, id primitive.ObjectID, transaction domain.Transaction) (domain.Order, error) {
 	return s.repo.AddTransaction(ctx, id, transaction)
 }
 

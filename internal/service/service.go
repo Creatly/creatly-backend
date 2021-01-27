@@ -42,6 +42,8 @@ type Students interface {
 	RefreshTokens(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (Tokens, error)
 	Verify(ctx context.Context, hash string) error
 	GetStudentModuleWithLessons(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) ([]domain.Lesson, error)
+	GiveAccessToModules(ctx context.Context, studentId primitive.ObjectID, moduleIds []primitive.ObjectID) error
+	GiveAccessToPackages(ctx context.Context, studentId primitive.ObjectID, packageIds []primitive.ObjectID) error
 }
 
 type AddToListInput struct {
@@ -59,16 +61,21 @@ type Courses interface {
 	GetCourseModules(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
 	GetModule(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
 	GetModuleWithContent(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
+
 	GetModuleOffers(ctx context.Context, schoolId, moduleId primitive.ObjectID) ([]domain.Offer, error)
+
 	GetPackageOffers(ctx context.Context, schoolId, packageId primitive.ObjectID) ([]domain.Offer, error)
+	GetPackagesModules(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Module, error)
+
 	GetPromocodeByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.Promocode, error)
 	GetPromocodeById(ctx context.Context, id primitive.ObjectID) (domain.Promocode, error)
+
 	GetOfferById(ctx context.Context, id primitive.ObjectID) (domain.Offer, error)
 }
 
 type Orders interface {
 	Create(ctx context.Context, studentId, offerId, promocodeId primitive.ObjectID) (string, error)
-	AddTransaction(ctx context.Context, id primitive.ObjectID, transaction domain.Transaction) error
+	AddTransaction(ctx context.Context, id primitive.ObjectID, transaction domain.Transaction) (domain.Order, error)
 }
 
 type Payments interface {
@@ -101,13 +108,14 @@ func NewServices(deps ServicesDeps) *Services {
 	emailsService := NewEmailsService(deps.EmailProvider, deps.EmailListId)
 	coursesService := NewCoursesService(deps.Repos.Courses, deps.Repos.Offers, deps.Repos.Promocodes)
 	ordersService := NewOrdersService(deps.Repos.Orders, coursesService, deps.PaymentProvider, deps.PaymentCallbackURL, deps.PaymentResponseURL)
+	studentsService := NewStudentsService(deps.Repos.Students, coursesService, deps.Hasher,
+		deps.TokenManager, emailsService, deps.AccessTokenTTL, deps.RefreshTokenTTL)
 
 	return &Services{
-		Schools: NewSchoolsService(deps.Repos.Schools, deps.Cache),
-		Students: NewStudentsService(deps.Repos.Students, coursesService, deps.Hasher,
-			deps.TokenManager, emailsService, deps.AccessTokenTTL, deps.RefreshTokenTTL),
+		Schools:  NewSchoolsService(deps.Repos.Schools, deps.Cache),
+		Students: studentsService,
 		Courses:  coursesService,
-		Payments: NewPaymentsService(deps.PaymentProvider, ordersService),
+		Payments: NewPaymentsService(deps.PaymentProvider, ordersService, coursesService, studentsService),
 		Orders:   ordersService,
 	}
 }
