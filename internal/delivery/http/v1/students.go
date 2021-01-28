@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/zhashkevych/courses-backend/internal/domain"
 	"github.com/zhashkevych/courses-backend/internal/service"
@@ -8,6 +9,8 @@ import (
 	"net/http"
 	"time"
 )
+
+// TODO: return time.Time in RFC3339
 
 func (h *Handler) initStudentsRoutes(api *gin.RouterGroup) {
 	students := api.Group("/students", h.setSchoolFromRequest)
@@ -295,25 +298,34 @@ func (h *Handler) studentGetCourseById(c *gin.Context) {
 		return
 	}
 
-	var searchedCourse domain.Course
-	for _, course := range school.Courses {
-		if course.Published && course.ID.Hex() == id {
-			searchedCourse = course
-		}
-	}
-
-	if searchedCourse.ID.IsZero() {
-		newResponse(c, http.StatusBadRequest, "not found")
+	course, err := getSchoolCourse(school, id)
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	modules, err := h.coursesService.GetCourseModules(c.Request.Context(), searchedCourse.ID)
+	modules, err := h.coursesService.GetCourseModules(c.Request.Context(), course.ID)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, newGetCourseByIdResponse(searchedCourse, modules))
+	c.JSON(http.StatusOK, newGetCourseByIdResponse(course, modules))
+}
+
+func getSchoolCourse(school domain.School, courseId string) (domain.Course, error) {
+	var searchedCourse domain.Course
+	for _, course := range school.Courses {
+		if course.Published && course.ID.Hex() == courseId {
+			searchedCourse = course
+		}
+	}
+
+	if searchedCourse.ID.IsZero() {
+		return domain.Course{}, errors.New("not found")
+	}
+
+	return searchedCourse, nil
 }
 
 type studentGetModuleLessonsResponse struct {
@@ -382,7 +394,7 @@ type studentOffer struct {
 	ID          primitive.ObjectID `json:"id" bson:"_id"`
 	Name        string             `json:"name" bson:"name"`
 	Description string             `json:"description" bson:"description"`
-	CreatedAt   time.Time          `json:"createdAt" bson:"createdAt"`
+	CreatedAt   string             `json:"createdAt" bson:"createdAt"`
 	Price       price              `json:"price" bson:"price"`
 }
 
@@ -406,7 +418,7 @@ func toStudentOffer(offer domain.Offer) studentOffer {
 		ID:          offer.ID,
 		Name:        offer.Name,
 		Description: offer.Description,
-		CreatedAt:   offer.CreatedAt,
+		CreatedAt:   offer.CreatedAt.Format(time.RFC3339),
 		Price: price{
 			Value:    offer.Price.Value,
 			Currency: offer.Price.Currency,
@@ -448,11 +460,6 @@ func (h *Handler) studentGetModuleOffers(c *gin.Context) {
 
 	offers, err := h.coursesService.GetModuleOffers(c.Request.Context(), school.ID, moduleId)
 	if err != nil {
-		if err == service.ErrModuleIsNotAvailable {
-			newResponse(c, http.StatusForbidden, err.Error())
-			return
-		}
-
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}

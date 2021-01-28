@@ -15,6 +15,8 @@ import (
 
 //go:generate mockgen -source=service.go -destination=mocks/mock.go
 
+// TODO handle "not found" errors
+
 type Schools interface {
 	GetByDomain(ctx context.Context, domainName string) (domain.School, error)
 }
