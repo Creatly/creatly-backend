@@ -47,7 +47,7 @@ func Run(configPath string) {
 	mongoClient := mongodb.NewClient(cfg.Mongo.URI, cfg.Mongo.User, cfg.Mongo.Password)
 	db := mongoClient.Database(cfg.Mongo.Name)
 
-	memCache := cache.NewMemoryCache(int64(cfg.CacheTTL))
+	memCache := cache.NewMemoryCache()
 	hasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
 	emailProvider := sendpulse.NewClient(cfg.Email.ClientID, cfg.Email.ClientSecret, memCache)
 	paymentProvider := payment.NewFondyClient(cfg.Payment.Fondy.MerchantId, cfg.Payment.Fondy.MerchantPassword)
@@ -71,6 +71,7 @@ func Run(configPath string) {
 		RefreshTokenTTL:    cfg.Auth.JWT.RefreshTokenTTL,
 		PaymentResponseURL: cfg.Payment.ResponseURL,
 		PaymentCallbackURL: cfg.Payment.CallbackURL,
+		CacheTTL:           int64(cfg.CacheTTL),
 	})
 	handlers := http.NewHandler(services.Schools, services.Students, services.Courses, services.Orders, services.Payments, tokenManager)
 

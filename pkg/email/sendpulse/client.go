@@ -9,6 +9,7 @@ import (
 	"github.com/zhashkevych/courses-backend/pkg/email"
 	"io/ioutil"
 	"net/http"
+	"time"
 )
 
 // Documentation https://sendpulse.com/integrations/api
@@ -20,6 +21,8 @@ const (
 	addToListEndpoint = "/addressbooks/%s/emails" // addressbooks/{id}/emails
 
 	grantType = "client_credentials"
+
+	cacheTTL = int64(time.Hour) // SendPulse access tokens are valid for 1 hour
 )
 
 type authRequest struct {
@@ -43,6 +46,7 @@ type emailInfo struct {
 	Variables map[string]string `json:"variables"`
 }
 
+// Client is SendPulse API client implementation
 type Client struct {
 	id     string
 	secret string
@@ -54,6 +58,7 @@ func NewClient(id, secret string, cache cache.Cache) *Client {
 	return &Client{id: id, secret: secret, cache: cache}
 }
 
+// AddEmailToList adds lead to provided email list with specific variables
 func (c *Client) AddEmailToList(input email.AddEmailInput) error {
 	token, err := c.getToken()
 	if err != nil {
@@ -63,7 +68,7 @@ func (c *Client) AddEmailToList(input email.AddEmailInput) error {
 	reqData := addToListRequest{
 		Emails: []emailInfo{
 			{
-				Email: input.Email,
+				Email:     input.Email,
 				Variables: input.Variables,
 			},
 		},
@@ -109,7 +114,7 @@ func (c *Client) getToken() (string, error) {
 		return "", err
 	}
 
-	c.cache.Set("t", token)
+	c.cache.Set("t", token, cacheTTL)
 	return token.(string), nil
 }
 

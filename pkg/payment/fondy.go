@@ -13,13 +13,15 @@ import (
 	"strings"
 )
 
+// Documentation
 // https://docs.fondy.eu/ru/docs/page/1/
 
-// Testing credentials:
+// Testing credentials
 // success card - 4444555566661111
 // failure card - 4444111166665555
 
 const (
+	// FondyUserAgent is a value for user-agent header sent in Fondy's requests. Used to validate request.
 	FondyUserAgent = "Mozilla/5.0 (X11; Linux x86_64; Twisted) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36"
 
 	checkoutUrl   = "https://pay.fondy.eu/api/checkout/url/"
@@ -173,6 +175,7 @@ func generateSignature(values []string, password string) string {
 	return fmt.Sprintf("%x", hash.Sum(nil))
 }
 
+// FondyClient is a fondy payment provider API client
 type FondyClient struct {
 	merchantId       string
 	merchantPassword string
@@ -182,6 +185,7 @@ func NewFondyClient(merchantId string, merchantPassword string) *FondyClient {
 	return &FondyClient{merchantId: merchantId, merchantPassword: merchantPassword}
 }
 
+// GeneratePaymentLink returns payment URL for provided order info
 func (c *FondyClient) GeneratePaymentLink(input GeneratePaymentLinkInput) (string, error) {
 	checkoutReq := &checkoutRequest{
 		OrderId:           input.OrderId,

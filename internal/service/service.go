@@ -13,6 +13,8 @@ import (
 	"time"
 )
 
+//go:generate mockgen -source=service.go -destination=mocks/mock.go
+
 type Schools interface {
 	GetByDomain(ctx context.Context, domainName string) (domain.School, error)
 }
@@ -102,6 +104,7 @@ type ServicesDeps struct {
 	RefreshTokenTTL    time.Duration
 	PaymentCallbackURL string
 	PaymentResponseURL string
+	CacheTTL           int64
 }
 
 func NewServices(deps ServicesDeps) *Services {
@@ -112,7 +115,7 @@ func NewServices(deps ServicesDeps) *Services {
 		deps.TokenManager, emailsService, deps.AccessTokenTTL, deps.RefreshTokenTTL)
 
 	return &Services{
-		Schools:  NewSchoolsService(deps.Repos.Schools, deps.Cache),
+		Schools:  NewSchoolsService(deps.Repos.Schools, deps.Cache, deps.CacheTTL),
 		Students: studentsService,
 		Courses:  coursesService,
 		Payments: NewPaymentsService(deps.PaymentProvider, ordersService, coursesService, studentsService),

@@ -9,6 +9,7 @@ import (
 type item struct {
 	value     interface{}
 	createdAt int64
+	ttl       int64
 }
 
 type MemoryCache struct {
@@ -16,18 +17,18 @@ type MemoryCache struct {
 	sync.RWMutex
 }
 
-// TODO move ttl to Set()
-func NewMemoryCache(ttl int64) *MemoryCache {
+// NewMemoryCache uses map to store key:value data in-memory
+func NewMemoryCache() *MemoryCache {
 	c := &MemoryCache{cache: make(map[interface{}]*item)}
-	go c.setTtlTimer(ttl)
+	go c.setTtlTimer()
 	return c
 }
 
-func (c *MemoryCache) setTtlTimer(ttl int64) {
+func (c *MemoryCache) setTtlTimer() {
 	for now := range time.Tick(time.Second) {
 		c.Lock()
 		for k, v := range c.cache {
-			if now.Unix()-v.createdAt > ttl {
+			if now.Unix()-v.createdAt > v.ttl {
 				delete(c.cache, k)
 			}
 		}
@@ -35,11 +36,12 @@ func (c *MemoryCache) setTtlTimer(ttl int64) {
 	}
 }
 
-func (c *MemoryCache) Set(key, value interface{}) error {
+func (c *MemoryCache) Set(key, value interface{}, ttl int64) error {
 	c.Lock()
 	c.cache[key] = &item{
 		value:     value,
 		createdAt: time.Now().Unix(),
+		ttl:       ttl,
 	}
 	c.Unlock()
 

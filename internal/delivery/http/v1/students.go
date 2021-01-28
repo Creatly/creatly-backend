@@ -15,7 +15,7 @@ func (h *Handler) initStudentsRoutes(api *gin.RouterGroup) {
 		students.POST("/sign-up", h.studentSignUp)
 		students.POST("/sign-in", h.studentSignIn)
 		students.POST("/auth/refresh", h.studentRefresh)
-		students.POST("/verify/:hash", h.studentVerify)
+		students.POST("/verify/:code", h.studentVerify)
 		students.GET("/courses", h.studentGetAllCourses)
 		students.GET("/courses/:id", h.studentGetCourseById)
 
@@ -190,7 +190,7 @@ func (h *Handler) studentVerify(c *gin.Context) {
 		return
 	}
 
-	c.Status(http.StatusOK)
+	newResponse(c, http.StatusOK, "success")
 }
 
 // @Summary Student Get All Courses
@@ -498,7 +498,7 @@ func (h *Handler) studentGetPromocode(c *gin.Context) {
 }
 
 type createOrderInput struct {
-	OfferId string `json:"offerId"`
+	OfferId string `json:"offerId" binding:"required"`
 	PromoId string `json:"promoId"`
 }
 
