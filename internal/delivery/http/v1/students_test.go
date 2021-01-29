@@ -422,91 +422,124 @@ func TestHandler_studentGetModuleLessons(t *testing.T) {
 	}
 }
 
-//func TestHandler_studentGetCourseById(t *testing.T) {
-//	type mockBehavior func(r *mock_service.MockCourses, courseId primitive.ObjectID, modules []domain.Module)
-//
-//	now := time.Now()
-//	course := domain.Course{
-//		ID:          primitive.NewObjectID(),
-//		Name:        "course 1",
-//		Code:        "course-1",
-//		Description: "description",
-//		ImageURL:    "imageUrl",
-//		CreatedAt:   now,
-//	}
-//	school := domain.School{
-//		ID:      primitive.NewObjectID(),
-//		Courses: []domain.Course{course},
-//	}
-//
-//	tests := []struct {
-//		name         string
-//		courseId     string
-//		school       domain.School
-//		studentId    primitive.ObjectID
-//		modules      []domain.Module
-//		mockBehavior mockBehavior
-//		statusCode   int
-//		responseBody string
-//	}{
-//		{
-//			name:     "ok",
-//			courseId: course.ID.Hex(),
-//			school:   school,
-//			modules: []domain.Module{
-//				{
-//					Name:      "test module",
-//					Position:  0,
-//					Published: true,
-//					Lessons: []domain.Lesson{
-//						{
-//							Name:      "test lesson",
-//							Published: true,
-//						},
-//					},
-//				},
-//			},
-//			mockBehavior: func(r *mock_service.MockCourses, courseId primitive.ObjectID, modules []domain.Module) {
-//				r.EXPECT().GetCourseModules(context.Background(), course.ID).Return(modules, nil)
-//			},
-//			statusCode: 200,
-//			responseBody: fmt.Sprintf(`{"course":{"id":"%s", "name":""},[{"id":"000000000000000000000000","name":"test lesson","position":0,"published":true,"content":"content"}]}`,
-//				course.ID.Hex()),
-//		},
-//	}
-//
-//	for _, tt := range tests {
-//		t.Run(tt.name, func(t *testing.T) {
-//			// Init Dependencies
-//			c := gomock.NewController(t)
-//			defer c.Finish()
-//
-//			s := mock_service.NewMockStudents(c)
-//
-//			id, _ := primitive.ObjectIDFromHex(tt.moduleId)
-//			tt.mockBehavior(s, tt.schoolId, tt.studentId, id, tt.lessons)
-//
-//			handler := Handler{studentsService: s}
-//
-//			// Init Endpoint
-//			r := gin.New()
-//			r.GET("/modules/:id/lessons", func(c *gin.Context) {
-//				c.Set(schoolCtx, domain.School{
-//					ID: schoolId,
-//				})
-//				c.Set(studentCtx, tt.studentId.Hex())
-//			}, handler.studentGetModuleLessons)
-//
-//			// Create Request
-//			w := httptest.NewRecorder()
-//			req := httptest.NewRequest("GET", fmt.Sprintf("/modules/%s/lessons", tt.moduleId), nil)
-//
-//			// Make Request
-//			r.ServeHTTP(w, req)
-//
-//			// Assert
-//			assert.Equal(t, w.Code, tt.statusCode)
-//			assert.Equal(t, w.Body.String(), tt.responseBody)
-//		})
-//	}
-//}
+func TestHandler_studentSignUp(t *testing.T) {
+	type mockBehavior func(r *mock_service.MockStudents, input service.StudentSignUpInput)
+
+	schoolId := primitive.NewObjectID()
+
+	tests := []struct {
+		name         string
+		requestBody  string
+		schoolId     primitive.ObjectID
+		serviceInput service.StudentSignUpInput
+		mockBehavior mockBehavior
+		statusCode   int
+		responseBody string
+	}{
+		{
+			name:        "ok",
+			requestBody: `{"name":"Vasya","email":"test@test.com","password":"qwerty123","registerSource":"test-course"}`,
+			schoolId:    schoolId,
+			serviceInput: service.StudentSignUpInput{
+				Name:           "Vasya",
+				Email:          "test@test.com",
+				Password:       "qwerty123",
+				RegisterSource: "test-course",
+				SchoolID:       schoolId,
+			},
+			mockBehavior: func(r *mock_service.MockStudents, input service.StudentSignUpInput) {
+				r.EXPECT().SignUp(context.Background(), input).Return(nil)
+			},
+			statusCode: 201,
+		},
+		{
+			name:        "missing name",
+			requestBody: `{"name":"","email":"test@test.com","password":"qwerty123","registerSource":"test-course"}`,
+			schoolId:    schoolId,
+			mockBehavior: func(r *mock_service.MockStudents, input service.StudentSignUpInput) {},
+			statusCode: 400,
+			responseBody: `{"message":"invalid input body"}`,
+		},
+		{
+			name:        "invalid name",
+			requestBody: `{"name":"q","email":"test@test.com","password":"qwerty123","registerSource":"test-course"}`,
+			schoolId:    schoolId,
+			mockBehavior: func(r *mock_service.MockStudents, input service.StudentSignUpInput) {},
+			statusCode: 400,
+			responseBody: `{"message":"invalid input body"}`,
+		},
+		{
+			name:        "invalid name",
+			requestBody: `{"name":"q","email":"test@test.com","password":"qwerty123","registerSource":"test-course"}`,
+			schoolId:    schoolId,
+			mockBehavior: func(r *mock_service.MockStudents, input service.StudentSignUpInput) {},
+			statusCode: 400,
+			responseBody: `{"message":"invalid input body"}`,
+		},
+		{
+			name:        "missing email",
+			requestBody: `{"name":"Vasya","email":"","password":"qwerty123","registerSource":"test-course"}`,
+			schoolId:    schoolId,
+			mockBehavior: func(r *mock_service.MockStudents, input service.StudentSignUpInput) {},
+			statusCode: 400,
+			responseBody: `{"message":"invalid input body"}`,
+		},
+		{
+			name:        "missing password",
+			requestBody: `{"name":"Vasya","email":"test@test.com","password":"","registerSource":"test-course"}`,
+			schoolId:    schoolId,
+			mockBehavior: func(r *mock_service.MockStudents, input service.StudentSignUpInput) {},
+			statusCode: 400,
+			responseBody: `{"message":"invalid input body"}`,
+		},
+		{
+			name:        "password too short",
+			requestBody: `{"name":"Vasya","email":"test@test.com","password":"qwerty","registerSource":"test-course"}`,
+			schoolId:    schoolId,
+			mockBehavior: func(r *mock_service.MockStudents, input service.StudentSignUpInput) {},
+			statusCode: 400,
+			responseBody: `{"message":"invalid input body"}`,
+		},
+		{
+			name:        "missing registerSource",
+			requestBody: `{"name":"Vasya","email":"test@test.com","password":"","registerSource":""}`,
+			schoolId:    schoolId,
+			mockBehavior: func(r *mock_service.MockStudents, input service.StudentSignUpInput) {},
+			statusCode: 400,
+			responseBody: `{"message":"invalid input body"}`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Init Dependencies
+			c := gomock.NewController(t)
+			defer c.Finish()
+
+			s := mock_service.NewMockStudents(c)
+
+			tt.mockBehavior(s, tt.serviceInput)
+
+			handler := Handler{studentsService: s}
+
+			// Init Endpoint
+			r := gin.New()
+			r.GET("/sign-up", func(c *gin.Context) {
+				c.Set(schoolCtx, domain.School{
+					ID: tt.schoolId,
+				})
+			}, handler.studentSignUp)
+
+			// Create Request
+			w := httptest.NewRecorder()
+			req := httptest.NewRequest("GET", "/sign-up", bytes.NewBufferString(tt.requestBody))
+
+			// Make Request
+			r.ServeHTTP(w, req)
+
+			// Assert
+			assert.Equal(t, w.Code, tt.statusCode)
+			assert.Equal(t, w.Body.String(), tt.responseBody)
+		})
+	}
+}

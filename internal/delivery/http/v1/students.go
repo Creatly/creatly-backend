@@ -33,10 +33,10 @@ func (h *Handler) initStudentsRoutes(api *gin.RouterGroup) {
 }
 
 type studentSignUpInput struct {
-	Name           string `json:"name" binding:"required"`
-	Email          string `json:"email" binding:"required"`
-	Password       string `json:"password" binding:"required"`
-	RegisterSource string `json:"registerSource"`
+	Name           string `json:"name" binding:"required,min=2,max=64"`
+	Email          string `json:"email" binding:"required,email,max=64"`
+	Password       string `json:"password" binding:"required,min=8,max=64"`
+	RegisterSource string `json:"registerSource" binding:"required,max=64"`
 }
 
 // @Summary Student SignUp
@@ -79,8 +79,8 @@ func (h *Handler) studentSignUp(c *gin.Context) {
 }
 
 type studentSignInInput struct {
-	Email    string `json:"email" binding:"required"`
-	Password string `json:"password" binding:"required"`
+	Email    string `json:"email" binding:"required,email,max=64"`
+	Password string `json:"password" binding:"required,min=8,max=64"`
 }
 
 type tokenResponse struct {
@@ -285,6 +285,7 @@ func toLessons(lessons []domain.Lesson) []lesson {
 // @Failure 500 {object} response
 // @Failure default {object} response
 // @Router /students/courses/{id} [get]
+// TODO cover with test
 func (h *Handler) studentGetCourseById(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
