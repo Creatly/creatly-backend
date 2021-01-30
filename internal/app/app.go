@@ -14,6 +14,7 @@ import (
 	"github.com/zhashkevych/courses-backend/pkg/email/sendpulse"
 	"github.com/zhashkevych/courses-backend/pkg/hash"
 	"github.com/zhashkevych/courses-backend/pkg/logger"
+	"github.com/zhashkevych/courses-backend/pkg/payment"
 	"os"
 	"os/signal"
 	"syscall"
@@ -23,7 +24,6 @@ import (
 // @version 1.0
 // @description API Server for Course Platform
 
-// TODO host based on env
 // @host localhost:8000
 // @BasePath /api/v1/
 
@@ -47,9 +47,10 @@ func Run(configPath string) {
 	mongoClient := mongodb.NewClient(cfg.Mongo.URI, cfg.Mongo.User, cfg.Mongo.Password)
 	db := mongoClient.Database(cfg.Mongo.Name)
 
-	memCache := cache.NewMemoryCache(int64(cfg.CacheTTL))
+	memCache := cache.NewMemoryCache()
 	hasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
 	emailProvider := sendpulse.NewClient(cfg.Email.ClientID, cfg.Email.ClientSecret, memCache)
+	paymentProvider := payment.NewFondyClient(cfg.Payment.Fondy.MerchantId, cfg.Payment.Fondy.MerchantPassword)
 	tokenManager, err := auth.NewManager(cfg.Auth.JWT.SigningKey)
 	if err != nil {
 		logger.Error(err)
@@ -58,9 +59,21 @@ func Run(configPath string) {
 
 	// Services, Repos & API Handlers
 	repos := repository.NewRepositories(db)
-	services := service.NewServices(repos, memCache, hasher, tokenManager,
-		emailProvider, cfg.Email.ListID, cfg.Auth.JWT.AccessTokenTTL, cfg.Auth.JWT.RefreshTokenTTL)
-	handlers := http.NewHandler(services.Schools, services.Students, services.Courses, tokenManager)
+	services := service.NewServices(service.ServicesDeps{
+		Repos:              repos,
+		Cache:              memCache,
+		Hasher:             hasher,
+		TokenManager:       tokenManager,
+		EmailProvider:      emailProvider,
+		EmailListId:        cfg.Email.ListID,
+		PaymentProvider:    paymentProvider,
+		AccessTokenTTL:     cfg.Auth.JWT.AccessTokenTTL,
+		RefreshTokenTTL:    cfg.Auth.JWT.RefreshTokenTTL,
+		PaymentResponseURL: cfg.Payment.ResponseURL,
+		PaymentCallbackURL: cfg.Payment.CallbackURL,
+		CacheTTL:           int64(cfg.CacheTTL),
+	})
+	handlers := http.NewHandler(services.Schools, services.Students, services.Courses, services.Orders, services.Payments, tokenManager)
 
 	// HTTP Server
 	srv := server.NewServer(cfg, handlers.Init(cfg.HTTP.Host, cfg.HTTP.Port))

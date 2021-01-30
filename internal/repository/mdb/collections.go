@@ -9,4 +9,5 @@ const (
 	packagesCollection   = "packages"
 	modulesCollection    = "modules"
 	contentCollection    = "content"
+	ordersCollection     = "orders"
 )

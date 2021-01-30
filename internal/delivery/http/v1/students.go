@@ -1,12 +1,16 @@
 package v1
 
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/zhashkevych/courses-backend/internal/domain"
 	"github.com/zhashkevych/courses-backend/internal/service"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
+	"time"
 )
+
+// TODO: return time.Time in RFC3339
 
 func (h *Handler) initStudentsRoutes(api *gin.RouterGroup) {
 	students := api.Group("/students", h.setSchoolFromRequest)
@@ -14,22 +18,25 @@ func (h *Handler) initStudentsRoutes(api *gin.RouterGroup) {
 		students.POST("/sign-up", h.studentSignUp)
 		students.POST("/sign-in", h.studentSignIn)
 		students.POST("/auth/refresh", h.studentRefresh)
-		students.POST("/verify/:hash", h.studentVerify)
+		students.POST("/verify/:code", h.studentVerify)
 		students.GET("/courses", h.studentGetAllCourses)
 		students.GET("/courses/:id", h.studentGetCourseById)
 
 		authenticated := students.Group("/", h.userIdentity)
 		{
 			authenticated.GET("/modules/:id/lessons", h.studentGetModuleLessons)
+			authenticated.GET("/modules/:id/offers", h.studentGetModuleOffers)
+			authenticated.GET("/promocodes/:code", h.studentGetPromocode)
+			authenticated.POST("/order", h.studentCreateOrder)
 		}
 	}
 }
 
 type studentSignUpInput struct {
-	Name           string `json:"name" binding:"required"`
-	Email          string `json:"email" binding:"required"`
-	Password       string `json:"password" binding:"required"`
-	RegisterSource string `json:"registerSource"`
+	Name           string `json:"name" binding:"required,min=2,max=64"`
+	Email          string `json:"email" binding:"required,email,max=64"`
+	Password       string `json:"password" binding:"required,min=8,max=64"`
+	RegisterSource string `json:"registerSource" binding:"required,max=64"`
 }
 
 // @Summary Student SignUp
@@ -40,20 +47,20 @@ type studentSignUpInput struct {
 // @Produce  json
 // @Param input body studentSignUpInput true "sign up info"
 // @Success 201 {string} string "ok"
-// @Failure 400,404 {object} errorResponse
-// @Failure 500 {object} errorResponse
-// @Failure default {object} errorResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
 // @Router /students/sign-up [post]
 func (h *Handler) studentSignUp(c *gin.Context) {
 	var inp studentSignUpInput
 	if err := c.BindJSON(&inp); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
+		newResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -64,7 +71,7 @@ func (h *Handler) studentSignUp(c *gin.Context) {
 		RegisterSource: inp.RegisterSource,
 		SchoolID:       school.ID,
 	}); err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -72,8 +79,8 @@ func (h *Handler) studentSignUp(c *gin.Context) {
 }
 
 type studentSignInInput struct {
-	Email    string `json:"email" binding:"required"`
-	Password string `json:"password" binding:"required"`
+	Email    string `json:"email" binding:"required,email,max=64"`
+	Password string `json:"password" binding:"required,min=8,max=64"`
 }
 
 type tokenResponse struct {
@@ -89,20 +96,20 @@ type tokenResponse struct {
 // @Produce  json
 // @Param input body studentSignInInput true "sign up info"
 // @Success 200 {object} tokenResponse
-// @Failure 400,404 {object} errorResponse
-// @Failure 500 {object} errorResponse
-// @Failure default {object} errorResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
 // @Router /students/sign-in [post]
 func (h *Handler) studentSignIn(c *gin.Context) {
 	var inp studentSignInInput
 	if err := c.BindJSON(&inp); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
+		newResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -112,7 +119,7 @@ func (h *Handler) studentSignIn(c *gin.Context) {
 		Password: inp.Password,
 	})
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -133,26 +140,26 @@ type refreshInput struct {
 // @Produce  json
 // @Param input body refreshInput true "sign up info"
 // @Success 200 {object} tokenResponse
-// @Failure 400,404 {object} errorResponse
-// @Failure 500 {object} errorResponse
-// @Failure default {object} errorResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
 // @Router /students/refresh [post]
 func (h *Handler) studentRefresh(c *gin.Context) {
 	var inp refreshInput
 	if err := c.BindJSON(&inp); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
+		newResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	res, err := h.studentsService.RefreshTokens(c.Request.Context(), school.ID, inp.Token)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -170,23 +177,23 @@ func (h *Handler) studentRefresh(c *gin.Context) {
 // @Produce  json
 // @Param code path string true "verification code"
 // @Success 200 {object} tokenResponse
-// @Failure 400,404 {object} errorResponse
-// @Failure 500 {object} errorResponse
-// @Failure default {object} errorResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
 // @Router /students/verify/{code} [post]
 func (h *Handler) studentVerify(c *gin.Context) {
 	code := c.Param("code")
 	if code == "" {
-		newErrorResponse(c, http.StatusBadRequest, "code is empty")
+		newResponse(c, http.StatusBadRequest, "code is empty")
 		return
 	}
 
 	if err := h.studentsService.Verify(c.Request.Context(), code); err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	c.Status(http.StatusOK)
+	newResponse(c, http.StatusOK, "success")
 }
 
 // @Summary Student Get All Courses
@@ -196,14 +203,14 @@ func (h *Handler) studentVerify(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Success 200 {array} domain.Course
-// @Failure 400,404 {object} errorResponse
-// @Failure 500 {object} errorResponse
-// @Failure default {object} errorResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
 // @Router /students/courses [get]
 func (h *Handler) studentGetAllCourses(c *gin.Context) {
 	school, err := getSchoolFromContext(c)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -274,42 +281,56 @@ func toLessons(lessons []domain.Lesson) []lesson {
 // @Produce  json
 // @Param id path string true "course id"
 // @Success 200 {object} domain.Course
-// @Failure 400,404 {object} errorResponse
-// @Failure 500 {object} errorResponse
-// @Failure default {object} errorResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
 // @Router /students/courses/{id} [get]
+// TODO cover with test
 func (h *Handler) studentGetCourseById(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
-		newErrorResponse(c, http.StatusBadRequest, "invalid id param")
+		newResponse(c, http.StatusBadRequest, "empty id param")
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
+	course, err := getSchoolCourse(school, id)
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	modules, err := h.coursesService.GetCourseModules(c.Request.Context(), course.ID)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, newGetCourseByIdResponse(course, modules))
+}
+
+func getSchoolCourse(school domain.School, courseId string) (domain.Course, error) {
 	var searchedCourse domain.Course
 	for _, course := range school.Courses {
-		if course.Published && course.ID.Hex() == id {
+		if course.Published && course.ID.Hex() == courseId {
 			searchedCourse = course
 		}
 	}
 
 	if searchedCourse.ID.IsZero() {
-		newErrorResponse(c, http.StatusBadRequest, "not found")
-		return
+		return domain.Course{}, errors.New("not found")
 	}
 
-	modules, err := h.coursesService.GetCourseModules(c.Request.Context(), searchedCourse.ID)
-	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
+	return searchedCourse, nil
+}
 
-	c.JSON(http.StatusOK, newGetCourseByIdResponse(searchedCourse, modules))
+type studentGetModuleLessonsResponse struct {
+	Lessons []domain.Lesson `json:"lessons"`
 }
 
 // @Summary Student Get Lessons By Module ID
@@ -320,46 +341,227 @@ func (h *Handler) studentGetCourseById(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Param id path string true "module id"
-// @Success 200 {object} domain.Module
-// @Failure 400,404 {object} errorResponse
-// @Failure 500 {object} errorResponse
-// @Failure default {object} errorResponse
+// @Success 200 {object} studentGetModuleLessonsResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
 // @Router /students/modules/{id}/lessons [get]
 func (h *Handler) studentGetModuleLessons(c *gin.Context) {
 	moduleIdParam := c.Param("id")
 	if moduleIdParam == "" {
-		newErrorResponse(c, http.StatusBadRequest, "invalid id param")
+		newResponse(c, http.StatusBadRequest, "empty id param")
 		return
 	}
 
 	moduleId, err := primitive.ObjectIDFromHex(moduleIdParam)
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid id param")
+		newResponse(c, http.StatusBadRequest, "invalid id param")
 		return
 	}
 
 	studentId, err := getStudentId(c)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	module, err := h.studentsService.GetModuleWithContent(c.Request.Context(), school.ID, studentId, moduleId)
+	lessons, err := h.studentsService.GetStudentModuleWithLessons(c.Request.Context(), school.ID, studentId, moduleId)
 	if err != nil {
 		if err == service.ErrModuleIsNotAvailable {
-			newErrorResponse(c, http.StatusForbidden, err.Error())
+			newResponse(c, http.StatusForbidden, err.Error())
 			return
 		}
 
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, module)
+	c.JSON(http.StatusOK, studentGetModuleLessonsResponse{
+		Lessons: lessons,
+	})
+}
+
+type studentGetModuleOffersResponse struct {
+	Offers []studentOffer `json:"offers"`
+}
+
+type studentOffer struct {
+	ID          primitive.ObjectID `json:"id" bson:"_id"`
+	Name        string             `json:"name" bson:"name"`
+	Description string             `json:"description" bson:"description"`
+	CreatedAt   string             `json:"createdAt" bson:"createdAt"`
+	Price       price              `json:"price" bson:"price"`
+}
+
+type price struct {
+	Value    int    `json:"value"`
+	Currency string `json:"currency"`
+}
+
+func toStudentOffers(offers []domain.Offer) []studentOffer {
+	out := make([]studentOffer, len(offers))
+
+	for i := range offers {
+		out[i] = toStudentOffer(offers[i])
+	}
+
+	return out
+}
+
+func toStudentOffer(offer domain.Offer) studentOffer {
+	return studentOffer{
+		ID:          offer.ID,
+		Name:        offer.Name,
+		Description: offer.Description,
+		CreatedAt:   offer.CreatedAt.Format(time.RFC3339),
+		Price: price{
+			Value:    offer.Price.Value,
+			Currency: offer.Price.Currency,
+		},
+	}
+}
+
+// @Summary Student Get Offers By Module ID
+// @Security StudentsAuth
+// @Tags students
+// @Description student get offers by module id
+// @ID studentGetModuleOffers
+// @Accept  json
+// @Produce  json
+// @Param id path string true "module id"
+// @Success 200 {string} string "ok"
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /students/modules/{id}/offers [get]
+func (h *Handler) studentGetModuleOffers(c *gin.Context) {
+	moduleIdParam := c.Param("id")
+	if moduleIdParam == "" {
+		newResponse(c, http.StatusBadRequest, "empty id param")
+		return
+	}
+
+	moduleId, err := primitive.ObjectIDFromHex(moduleIdParam)
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid id param")
+		return
+	}
+
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	offers, err := h.coursesService.GetModuleOffers(c.Request.Context(), school.ID, moduleId)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, studentGetModuleOffersResponse{
+		Offers: toStudentOffers(offers),
+	})
+}
+
+// @Summary Student Get Promocode By Code
+// @Security StudentsAuth
+// @Tags students
+// @Description student get promocode by code
+// @ID studentGetPromocode
+// @Accept  json
+// @Produce  json
+// @Param code path string true "code"
+// @Success 200 {object} domain.Promocode
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /students/promocodes/{code} [get]
+func (h *Handler) studentGetPromocode(c *gin.Context) {
+	code := c.Param("code")
+	if code == "" {
+		newResponse(c, http.StatusBadRequest, "empty code param")
+		return
+	}
+
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	promocode, err := h.coursesService.GetPromocodeByCode(c.Request.Context(), school.ID, code)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, promocode)
+}
+
+type createOrderInput struct {
+	OfferId string `json:"offerId" binding:"required"`
+	PromoId string `json:"promoId"`
+}
+
+type createOrderResponse struct {
+	PaymentLink string `json:"paymentLink"`
+}
+
+// @Summary Student CreateOrder
+// @Security StudentsAuth
+// @Tags students
+// @Description student create order
+// @ID studentCreateOrder
+// @Accept  json
+// @Produce  json
+// @Param input body createOrderInput true "order info"
+// @Success 200 {object} createOrderResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /students/order [post]
+func (h *Handler) studentCreateOrder(c *gin.Context) {
+	var inp createOrderInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+
+	offerId, err := primitive.ObjectIDFromHex(inp.OfferId)
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid offer id")
+		return
+	}
+
+	var promoId primitive.ObjectID
+
+	if inp.PromoId != "" {
+		var err error
+		promoId, err = primitive.ObjectIDFromHex(inp.PromoId)
+		if err != nil {
+			newResponse(c, http.StatusBadRequest, "invalid promo id")
+			return
+		}
+	}
+
+	studentId, err := getStudentId(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	paymentLink, err := h.ordersService.Create(c.Request.Context(), studentId, offerId, promoId)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, createOrderResponse{paymentLink})
 }

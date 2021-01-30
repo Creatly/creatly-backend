@@ -85,40 +85,65 @@ func (s *StudentsService) Verify(ctx context.Context, hash string) error {
 	return s.repo.Verify(ctx, hash)
 }
 
-func (s *StudentsService) GetModuleWithContent(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) (domain.Module, error) {
+func (s *StudentsService) GetStudentModuleWithLessons(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) ([]domain.Lesson, error) {
 	// Get module with lessons content, check if it is available for student
 	module, err := s.coursesService.GetModuleWithContent(ctx, moduleId)
 	if err != nil {
-		return domain.Module{}, err
+		return nil, err
 	}
+
+	logger.Info(module)
 
 	student, err := s.repo.GetById(ctx, studentId)
 	if err != nil {
-		return domain.Module{}, nil
+		return nil, err
 	}
 
+	logger.Info(student)
+
 	if student.IsModuleAvailable(module) {
-		return module, nil
+		logger.Info("Module is available")
+		return module.Lessons, nil
 	}
+
+	logger.Info("Ooops")
 
 	// Find module offers
 	offers, err := s.coursesService.GetPackageOffers(ctx, schoolId, module.PackageID)
 	if err != nil {
-		return domain.Module{}, err
+		return nil, err
 	}
 
 	if len(offers) != 0 {
-		return domain.Module{}, ErrModuleIsNotAvailable
+		return nil, ErrModuleIsNotAvailable
 	}
 
 	// If module has no offers - it's free and available to everyone
 	go func() {
-		if err := s.repo.GiveModuleAccess(ctx, studentId, moduleId); err != nil {
+		if err := s.repo.GiveAccessToModules(ctx, studentId, []primitive.ObjectID{moduleId}); err != nil {
 			logger.Error(err)
 		}
 	}()
 
-	return module, nil
+	return module.Lessons, nil
+}
+
+func (s *StudentsService) GiveAccessToModules(ctx context.Context, studentId primitive.ObjectID, moduleIds []primitive.ObjectID) error {
+	return s.repo.GiveAccessToModules(ctx, studentId, moduleIds)
+}
+
+func (s *StudentsService) GiveAccessToPackages(ctx context.Context, studentId primitive.ObjectID, packageIds []primitive.ObjectID) error {
+	modules, err := s.coursesService.GetPackagesModules(ctx, packageIds)
+	if err != nil {
+		return err
+	}
+
+	ids := make([]primitive.ObjectID, len(modules))
+	for i := range modules {
+		ids[i] = modules[i].ID
+	}
+
+	return s.repo.GiveAccessToModules(ctx, studentId, ids)
 }
 
 func (s *StudentsService) createSession(ctx context.Context, studentId primitive.ObjectID) (Tokens, error) {

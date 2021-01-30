@@ -9,15 +9,19 @@ import (
 
 func TestInit(t *testing.T) {
 	type env struct {
-		mongoURI        string
-		mongoUser       string
-		mongoPass       string
-		passwordSalt    string
-		jwtSigningKey   string
-		sendpulseListId string
-		sendpulseId     string
-		sendpulseSecret string
-		host            string
+		mongoURI           string
+		mongoUser          string
+		mongoPass          string
+		passwordSalt       string
+		jwtSigningKey      string
+		sendpulseListId    string
+		sendpulseId        string
+		sendpulseSecret    string
+		host               string
+		fondyMerchantId    string
+		fondyMerchantPass  string
+		paymentCallbackURL string
+		paymentResponseURL string
 	}
 
 	type args struct {
@@ -35,6 +39,10 @@ func TestInit(t *testing.T) {
 		os.Setenv("SENDPULSE_ID", env.sendpulseId)
 		os.Setenv("SENDPULSE_SECRET", env.sendpulseSecret)
 		os.Setenv("HTTP_HOST", env.host)
+		os.Setenv("FONDY_MERCHANT_ID", env.fondyMerchantId)
+		os.Setenv("FONDY_MERCHANT_PASS", env.fondyMerchantPass)
+		os.Setenv("PAYMENT_CALLBACK_URL", env.paymentCallbackURL)
+		os.Setenv("PAYMENT_RESPONSE_URL", env.paymentResponseURL)
 	}
 
 	tests := []struct {
@@ -48,15 +56,19 @@ func TestInit(t *testing.T) {
 			args: args{
 				path: "fixtures/test",
 				env: env{
-					mongoURI:        "mongodb://localhost:27017",
-					mongoUser:       "admin",
-					mongoPass:       "qwerty",
-					passwordSalt:    "salt",
-					jwtSigningKey:   "key",
-					sendpulseSecret: "secret",
-					sendpulseId:     "id",
-					sendpulseListId: "listId",
-					host:            "localhost",
+					mongoURI:           "mongodb://localhost:27017",
+					mongoUser:          "admin",
+					mongoPass:          "qwerty",
+					passwordSalt:       "salt",
+					jwtSigningKey:      "key",
+					sendpulseSecret:    "secret",
+					sendpulseId:        "id",
+					sendpulseListId:    "listId",
+					host:               "localhost",
+					fondyMerchantId:    "123",
+					fondyMerchantPass:  "fondy",
+					paymentResponseURL: "https://zhashkevych.com/",
+					paymentCallbackURL: "https://zhashkevych.com/callback",
 				}},
 			want: &Config{
 				CacheTTL: time.Second * 3600,
@@ -89,6 +101,14 @@ func TestInit(t *testing.T) {
 					ListID:       "listId",
 					ClientID:     "id",
 					ClientSecret: "secret",
+				},
+				Payment: PaymentConfig{
+					Fondy: FondyConfig{
+						MerchantId:       "123",
+						MerchantPassword: "fondy",
+					},
+					CallbackURL: "https://zhashkevych.com/callback",
+					ResponseURL: "https://zhashkevych.com/",
 				},
 			},
 		},

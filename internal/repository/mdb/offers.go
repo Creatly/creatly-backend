@@ -18,7 +18,7 @@ func NewOffersRepo(db *mongo.Database) *OffersRepo {
 	}
 }
 
-func (r *OffersRepo) GetSchoolOffers(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Offer, error) {
+func (r *OffersRepo) GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Offer, error) {
 	cur, err := r.db.Find(ctx, bson.M{"schoolId": schoolId})
 	if err != nil {
 		return nil, err
@@ -27,4 +27,10 @@ func (r *OffersRepo) GetSchoolOffers(ctx context.Context, schoolId primitive.Obj
 	var offers []domain.Offer
 	err = cur.All(ctx, &offers)
 	return offers, err
+}
+
+func (r *OffersRepo) GetById(ctx context.Context, id primitive.ObjectID) (domain.Offer, error) {
+	var offer domain.Offer
+	err := r.db.FindOne(ctx, bson.M{"_id": id}).Decode(&offer)
+	return offer, err
 }

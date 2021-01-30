@@ -8,6 +8,7 @@ import (
 	"time"
 )
 
+// TokenManager provides logic for JWT & Refresh tokens generation and parsing
 type TokenManager interface {
 	NewJWT(userId string, ttl time.Duration) (string, error)
 	Parse(accessToken string) (string, error)

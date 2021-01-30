@@ -16,6 +16,6 @@ type Offer struct {
 }
 
 type Price struct {
-	Value    primitive.Decimal128 `json:"value" bson:"value"`
-	Currency string               `json:"currency" bson:"currency"`
+	Value    int    `json:"value" bson:"value"`
+	Currency string `json:"currency" bson:"currency"`
 }

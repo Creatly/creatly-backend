@@ -11,10 +11,11 @@ import (
 type SchoolsService struct {
 	repo  repository.Schools
 	cache cache.Cache
+	ttl   int64
 }
 
-func NewSchoolsService(repo repository.Schools, cache cache.Cache) *SchoolsService {
-	return &SchoolsService{repo: repo, cache: cache}
+func NewSchoolsService(repo repository.Schools, cache cache.Cache, ttl int64) *SchoolsService {
+	return &SchoolsService{repo: repo, cache: cache, ttl: ttl}
 }
 
 func (s *SchoolsService) GetByDomain(ctx context.Context, domainName string) (domain.School, error) {
@@ -29,6 +30,6 @@ func (s *SchoolsService) GetByDomain(ctx context.Context, domainName string) (do
 		return domain.School{}, err
 	}
 
-	s.cache.Set(domainName, school)
+	s.cache.Set(domainName, school, s.ttl)
 	return school, nil
 }

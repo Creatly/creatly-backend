@@ -32,28 +32,31 @@ definitions:
       published:
         type: boolean
     type: object
-  domain.Module:
+  domain.Promocode:
     properties:
-      courseId:
+      code:
+        type: string
+      discountPercentage:
+        type: integer
+      expiresAt:
         type: string
       id:
         type: string
-      lessons:
+      offerIds:
         items:
-          $ref: '#/definitions/domain.Lesson'
+          type: string
         type: array
-      name:
-        type: string
-      packageId:
-        type: string
-      position:
-        type: integer
-      published:
-        type: boolean
     type: object
-  v1.errorResponse:
+  v1.createOrderInput:
     properties:
-      message:
+      offerId:
+        type: string
+      promoId:
+        type: string
+    type: object
+  v1.createOrderResponse:
+    properties:
+      paymentLink:
         type: string
     type: object
   v1.refreshInput:
@@ -62,6 +65,18 @@ definitions:
         type: string
     required:
     - token
+    type: object
+  v1.response:
+    properties:
+      message:
+        type: string
+    type: object
+  v1.studentGetModuleLessonsResponse:
+    properties:
+      lessons:
+        items:
+          $ref: '#/definitions/domain.Lesson'
+        type: array
     type: object
   v1.studentSignInInput:
     properties:
@@ -120,19 +135,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/v1.errorResponse'
+            $ref: '#/definitions/v1.response'
         "404":
           description: Bad Request
           schema:
-            $ref: '#/definitions/v1.errorResponse'
+            $ref: '#/definitions/v1.response'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1.errorResponse'
+            $ref: '#/definitions/v1.response'
         default:
           description: ""
           schema:
-            $ref: '#/definitions/v1.errorResponse'
+            $ref: '#/definitions/v1.response'
       summary: Student Get All Courses
       tags:
       - students
@@ -158,19 +173,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/v1.errorResponse'
+            $ref: '#/definitions/v1.response'
         "404":
           description: Bad Request
           schema:
-            $ref: '#/definitions/v1.errorResponse'
+            $ref: '#/definitions/v1.response'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1.errorResponse'
+            $ref: '#/definitions/v1.response'
         default:
           description: ""
           schema:
-            $ref: '#/definitions/v1.errorResponse'
+            $ref: '#/definitions/v1.response'
       summary: Student Get Course By ID
       tags:
       - students
@@ -192,26 +207,147 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.Module'
+            $ref: '#/definitions/v1.studentGetModuleLessonsResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/v1.errorResponse'
+            $ref: '#/definitions/v1.response'
         "404":
           description: Bad Request
           schema:
-            $ref: '#/definitions/v1.errorResponse'
+            $ref: '#/definitions/v1.response'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1.errorResponse'
+            $ref: '#/definitions/v1.response'
         default:
           description: ""
           schema:
-            $ref: '#/definitions/v1.errorResponse'
+            $ref: '#/definitions/v1.response'
       security:
       - StudentsAuth: []
       summary: Student Get Lessons By Module ID
+      tags:
+      - students
+  /students/modules/{id}/offers:
+    get:
+      consumes:
+      - application/json
+      description: student get offers by module id
+      operationId: studentGetModuleOffers
+      parameters:
+      - description: module id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - StudentsAuth: []
+      summary: Student Get Offers By Module ID
+      tags:
+      - students
+  /students/order:
+    post:
+      consumes:
+      - application/json
+      description: student create order
+      operationId: studentCreateOrder
+      parameters:
+      - description: order info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.createOrderInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.createOrderResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - StudentsAuth: []
+      summary: Student CreateOrder
+      tags:
+      - students
+  /students/promocodes/{code}:
+    get:
+      consumes:
+      - application/json
+      description: student get promocode by code
+      operationId: studentGetPromocode
+      parameters:
+      - description: code
+        in: path
+        name: code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Promocode'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - StudentsAuth: []
+      summary: Student Get Promocode By Code
       tags:
       - students
   /students/refresh:
@@ -236,19 +372,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/v1.errorResponse'
+            $ref: '#/definitions/v1.response'
         "404":
           description: Bad Request
           schema:
-            $ref: '#/definitions/v1.errorResponse'
+            $ref: '#/definitions/v1.response'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1.errorResponse'
+            $ref: '#/definitions/v1.response'
         default:
           description: ""
           schema:
-            $ref: '#/definitions/v1.errorResponse'
+            $ref: '#/definitions/v1.response'
       summary: Student Refresh Tokens
       tags:
       - students
@@ -275,19 +411,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/v1.errorResponse'
+            $ref: '#/definitions/v1.response'
         "404":
           description: Bad Request
           schema:
-            $ref: '#/definitions/v1.errorResponse'
+            $ref: '#/definitions/v1.response'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1.errorResponse'
+            $ref: '#/definitions/v1.response'
         default:
           description: ""
           schema:
-            $ref: '#/definitions/v1.errorResponse'
+            $ref: '#/definitions/v1.response'
       summary: Student SignIn
       tags:
       - students
@@ -314,19 +450,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/v1.errorResponse'
+            $ref: '#/definitions/v1.response'
         "404":
           description: Bad Request
           schema:
-            $ref: '#/definitions/v1.errorResponse'
+            $ref: '#/definitions/v1.response'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1.errorResponse'
+            $ref: '#/definitions/v1.response'
         default:
           description: ""
           schema:
-            $ref: '#/definitions/v1.errorResponse'
+            $ref: '#/definitions/v1.response'
       summary: Student SignUp
       tags:
       - students
@@ -352,19 +488,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/v1.errorResponse'
+            $ref: '#/definitions/v1.response'
         "404":
           description: Bad Request
           schema:
-            $ref: '#/definitions/v1.errorResponse'
+            $ref: '#/definitions/v1.response'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1.errorResponse'
+            $ref: '#/definitions/v1.response'
         default:
           description: ""
           schema:
-            $ref: '#/definitions/v1.errorResponse'
+            $ref: '#/definitions/v1.response'
       summary: Student Verify Registration
       tags:
       - students

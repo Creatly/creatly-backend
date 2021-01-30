@@ -10,10 +10,11 @@ import (
 type CoursesService struct {
 	repo       repository.Courses
 	offersRepo repository.Offers
+	promoRepo  repository.Promocodes
 }
 
-func NewCoursesService(repo repository.Courses, offersRepo repository.Offers) *CoursesService {
-	return &CoursesService{repo: repo, offersRepo: offersRepo}
+func NewCoursesService(repo repository.Courses, offersRepo repository.Offers, promoRepo repository.Promocodes) *CoursesService {
+	return &CoursesService{repo: repo, offersRepo: offersRepo, promoRepo: promoRepo}
 }
 
 func (s *CoursesService) GetCourseModules(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error) {
@@ -29,12 +30,16 @@ func (s *CoursesService) GetCourseModules(ctx context.Context, courseId primitiv
 	return modules, nil
 }
 
+func (s *CoursesService) GetModule(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error) {
+	return s.repo.GetModule(ctx, moduleId)
+}
+
 func (s *CoursesService) GetModuleWithContent(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error) {
 	return s.repo.GetModuleWithContent(ctx, moduleId)
 }
 
 func (s *CoursesService) GetPackageOffers(ctx context.Context, schoolId, packageId primitive.ObjectID) ([]domain.Offer, error) {
-	offers, err := s.offersRepo.GetSchoolOffers(ctx, schoolId)
+	offers, err := s.offersRepo.GetBySchool(ctx, schoolId)
 	if err != nil {
 		return nil, err
 	}
@@ -49,6 +54,10 @@ func (s *CoursesService) GetPackageOffers(ctx context.Context, schoolId, package
 	return result, nil
 }
 
+func (s *CoursesService) GetPackagesModules(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Module, error) {
+	return s.repo.GetPackagesModules(ctx, packageIds)
+}
+
 func inArray(array []primitive.ObjectID, searchedItem primitive.ObjectID) bool {
 	for i := range array {
 		if array[i] == searchedItem {
@@ -56,4 +65,25 @@ func inArray(array []primitive.ObjectID, searchedItem primitive.ObjectID) bool {
 		}
 	}
 	return false
+}
+
+func (s *CoursesService) GetModuleOffers(ctx context.Context, schoolId, moduleId primitive.ObjectID) ([]domain.Offer, error) {
+	module, err := s.GetModule(ctx, moduleId)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.GetPackageOffers(ctx, schoolId, module.PackageID)
+}
+
+func (s *CoursesService) GetPromocodeByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.Promocode, error) {
+	return s.promoRepo.GetByCode(ctx, schoolId, code)
+}
+
+func (s *CoursesService) GetPromocodeById(ctx context.Context, id primitive.ObjectID) (domain.Promocode, error) {
+	return s.promoRepo.GetById(ctx, id)
+}
+
+func (s *CoursesService) GetOfferById(ctx context.Context, id primitive.ObjectID) (domain.Offer, error) {
+	return s.offersRepo.GetById(ctx, id)
 }

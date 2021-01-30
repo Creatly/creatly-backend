@@ -21,6 +21,7 @@ type (
 		Auth        AuthConfig
 		FileStorage FileStorageConfig
 		Email       EmailConfig
+		Payment     PaymentConfig
 		CacheTTL    time.Duration `mapstructure:"ttl"`
 	}
 
@@ -51,6 +52,17 @@ type (
 		ListID       string
 		ClientID     string
 		ClientSecret string
+	}
+
+	PaymentConfig struct {
+		Fondy       FondyConfig
+		CallbackURL string
+		ResponseURL string
+	}
+
+	FondyConfig struct {
+		MerchantId       string
+		MerchantPassword string
 	}
 
 	HTTPConfig struct {
@@ -122,6 +134,11 @@ func setFromEnv(cfg *Config) {
 	cfg.Email.ListID = viper.GetString("listid")
 
 	cfg.HTTP.Host = viper.GetString("host")
+
+	cfg.Payment.Fondy.MerchantId = viper.GetString("merchant_id")
+	cfg.Payment.Fondy.MerchantPassword = viper.GetString("merchant_pass")
+	cfg.Payment.CallbackURL = viper.GetString("callback_url")
+	cfg.Payment.ResponseURL = viper.GetString("response_url")
 }
 
 func parseConfigFile(filepath string) error {
@@ -159,6 +176,14 @@ func parseEnv() error {
 		return err
 	}
 
+	if err := parseFondyEnvVariables(); err != nil {
+		return err
+	}
+
+	if err := parsePaymentEnvVariables(); err != nil {
+		return err
+	}
+
 	return parsePasswordFromEnv()
 }
 
@@ -186,6 +211,33 @@ func parseSendPulseEnvVariables() error {
 	}
 
 	return viper.BindEnv("secret")
+}
+
+func parseFondyEnvVariables() error {
+	viper.SetEnvPrefix("fondy")
+	if err := viper.BindEnv("merchant_id"); err != nil {
+		return err
+	}
+
+	if err := viper.BindEnv("merchant_pass"); err != nil {
+		return err
+	}
+
+	if err := viper.BindEnv("callback_url"); err != nil {
+		return err
+	}
+
+	return viper.BindEnv("response_url")
+}
+
+func parsePaymentEnvVariables() error {
+	viper.SetEnvPrefix("payment")
+
+	if err := viper.BindEnv("callback_url"); err != nil {
+		return err
+	}
+
+	return viper.BindEnv("response_url")
 }
 
 func parsePasswordFromEnv() error {

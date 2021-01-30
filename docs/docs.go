@@ -51,25 +51,25 @@ var doc = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "404": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "default": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     }
                 }
@@ -108,25 +108,25 @@ var doc = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "404": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "default": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     }
                 }
@@ -164,31 +164,219 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Module"
+                            "$ref": "#/definitions/v1.studentGetModuleLessonsResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "404": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "default": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/students/modules/{id}/offers": {
+            "get": {
+                "security": [
+                    {
+                        "StudentsAuth": []
+                    }
+                ],
+                "description": "student get offers by module id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "students"
+                ],
+                "summary": "Student Get Offers By Module ID",
+                "operationId": "studentGetModuleOffers",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "module id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/students/order": {
+            "post": {
+                "security": [
+                    {
+                        "StudentsAuth": []
+                    }
+                ],
+                "description": "student create order",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "students"
+                ],
+                "summary": "Student CreateOrder",
+                "operationId": "studentCreateOrder",
+                "parameters": [
+                    {
+                        "description": "order info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.createOrderInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.createOrderResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/students/promocodes/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "StudentsAuth": []
+                    }
+                ],
+                "description": "student get promocode by code",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "students"
+                ],
+                "summary": "Student Get Promocode By Code",
+                "operationId": "studentGetPromocode",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Promocode"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
                         }
                     }
                 }
@@ -228,25 +416,25 @@ var doc = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "404": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "default": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     }
                 }
@@ -287,25 +475,25 @@ var doc = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "404": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "default": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     }
                 }
@@ -346,25 +534,25 @@ var doc = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "404": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "default": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     }
                 }
@@ -403,25 +591,25 @@ var doc = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "404": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     },
                     "default": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
+                            "$ref": "#/definitions/v1.response"
                         }
                     }
                 }
@@ -478,39 +666,44 @@ var doc = `{
                 }
             }
         },
-        "domain.Module": {
+        "domain.Promocode": {
             "type": "object",
             "properties": {
-                "courseId": {
+                "code": {
+                    "type": "string"
+                },
+                "discountPercentage": {
+                    "type": "integer"
+                },
+                "expiresAt": {
                     "type": "string"
                 },
                 "id": {
                     "type": "string"
                 },
-                "lessons": {
+                "offerIds": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/domain.Lesson"
+                        "type": "string"
                     }
-                },
-                "name": {
-                    "type": "string"
-                },
-                "packageId": {
-                    "type": "string"
-                },
-                "position": {
-                    "type": "integer"
-                },
-                "published": {
-                    "type": "boolean"
                 }
             }
         },
-        "v1.errorResponse": {
+        "v1.createOrderInput": {
             "type": "object",
             "properties": {
-                "message": {
+                "offerId": {
+                    "type": "string"
+                },
+                "promoId": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.createOrderResponse": {
+            "type": "object",
+            "properties": {
+                "paymentLink": {
                     "type": "string"
                 }
             }
@@ -523,6 +716,25 @@ var doc = `{
             "properties": {
                 "token": {
                     "type": "string"
+                }
+            }
+        },
+        "v1.response": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.studentGetModuleLessonsResponse": {
+            "type": "object",
+            "properties": {
+                "lessons": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Lesson"
+                    }
                 }
             }
         },

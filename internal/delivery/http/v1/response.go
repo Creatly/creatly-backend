@@ -5,11 +5,11 @@ import (
 	"github.com/zhashkevych/courses-backend/pkg/logger"
 )
 
-type errorResponse struct {
+type response struct {
 	Message string `json:"message"`
 }
 
-func newErrorResponse(c *gin.Context, statusCode int, message string) {
+func newResponse(c *gin.Context, statusCode int, message string) {
 	logger.Error(message)
-	c.AbortWithStatusJSON(statusCode, errorResponse{message})
+	c.AbortWithStatusJSON(statusCode, response{message})
 }

@@ -18,31 +18,48 @@ type Students interface {
 	GetByRefreshToken(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (domain.Student, error)
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.Student, error)
 	SetSession(ctx context.Context, studentId primitive.ObjectID, session domain.Session) error
-	GiveModuleAccess(ctx context.Context, studentId, moduleId primitive.ObjectID) error
+	GiveAccessToModules(ctx context.Context, studentId primitive.ObjectID, moduleIds []primitive.ObjectID) error
 	Verify(ctx context.Context, code string) error
 }
 
 type Courses interface {
 	GetModules(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
+	GetModule(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
 	GetModuleWithContent(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
+	GetPackagesModules(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Module, error)
 }
 
 type Offers interface {
-	GetSchoolOffers(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Offer, error)
+	GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Offer, error)
+	GetById(ctx context.Context, id primitive.ObjectID) (domain.Offer, error)
+}
+
+type Promocodes interface {
+	GetByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.Promocode, error)
+	GetById(ctx context.Context, id primitive.ObjectID) (domain.Promocode, error)
+}
+
+type Orders interface {
+	Create(ctx context.Context, order domain.Order) error
+	AddTransaction(ctx context.Context, id primitive.ObjectID, transaction domain.Transaction) (domain.Order, error)
 }
 
 type Repositories struct {
-	Schools  Schools
-	Students Students
-	Courses  Courses
-	Offers   Offers
+	Schools    Schools
+	Students   Students
+	Courses    Courses
+	Offers     Offers
+	Promocodes Promocodes
+	Orders     Orders
 }
 
 func NewRepositories(db *mongo.Database) *Repositories {
 	return &Repositories{
-		Schools:  mdb.NewSchoolsRepo(db),
-		Students: mdb.NewStudentsRepo(db),
-		Courses:  mdb.NewCoursesRepo(db),
-		Offers:   mdb.NewOffersRepo(db),
+		Schools:    mdb.NewSchoolsRepo(db),
+		Students:   mdb.NewStudentsRepo(db),
+		Courses:    mdb.NewCoursesRepo(db),
+		Offers:     mdb.NewOffersRepo(db),
+		Promocodes: mdb.NewPromocodeRepo(db),
+		Orders:     mdb.NewOrdersRepo(db),
 	}
 }
