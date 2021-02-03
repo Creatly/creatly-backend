@@ -25,7 +25,7 @@ func NewAdminsService(hasher hash.PasswordHasher, tokenManager auth.TokenManager
 
 func (s *AdminsService) SignIn(ctx context.Context, input SignInInput) (Tokens, error) {
 	//student, err := s.repo.GetByCredentials(ctx, input.SchoolID, input.Email, s.hasher.Hash(input.Password))
-	student, err := s.repo.GetByCredentials(ctx, input.SchoolID, input.Email, input.Password)
+	student, err := s.repo.GetByCredentials(ctx, input.SchoolID, input.Email, input.Password) // TODO implement password hashing
 	if err != nil {
 		return Tokens{}, err
 	}

@@ -299,7 +299,7 @@ func (h *Handler) studentGetCourseById(c *gin.Context) {
 		return
 	}
 
-	course, err := getSchoolCourse(school, id)
+	course, err := studentGetSchoolCourse(school, id)
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
 		return
@@ -314,7 +314,7 @@ func (h *Handler) studentGetCourseById(c *gin.Context) {
 	c.JSON(http.StatusOK, newGetCourseByIdResponse(course, modules))
 }
 
-func getSchoolCourse(school domain.School, courseId string) (domain.Course, error) {
+func studentGetSchoolCourse(school domain.School, courseId string) (domain.Course, error) {
 	var searchedCourse domain.Course
 	for _, course := range school.Courses {
 		if course.Published && course.ID.Hex() == courseId {

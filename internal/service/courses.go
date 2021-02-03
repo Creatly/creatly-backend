@@ -23,10 +23,6 @@ func (s *CoursesService) GetCourseModules(ctx context.Context, courseId primitiv
 		return nil, err
 	}
 
-	if len(modules) == 0 {
-		return nil, ErrCourseContentNotFound
-	}
-
 	return modules, nil
 }
 
