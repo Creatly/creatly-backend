@@ -12,7 +12,7 @@ func (h *Handler) initAdminRoutes(api *gin.RouterGroup) {
 		students.POST("/sign-in", h.adminSignIn)
 		students.POST("/auth/refresh", h.adminRefresh)
 
-		_ = students.Group("/")
+		_ = students.Group("/", h.adminIdentity)
 		{
 
 		}
@@ -60,6 +60,38 @@ func (h *Handler) adminSignIn(c *gin.Context) {
 	})
 }
 
+// @Summary Admin Refresh Tokens
+// @Tags admins
+// @Description admin refresh tokens
+// @Accept  json
+// @Produce  json
+// @Param input body refreshInput true "refresh info"
+// @Success 200 {object} tokenResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/auth/refresh [post]
 func (h *Handler) adminRefresh(c *gin.Context) {
+	var inp refreshInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
 
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	res, err := h.adminsService.RefreshTokens(c.Request.Context(), school.ID, inp.Token)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, tokenResponse{
+		AccessToken:  res.AccessToken,
+		RefreshToken: res.RefreshToken,
+	})
 }

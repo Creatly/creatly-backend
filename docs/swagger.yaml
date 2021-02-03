@@ -120,6 +120,44 @@ info:
   title: Course Platform API
   version: "1.0"
 paths:
+  /admins/auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: admin refresh tokens
+      parameters:
+      - description: refresh info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.refreshInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.tokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      summary: Admin Refresh Tokens
+      tags:
+      - admins
   /admins/sign-in:
     post:
       consumes:

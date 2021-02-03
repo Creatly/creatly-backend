@@ -34,7 +34,12 @@ func (s *AdminsService) SignIn(ctx context.Context, input SignInInput) (Tokens, 
 }
 
 func (s *AdminsService) RefreshTokens(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (Tokens, error) {
-	return Tokens{}, nil
+	student, err := s.repo.GetByRefreshToken(ctx, schoolId, refreshToken)
+	if err != nil {
+		return Tokens{}, err
+	}
+
+	return s.createSession(ctx, student.ID)
 }
 
 func (s *AdminsService) createSession(ctx context.Context, adminId primitive.ObjectID) (Tokens, error) {

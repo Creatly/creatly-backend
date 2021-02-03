@@ -6,6 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"time"
 )
 
 type AdminsRepo struct {
@@ -24,7 +25,11 @@ func (r *AdminsRepo) GetByCredentials(ctx context.Context, schoolId primitive.Ob
 }
 
 func (r *AdminsRepo) GetByRefreshToken(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (domain.Admin, error) {
-	return domain.Admin{}, nil
+	var admin domain.Admin
+	err := r.db.FindOne(ctx, bson.M{"session.refreshToken": refreshToken, "schoolId": schoolId,
+		"session.expiresAt": bson.M{"$gt": time.Now()}}).Decode(&admin)
+
+	return admin, err
 }
 
 func (r *AdminsRepo) SetSession(ctx context.Context, id primitive.ObjectID, session domain.Session) error {

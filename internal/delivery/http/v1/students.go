@@ -22,7 +22,7 @@ func (h *Handler) initStudentsRoutes(api *gin.RouterGroup) {
 		students.GET("/courses", h.studentGetAllCourses)
 		students.GET("/courses/:id", h.studentGetCourseById)
 
-		authenticated := students.Group("/", h.userIdentity)
+		authenticated := students.Group("/", h.studentIdentity)
 		{
 			authenticated.GET("/modules/:id/lessons", h.studentGetModuleLessons)
 			authenticated.GET("/modules/:id/offers", h.studentGetModuleOffers)
