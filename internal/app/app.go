@@ -73,7 +73,7 @@ func Run(configPath string) {
 		PaymentCallbackURL: cfg.Payment.CallbackURL,
 		CacheTTL:           int64(cfg.CacheTTL),
 	})
-	handlers := http.NewHandler(services.Schools, services.Students, services.Courses, services.Orders, services.Payments, tokenManager)
+	handlers := http.NewHandler(services.Schools, services.Students, services.Courses, services.Orders, services.Payments, services.Admins, tokenManager)
 
 	// HTTP Server
 	srv := server.NewServer(cfg, handlers.Init(cfg.HTTP.Host, cfg.HTTP.Port))

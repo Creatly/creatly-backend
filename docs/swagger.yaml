@@ -53,6 +53,8 @@ definitions:
         type: string
       promoId:
         type: string
+    required:
+    - offerId
     type: object
   v1.createOrderResponse:
     properties:
@@ -71,14 +73,7 @@ definitions:
       message:
         type: string
     type: object
-  v1.studentGetModuleLessonsResponse:
-    properties:
-      lessons:
-        items:
-          $ref: '#/definitions/domain.Lesson'
-        type: array
-    type: object
-  v1.studentSignInInput:
+  v1.signInInput:
     properties:
       email:
         type: string
@@ -87,6 +82,13 @@ definitions:
     required:
     - email
     - password
+    type: object
+  v1.studentGetModuleLessonsResponse:
+    properties:
+      lessons:
+        items:
+          $ref: '#/definitions/domain.Lesson'
+        type: array
     type: object
   v1.studentSignUpInput:
     properties:
@@ -102,6 +104,7 @@ definitions:
     - email
     - name
     - password
+    - registerSource
     type: object
   v1.tokenResponse:
     properties:
@@ -117,6 +120,83 @@ info:
   title: Course Platform API
   version: "1.0"
 paths:
+  /admins/sign-in:
+    post:
+      consumes:
+      - application/json
+      description: admin sign in
+      operationId: adminSignIn
+      parameters:
+      - description: sign up info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.signInInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.tokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      summary: Admin SignIn
+      tags:
+      - admins
+  /students/auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: student refresh tokens
+      parameters:
+      - description: sign up info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.refreshInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.tokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      summary: Student Refresh Tokens
+      tags:
+      - students
   /students/courses:
     get:
       consumes:
@@ -350,44 +430,6 @@ paths:
       summary: Student Get Promocode By Code
       tags:
       - students
-  /students/refresh:
-    post:
-      consumes:
-      - application/json
-      description: student refresh tokens
-      parameters:
-      - description: sign up info
-        in: body
-        name: input
-        required: true
-        schema:
-          $ref: '#/definitions/v1.refreshInput'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/v1.tokenResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/v1.response'
-        "404":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/v1.response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/v1.response'
-        default:
-          description: ""
-          schema:
-            $ref: '#/definitions/v1.response'
-      summary: Student Refresh Tokens
-      tags:
-      - students
   /students/sign-in:
     post:
       consumes:
@@ -400,7 +442,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/v1.studentSignInInput'
+          $ref: '#/definitions/v1.signInInput'
       produces:
       - application/json
       responses:

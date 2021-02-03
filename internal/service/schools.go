@@ -5,7 +5,6 @@ import (
 	"github.com/zhashkevych/courses-backend/internal/domain"
 	"github.com/zhashkevych/courses-backend/internal/repository"
 	"github.com/zhashkevych/courses-backend/pkg/cache"
-	"github.com/zhashkevych/courses-backend/pkg/logger"
 )
 
 type SchoolsService struct {
@@ -22,8 +21,6 @@ func (s *SchoolsService) GetByDomain(ctx context.Context, domainName string) (do
 	if value, err := s.cache.Get(domainName); err == nil {
 		return value.(domain.School), nil
 	}
-
-	logger.Info(domainName)
 
 	school, err := s.repo.GetByDomain(ctx, domainName)
 	if err != nil {

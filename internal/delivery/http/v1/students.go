@@ -78,7 +78,7 @@ func (h *Handler) studentSignUp(c *gin.Context) {
 	c.Status(http.StatusCreated)
 }
 
-type studentSignInInput struct {
+type signInInput struct {
 	Email    string `json:"email" binding:"required,email,max=64"`
 	Password string `json:"password" binding:"required,min=8,max=64"`
 }
@@ -94,14 +94,14 @@ type tokenResponse struct {
 // @ID studentSignIn
 // @Accept  json
 // @Produce  json
-// @Param input body studentSignInInput true "sign up info"
+// @Param input body signInInput true "sign up info"
 // @Success 200 {object} tokenResponse
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
 // @Router /students/sign-in [post]
 func (h *Handler) studentSignIn(c *gin.Context) {
-	var inp studentSignInInput
+	var inp signInInput
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
 		return
@@ -113,7 +113,7 @@ func (h *Handler) studentSignIn(c *gin.Context) {
 		return
 	}
 
-	res, err := h.studentsService.SignIn(c.Request.Context(), service.StudentSignInInput{
+	res, err := h.studentsService.SignIn(c.Request.Context(), service.SignInInput{
 		SchoolID: school.ID,
 		Email:    inp.Email,
 		Password: inp.Password,
@@ -143,7 +143,7 @@ type refreshInput struct {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /students/refresh [post]
+// @Router /students/auth/refresh [post]
 func (h *Handler) studentRefresh(c *gin.Context) {
 	var inp refreshInput
 	if err := c.BindJSON(&inp); err != nil {

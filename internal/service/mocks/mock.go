@@ -90,7 +90,7 @@ func (mr *MockStudentsMockRecorder) SignUp(ctx, input interface{}) *gomock.Call 
 }
 
 // SignIn mocks base method
-func (m *MockStudents) SignIn(ctx context.Context, input service.StudentSignInInput) (service.Tokens, error) {
+func (m *MockStudents) SignIn(ctx context.Context, input service.SignInInput) (service.Tokens, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SignIn", ctx, input)
 	ret0, _ := ret[0].(service.Tokens)

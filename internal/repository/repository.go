@@ -10,6 +10,7 @@ import (
 
 type Schools interface {
 	GetByDomain(ctx context.Context, domain string) (domain.School, error)
+	GetById(ctx context.Context, id primitive.ObjectID) (domain.School, error)
 }
 
 type Students interface {
@@ -20,6 +21,13 @@ type Students interface {
 	SetSession(ctx context.Context, studentId primitive.ObjectID, session domain.Session) error
 	GiveAccessToModules(ctx context.Context, studentId primitive.ObjectID, moduleIds []primitive.ObjectID) error
 	Verify(ctx context.Context, code string) error
+}
+
+type Admins interface {
+	GetByCredentials(ctx context.Context, schoolId primitive.ObjectID, email, password string) (domain.Admin, error)
+	GetByRefreshToken(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (domain.Admin, error)
+	SetSession(ctx context.Context, id primitive.ObjectID, session domain.Session) error
+	GetById(ctx context.Context, id primitive.ObjectID) (domain.Admin, error)
 }
 
 type Courses interface {
@@ -51,6 +59,7 @@ type Repositories struct {
 	Offers     Offers
 	Promocodes Promocodes
 	Orders     Orders
+	Admins     Admins
 }
 
 func NewRepositories(db *mongo.Database) *Repositories {
@@ -61,5 +70,6 @@ func NewRepositories(db *mongo.Database) *Repositories {
 		Offers:     mdb.NewOffersRepo(db),
 		Promocodes: mdb.NewPromocodeRepo(db),
 		Orders:     mdb.NewOrdersRepo(db),
+		Admins:     mdb.NewAdminsRepo(db),
 	}
 }

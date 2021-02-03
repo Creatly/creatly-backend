@@ -29,7 +29,7 @@ type StudentSignUpInput struct {
 	RegisterSource string
 }
 
-type StudentSignInInput struct {
+type SignInInput struct {
 	Email    string
 	Password string
 	SchoolID primitive.ObjectID
@@ -42,12 +42,17 @@ type Tokens struct {
 
 type Students interface {
 	SignUp(ctx context.Context, input StudentSignUpInput) error
-	SignIn(ctx context.Context, input StudentSignInInput) (Tokens, error)
+	SignIn(ctx context.Context, input SignInInput) (Tokens, error)
 	RefreshTokens(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (Tokens, error)
 	Verify(ctx context.Context, hash string) error
 	GetStudentModuleWithLessons(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) ([]domain.Lesson, error)
 	GiveAccessToModules(ctx context.Context, studentId primitive.ObjectID, moduleIds []primitive.ObjectID) error
 	GiveAccessToPackages(ctx context.Context, studentId primitive.ObjectID, packageIds []primitive.ObjectID) error
+}
+
+type Admins interface {
+	SignIn(ctx context.Context, input SignInInput) (Tokens, error)
+	RefreshTokens(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (Tokens, error)
 }
 
 type AddToListInput struct {
@@ -92,6 +97,7 @@ type Services struct {
 	Courses  Courses
 	Payments Payments
 	Orders   Orders
+	Admins   Admins
 }
 
 type ServicesDeps struct {
@@ -122,5 +128,6 @@ func NewServices(deps ServicesDeps) *Services {
 		Courses:  coursesService,
 		Payments: NewPaymentsService(deps.PaymentProvider, ordersService, coursesService, studentsService),
 		Orders:   ordersService,
+		Admins:   NewAdminsService(deps.Hasher, deps.TokenManager, deps.Repos.Admins, deps.AccessTokenTTL, deps.RefreshTokenTTL),
 	}
 }

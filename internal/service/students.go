@@ -63,7 +63,7 @@ func (s *StudentsService) SignUp(ctx context.Context, input StudentSignUpInput) 
 	})
 }
 
-func (s *StudentsService) SignIn(ctx context.Context, input StudentSignInInput) (Tokens, error) {
+func (s *StudentsService) SignIn(ctx context.Context, input SignInInput) (Tokens, error) {
 	student, err := s.repo.GetByCredentials(ctx, input.SchoolID, input.Email, s.hasher.Hash(input.Password))
 	if err != nil {
 		return Tokens{}, err
