@@ -53,6 +53,8 @@ type Students interface {
 type Admins interface {
 	SignIn(ctx context.Context, input SignInInput) (Tokens, error)
 	RefreshTokens(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (Tokens, error)
+	GetCourses(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Course, error)
+	GetCourseById(ctx context.Context, schoolId, courseId primitive.ObjectID) (domain.Course, error)
 }
 
 type AddToListInput struct {
@@ -80,6 +82,8 @@ type Courses interface {
 	GetPromocodeById(ctx context.Context, id primitive.ObjectID) (domain.Promocode, error)
 
 	GetOfferById(ctx context.Context, id primitive.ObjectID) (domain.Offer, error)
+
+	Create(ctx context.Context, schoolId primitive.ObjectID, name string) (primitive.ObjectID, error)
 }
 
 type Orders interface {
@@ -128,6 +132,6 @@ func NewServices(deps ServicesDeps) *Services {
 		Courses:  coursesService,
 		Payments: NewPaymentsService(deps.PaymentProvider, ordersService, coursesService, studentsService),
 		Orders:   ordersService,
-		Admins:   NewAdminsService(deps.Hasher, deps.TokenManager, deps.Repos.Admins, deps.AccessTokenTTL, deps.RefreshTokenTTL),
+		Admins:   NewAdminsService(deps.Hasher, deps.TokenManager, deps.Repos.Admins, deps.Repos.Schools, deps.AccessTokenTTL, deps.RefreshTokenTTL),
 	}
 }

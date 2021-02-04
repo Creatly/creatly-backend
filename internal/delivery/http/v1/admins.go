@@ -1,10 +1,9 @@
 package v1
 
 import (
-	"errors"
 	"github.com/gin-gonic/gin"
-	"github.com/zhashkevych/courses-backend/internal/domain"
 	"github.com/zhashkevych/courses-backend/internal/service"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
 )
 
@@ -102,8 +101,45 @@ func (h *Handler) adminRefresh(c *gin.Context) {
 	})
 }
 
-func (h *Handler) adminCreateCourse(c *gin.Context) {
+type createCourseInput struct {
+	Name string `json:"name,required"`
+}
 
+// @Summary Admin Create New Courses
+// @Security AdminAuth
+// @Tags admins
+// @Description admin create new course
+// @ID adminCreateCourse
+// @Accept  json
+// @Produce  json
+// @Param input body createCourseInput true "course info"
+// @Success 200 {array} domain.Course
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/courses [post]
+func (h *Handler) adminCreateCourse(c *gin.Context) {
+	var inp createCourseInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	id, err := h.coursesService.Create(c.Request.Context(), school.ID, inp.Name)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusCreated, map[string]interface{}{
+		"id": id,
+	})
 }
 
 // @Summary Admin Get All Courses
@@ -125,7 +161,13 @@ func (h *Handler) adminGetAllCourses(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, school.Courses)
+	courses, err := h.adminsService.GetCourses(c.Request.Context(), school.ID)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, courses)
 }
 
 // @Summary Admin Get Course By ID
@@ -142,8 +184,8 @@ func (h *Handler) adminGetAllCourses(c *gin.Context) {
 // @Failure default {object} response
 // @Router /admins/courses/{id} [get]
 func (h *Handler) adminGetCourseById(c *gin.Context) {
-	id := c.Param("id")
-	if id == "" {
+	idParam := c.Param("id")
+	if idParam == "" {
 		newResponse(c, http.StatusBadRequest, "empty id param")
 		return
 	}
@@ -154,9 +196,15 @@ func (h *Handler) adminGetCourseById(c *gin.Context) {
 		return
 	}
 
-	course, err := adminGetSchoolCourses(school, id)
+	id, err := primitive.ObjectIDFromHex(idParam)
 	if err != nil {
-		newResponse(c, http.StatusBadRequest, err.Error())
+		newResponse(c, http.StatusBadRequest, "invalid id param")
+		return
+	}
+
+	course, err := h.adminsService.GetCourseById(c.Request.Context(), school.ID, id)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -167,21 +215,6 @@ func (h *Handler) adminGetCourseById(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, newGetCourseByIdResponse(course, modules))
-}
-
-func adminGetSchoolCourses(school domain.School, courseId string) (domain.Course, error) {
-	var searchedCourse domain.Course
-	for _, course := range school.Courses {
-		if course.ID.Hex() == courseId {
-			searchedCourse = course
-		}
-	}
-
-	if searchedCourse.ID.IsZero() {
-		return domain.Course{}, errors.New("not found")
-	}
-
-	return searchedCourse, nil
 }
 
 func (h *Handler) adminUpdateCourse(c *gin.Context) {

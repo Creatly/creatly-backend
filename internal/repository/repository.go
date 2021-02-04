@@ -35,6 +35,7 @@ type Courses interface {
 	GetModule(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
 	GetModuleWithContent(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
 	GetPackagesModules(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Module, error)
+	Create(ctx context.Context, schoolId primitive.ObjectID, course domain.Course) (primitive.ObjectID, error)
 }
 
 type Offers interface {

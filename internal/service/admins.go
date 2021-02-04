@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"github.com/zhashkevych/courses-backend/internal/domain"
 	"github.com/zhashkevych/courses-backend/internal/repository"
 	"github.com/zhashkevych/courses-backend/pkg/auth"
@@ -13,14 +14,24 @@ import (
 type AdminsService struct {
 	hasher       hash.PasswordHasher
 	tokenManager auth.TokenManager
-	repo         repository.Admins
+
+	repo           repository.Admins
+	schoolRepo     repository.Schools
 
 	accessTokenTTL  time.Duration
 	refreshTokenTTL time.Duration
 }
 
-func NewAdminsService(hasher hash.PasswordHasher, tokenManager auth.TokenManager, repo repository.Admins, accessTokenTTL time.Duration, refreshTokenTTL time.Duration) *AdminsService {
-	return &AdminsService{hasher: hasher, tokenManager: tokenManager, repo: repo, accessTokenTTL: accessTokenTTL, refreshTokenTTL: refreshTokenTTL}
+func NewAdminsService(hasher hash.PasswordHasher, tokenManager auth.TokenManager,
+	repo repository.Admins, schoolRepo repository.Schools, accessTokenTTL time.Duration, refreshTokenTTL time.Duration) *AdminsService {
+	return &AdminsService{
+		hasher: hasher,
+		tokenManager: tokenManager,
+		repo: repo,
+		schoolRepo: schoolRepo,
+		accessTokenTTL: accessTokenTTL,
+		refreshTokenTTL: refreshTokenTTL,
+	}
 }
 
 func (s *AdminsService) SignIn(ctx context.Context, input SignInInput) (Tokens, error) {
@@ -40,6 +51,35 @@ func (s *AdminsService) RefreshTokens(ctx context.Context, schoolId primitive.Ob
 	}
 
 	return s.createSession(ctx, student.ID)
+}
+
+func (s *AdminsService) GetCourses(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Course, error) {
+	school, err := s.schoolRepo.GetById(ctx, schoolId)
+	if err != nil {
+		return nil, err
+	}
+
+	return school.Courses, nil
+}
+
+func (s *AdminsService) GetCourseById(ctx context.Context, schoolId, courseId primitive.ObjectID) (domain.Course, error) {
+	school, err := s.schoolRepo.GetById(ctx, schoolId)
+	if err != nil {
+		return domain.Course{}, err
+	}
+
+	var searchedCourse domain.Course
+	for _, course := range school.Courses {
+		if course.ID == courseId {
+			searchedCourse = course
+		}
+	}
+
+	if searchedCourse.ID.IsZero() {
+		return domain.Course{}, errors.New("not found")
+	}
+
+	return searchedCourse, nil
 }
 
 func (s *AdminsService) createSession(ctx context.Context, adminId primitive.ObjectID) (Tokens, error) {

@@ -71,7 +71,7 @@ func Run(configPath string) {
 		RefreshTokenTTL:    cfg.Auth.JWT.RefreshTokenTTL,
 		PaymentResponseURL: cfg.Payment.ResponseURL,
 		PaymentCallbackURL: cfg.Payment.CallbackURL,
-		CacheTTL:           int64(cfg.CacheTTL),
+		CacheTTL:           int64(cfg.CacheTTL.Seconds()),
 	})
 	handlers := http.NewHandler(services.Schools, services.Students, services.Courses, services.Orders, services.Payments, services.Admins, tokenManager)
 

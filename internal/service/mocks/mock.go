@@ -176,6 +176,59 @@ func (mr *MockStudentsMockRecorder) GiveAccessToPackages(ctx, studentId, package
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GiveAccessToPackages", reflect.TypeOf((*MockStudents)(nil).GiveAccessToPackages), ctx, studentId, packageIds)
 }
 
+// MockAdmins is a mock of Admins interface
+type MockAdmins struct {
+	ctrl     *gomock.Controller
+	recorder *MockAdminsMockRecorder
+}
+
+// MockAdminsMockRecorder is the mock recorder for MockAdmins
+type MockAdminsMockRecorder struct {
+	mock *MockAdmins
+}
+
+// NewMockAdmins creates a new mock instance
+func NewMockAdmins(ctrl *gomock.Controller) *MockAdmins {
+	mock := &MockAdmins{ctrl: ctrl}
+	mock.recorder = &MockAdminsMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockAdmins) EXPECT() *MockAdminsMockRecorder {
+	return m.recorder
+}
+
+// SignIn mocks base method
+func (m *MockAdmins) SignIn(ctx context.Context, input service.SignInInput) (service.Tokens, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SignIn", ctx, input)
+	ret0, _ := ret[0].(service.Tokens)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SignIn indicates an expected call of SignIn
+func (mr *MockAdminsMockRecorder) SignIn(ctx, input interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SignIn", reflect.TypeOf((*MockAdmins)(nil).SignIn), ctx, input)
+}
+
+// RefreshTokens mocks base method
+func (m *MockAdmins) RefreshTokens(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (service.Tokens, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RefreshTokens", ctx, schoolId, refreshToken)
+	ret0, _ := ret[0].(service.Tokens)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// RefreshTokens indicates an expected call of RefreshTokens
+func (mr *MockAdminsMockRecorder) RefreshTokens(ctx, schoolId, refreshToken interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RefreshTokens", reflect.TypeOf((*MockAdmins)(nil).RefreshTokens), ctx, schoolId, refreshToken)
+}
+
 // MockEmails is a mock of Emails interface
 type MockEmails struct {
 	ctrl     *gomock.Controller
@@ -369,6 +422,21 @@ func (m *MockCourses) GetOfferById(ctx context.Context, id primitive.ObjectID) (
 func (mr *MockCoursesMockRecorder) GetOfferById(ctx, id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOfferById", reflect.TypeOf((*MockCourses)(nil).GetOfferById), ctx, id)
+}
+
+// Create mocks base method
+func (m *MockCourses) Create(ctx context.Context, schoolId primitive.ObjectID, name string) (primitive.ObjectID, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Create", ctx, schoolId, name)
+	ret0, _ := ret[0].(primitive.ObjectID)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Create indicates an expected call of Create
+func (mr *MockCoursesMockRecorder) Create(ctx, schoolId, name interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockCourses)(nil).Create), ctx, schoolId, name)
 }
 
 // MockOrders is a mock of Orders interface

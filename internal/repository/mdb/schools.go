@@ -25,7 +25,6 @@ func (r *SchoolsRepo) GetByDomain(ctx context.Context, domainName string) (domai
 	return school, err
 }
 
-// TODO: remove unused?
 func (r *SchoolsRepo) GetById(ctx context.Context, id primitive.ObjectID) (domain.School, error) {
 	var school domain.School
 	err := r.db.FindOne(ctx, bson.M{"_id": id}).Decode(&school)

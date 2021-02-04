@@ -77,3 +77,9 @@ func (r *CoursesRepo) GetPackagesModules(ctx context.Context, packageIds []primi
 	err = cur.All(ctx, &modules)
 	return modules, err
 }
+
+func (r *CoursesRepo) Create(ctx context.Context, schoolId primitive.ObjectID, course domain.Course) (primitive.ObjectID, error) {
+	course.ID = primitive.NewObjectID()
+	_, err := r.db.Collection(schoolsCollection).UpdateOne(ctx, bson.M{"_id": schoolId}, bson.M{"$push": bson.M{"courses": course}})
+	return course.ID, err
+}

@@ -5,6 +5,7 @@ import (
 	"github.com/zhashkevych/courses-backend/internal/domain"
 	"github.com/zhashkevych/courses-backend/internal/repository"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"time"
 )
 
 type CoursesService struct {
@@ -82,4 +83,12 @@ func (s *CoursesService) GetPromocodeById(ctx context.Context, id primitive.Obje
 
 func (s *CoursesService) GetOfferById(ctx context.Context, id primitive.ObjectID) (domain.Offer, error) {
 	return s.offersRepo.GetById(ctx, id)
+}
+
+func (s *CoursesService) Create(ctx context.Context, schoolId primitive.ObjectID, name string) (primitive.ObjectID, error) {
+	return s.repo.Create(ctx, schoolId, domain.Course{
+		Name:      name,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	})
 }
