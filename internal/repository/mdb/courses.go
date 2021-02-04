@@ -83,3 +83,28 @@ func (r *CoursesRepo) Create(ctx context.Context, schoolId primitive.ObjectID, c
 	_, err := r.db.Collection(schoolsCollection).UpdateOne(ctx, bson.M{"_id": schoolId}, bson.M{"$push": bson.M{"courses": course}})
 	return course.ID, err
 }
+
+func (r *CoursesRepo) UpdateCourse(ctx context.Context, schoolId primitive.ObjectID, course domain.Course) error {
+	updateQuery := bson.M{}
+
+	if course.Name != "" {
+		updateQuery["courses.$.name"] = course.Name
+	}
+
+	if course.Description != "" {
+		updateQuery["courses.$.description"] = course.Description
+	}
+
+	if course.Code != "" {
+		updateQuery["courses.$.code"] = course.Code
+	}
+
+	if course.Published != nil {
+		updateQuery["courses.$.published"] = *course.Published
+	}
+
+	_, err := r.db.Collection(schoolsCollection).UpdateOne(ctx,
+		bson.M{"_id": schoolId, "courses._id": course.ID}, bson.M{"$set": updateQuery})
+
+	return err
+}

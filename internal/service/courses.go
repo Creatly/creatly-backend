@@ -92,3 +92,20 @@ func (s *CoursesService) Create(ctx context.Context, schoolId primitive.ObjectID
 		UpdatedAt: time.Now(),
 	})
 }
+
+func (s *CoursesService) Update(ctx context.Context, schoolId primitive.ObjectID, inp UpdateCourseInput) error {
+	course := domain.Course{
+		Name:        inp.Name,
+		Code:        inp.Code,
+		Description: inp.Description,
+		Published:   inp.Published,
+	}
+
+	var err error
+	course.ID, err = primitive.ObjectIDFromHex(inp.CourseID)
+	if err != nil {
+		return err
+	}
+
+	return s.repo.UpdateCourse(ctx, schoolId, course)
+}

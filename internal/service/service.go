@@ -68,6 +68,14 @@ type Emails interface {
 	AddToList(AddToListInput) error
 }
 
+type UpdateCourseInput struct {
+	CourseID    string
+	Name        string
+	Code        string
+	Description string
+	Published   *bool
+}
+
 type Courses interface {
 	GetCourseModules(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
 	GetModule(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
@@ -84,6 +92,7 @@ type Courses interface {
 	GetOfferById(ctx context.Context, id primitive.ObjectID) (domain.Offer, error)
 
 	Create(ctx context.Context, schoolId primitive.ObjectID, name string) (primitive.ObjectID, error)
+	Update(ctx context.Context, schoolId primitive.ObjectID, inp UpdateCourseInput) error
 }
 
 type Orders interface {

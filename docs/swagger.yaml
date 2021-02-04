@@ -47,6 +47,17 @@ definitions:
           type: string
         type: array
     type: object
+  v1.adminUpdateCourseInput:
+    properties:
+      code:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+      published:
+        type: boolean
+    type: object
   v1.createCourseInput:
     properties:
       name:
@@ -279,6 +290,51 @@ paths:
       security:
       - AdminAuth: []
       summary: Admin Get Course By ID
+      tags:
+      - admins
+    put:
+      consumes:
+      - application/json
+      description: admin update course
+      operationId: adminUpdateCourse
+      parameters:
+      - description: course id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: course update info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.adminUpdateCourseInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Update Course
       tags:
       - admins
   /admins/sign-in:

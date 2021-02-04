@@ -229,6 +229,36 @@ func (mr *MockAdminsMockRecorder) RefreshTokens(ctx, schoolId, refreshToken inte
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RefreshTokens", reflect.TypeOf((*MockAdmins)(nil).RefreshTokens), ctx, schoolId, refreshToken)
 }
 
+// GetCourses mocks base method
+func (m *MockAdmins) GetCourses(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Course, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetCourses", ctx, schoolId)
+	ret0, _ := ret[0].([]domain.Course)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetCourses indicates an expected call of GetCourses
+func (mr *MockAdminsMockRecorder) GetCourses(ctx, schoolId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCourses", reflect.TypeOf((*MockAdmins)(nil).GetCourses), ctx, schoolId)
+}
+
+// GetCourseById mocks base method
+func (m *MockAdmins) GetCourseById(ctx context.Context, schoolId, courseId primitive.ObjectID) (domain.Course, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetCourseById", ctx, schoolId, courseId)
+	ret0, _ := ret[0].(domain.Course)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetCourseById indicates an expected call of GetCourseById
+func (mr *MockAdminsMockRecorder) GetCourseById(ctx, schoolId, courseId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCourseById", reflect.TypeOf((*MockAdmins)(nil).GetCourseById), ctx, schoolId, courseId)
+}
+
 // MockEmails is a mock of Emails interface
 type MockEmails struct {
 	ctrl     *gomock.Controller
@@ -437,6 +467,20 @@ func (m *MockCourses) Create(ctx context.Context, schoolId primitive.ObjectID, n
 func (mr *MockCoursesMockRecorder) Create(ctx, schoolId, name interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockCourses)(nil).Create), ctx, schoolId, name)
+}
+
+// Update mocks base method
+func (m *MockCourses) Update(ctx context.Context, schoolId primitive.ObjectID, inp service.UpdateCourseInput) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Update", ctx, schoolId, inp)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Update indicates an expected call of Update
+func (mr *MockCoursesMockRecorder) Update(ctx, schoolId, inp interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockCourses)(nil).Update), ctx, schoolId, inp)
 }
 
 // MockOrders is a mock of Orders interface

@@ -217,8 +217,58 @@ func (h *Handler) adminGetCourseById(c *gin.Context) {
 	c.JSON(http.StatusOK, newGetCourseByIdResponse(course, modules))
 }
 
-func (h *Handler) adminUpdateCourse(c *gin.Context) {
+type adminUpdateCourseInput struct {
+	Name        string `json:"name"`
+	Code        string `json:"code"`
+	Description string `json:"description"`
+	Published   *bool  `json:"published"`
+}
 
+// @Summary Admin Update Course
+// @Security AdminAuth
+// @Tags admins
+// @Description admin update course
+// @ID adminUpdateCourse
+// @Accept  json
+// @Produce  json
+// @Param id path string true "course id"
+// @Param input body adminUpdateCourseInput true "course update info"
+// @Success 200 {string} string "ok"
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/courses/{id} [put]
+func (h *Handler) adminUpdateCourse(c *gin.Context) {
+	idParam := c.Param("id")
+	if idParam == "" {
+		newResponse(c, http.StatusBadRequest, "empty id param")
+		return
+	}
+
+	var inp adminUpdateCourseInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "empty id param")
+		return
+	}
+
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if err := h.coursesService.Update(c.Request.Context(), school.ID, service.UpdateCourseInput{
+		CourseID:    idParam,
+		Name:        inp.Name,
+		Description: inp.Description,
+		Code:        inp.Code,
+		Published:   inp.Published,
+	}); err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.Status(http.StatusOK)
 }
 
 func (h *Handler) adminGetCourseContent(c *gin.Context) {

@@ -15,8 +15,8 @@ type AdminsService struct {
 	hasher       hash.PasswordHasher
 	tokenManager auth.TokenManager
 
-	repo           repository.Admins
-	schoolRepo     repository.Schools
+	repo       repository.Admins
+	schoolRepo repository.Schools
 
 	accessTokenTTL  time.Duration
 	refreshTokenTTL time.Duration
@@ -25,11 +25,11 @@ type AdminsService struct {
 func NewAdminsService(hasher hash.PasswordHasher, tokenManager auth.TokenManager,
 	repo repository.Admins, schoolRepo repository.Schools, accessTokenTTL time.Duration, refreshTokenTTL time.Duration) *AdminsService {
 	return &AdminsService{
-		hasher: hasher,
-		tokenManager: tokenManager,
-		repo: repo,
-		schoolRepo: schoolRepo,
-		accessTokenTTL: accessTokenTTL,
+		hasher:          hasher,
+		tokenManager:    tokenManager,
+		repo:            repo,
+		schoolRepo:      schoolRepo,
+		accessTokenTTL:  accessTokenTTL,
 		refreshTokenTTL: refreshTokenTTL,
 	}
 }
