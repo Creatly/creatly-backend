@@ -130,16 +130,16 @@ func TestHandler_studentCreateOrder(t *testing.T) {
 }
 
 func TestHandler_studentGetPromocode(t *testing.T) {
-	type mockBehavior func(r *mock_service.MockCourses, schoolId primitive.ObjectID, code string, promocode domain.Promocode)
+	type mockBehavior func(r *mock_service.MockCourses, schoolId primitive.ObjectID, code string, promocode domain.PromoCode)
 
 	schoolId := primitive.NewObjectID()
 
-	promocode := domain.Promocode{
+	promocode := domain.PromoCode{
 		Code:               "GOGOGO25",
 		DiscountPercentage: 25,
 	}
 
-	setResponseBody := func(promocode domain.Promocode) string {
+	setResponseBody := func(promocode domain.PromoCode) string {
 		body, _ := json.Marshal(promocode)
 		return string(body)
 	}
@@ -148,7 +148,7 @@ func TestHandler_studentGetPromocode(t *testing.T) {
 		name         string
 		code         string
 		schoolId     primitive.ObjectID
-		promocode    domain.Promocode
+		promocode    domain.PromoCode
 		mockBehavior mockBehavior
 		statusCode   int
 		responseBody string
@@ -158,7 +158,7 @@ func TestHandler_studentGetPromocode(t *testing.T) {
 			code:      "GOGOGO25",
 			schoolId:  schoolId,
 			promocode: promocode,
-			mockBehavior: func(r *mock_service.MockCourses, schoolId primitive.ObjectID, code string, promocode domain.Promocode) {
+			mockBehavior: func(r *mock_service.MockCourses, schoolId primitive.ObjectID, code string, promocode domain.PromoCode) {
 				r.EXPECT().GetPromocodeByCode(context.Background(), schoolId, code).Return(promocode, nil)
 			},
 			statusCode:   200,
@@ -169,7 +169,7 @@ func TestHandler_studentGetPromocode(t *testing.T) {
 			code:         "",
 			schoolId:     schoolId,
 			promocode:    promocode,
-			mockBehavior: func(r *mock_service.MockCourses, schoolId primitive.ObjectID, code string, promocode domain.Promocode) {},
+			mockBehavior: func(r *mock_service.MockCourses, schoolId primitive.ObjectID, code string, promocode domain.PromoCode) {},
 			statusCode:   404,
 			responseBody: `404 page not found`,
 		},
@@ -178,7 +178,7 @@ func TestHandler_studentGetPromocode(t *testing.T) {
 			code:      "GOGOGO25",
 			schoolId:  schoolId,
 			promocode: promocode,
-			mockBehavior: func(r *mock_service.MockCourses, schoolId primitive.ObjectID, code string, promocode domain.Promocode) {
+			mockBehavior: func(r *mock_service.MockCourses, schoolId primitive.ObjectID, code string, promocode domain.PromoCode) {
 				r.EXPECT().GetPromocodeByCode(context.Background(), schoolId, code).Return(promocode, errors.New("failed to get promocode"))
 			},
 			statusCode:   500,

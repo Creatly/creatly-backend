@@ -73,11 +73,11 @@ func (s *CoursesService) GetModuleOffers(ctx context.Context, schoolId, moduleId
 	return s.GetPackageOffers(ctx, schoolId, module.PackageID)
 }
 
-func (s *CoursesService) GetPromocodeByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.Promocode, error) {
+func (s *CoursesService) GetPromocodeByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.PromoCode, error) {
 	return s.promoRepo.GetByCode(ctx, schoolId, code)
 }
 
-func (s *CoursesService) GetPromocodeById(ctx context.Context, id primitive.ObjectID) (domain.Promocode, error) {
+func (s *CoursesService) GetPromocodeById(ctx context.Context, id primitive.ObjectID) (domain.PromoCode, error) {
 	return s.promoRepo.GetById(ctx, id)
 }
 
@@ -108,4 +108,14 @@ func (s *CoursesService) Update(ctx context.Context, schoolId primitive.ObjectID
 	}
 
 	return s.repo.UpdateCourse(ctx, schoolId, course)
+}
+
+func (s *CoursesService) CreateModule(ctx context.Context, courseId primitive.ObjectID, name string, position int) (primitive.ObjectID, error) {
+	module := domain.Module{
+		Name:     name,
+		Position: position,
+		CourseID: courseId,
+	}
+
+	return s.repo.CreateModule(ctx, module)
 }

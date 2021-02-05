@@ -30,6 +30,7 @@ type Admins interface {
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.Admin, error)
 }
 
+// TODO decompose interface
 type Courses interface {
 	GetModules(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
 	GetModule(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
@@ -37,6 +38,7 @@ type Courses interface {
 	GetPackagesModules(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Module, error)
 	Create(ctx context.Context, schoolId primitive.ObjectID, course domain.Course) (primitive.ObjectID, error)
 	UpdateCourse(ctx context.Context, schoolId primitive.ObjectID, course domain.Course) error
+	CreateModule(ctx context.Context, module domain.Module) (primitive.ObjectID, error)
 }
 
 type Offers interface {
@@ -45,8 +47,8 @@ type Offers interface {
 }
 
 type Promocodes interface {
-	GetByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.Promocode, error)
-	GetById(ctx context.Context, id primitive.ObjectID) (domain.Promocode, error)
+	GetByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.PromoCode, error)
+	GetById(ctx context.Context, id primitive.ObjectID) (domain.PromoCode, error)
 }
 
 type Orders interface {

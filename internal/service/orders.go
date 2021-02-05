@@ -68,9 +68,9 @@ func (s *OrdersService) AddTransaction(ctx context.Context, id primitive.ObjectI
 	return s.repo.AddTransaction(ctx, id, transaction)
 }
 
-func (s *OrdersService) getOrderPromocode(ctx context.Context, promocodeId primitive.ObjectID) (domain.Promocode, error) {
+func (s *OrdersService) getOrderPromocode(ctx context.Context, promocodeId primitive.ObjectID) (domain.PromoCode, error) {
 	var (
-		promocode domain.Promocode
+		promocode domain.PromoCode
 		err       error
 	)
 
@@ -88,7 +88,7 @@ func (s *OrdersService) getOrderPromocode(ctx context.Context, promocodeId primi
 	return promocode, nil
 }
 
-func (s *OrdersService) calculateOrderPrice(price int, promocode domain.Promocode) int {
+func (s *OrdersService) calculateOrderPrice(price int, promocode domain.PromoCode) int {
 	if promocode.ID.IsZero() {
 		return price
 	} else {

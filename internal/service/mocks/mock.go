@@ -134,9 +134,9 @@ func (mr *MockStudentsMockRecorder) Verify(ctx, hash interface{}) *gomock.Call {
 }
 
 // GetStudentModuleWithLessons mocks base method
-func (m *MockStudents) GetStudentModuleWithLessons(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) ([]domain.Lesson, error) {
+func (m *MockStudents) GetModuleLessons(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) ([]domain.Lesson, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetStudentModuleWithLessons", ctx, schoolId, studentId, moduleId)
+	ret := m.ctrl.Call(m, "GetModuleLessons", ctx, schoolId, studentId, moduleId)
 	ret0, _ := ret[0].([]domain.Lesson)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
@@ -145,7 +145,7 @@ func (m *MockStudents) GetStudentModuleWithLessons(ctx context.Context, schoolId
 // GetStudentModuleWithLessons indicates an expected call of GetStudentModuleWithLessons
 func (mr *MockStudentsMockRecorder) GetStudentModuleWithLessons(ctx, schoolId, studentId, moduleId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStudentModuleWithLessons", reflect.TypeOf((*MockStudents)(nil).GetStudentModuleWithLessons), ctx, schoolId, studentId, moduleId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetModuleLessons", reflect.TypeOf((*MockStudents)(nil).GetModuleLessons), ctx, schoolId, studentId, moduleId)
 }
 
 // GiveAccessToModules mocks base method
@@ -410,10 +410,10 @@ func (mr *MockCoursesMockRecorder) GetPackagesModules(ctx, packageIds interface{
 }
 
 // GetPromocodeByCode mocks base method
-func (m *MockCourses) GetPromocodeByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.Promocode, error) {
+func (m *MockCourses) GetPromocodeByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.PromoCode, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetPromocodeByCode", ctx, schoolId, code)
-	ret0, _ := ret[0].(domain.Promocode)
+	ret0, _ := ret[0].(domain.PromoCode)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -425,10 +425,10 @@ func (mr *MockCoursesMockRecorder) GetPromocodeByCode(ctx, schoolId, code interf
 }
 
 // GetPromocodeById mocks base method
-func (m *MockCourses) GetPromocodeById(ctx context.Context, id primitive.ObjectID) (domain.Promocode, error) {
+func (m *MockCourses) GetPromocodeById(ctx context.Context, id primitive.ObjectID) (domain.PromoCode, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetPromocodeById", ctx, id)
-	ret0, _ := ret[0].(domain.Promocode)
+	ret0, _ := ret[0].(domain.PromoCode)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

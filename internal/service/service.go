@@ -45,7 +45,7 @@ type Students interface {
 	SignIn(ctx context.Context, input SignInInput) (Tokens, error)
 	RefreshTokens(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (Tokens, error)
 	Verify(ctx context.Context, hash string) error
-	GetStudentModuleWithLessons(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) ([]domain.Lesson, error)
+	GetModuleLessons(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) ([]domain.Lesson, error)
 	GiveAccessToModules(ctx context.Context, studentId primitive.ObjectID, moduleIds []primitive.ObjectID) error
 	GiveAccessToPackages(ctx context.Context, studentId primitive.ObjectID, packageIds []primitive.ObjectID) error
 }
@@ -76,6 +76,7 @@ type UpdateCourseInput struct {
 	Published   *bool
 }
 
+// TODO decompose interface
 type Courses interface {
 	GetCourseModules(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
 	GetModule(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
@@ -86,13 +87,14 @@ type Courses interface {
 	GetPackageOffers(ctx context.Context, schoolId, packageId primitive.ObjectID) ([]domain.Offer, error)
 	GetPackagesModules(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Module, error)
 
-	GetPromocodeByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.Promocode, error)
-	GetPromocodeById(ctx context.Context, id primitive.ObjectID) (domain.Promocode, error)
+	GetPromocodeByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.PromoCode, error)
+	GetPromocodeById(ctx context.Context, id primitive.ObjectID) (domain.PromoCode, error)
 
 	GetOfferById(ctx context.Context, id primitive.ObjectID) (domain.Offer, error)
 
 	Create(ctx context.Context, schoolId primitive.ObjectID, name string) (primitive.ObjectID, error)
 	Update(ctx context.Context, schoolId primitive.ObjectID, inp UpdateCourseInput) error
+	CreateModule(ctx context.Context, courseId primitive.ObjectID, name string, position int) (primitive.ObjectID, error)
 }
 
 type Orders interface {

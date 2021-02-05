@@ -16,14 +16,14 @@ func NewPromocodeRepo(db *mongo.Database) *PromocodesRepo {
 	return &PromocodesRepo{db: db.Collection(promocodesCollection)}
 }
 
-func (r *PromocodesRepo) GetByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.Promocode, error) {
-	var promocode domain.Promocode
+func (r *PromocodesRepo) GetByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.PromoCode, error) {
+	var promocode domain.PromoCode
 	err := r.db.FindOne(ctx, bson.M{"schoolId": schoolId, "code": code}).Decode(&promocode)
 	return promocode, err
 }
 
-func (r *PromocodesRepo) GetById(ctx context.Context, id primitive.ObjectID) (domain.Promocode, error) {
-	var promocode domain.Promocode
+func (r *PromocodesRepo) GetById(ctx context.Context, id primitive.ObjectID) (domain.PromoCode, error) {
+	var promocode domain.PromoCode
 	err := r.db.FindOne(ctx, bson.M{"_id": id}).Decode(&promocode)
 	return promocode, err
 }

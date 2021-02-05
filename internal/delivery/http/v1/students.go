@@ -246,7 +246,11 @@ type lesson struct {
 func newGetCourseByIdResponse(course domain.Course, courseModules []domain.Module) getCourseByIdResponse {
 	modules := make([]module, len(courseModules))
 
+	// TODO move logic to service
 	for i := range courseModules {
+		if !courseModules[i].Published {
+			continue
+		}
 		modules[i].ID = courseModules[i].ID
 		modules[i].Name = courseModules[i].Name
 		modules[i].Position = courseModules[i].Position
@@ -329,7 +333,7 @@ func studentGetSchoolCourse(school domain.School, courseId string) (domain.Cours
 	return searchedCourse, nil
 }
 
-type studentGetModuleLessonsResponse struct {
+type getModuleLessonsResponse struct {
 	Lessons []domain.Lesson `json:"lessons"`
 }
 
@@ -341,7 +345,7 @@ type studentGetModuleLessonsResponse struct {
 // @Accept  json
 // @Produce  json
 // @Param id path string true "module id"
-// @Success 200 {object} studentGetModuleLessonsResponse
+// @Success 200 {object} getModuleLessonsResponse
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
@@ -371,7 +375,7 @@ func (h *Handler) studentGetModuleLessons(c *gin.Context) {
 		return
 	}
 
-	lessons, err := h.studentsService.GetStudentModuleWithLessons(c.Request.Context(), school.ID, studentId, moduleId)
+	lessons, err := h.studentsService.GetModuleLessons(c.Request.Context(), school.ID, studentId, moduleId)
 	if err != nil {
 		if err == service.ErrModuleIsNotAvailable {
 			newResponse(c, http.StatusForbidden, err.Error())
@@ -382,7 +386,7 @@ func (h *Handler) studentGetModuleLessons(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, studentGetModuleLessonsResponse{
+	c.JSON(http.StatusOK, getModuleLessonsResponse{
 		Lessons: lessons,
 	})
 }
@@ -470,7 +474,7 @@ func (h *Handler) studentGetModuleOffers(c *gin.Context) {
 	})
 }
 
-// @Summary Student Get Promocode By Code
+// @Summary Student Get PromoCode By Code
 // @Security StudentsAuth
 // @Tags students
 // @Description student get promocode by code
@@ -478,7 +482,7 @@ func (h *Handler) studentGetModuleOffers(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Param code path string true "code"
-// @Success 200 {object} domain.Promocode
+// @Success 200 {object} domain.PromoCode
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response

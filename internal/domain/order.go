@@ -13,7 +13,7 @@ const (
 )
 
 type Order struct {
-	ID           primitive.ObjectID `json:"id" bson:"_id"`
+	ID           primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	StudentID    primitive.ObjectID `json:"studentId" bson:"studentId"`
 	OfferID      primitive.ObjectID `json:"offerId" bson:"offerId"`
 	PromoID      primitive.ObjectID `json:"promoId" bson:"promoId"`

@@ -18,7 +18,7 @@ func NewCoursesRepo(db *mongo.Database) *CoursesRepo {
 
 func (r *CoursesRepo) GetModules(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error) {
 	var modules []domain.Module
-	cur, err := r.db.Collection(modulesCollection).Find(ctx, bson.M{"courseId": courseId, "published": true})
+	cur, err := r.db.Collection(modulesCollection).Find(ctx, bson.M{"courseId": courseId})
 	if err != nil {
 		return nil, err
 	}
@@ -107,4 +107,9 @@ func (r *CoursesRepo) UpdateCourse(ctx context.Context, schoolId primitive.Objec
 		bson.M{"_id": schoolId, "courses._id": course.ID}, bson.M{"$set": updateQuery})
 
 	return err
+}
+
+func (r *CoursesRepo) CreateModule(ctx context.Context, module domain.Module) (primitive.ObjectID, error) {
+	res, err := r.db.Collection(modulesCollection).InsertOne(ctx, module)
+	return res.InsertedID.(primitive.ObjectID), err
 }

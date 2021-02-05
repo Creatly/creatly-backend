@@ -3,7 +3,7 @@ package domain
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
 type School struct {
-	ID           primitive.ObjectID  `json:"id" bson:"_id"`
+	ID           primitive.ObjectID  `json:"id" bson:"_id,omitempty"`
 	Name         string              `json:"name" bson:"name"`
 	Description  string              `json:"description" bson:"description"`
 	Domain       string              `json:"domain" bson:"domain"`
@@ -13,8 +13,9 @@ type School struct {
 }
 
 type Admin struct {
-	ID primitive.ObjectID `json:"id" bson:"_id"`
-	Name     string `json:"name" bson:"name"`
-	Email    string `json:"email" bson:"email"`
-	Password string `json:"hash" bson:"hash"`
+	ID       primitive.ObjectID `json:"id" bson:"_id"`
+	Name     string             `json:"name" bson:"name"`
+	Email    string             `json:"email" bson:"email"`
+	Password string             `json:"password" bson:"password"`
+	SchoolId primitive.ObjectID
 }

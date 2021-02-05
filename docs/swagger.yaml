@@ -63,6 +63,16 @@ definitions:
       name:
         type: string
     type: object
+  v1.createModuleInput:
+    properties:
+      name:
+        type: string
+      position:
+        type: integer
+    required:
+    - name
+    - position
+    type: object
   v1.createOrderInput:
     properties:
       offerId:
@@ -76,6 +86,13 @@ definitions:
     properties:
       paymentLink:
         type: string
+    type: object
+  v1.getModuleLessonsResponse:
+    properties:
+      lessons:
+        items:
+          $ref: '#/definitions/domain.Lesson'
+        type: array
     type: object
   v1.refreshInput:
     properties:
@@ -98,13 +115,6 @@ definitions:
     required:
     - email
     - password
-    type: object
-  v1.studentGetModuleLessonsResponse:
-    properties:
-      lessons:
-        items:
-          $ref: '#/definitions/domain.Lesson'
-        type: array
     type: object
   v1.studentSignUpInput:
     properties:
@@ -173,7 +183,7 @@ paths:
             $ref: '#/definitions/v1.response'
       summary: Admin Refresh Tokens
       tags:
-      - admins
+      - admins-auth
   /admins/courses:
     get:
       consumes:
@@ -209,7 +219,7 @@ paths:
       - AdminAuth: []
       summary: Admin Get All Courses
       tags:
-      - admins
+      - admins-courses
     post:
       consumes:
       - application/json
@@ -251,7 +261,7 @@ paths:
       - AdminAuth: []
       summary: Admin Create New Courses
       tags:
-      - admins
+      - admins-courses
   /admins/courses/{id}:
     get:
       consumes:
@@ -291,7 +301,7 @@ paths:
       - AdminAuth: []
       summary: Admin Get Course By ID
       tags:
-      - admins
+      - admins-courses
     put:
       consumes:
       - application/json
@@ -336,7 +346,93 @@ paths:
       - AdminAuth: []
       summary: Admin Update Course
       tags:
-      - admins
+      - admins-courses
+  /admins/courses/{id}/modules:
+    post:
+      consumes:
+      - application/json
+      description: admin update course
+      operationId: adminCreateModule
+      parameters:
+      - description: module id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: module info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.createModuleInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: id
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Create Module
+      tags:
+      - admins-modules
+  /admins/modules/{id}/lessons:
+    get:
+      consumes:
+      - application/json
+      description: admin get module content
+      operationId: adminGetModuleLessons
+      parameters:
+      - description: module id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Get Module Lessons
+      tags:
+      - admins-lessons
   /admins/sign-in:
     post:
       consumes:
@@ -375,7 +471,7 @@ paths:
             $ref: '#/definitions/v1.response'
       summary: Admin SignIn
       tags:
-      - admins
+      - admins-auth
   /students/auth/refresh:
     post:
       consumes:
@@ -504,7 +600,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1.studentGetModuleLessonsResponse'
+            $ref: '#/definitions/v1.getModuleLessonsResponse'
         "400":
           description: Bad Request
           schema:
