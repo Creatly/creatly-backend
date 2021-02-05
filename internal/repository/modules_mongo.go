@@ -1,4 +1,4 @@
-package mdb
+package repository
 
 import (
 	"context"
@@ -47,4 +47,30 @@ func (r *ModulesRepo) GetByPackages(ctx context.Context, packageIds []primitive.
 
 	err = cur.All(ctx, &modules)
 	return modules, err
+}
+
+func (r *ModulesRepo) Update(ctx context.Context, inp UpdateModuleInput) error {
+	updateQuery := bson.M{}
+
+	if inp.Name != "" {
+		updateQuery["name"] = inp.Name
+	}
+
+	if inp.Position != nil {
+		updateQuery["position"] = *inp.Position
+	}
+
+	if inp.Published != nil {
+		updateQuery["published"] = *inp.Published
+	}
+
+	_, err := r.db.UpdateOne(ctx,
+		bson.M{"_id": inp.ID}, bson.M{"$set": updateQuery})
+
+	return err
+}
+
+func (r *ModulesRepo) Delete(ctx context.Context, id primitive.ObjectID) error {
+	_, err := r.db.DeleteOne(ctx, bson.M{"_id": id})
+	return err
 }

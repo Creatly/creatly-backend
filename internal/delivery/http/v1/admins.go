@@ -2,6 +2,7 @@ package v1
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/zhashkevych/courses-backend/internal/domain"
 	"github.com/zhashkevych/courses-backend/internal/service"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
@@ -21,22 +22,17 @@ func (h *Handler) initAdminRoutes(api *gin.RouterGroup) {
 				courses.GET("/", h.adminGetAllCourses)
 				courses.GET("/:id", h.adminGetCourseById)
 				courses.PUT("/:id", h.adminUpdateCourse)
-
-				modules := courses.Group("/:id/modules")
-				{
-					modules.POST("/", h.adminCreateModule)
-					modules.PUT("/:moduleId", h.adminUpdateModule)
-					modules.DELETE("/:moduleId", h.adminDeleteModule)
-				}
+				courses.POST("/:id/modules", h.adminCreateModule)
 			}
 
-			lessons := authenticated.Group("/modules/:id/lessons")
+			modules := authenticated.Group("/modules")
 			{
-				lessons.GET("/", h.adminGetModuleLessons)
-				lessons.POST("/", h.adminCreateLesson)
-				lessons.PUT("/:id", h.adminUpdateLesson)
-				lessons.DELETE("/:id", h.adminDeleteLesson)
+				modules.PUT("/:id", h.adminUpdateModule)
+				modules.DELETE("/:id", h.adminDeleteModule)
+				modules.GET(":id/lessons", h.adminGetModuleLessons)
+				modules.POST("id/lessons", h.adminCreateLesson)
 			}
+
 		}
 	}
 }
@@ -187,6 +183,11 @@ func (h *Handler) adminGetAllCourses(c *gin.Context) {
 	c.JSON(http.StatusOK, courses)
 }
 
+type adminGetCourseByIdResponse struct {
+	Course  domain.Course   `json:"course"`
+	Modules []domain.Module `json:"modules"`
+}
+
 // @Summary Admin Get Course By ID
 // @Security AdminAuth
 // @Tags admins-courses
@@ -231,7 +232,10 @@ func (h *Handler) adminGetCourseById(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, newGetCourseByIdResponse(course, modules))
+	c.JSON(http.StatusOK, adminGetCourseByIdResponse{
+		Course:  course,
+		Modules: modules,
+	})
 }
 
 type adminUpdateCourseInput struct {
@@ -350,6 +354,94 @@ type createModuleInput struct {
 // @Failure default {object} response
 // @Router /admins/courses/{id}/modules [post]
 func (h *Handler) adminCreateModule(c *gin.Context) {
+	id := c.Param("id")
+	if id == "" {
+		newResponse(c, http.StatusBadRequest, "empty id param")
+		return
+	}
+
+	var inp createModuleInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+
+	moduleId, err := h.modulesService.Create(c.Request.Context(), service.CreateModuleInput{
+		CourseID: id,
+		Name:     inp.Name,
+		Position: inp.Position,
+	})
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, "invalid id param")
+		return
+	}
+
+	c.JSON(http.StatusCreated, map[string]interface{}{
+		"id": moduleId,
+	})
+}
+
+type updateModuleInput struct {
+	Name      string `json:"name"`
+	Position  *int   `json:"position"`
+	Published *bool  `json:"published"`
+}
+
+// @Summary Admin Update Module
+// @Security AdminAuth
+// @Tags admins-modules
+// @Description admin update course
+// @ID adminUpdateModule
+// @Accept  json
+// @Produce  json
+// @Param id path string true "module id"
+// @Param input body updateModuleInput true "update info"
+// @Success 200 {string} string "ok"
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/modules/{id} [put]
+func (h *Handler) adminUpdateModule(c *gin.Context) {
+	id := c.Param("id")
+	if id == "" {
+		newResponse(c, http.StatusBadRequest, "empty id param")
+		return
+	}
+
+	var inp updateModuleInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+
+	err := h.modulesService.Update(c.Request.Context(), service.UpdateModuleInput{
+		ID:        id,
+		Name:      inp.Name,
+		Position:  inp.Position,
+		Published: inp.Published,
+	})
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.Status(http.StatusOK)
+}
+
+// @Summary Admin Delete Module
+// @Security AdminAuth
+// @Tags admins-modules
+// @Description admin update course
+// @ID adminDeleteModule
+// @Accept  json
+// @Produce  json
+// @Param id path string true "module id"
+// @Success 200 {string} string "ok"
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/modules/{id} [delete]
+func (h *Handler) adminDeleteModule(c *gin.Context) {
 	idParam := c.Param("id")
 	if idParam == "" {
 		newResponse(c, http.StatusBadRequest, "empty id param")
@@ -362,29 +454,13 @@ func (h *Handler) adminCreateModule(c *gin.Context) {
 		return
 	}
 
-	var inp createModuleInput
-	if err := c.BindJSON(&inp); err != nil {
-		newResponse(c, http.StatusBadRequest, "invalid input body")
-		return
-	}
-
-	moduleId, err := h.modulesService.Create(c.Request.Context(), id, inp.Name, inp.Position)
+	err = h.modulesService.Delete(c.Request.Context(), id)
 	if err != nil {
-		newResponse(c, http.StatusInternalServerError, "invalid id param")
+		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusCreated, map[string]interface{}{
-		"id": moduleId,
-	})
-}
-
-func (h *Handler) adminUpdateModule(c *gin.Context) {
-
-}
-
-func (h *Handler) adminDeleteModule(c *gin.Context) {
-
+	c.Status(http.StatusOK)
 }
 
 func (h *Handler) adminCreateLesson(c *gin.Context) {

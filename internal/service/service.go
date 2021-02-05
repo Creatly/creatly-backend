@@ -92,12 +92,27 @@ type Offers interface {
 	GetByPackage(ctx context.Context, schoolId, packageId primitive.ObjectID) ([]domain.Offer, error)
 }
 
+type CreateModuleInput struct {
+	CourseID string
+	Name string
+	Position int
+}
+
+type UpdateModuleInput struct {
+	ID        string
+	Name      string
+	Position  *int
+	Published *bool
+}
+
 type Modules interface {
 	GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
 	GetById(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
 	GetByPackages(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Module, error)
 	GetWithContent(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
-	Create(ctx context.Context, courseId primitive.ObjectID, name string, position int) (primitive.ObjectID, error)
+	Create(ctx context.Context, inp CreateModuleInput) (primitive.ObjectID, error)
+	Update(ctx context.Context, inp UpdateModuleInput) error
+	Delete(ctx context.Context, id primitive.ObjectID) error
 }
 
 type Orders interface {

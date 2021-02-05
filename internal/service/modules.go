@@ -60,12 +60,37 @@ func (s *ModulesService) GetByPackages(ctx context.Context, packageIds []primiti
 	return s.repo.GetByPackages(ctx, packageIds)
 }
 
-func (s *ModulesService) Create(ctx context.Context, courseId primitive.ObjectID, name string, position int) (primitive.ObjectID, error) {
+func (s *ModulesService) Create(ctx context.Context, inp CreateModuleInput) (primitive.ObjectID, error) {
+	id, err := primitive.ObjectIDFromHex(inp.CourseID)
+	if err != nil {
+		return id, err
+	}
+
 	module := domain.Module{
-		Name:     name,
-		Position: position,
-		CourseID: courseId,
+		Name:     inp.Name,
+		Position: inp.Position,
+		CourseID: id,
 	}
 
 	return s.repo.Create(ctx, module)
+}
+
+func (s *ModulesService) Update(ctx context.Context, inp UpdateModuleInput) error {
+	id, err := primitive.ObjectIDFromHex(inp.ID)
+	if err != nil {
+		return err
+	}
+
+	updateInput := repository.UpdateModuleInput{
+		ID:        id,
+		Name:      inp.Name,
+		Position:  inp.Position,
+		Published: inp.Published,
+	}
+
+	return s.repo.Update(ctx, updateInput)
+}
+
+func (s *ModulesService) Delete(ctx context.Context, id primitive.ObjectID) error {
+	return s.repo.Delete(ctx, id)
 }

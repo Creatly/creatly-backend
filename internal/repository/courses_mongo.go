@@ -1,4 +1,4 @@
-package mdb
+package repository
 
 import (
 	"context"
@@ -22,27 +22,27 @@ func (r *CoursesRepo) Create(ctx context.Context, schoolId primitive.ObjectID, c
 	return course.ID, err
 }
 
-func (r *CoursesRepo) Update(ctx context.Context, schoolId primitive.ObjectID, course domain.Course) error {
+func (r *CoursesRepo) Update(ctx context.Context, schoolId primitive.ObjectID, inp UpdateCourseInput) error {
 	updateQuery := bson.M{}
 
-	if course.Name != "" {
-		updateQuery["courses.$.name"] = course.Name
+	if inp.Name != "" {
+		updateQuery["courses.$.name"] = inp.Name
 	}
 
-	if course.Description != "" {
-		updateQuery["courses.$.description"] = course.Description
+	if inp.Description != "" {
+		updateQuery["courses.$.description"] = inp.Description
 	}
 
-	if course.Code != "" {
-		updateQuery["courses.$.code"] = course.Code
+	if inp.Code != "" {
+		updateQuery["courses.$.code"] = inp.Code
 	}
 
-	if course.Published != nil {
-		updateQuery["courses.$.published"] = *course.Published
+	if inp.Published != nil {
+		updateQuery["courses.$.published"] = *inp.Published
 	}
 
 	_, err := r.db.Collection(schoolsCollection).UpdateOne(ctx,
-		bson.M{"_id": schoolId, "courses._id": course.ID}, bson.M{"$set": updateQuery})
+		bson.M{"_id": schoolId, "courses._id": inp.ID}, bson.M{"$set": updateQuery})
 
 	return err
 }

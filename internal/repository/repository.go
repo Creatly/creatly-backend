@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	"github.com/zhashkevych/courses-backend/internal/domain"
-	"github.com/zhashkevych/courses-backend/internal/repository/mdb"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -30,9 +29,24 @@ type Admins interface {
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.Admin, error)
 }
 
+type UpdateCourseInput struct {
+	ID          primitive.ObjectID
+	Name        string
+	Code        string
+	Description string
+	Published   *bool
+}
+
 type Courses interface {
 	Create(ctx context.Context, schoolId primitive.ObjectID, course domain.Course) (primitive.ObjectID, error)
-	Update(ctx context.Context, schoolId primitive.ObjectID, course domain.Course) error
+	Update(ctx context.Context, schoolId primitive.ObjectID, inp UpdateCourseInput) error
+}
+
+type UpdateModuleInput struct {
+	ID        primitive.ObjectID
+	Name      string
+	Position  *int
+	Published *bool
 }
 
 type Modules interface {
@@ -40,6 +54,8 @@ type Modules interface {
 	GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
 	GetById(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
 	GetByPackages(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Module, error)
+	Update(ctx context.Context, inp UpdateModuleInput) error
+	Delete(ctx context.Context, id primitive.ObjectID) error
 }
 
 type LessonContent interface {
@@ -75,14 +91,14 @@ type Repositories struct {
 
 func NewRepositories(db *mongo.Database) *Repositories {
 	return &Repositories{
-		Schools:       mdb.NewSchoolsRepo(db),
-		Students:      mdb.NewStudentsRepo(db),
-		Courses:       mdb.NewCoursesRepo(db),
-		Modules:       mdb.NewModulesRepo(db),
-		LessonContent: mdb.NewLessonContentRepo(db),
-		Offers:        mdb.NewOffersRepo(db),
-		PromoCodes:    mdb.NewPromocodeRepo(db),
-		Orders:        mdb.NewOrdersRepo(db),
-		Admins:        mdb.NewAdminsRepo(db),
+		Schools:       NewSchoolsRepo(db),
+		Students:      NewStudentsRepo(db),
+		Courses:       NewCoursesRepo(db),
+		Modules:       NewModulesRepo(db),
+		LessonContent: NewLessonContentRepo(db),
+		Offers:        NewOffersRepo(db),
+		PromoCodes:    NewPromocodeRepo(db),
+		Orders:        NewOrdersRepo(db),
+		Admins:        NewAdminsRepo(db),
 	}
 }

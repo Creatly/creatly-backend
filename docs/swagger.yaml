@@ -139,6 +139,15 @@ definitions:
       refreshToken:
         type: string
     type: object
+  v1.updateModuleInput:
+    properties:
+      name:
+        type: string
+      position:
+        type: integer
+      published:
+        type: boolean
+    type: object
 host: localhost:8000
 info:
   contact: {}
@@ -391,6 +400,91 @@ paths:
       security:
       - AdminAuth: []
       summary: Admin Create Module
+      tags:
+      - admins-modules
+  /admins/modules/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: admin update course
+      operationId: adminDeleteModule
+      parameters:
+      - description: module id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Delete Module
+      tags:
+      - admins-modules
+    put:
+      consumes:
+      - application/json
+      description: admin update course
+      operationId: adminUpdateModule
+      parameters:
+      - description: module id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: update info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.updateModuleInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Update Module
       tags:
       - admins-modules
   /admins/modules/{id}/lessons:
@@ -708,7 +802,7 @@ paths:
       consumes:
       - application/json
       description: student get promocode by code
-      operationId: studentGetPromocode
+      operationId: studentGetPromo
       parameters:
       - description: code
         in: path

@@ -217,10 +217,9 @@ func (h *Handler) studentGetAllCourses(c *gin.Context) {
 	// Return only published courses
 	courses := make([]domain.Course, 0)
 	for _, course := range school.Courses {
-		if course.Published != nil {
-			if *course.Published {
-				courses = append(courses, course)
-			}
+		if course.Published {
+			courses = append(courses, course)
+
 		}
 	}
 
@@ -248,11 +247,7 @@ type lesson struct {
 func newGetCourseByIdResponse(course domain.Course, courseModules []domain.Module) getCourseByIdResponse {
 	modules := make([]module, len(courseModules))
 
-	// TODO move logic to service
 	for i := range courseModules {
-		if !courseModules[i].Published {
-			continue
-		}
 		modules[i].ID = courseModules[i].ID
 		modules[i].Name = courseModules[i].Name
 		modules[i].Position = courseModules[i].Position
@@ -323,10 +318,8 @@ func (h *Handler) studentGetCourseById(c *gin.Context) {
 func studentGetSchoolCourse(school domain.School, courseId string) (domain.Course, error) {
 	var searchedCourse domain.Course
 	for _, course := range school.Courses {
-		if course.Published != nil {
-			if *course.Published && course.ID.Hex() == courseId {
-				searchedCourse = course
-			}
+		if course.Published && course.ID.Hex() == courseId {
+			searchedCourse = course
 		}
 	}
 

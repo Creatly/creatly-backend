@@ -13,7 +13,7 @@ type Course struct {
 	ImageURL    string             `json:"imageUrl" bson:"imageUrl,omitempty"`
 	CreatedAt   time.Time          `json:"createdAt" bson:"createdAt,omitempty"`
 	UpdatedAt   time.Time          `json:"updatedAt" bson:"updatedAt,omitempty"`
-	Published   *bool              `json:"published" bson:"published,omitempty"`
+	Published   bool               `json:"published" bson:"published,omitempty"`
 }
 
 type Module struct {
@@ -22,15 +22,15 @@ type Module struct {
 	Position  int                `json:"position" bson:"position"`
 	Published bool               `json:"published"`
 	CourseID  primitive.ObjectID `json:"courseId" bson:"courseId"`
-	PackageID primitive.ObjectID `json:"packageId" bson:"packageId,omitempty"`
-	Lessons   []Lesson           `json:"lessons" bson:"lessons,omitempty"`
+	PackageID primitive.ObjectID `json:"packageId,omitempty" bson:"packageId,omitempty"`
+	Lessons   []Lesson           `json:"lessons,omitempty" bson:"lessons,omitempty"`
 }
 
 type Lesson struct {
 	ID        primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	Name      string             `json:"name" bson:"name"`
 	Position  int                `json:"position" bson:"position"`
-	Published bool               `json:"published"`
+	Published bool               `json:"published" bson:"published,omitempty"`
 	Content   string             `json:"content,omitempty"`
 }
 

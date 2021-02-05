@@ -25,7 +25,7 @@ func (s *CoursesService) Create(ctx context.Context, schoolId primitive.ObjectID
 }
 
 func (s *CoursesService) Update(ctx context.Context, schoolId primitive.ObjectID, inp UpdateCourseInput) error {
-	course := domain.Course{
+	updateInput := repository.UpdateCourseInput{
 		Name:        inp.Name,
 		Code:        inp.Code,
 		Description: inp.Description,
@@ -33,10 +33,10 @@ func (s *CoursesService) Update(ctx context.Context, schoolId primitive.ObjectID
 	}
 
 	var err error
-	course.ID, err = primitive.ObjectIDFromHex(inp.CourseID)
+	updateInput.ID, err = primitive.ObjectIDFromHex(inp.CourseID)
 	if err != nil {
 		return err
 	}
 
-	return s.repo.Update(ctx, schoolId, course)
+	return s.repo.Update(ctx, schoolId, updateInput)
 }
