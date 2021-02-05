@@ -76,25 +76,28 @@ type UpdateCourseInput struct {
 	Published   *bool
 }
 
-// TODO decompose interface
 type Courses interface {
-	GetCourseModules(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
-	GetModule(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
-	GetModuleWithContent(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
-
-	GetModuleOffers(ctx context.Context, schoolId, moduleId primitive.ObjectID) ([]domain.Offer, error)
-
-	GetPackageOffers(ctx context.Context, schoolId, packageId primitive.ObjectID) ([]domain.Offer, error)
-	GetPackagesModules(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Module, error)
-
-	GetPromoByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.PromoCode, error)
-	GetPromoById(ctx context.Context, id primitive.ObjectID) (domain.PromoCode, error)
-
-	GetOfferById(ctx context.Context, id primitive.ObjectID) (domain.Offer, error)
-
 	Create(ctx context.Context, schoolId primitive.ObjectID, name string) (primitive.ObjectID, error)
 	Update(ctx context.Context, schoolId primitive.ObjectID, inp UpdateCourseInput) error
-	CreateModule(ctx context.Context, courseId primitive.ObjectID, name string, position int) (primitive.ObjectID, error)
+}
+
+type PromoCodes interface {
+	GetByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.PromoCode, error)
+	GetById(ctx context.Context, id primitive.ObjectID) (domain.PromoCode, error)
+}
+
+type Offers interface {
+	GetById(ctx context.Context, id primitive.ObjectID) (domain.Offer, error)
+	GetByModule(ctx context.Context, schoolId, moduleId primitive.ObjectID) ([]domain.Offer, error)
+	GetByPackage(ctx context.Context, schoolId, packageId primitive.ObjectID) ([]domain.Offer, error)
+}
+
+type Modules interface {
+	GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
+	GetById(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
+	GetByPackages(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Module, error)
+	GetWithContent(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
+	Create(ctx context.Context, courseId primitive.ObjectID, name string, position int) (primitive.ObjectID, error)
 }
 
 type Orders interface {
@@ -107,12 +110,15 @@ type Payments interface {
 }
 
 type Services struct {
-	Schools  Schools
-	Students Students
-	Courses  Courses
-	Payments Payments
-	Orders   Orders
-	Admins   Admins
+	Schools    Schools
+	Students   Students
+	Courses    Courses
+	PromoCodes PromoCodes
+	Offers     Offers
+	Modules    Modules
+	Payments   Payments
+	Orders     Orders
+	Admins     Admins
 }
 
 type ServicesDeps struct {
@@ -132,17 +138,23 @@ type ServicesDeps struct {
 
 func NewServices(deps ServicesDeps) *Services {
 	emailsService := NewEmailsService(deps.EmailProvider, deps.EmailListId)
-	coursesService := NewCoursesService(deps.Repos.Courses, deps.Repos.Offers, deps.Repos.Promocodes)
-	ordersService := NewOrdersService(deps.Repos.Orders, coursesService, deps.PaymentProvider, deps.PaymentCallbackURL, deps.PaymentResponseURL)
-	studentsService := NewStudentsService(deps.Repos.Students, coursesService, deps.Hasher,
+	coursesService := NewCoursesService(deps.Repos.Courses)
+	modulesService := NewModulesService(deps.Repos.Courses)
+	offersService := NewOffersService(deps.Repos.Offers, modulesService)
+	promoCodesService := NewPromoCodeService(deps.Repos.Promocodes)
+	ordersService := NewOrdersService(deps.Repos.Orders, offersService, promoCodesService, deps.PaymentProvider, deps.PaymentCallbackURL, deps.PaymentResponseURL)
+	studentsService := NewStudentsService(deps.Repos.Students, modulesService, offersService, deps.Hasher,
 		deps.TokenManager, emailsService, deps.AccessTokenTTL, deps.RefreshTokenTTL)
 
 	return &Services{
-		Schools:  NewSchoolsService(deps.Repos.Schools, deps.Cache, deps.CacheTTL),
-		Students: studentsService,
-		Courses:  coursesService,
-		Payments: NewPaymentsService(deps.PaymentProvider, ordersService, coursesService, studentsService),
-		Orders:   ordersService,
-		Admins:   NewAdminsService(deps.Hasher, deps.TokenManager, deps.Repos.Admins, deps.Repos.Schools, deps.AccessTokenTTL, deps.RefreshTokenTTL),
+		Schools:    NewSchoolsService(deps.Repos.Schools, deps.Cache, deps.CacheTTL),
+		Students:   studentsService,
+		Courses:    coursesService,
+		PromoCodes: promoCodesService,
+		Offers:     offersService,
+		Modules:    modulesService,
+		Payments:   NewPaymentsService(deps.PaymentProvider, ordersService, offersService, studentsService),
+		Orders:     ordersService,
+		Admins:     NewAdminsService(deps.Hasher, deps.TokenManager, deps.Repos.Admins, deps.Repos.Schools, deps.AccessTokenTTL, deps.RefreshTokenTTL),
 	}
 }

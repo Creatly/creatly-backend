@@ -7,25 +7,32 @@ import (
 )
 
 type Handler struct {
-	schoolsService  service.Schools
-	studentsService service.Students
-	coursesService  service.Courses
-	ordersService   service.Orders
-	paymentsService service.Payments
-	adminsService   service.Admins
-	tokenManager    auth.TokenManager
+	schoolsService    service.Schools
+	studentsService   service.Students
+	coursesService    service.Courses
+	promoCodesService service.PromoCodes
+	offersService     service.Offers
+	modulesService    service.Modules
+	ordersService     service.Orders
+	paymentsService   service.Payments
+	adminsService     service.Admins
+	tokenManager      auth.TokenManager
 }
 
-func NewHandler(schoolsService service.Schools, studentsService service.Students, coursesService service.Courses, ordersService service.Orders,
+func NewHandler(schoolsService service.Schools, studentsService service.Students, coursesService service.Courses, promoCodesService service.PromoCodes,
+	offersService service.Offers, modulesService service.Modules, ordersService service.Orders,
 	paymentsService service.Payments, adminsService service.Admins, tokenManager auth.TokenManager) *Handler {
 	return &Handler{
-		schoolsService:  schoolsService,
-		studentsService: studentsService,
-		coursesService:  coursesService,
-		ordersService:   ordersService,
-		paymentsService: paymentsService,
-		adminsService:   adminsService,
-		tokenManager:    tokenManager,
+		schoolsService:    schoolsService,
+		studentsService:   studentsService,
+		coursesService:    coursesService,
+		offersService:     offersService,
+		promoCodesService: promoCodesService,
+		modulesService:    modulesService,
+		ordersService:     ordersService,
+		paymentsService:   paymentsService,
+		adminsService:     adminsService,
+		tokenManager:      tokenManager,
 	}
 }
 

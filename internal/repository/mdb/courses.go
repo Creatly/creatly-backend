@@ -29,7 +29,7 @@ func (r *CoursesRepo) GetModules(ctx context.Context, courseId primitive.ObjectI
 
 func (r *CoursesRepo) GetModuleWithContent(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error) {
 	var module domain.Module
-	err := r.db.Collection(modulesCollection).FindOne(ctx, bson.M{"_id": moduleId, "published": true}).Decode(&module)
+	err := r.db.Collection(modulesCollection).FindOne(ctx, bson.M{"_id": moduleId}).Decode(&module)
 	if err != nil {
 		return module, err
 	}
@@ -63,7 +63,7 @@ func (r *CoursesRepo) GetModuleWithContent(ctx context.Context, moduleId primiti
 
 func (r *CoursesRepo) GetModule(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error) {
 	var module domain.Module
-	err := r.db.Collection(modulesCollection).FindOne(ctx, bson.M{"_id": moduleId, "published": true}).Decode(&module)
+	err := r.db.Collection(modulesCollection).FindOne(ctx, bson.M{"_id": moduleId}).Decode(&module)
 	return module, err
 }
 

@@ -17,7 +17,7 @@ type Student struct {
 	AvailableModules []primitive.ObjectID `json:"availableModules" bson:"availableModules,omitempty"`
 	AvailableCourses []primitive.ObjectID `json:"availableCourses" bson:"availableCourses,omitempty"`
 	Verification     Verification         `json:"verification" bson:"verification"`
-	Session          Session              `json:"session" bson:"session"`
+	Session          Session              `json:"session" bson:"session,omitempty"`
 }
 
 func (s Student) IsModuleAvailable(m Module) bool {

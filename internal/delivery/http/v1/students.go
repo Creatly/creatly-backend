@@ -217,8 +217,10 @@ func (h *Handler) studentGetAllCourses(c *gin.Context) {
 	// Return only published courses
 	courses := make([]domain.Course, 0)
 	for _, course := range school.Courses {
-		if *course.Published {
-			courses = append(courses, course)
+		if course.Published != nil {
+			if *course.Published {
+				courses = append(courses, course)
+			}
 		}
 	}
 
@@ -309,7 +311,7 @@ func (h *Handler) studentGetCourseById(c *gin.Context) {
 		return
 	}
 
-	modules, err := h.coursesService.GetCourseModules(c.Request.Context(), course.ID)
+	modules, err := h.modulesService.GetByCourse(c.Request.Context(), course.ID)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -321,8 +323,10 @@ func (h *Handler) studentGetCourseById(c *gin.Context) {
 func studentGetSchoolCourse(school domain.School, courseId string) (domain.Course, error) {
 	var searchedCourse domain.Course
 	for _, course := range school.Courses {
-		if *course.Published && course.ID.Hex() == courseId {
-			searchedCourse = course
+		if course.Published != nil {
+			if *course.Published && course.ID.Hex() == courseId {
+				searchedCourse = course
+			}
 		}
 	}
 
@@ -463,7 +467,7 @@ func (h *Handler) studentGetModuleOffers(c *gin.Context) {
 		return
 	}
 
-	offers, err := h.coursesService.GetModuleOffers(c.Request.Context(), school.ID, moduleId)
+	offers, err := h.offersService.GetByModule(c.Request.Context(), school.ID, moduleId)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -500,7 +504,7 @@ func (h *Handler) studentGetPromo(c *gin.Context) {
 		return
 	}
 
-	promocode, err := h.coursesService.GetPromoByCode(c.Request.Context(), school.ID, code)
+	promocode, err := h.promoCodesService.GetByCode(c.Request.Context(), school.ID, code)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return

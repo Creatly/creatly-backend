@@ -32,6 +32,7 @@ func (h *Handler) initAdminRoutes(api *gin.RouterGroup) {
 
 			lessons := authenticated.Group("/modules/:id/lessons")
 			{
+				lessons.GET("/", h.adminGetModuleLessons)
 				lessons.POST("/", h.adminCreateLesson)
 				lessons.PUT("/:id", h.adminUpdateLesson)
 				lessons.DELETE("/:id", h.adminDeleteLesson)
@@ -224,7 +225,7 @@ func (h *Handler) adminGetCourseById(c *gin.Context) {
 		return
 	}
 
-	modules, err := h.coursesService.GetCourseModules(c.Request.Context(), course.ID)
+	modules, err := h.modulesService.GetByCourse(c.Request.Context(), course.ID)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -313,7 +314,7 @@ func (h *Handler) adminGetModuleLessons(c *gin.Context) {
 		return
 	}
 
-	module, err := h.coursesService.GetModuleWithContent(c.Request.Context(), moduleId)
+	module, err := h.modulesService.GetWithContent(c.Request.Context(), moduleId)
 	if err != nil {
 		if err == service.ErrModuleIsNotAvailable {
 			newResponse(c, http.StatusForbidden, err.Error())
@@ -367,7 +368,7 @@ func (h *Handler) adminCreateModule(c *gin.Context) {
 		return
 	}
 
-	moduleId, err := h.coursesService.CreateModule(c.Request.Context(), id, inp.Name, inp.Position)
+	moduleId, err := h.modulesService.Create(c.Request.Context(), id, inp.Name, inp.Position)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, "invalid id param")
 		return

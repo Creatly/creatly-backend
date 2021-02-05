@@ -12,21 +12,24 @@ import (
 )
 
 type StudentsService struct {
-	repo           repository.Students
-	coursesService Courses
-	hasher         hash.PasswordHasher
-	tokenManager   auth.TokenManager
+	repo         repository.Students
+	hasher       hash.PasswordHasher
+	tokenManager auth.TokenManager
+
+	modulesService Modules
+	offersService  Offers
 	emailService   Emails
 
 	accessTokenTTL  time.Duration
 	refreshTokenTTL time.Duration
 }
 
-func NewStudentsService(repo repository.Students, coursesService Courses, hasher hash.PasswordHasher, tokenManager auth.TokenManager,
+func NewStudentsService(repo repository.Students, modulesService Modules, offersService Offers, hasher hash.PasswordHasher, tokenManager auth.TokenManager,
 	emailService Emails, accessTTL, refreshTTL time.Duration) *StudentsService {
 	return &StudentsService{
 		repo:            repo,
-		coursesService:  coursesService,
+		modulesService:  modulesService,
+		offersService:   offersService,
 		hasher:          hasher,
 		emailService:    emailService,
 		tokenManager:    tokenManager,
@@ -87,7 +90,7 @@ func (s *StudentsService) Verify(ctx context.Context, hash string) error {
 
 func (s *StudentsService) GetModuleLessons(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) ([]domain.Lesson, error) {
 	// Get module with lessons content, check if it is available for student
-	module, err := s.coursesService.GetModuleWithContent(ctx, moduleId)
+	module, err := s.modulesService.GetWithContent(ctx, moduleId)
 	if err != nil {
 		return nil, err
 	}
@@ -109,7 +112,7 @@ func (s *StudentsService) GetModuleLessons(ctx context.Context, schoolId, studen
 	logger.Info("Ooops")
 
 	// Find module offers
-	offers, err := s.coursesService.GetPackageOffers(ctx, schoolId, module.PackageID)
+	offers, err := s.offersService.GetByModule(ctx, schoolId, module.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -133,7 +136,7 @@ func (s *StudentsService) GiveAccessToModules(ctx context.Context, studentId pri
 }
 
 func (s *StudentsService) GiveAccessToPackages(ctx context.Context, studentId primitive.ObjectID, packageIds []primitive.ObjectID) error {
-	modules, err := s.coursesService.GetPackagesModules(ctx, packageIds)
+	modules, err := s.modulesService.GetByPackages(ctx, packageIds)
 	if err != nil {
 		return err
 	}
