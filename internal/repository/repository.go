@@ -30,15 +30,20 @@ type Admins interface {
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.Admin, error)
 }
 
-// TODO decompose interface
 type Courses interface {
-	GetModules(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
-	GetModule(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
-	GetModuleWithContent(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
-	GetPackagesModules(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Module, error)
 	Create(ctx context.Context, schoolId primitive.ObjectID, course domain.Course) (primitive.ObjectID, error)
-	UpdateCourse(ctx context.Context, schoolId primitive.ObjectID, course domain.Course) error
-	CreateModule(ctx context.Context, module domain.Module) (primitive.ObjectID, error)
+	Update(ctx context.Context, schoolId primitive.ObjectID, course domain.Course) error
+}
+
+type Modules interface {
+	Create(ctx context.Context, module domain.Module) (primitive.ObjectID, error)
+	GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
+	GetById(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
+	GetByPackages(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Module, error)
+}
+
+type LessonContent interface {
+	GetByLessons(ctx context.Context, lessonIds []primitive.ObjectID) ([]domain.LessonContent, error)
 }
 
 type Offers interface {
@@ -46,7 +51,7 @@ type Offers interface {
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.Offer, error)
 }
 
-type Promocodes interface {
+type PromoCodes interface {
 	GetByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.PromoCode, error)
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.PromoCode, error)
 }
@@ -57,23 +62,27 @@ type Orders interface {
 }
 
 type Repositories struct {
-	Schools    Schools
-	Students   Students
-	Courses    Courses
-	Offers     Offers
-	Promocodes Promocodes
-	Orders     Orders
-	Admins     Admins
+	Schools       Schools
+	Students      Students
+	Courses       Courses
+	Modules       Modules
+	LessonContent LessonContent
+	Offers        Offers
+	PromoCodes    PromoCodes
+	Orders        Orders
+	Admins        Admins
 }
 
 func NewRepositories(db *mongo.Database) *Repositories {
 	return &Repositories{
-		Schools:    mdb.NewSchoolsRepo(db),
-		Students:   mdb.NewStudentsRepo(db),
-		Courses:    mdb.NewCoursesRepo(db),
-		Offers:     mdb.NewOffersRepo(db),
-		Promocodes: mdb.NewPromocodeRepo(db),
-		Orders:     mdb.NewOrdersRepo(db),
-		Admins:     mdb.NewAdminsRepo(db),
+		Schools:       mdb.NewSchoolsRepo(db),
+		Students:      mdb.NewStudentsRepo(db),
+		Courses:       mdb.NewCoursesRepo(db),
+		Modules:       mdb.NewModulesRepo(db),
+		LessonContent: mdb.NewLessonContentRepo(db),
+		Offers:        mdb.NewOffersRepo(db),
+		PromoCodes:    mdb.NewPromocodeRepo(db),
+		Orders:        mdb.NewOrdersRepo(db),
+		Admins:        mdb.NewAdminsRepo(db),
 	}
 }

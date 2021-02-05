@@ -8,15 +8,16 @@ import (
 )
 
 type ModulesService struct {
-	repo repository.Courses
+	repo        repository.Modules
+	contentRepo repository.LessonContent
 }
 
-func NewModulesService(repo repository.Courses) *ModulesService {
-	return &ModulesService{repo: repo}
+func NewModulesService(repo repository.Modules, contentRepo repository.LessonContent) *ModulesService {
+	return &ModulesService{repo: repo, contentRepo: contentRepo}
 }
 
 func (s *ModulesService) GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error) {
-	modules, err := s.repo.GetModules(ctx, courseId)
+	modules, err := s.repo.GetByCourse(ctx, courseId)
 	if err != nil {
 		return nil, err
 	}
@@ -25,15 +26,38 @@ func (s *ModulesService) GetByCourse(ctx context.Context, courseId primitive.Obj
 }
 
 func (s *ModulesService) GetById(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error) {
-	return s.repo.GetModule(ctx, moduleId)
+	return s.repo.GetById(ctx, moduleId)
 }
 
 func (s *ModulesService) GetWithContent(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error) {
-	return s.repo.GetModuleWithContent(ctx, moduleId)
+	module, err := s.repo.GetById(ctx, moduleId)
+	if err != nil {
+		return module, err
+	}
+
+	lessonIds := make([]primitive.ObjectID, len(module.Lessons))
+	for _, lesson := range module.Lessons {
+		lessonIds = append(lessonIds, lesson.ID)
+	}
+
+	content, err := s.contentRepo.GetByLessons(ctx, lessonIds)
+	if err != nil {
+		return module, err
+	}
+
+	for i := range module.Lessons {
+		for _, lessonContent := range content {
+			if module.Lessons[i].ID == lessonContent.LessonID {
+				module.Lessons[i].Content = lessonContent.Content
+			}
+		}
+	}
+
+	return module, nil
 }
 
 func (s *ModulesService) GetByPackages(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Module, error) {
-	return s.repo.GetPackagesModules(ctx, packageIds)
+	return s.repo.GetByPackages(ctx, packageIds)
 }
 
 func (s *ModulesService) Create(ctx context.Context, courseId primitive.ObjectID, name string, position int) (primitive.ObjectID, error) {
@@ -43,5 +67,5 @@ func (s *ModulesService) Create(ctx context.Context, courseId primitive.ObjectID
 		CourseID: courseId,
 	}
 
-	return s.repo.CreateModule(ctx, module)
+	return s.repo.Create(ctx, module)
 }

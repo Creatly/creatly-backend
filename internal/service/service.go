@@ -139,9 +139,9 @@ type ServicesDeps struct {
 func NewServices(deps ServicesDeps) *Services {
 	emailsService := NewEmailsService(deps.EmailProvider, deps.EmailListId)
 	coursesService := NewCoursesService(deps.Repos.Courses)
-	modulesService := NewModulesService(deps.Repos.Courses)
+	modulesService := NewModulesService(deps.Repos.Modules, deps.Repos.LessonContent)
 	offersService := NewOffersService(deps.Repos.Offers, modulesService)
-	promoCodesService := NewPromoCodeService(deps.Repos.Promocodes)
+	promoCodesService := NewPromoCodeService(deps.Repos.PromoCodes)
 	ordersService := NewOrdersService(deps.Repos.Orders, offersService, promoCodesService, deps.PaymentProvider, deps.PaymentCallbackURL, deps.PaymentResponseURL)
 	studentsService := NewStudentsService(deps.Repos.Students, modulesService, offersService, deps.Hasher,
 		deps.TokenManager, emailsService, deps.AccessTokenTTL, deps.RefreshTokenTTL)

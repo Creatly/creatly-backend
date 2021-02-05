@@ -38,5 +38,5 @@ func (s *CoursesService) Update(ctx context.Context, schoolId primitive.ObjectID
 		return err
 	}
 
-	return s.repo.UpdateCourse(ctx, schoolId, course)
+	return s.repo.Update(ctx, schoolId, course)
 }

@@ -8,10 +8,10 @@ import (
 )
 
 type PromoCodeService struct {
-	repo repository.Promocodes
+	repo repository.PromoCodes
 }
 
-func NewPromoCodeService(repo repository.Promocodes) *PromoCodeService {
+func NewPromoCodeService(repo repository.PromoCodes) *PromoCodeService {
 	return &PromoCodeService{repo: repo}
 }
 
