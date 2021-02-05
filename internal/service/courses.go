@@ -73,11 +73,11 @@ func (s *CoursesService) GetModuleOffers(ctx context.Context, schoolId, moduleId
 	return s.GetPackageOffers(ctx, schoolId, module.PackageID)
 }
 
-func (s *CoursesService) GetPromocodeByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.PromoCode, error) {
+func (s *CoursesService) GetPromoByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.PromoCode, error) {
 	return s.promoRepo.GetByCode(ctx, schoolId, code)
 }
 
-func (s *CoursesService) GetPromocodeById(ctx context.Context, id primitive.ObjectID) (domain.PromoCode, error) {
+func (s *CoursesService) GetPromoById(ctx context.Context, id primitive.ObjectID) (domain.PromoCode, error) {
 	return s.promoRepo.GetById(ctx, id)
 }
 

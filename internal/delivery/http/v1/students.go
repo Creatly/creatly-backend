@@ -500,7 +500,7 @@ func (h *Handler) studentGetPromocode(c *gin.Context) {
 		return
 	}
 
-	promocode, err := h.coursesService.GetPromocodeByCode(c.Request.Context(), school.ID, code)
+	promocode, err := h.coursesService.GetPromoByCode(c.Request.Context(), school.ID, code)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return

@@ -75,7 +75,7 @@ func (s *OrdersService) getOrderPromocode(ctx context.Context, promocodeId primi
 	)
 
 	if !promocodeId.IsZero() {
-		promocode, err = s.coursesService.GetPromocodeById(ctx, promocodeId)
+		promocode, err = s.coursesService.GetPromoById(ctx, promocodeId)
 		if err != nil {
 			return promocode, err
 		}

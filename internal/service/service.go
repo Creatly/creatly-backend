@@ -87,8 +87,8 @@ type Courses interface {
 	GetPackageOffers(ctx context.Context, schoolId, packageId primitive.ObjectID) ([]domain.Offer, error)
 	GetPackagesModules(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Module, error)
 
-	GetPromocodeByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.PromoCode, error)
-	GetPromocodeById(ctx context.Context, id primitive.ObjectID) (domain.PromoCode, error)
+	GetPromoByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.PromoCode, error)
+	GetPromoById(ctx context.Context, id primitive.ObjectID) (domain.PromoCode, error)
 
 	GetOfferById(ctx context.Context, id primitive.ObjectID) (domain.Offer, error)
 
