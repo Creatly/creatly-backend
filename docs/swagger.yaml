@@ -32,7 +32,7 @@ definitions:
       published:
         type: boolean
     type: object
-  domain.Promocode:
+  domain.PromoCode:
     properties:
       code:
         type: string
@@ -509,7 +509,7 @@ paths:
             $ref: '#/definitions/v1.response'
       summary: Student Refresh Tokens
       tags:
-      - students
+      - students-auth
   /students/courses:
     get:
       consumes:
@@ -543,7 +543,7 @@ paths:
             $ref: '#/definitions/v1.response'
       summary: Student Get All Courses
       tags:
-      - students
+      - students-courses
   /students/courses/{id}:
     get:
       consumes:
@@ -581,7 +581,7 @@ paths:
             $ref: '#/definitions/v1.response'
       summary: Student Get Course By ID
       tags:
-      - students
+      - students-courses
   /students/modules/{id}/lessons:
     get:
       consumes:
@@ -621,7 +621,7 @@ paths:
       - StudentsAuth: []
       summary: Student Get Lessons By Module ID
       tags:
-      - students
+      - students-courses
   /students/modules/{id}/offers:
     get:
       consumes:
@@ -661,7 +661,7 @@ paths:
       - StudentsAuth: []
       summary: Student Get Offers By Module ID
       tags:
-      - students
+      - students-courses
   /students/order:
     post:
       consumes:
@@ -702,7 +702,7 @@ paths:
       - StudentsAuth: []
       summary: Student CreateOrder
       tags:
-      - students
+      - students-courses
   /students/promocodes/{code}:
     get:
       consumes:
@@ -721,7 +721,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.Promocode'
+            $ref: '#/definitions/domain.PromoCode'
         "400":
           description: Bad Request
           schema:
@@ -740,9 +740,9 @@ paths:
             $ref: '#/definitions/v1.response'
       security:
       - StudentsAuth: []
-      summary: Student Get Promocode By Code
+      summary: Student Get PromoCode By Code
       tags:
-      - students
+      - students-courses
   /students/sign-in:
     post:
       consumes:
@@ -781,7 +781,7 @@ paths:
             $ref: '#/definitions/v1.response'
       summary: Student SignIn
       tags:
-      - students
+      - students-auth
   /students/sign-up:
     post:
       consumes:
@@ -820,7 +820,7 @@ paths:
             $ref: '#/definitions/v1.response'
       summary: Student SignUp
       tags:
-      - students
+      - students-auth
   /students/verify/{code}:
     post:
       consumes:
@@ -858,7 +858,7 @@ paths:
             $ref: '#/definitions/v1.response'
       summary: Student Verify Registration
       tags:
-      - students
+      - students-auth
 securityDefinitions:
   AdminAuth:
     in: header

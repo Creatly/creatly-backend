@@ -26,7 +26,7 @@ func (h *Handler) initStudentsRoutes(api *gin.RouterGroup) {
 		{
 			authenticated.GET("/modules/:id/lessons", h.studentGetModuleLessons)
 			authenticated.GET("/modules/:id/offers", h.studentGetModuleOffers)
-			authenticated.GET("/promocodes/:code", h.studentGetPromocode)
+			authenticated.GET("/promocodes/:code", h.studentGetPromo)
 			authenticated.POST("/order", h.studentCreateOrder)
 		}
 	}
@@ -40,7 +40,7 @@ type studentSignUpInput struct {
 }
 
 // @Summary Student SignUp
-// @Tags students
+// @Tags students-auth
 // @Description create student account
 // @ID studentSignUp
 // @Accept  json
@@ -89,7 +89,7 @@ type tokenResponse struct {
 }
 
 // @Summary Student SignIn
-// @Tags students
+// @Tags students-auth
 // @Description student sign in
 // @ID studentSignIn
 // @Accept  json
@@ -134,7 +134,7 @@ type refreshInput struct {
 }
 
 // @Summary Student Refresh Tokens
-// @Tags students
+// @Tags students-auth
 // @Description student refresh tokens
 // @Accept  json
 // @Produce  json
@@ -170,7 +170,7 @@ func (h *Handler) studentRefresh(c *gin.Context) {
 }
 
 // @Summary Student Verify Registration
-// @Tags students
+// @Tags students-auth
 // @Description student verify registration
 // @ID studentVerify
 // @Accept  json
@@ -197,7 +197,7 @@ func (h *Handler) studentVerify(c *gin.Context) {
 }
 
 // @Summary Student Get All Courses
-// @Tags students
+// @Tags students-courses
 // @Description student get all courses
 // @ID studentGetAllCourses
 // @Accept  json
@@ -278,7 +278,7 @@ func toLessons(lessons []domain.Lesson) []lesson {
 }
 
 // @Summary Student Get Course By ID
-// @Tags students
+// @Tags students-courses
 // @Description student get course by id
 // @ID studentGetCourseById
 // @Accept  json
@@ -339,7 +339,7 @@ type getModuleLessonsResponse struct {
 
 // @Summary Student Get Lessons By Module ID
 // @Security StudentsAuth
-// @Tags students
+// @Tags students-courses
 // @Description student get lessons by module id
 // @ID studentGetModuleLessons
 // @Accept  json
@@ -433,7 +433,7 @@ func toStudentOffer(offer domain.Offer) studentOffer {
 
 // @Summary Student Get Offers By Module ID
 // @Security StudentsAuth
-// @Tags students
+// @Tags students-courses
 // @Description student get offers by module id
 // @ID studentGetModuleOffers
 // @Accept  json
@@ -476,9 +476,9 @@ func (h *Handler) studentGetModuleOffers(c *gin.Context) {
 
 // @Summary Student Get PromoCode By Code
 // @Security StudentsAuth
-// @Tags students
+// @Tags students-courses
 // @Description student get promocode by code
-// @ID studentGetPromocode
+// @ID studentGetPromo
 // @Accept  json
 // @Produce  json
 // @Param code path string true "code"
@@ -487,7 +487,7 @@ func (h *Handler) studentGetModuleOffers(c *gin.Context) {
 // @Failure 500 {object} response
 // @Failure default {object} response
 // @Router /students/promocodes/{code} [get]
-func (h *Handler) studentGetPromocode(c *gin.Context) {
+func (h *Handler) studentGetPromo(c *gin.Context) {
 	code := c.Param("code")
 	if code == "" {
 		newResponse(c, http.StatusBadRequest, "empty code param")
@@ -520,7 +520,7 @@ type createOrderResponse struct {
 
 // @Summary Student CreateOrder
 // @Security StudentsAuth
-// @Tags students
+// @Tags students-courses
 // @Description student create order
 // @ID studentCreateOrder
 // @Accept  json

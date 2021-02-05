@@ -203,7 +203,7 @@ func TestHandler_studentGetPromocode(t *testing.T) {
 				c.Set(schoolCtx, domain.School{
 					ID: schoolId,
 				})
-			}, handler.studentGetPromocode)
+			}, handler.studentGetPromo)
 
 			// Create Request
 			w := httptest.NewRecorder()

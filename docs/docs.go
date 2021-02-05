@@ -536,7 +536,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "students"
+                    "students-auth"
                 ],
                 "summary": "Student Refresh Tokens",
                 "parameters": [
@@ -594,7 +594,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "students"
+                    "students-courses"
                 ],
                 "summary": "Student Get All Courses",
                 "operationId": "studentGetAllCourses",
@@ -645,7 +645,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "students"
+                    "students-courses"
                 ],
                 "summary": "Student Get Course By ID",
                 "operationId": "studentGetCourseById",
@@ -707,7 +707,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "students"
+                    "students-courses"
                 ],
                 "summary": "Student Get Lessons By Module ID",
                 "operationId": "studentGetModuleLessons",
@@ -769,7 +769,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "students"
+                    "students-courses"
                 ],
                 "summary": "Student Get Offers By Module ID",
                 "operationId": "studentGetModuleOffers",
@@ -831,7 +831,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "students"
+                    "students-courses"
                 ],
                 "summary": "Student CreateOrder",
                 "operationId": "studentCreateOrder",
@@ -895,9 +895,9 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "students"
+                    "students-courses"
                 ],
-                "summary": "Student Get Promocode By Code",
+                "summary": "Student Get PromoCode By Code",
                 "operationId": "studentGetPromocode",
                 "parameters": [
                     {
@@ -912,7 +912,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Promocode"
+                            "$ref": "#/definitions/domain.PromoCode"
                         }
                     },
                     "400": {
@@ -952,7 +952,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "students"
+                    "students-auth"
                 ],
                 "summary": "Student SignIn",
                 "operationId": "studentSignIn",
@@ -1011,7 +1011,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "students"
+                    "students-auth"
                 ],
                 "summary": "Student SignUp",
                 "operationId": "studentSignUp",
@@ -1070,7 +1070,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "students"
+                    "students-auth"
                 ],
                 "summary": "Student Verify Registration",
                 "operationId": "studentVerify",
@@ -1168,7 +1168,7 @@ var doc = `{
                 }
             }
         },
-        "domain.Promocode": {
+        "domain.PromoCode": {
             "type": "object",
             "properties": {
                 "code": {

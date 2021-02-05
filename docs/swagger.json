@@ -521,7 +521,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "students"
+                    "students-auth"
                 ],
                 "summary": "Student Refresh Tokens",
                 "parameters": [
@@ -579,7 +579,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "students"
+                    "students-courses"
                 ],
                 "summary": "Student Get All Courses",
                 "operationId": "studentGetAllCourses",
@@ -630,7 +630,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "students"
+                    "students-courses"
                 ],
                 "summary": "Student Get Course By ID",
                 "operationId": "studentGetCourseById",
@@ -692,7 +692,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "students"
+                    "students-courses"
                 ],
                 "summary": "Student Get Lessons By Module ID",
                 "operationId": "studentGetModuleLessons",
@@ -754,7 +754,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "students"
+                    "students-courses"
                 ],
                 "summary": "Student Get Offers By Module ID",
                 "operationId": "studentGetModuleOffers",
@@ -816,7 +816,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "students"
+                    "students-courses"
                 ],
                 "summary": "Student CreateOrder",
                 "operationId": "studentCreateOrder",
@@ -880,9 +880,9 @@
                     "application/json"
                 ],
                 "tags": [
-                    "students"
+                    "students-courses"
                 ],
-                "summary": "Student Get Promocode By Code",
+                "summary": "Student Get PromoCode By Code",
                 "operationId": "studentGetPromocode",
                 "parameters": [
                     {
@@ -897,7 +897,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Promocode"
+                            "$ref": "#/definitions/domain.PromoCode"
                         }
                     },
                     "400": {
@@ -937,7 +937,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "students"
+                    "students-auth"
                 ],
                 "summary": "Student SignIn",
                 "operationId": "studentSignIn",
@@ -996,7 +996,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "students"
+                    "students-auth"
                 ],
                 "summary": "Student SignUp",
                 "operationId": "studentSignUp",
@@ -1055,7 +1055,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "students"
+                    "students-auth"
                 ],
                 "summary": "Student Verify Registration",
                 "operationId": "studentVerify",
@@ -1153,7 +1153,7 @@
                 }
             }
         },
-        "domain.Promocode": {
+        "domain.PromoCode": {
             "type": "object",
             "properties": {
                 "code": {
