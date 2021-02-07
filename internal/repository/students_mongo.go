@@ -46,7 +46,12 @@ func (r *StudentsRepo) GetById(ctx context.Context, id primitive.ObjectID) (doma
 }
 
 func (r *StudentsRepo) SetSession(ctx context.Context, studentId primitive.ObjectID, session domain.Session) error {
-	_, err := r.db.UpdateOne(ctx, bson.M{"_id": studentId}, bson.M{"$set": bson.M{"session": session}})
+	_, err := r.db.UpdateOne(ctx, bson.M{"_id": studentId}, bson.M{"$set": bson.M{"session": session, "lastVisitAt": time.Now()}})
+	return err
+}
+
+func (r *StudentsRepo) GiveAccessToCourseAndModule(ctx context.Context, studentId, courseId, moduleId primitive.ObjectID) error {
+	_, err := r.db.UpdateOne(ctx, bson.M{"_id": studentId}, bson.M{"$push": bson.M{"availableModules": moduleId, "availableCourses": courseId}})
 	return err
 }
 

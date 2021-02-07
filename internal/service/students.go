@@ -123,16 +123,12 @@ func (s *StudentsService) GetModuleLessons(ctx context.Context, schoolId, studen
 
 	// If module has no offers - it's free and available to everyone
 	go func() {
-		if err := s.repo.GiveAccessToModules(ctx, studentId, []primitive.ObjectID{moduleId}); err != nil {
+		if err := s.repo.GiveAccessToCourseAndModule(ctx, studentId, module.CourseID, moduleId); err != nil {
 			logger.Error(err)
 		}
 	}()
 
 	return module.Lessons, nil
-}
-
-func (s *StudentsService) GiveAccessToModules(ctx context.Context, studentId primitive.ObjectID, moduleIds []primitive.ObjectID) error {
-	return s.repo.GiveAccessToModules(ctx, studentId, moduleIds)
 }
 
 func (s *StudentsService) GiveAccessToPackages(ctx context.Context, studentId primitive.ObjectID, packageIds []primitive.ObjectID) error {

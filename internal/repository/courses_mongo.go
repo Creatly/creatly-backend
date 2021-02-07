@@ -6,6 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"time"
 )
 
 type CoursesRepo struct {
@@ -24,6 +25,8 @@ func (r *CoursesRepo) Create(ctx context.Context, schoolId primitive.ObjectID, c
 
 func (r *CoursesRepo) Update(ctx context.Context, schoolId primitive.ObjectID, inp UpdateCourseInput) error {
 	updateQuery := bson.M{}
+
+	updateQuery["courses.$.updatedAt"] = time.Now()
 
 	if inp.Name != "" {
 		updateQuery["courses.$.name"] = inp.Name

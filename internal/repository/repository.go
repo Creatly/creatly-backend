@@ -18,6 +18,7 @@ type Students interface {
 	GetByRefreshToken(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (domain.Student, error)
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.Student, error)
 	SetSession(ctx context.Context, studentId primitive.ObjectID, session domain.Session) error
+	GiveAccessToCourseAndModule(ctx context.Context, studentId, courseId, moduleId primitive.ObjectID) error
 	GiveAccessToModules(ctx context.Context, studentId primitive.ObjectID, moduleIds []primitive.ObjectID) error
 	Verify(ctx context.Context, code string) error
 }

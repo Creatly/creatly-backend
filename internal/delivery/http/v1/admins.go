@@ -29,7 +29,7 @@ func (h *Handler) initAdminRoutes(api *gin.RouterGroup) {
 			{
 				modules.PUT("/:id", h.adminUpdateModule)
 				modules.DELETE("/:id", h.adminDeleteModule)
-				modules.GET(":id/lessons", h.adminGetModuleLessons)
+				modules.GET(":id/lessons", h.adminGetLessons)
 				modules.POST("id/lessons", h.adminCreateLesson)
 			}
 
@@ -292,48 +292,6 @@ func (h *Handler) adminUpdateCourse(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
-// @Summary Admin Get Module Lessons
-// @Security AdminAuth
-// @Tags admins-lessons
-// @Description admin get module content
-// @ID adminGetModuleLessons
-// @Accept  json
-// @Produce  json
-// @Param id path string true "module id"
-// @Success 200 {string} string "ok"
-// @Failure 400,404 {object} response
-// @Failure 500 {object} response
-// @Failure default {object} response
-// @Router /admins/modules/{id}/lessons [get]
-func (h *Handler) adminGetModuleLessons(c *gin.Context) {
-	moduleIdParam := c.Param("id")
-	if moduleIdParam == "" {
-		newResponse(c, http.StatusBadRequest, "empty id param")
-		return
-	}
-
-	moduleId, err := primitive.ObjectIDFromHex(moduleIdParam)
-	if err != nil {
-		newResponse(c, http.StatusBadRequest, "invalid id param")
-		return
-	}
-
-	module, err := h.modulesService.GetWithContent(c.Request.Context(), moduleId)
-	if err != nil {
-		if err == service.ErrModuleIsNotAvailable {
-			newResponse(c, http.StatusForbidden, err.Error())
-			return
-		}
-
-		newResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	c.JSON(http.StatusOK, getModuleLessonsResponse{
-		Lessons: module.Lessons,
-	})
-}
-
 type createModuleInput struct {
 	Name     string `json:"name" binding:"required,min=5"`
 	Position int    `json:"position" binding:"required,min=0"`
@@ -461,6 +419,48 @@ func (h *Handler) adminDeleteModule(c *gin.Context) {
 	}
 
 	c.Status(http.StatusOK)
+}
+
+// @Summary Admin Get Module Lessons
+// @Security AdminAuth
+// @Tags admins-lessons
+// @Description admin get module content
+// @ID adminGetLessons
+// @Accept  json
+// @Produce  json
+// @Param id path string true "module id"
+// @Success 200 {string} string "ok"
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/modules/{id}/lessons [get]
+func (h *Handler) adminGetLessons(c *gin.Context) {
+	moduleIdParam := c.Param("id")
+	if moduleIdParam == "" {
+		newResponse(c, http.StatusBadRequest, "empty id param")
+		return
+	}
+
+	moduleId, err := primitive.ObjectIDFromHex(moduleIdParam)
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid id param")
+		return
+	}
+
+	module, err := h.modulesService.GetWithContent(c.Request.Context(), moduleId)
+	if err != nil {
+		if err == service.ErrModuleIsNotAvailable {
+			newResponse(c, http.StatusForbidden, err.Error())
+			return
+		}
+
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, getModuleLessonsResponse{
+		Lessons: module.Lessons,
+	})
 }
 
 func (h *Handler) adminCreateLesson(c *gin.Context) {
