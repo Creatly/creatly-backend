@@ -554,7 +554,7 @@ var doc = `{
                     "admins-lessons"
                 ],
                 "summary": "Admin Get Module Lessons",
-                "operationId": "adminGetModuleLessons",
+                "operationId": "adminGetLessons",
                 "parameters": [
                     {
                         "type": "string",
@@ -657,67 +657,9 @@ var doc = `{
                 }
             }
         },
-        "/students/auth/refresh": {
-            "post": {
-                "description": "student refresh tokens",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "students-auth"
-                ],
-                "summary": "Student Refresh Tokens",
-                "parameters": [
-                    {
-                        "description": "sign up info",
-                        "name": "input",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/v1.refreshInput"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/v1.tokenResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/v1.response"
-                        }
-                    },
-                    "404": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/v1.response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/v1.response"
-                        }
-                    },
-                    "default": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/v1.response"
-                        }
-                    }
-                }
-            }
-        },
-        "/students/courses": {
+        "/courses": {
             "get": {
-                "description": "student get all courses",
+                "description": "get all courses",
                 "consumes": [
                     "application/json"
                 ],
@@ -725,10 +667,10 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "students-courses"
+                    "courses"
                 ],
-                "summary": "Student Get All Courses",
-                "operationId": "studentGetAllCourses",
+                "summary": "Get All Courses",
+                "operationId": "getAllCourses",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -766,9 +708,9 @@ var doc = `{
                 }
             }
         },
-        "/students/courses/{id}": {
+        "/courses/{id}": {
             "get": {
-                "description": "student get course by id",
+                "description": "get course by id",
                 "consumes": [
                     "application/json"
                 ],
@@ -776,10 +718,10 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "students-courses"
+                    "courses"
                 ],
-                "summary": "Student Get Course By ID",
-                "operationId": "studentGetCourseById",
+                "summary": "Get Course By ID",
+                "operationId": "getCourseById",
                 "parameters": [
                     {
                         "type": "string",
@@ -794,6 +736,64 @@ var doc = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/domain.Course"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/students/auth/refresh": {
+            "post": {
+                "description": "student refresh tokens",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "students-auth"
+                ],
+                "summary": "Student Refresh Tokens",
+                "parameters": [
+                    {
+                        "description": "sign up info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.refreshInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.tokenResponse"
                         }
                     },
                     "400": {

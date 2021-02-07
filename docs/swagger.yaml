@@ -492,7 +492,7 @@ paths:
       consumes:
       - application/json
       description: admin get module content
-      operationId: adminGetModuleLessons
+      operationId: adminGetLessons
       parameters:
       - description: module id
         in: path
@@ -566,6 +566,78 @@ paths:
       summary: Admin SignIn
       tags:
       - admins-auth
+  /courses:
+    get:
+      consumes:
+      - application/json
+      description: get all courses
+      operationId: getAllCourses
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Course'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      summary: Get All Courses
+      tags:
+      - courses
+  /courses/{id}:
+    get:
+      consumes:
+      - application/json
+      description: get course by id
+      operationId: getCourseById
+      parameters:
+      - description: course id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Course'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      summary: Get Course By ID
+      tags:
+      - courses
   /students/auth/refresh:
     post:
       consumes:
@@ -604,78 +676,6 @@ paths:
       summary: Student Refresh Tokens
       tags:
       - students-auth
-  /students/courses:
-    get:
-      consumes:
-      - application/json
-      description: student get all courses
-      operationId: studentGetAllCourses
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/domain.Course'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/v1.response'
-        "404":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/v1.response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/v1.response'
-        default:
-          description: ""
-          schema:
-            $ref: '#/definitions/v1.response'
-      summary: Student Get All Courses
-      tags:
-      - students-courses
-  /students/courses/{id}:
-    get:
-      consumes:
-      - application/json
-      description: student get course by id
-      operationId: studentGetCourseById
-      parameters:
-      - description: course id
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/domain.Course'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/v1.response'
-        "404":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/v1.response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/v1.response'
-        default:
-          description: ""
-          schema:
-            $ref: '#/definitions/v1.response'
-      summary: Student Get Course By ID
-      tags:
-      - students-courses
   /students/modules/{id}/lessons:
     get:
       consumes:

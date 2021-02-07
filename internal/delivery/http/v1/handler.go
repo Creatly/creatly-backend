@@ -39,6 +39,7 @@ func NewHandler(schoolsService service.Schools, studentsService service.Students
 func (h *Handler) Init(api *gin.RouterGroup) {
 	v1 := api.Group("/v1")
 	{
+		h.initCoursesRoutes(v1)
 		h.initStudentsRoutes(v1)
 		h.initCallbackRoutes(v1)
 		h.initAdminRoutes(v1)
