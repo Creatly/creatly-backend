@@ -54,14 +54,14 @@ type getCourseByIdResponse struct {
 type module struct {
 	ID       primitive.ObjectID `json:"id" bson:"_id"`
 	Name     string             `json:"name" bson:"name"`
-	Position int                `json:"position" bson:"position"`
+	Position uint               `json:"position" bson:"position"`
 	Lessons  []lesson           `json:"lessons" bson:"lessons"`
 }
 
 type lesson struct {
 	ID       primitive.ObjectID `json:"id" bson:"_id"`
 	Name     string             `json:"name" bson:"name"`
-	Position int                `json:"position" bson:"position"`
+	Position uint               `json:"position" bson:"position"`
 }
 
 func newGetCourseByIdResponse(course domain.Course, courseModules []domain.Module) getCourseByIdResponse {

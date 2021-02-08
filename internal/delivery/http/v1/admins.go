@@ -320,7 +320,7 @@ func (h *Handler) adminUpdateCourse(c *gin.Context) {
 
 type createModuleInput struct {
 	Name     string `json:"name" binding:"required,min=5"`
-	Position int    `json:"position" binding:"required,min=0"`
+	Position uint   `json:"position"`
 }
 
 // @Summary Admin Create Module
@@ -367,7 +367,7 @@ func (h *Handler) adminCreateModule(c *gin.Context) {
 
 type updateModuleInput struct {
 	Name      string `json:"name"`
-	Position  *int   `json:"position"`
+	Position  *uint  `json:"position"`
 	Published *bool  `json:"published"`
 }
 
@@ -490,8 +490,8 @@ func (h *Handler) adminGetLessons(c *gin.Context) {
 }
 
 type createLessonInput struct {
-	Name     string `json:"name"`
-	Position int    `json:"position"`
+	Name     string `json:"name" binding:"required,min=5"`
+	Position uint   `json:"position"`
 }
 
 // @Summary Admin Create Lesson
@@ -574,7 +574,7 @@ func (h *Handler) adminGetLessonById(c *gin.Context) {
 type updateLessonInput struct {
 	Name      string `json:"name"`
 	Content   string `json:"content"`
-	Position  *int   `json:"position"`
+	Position  *uint   `json:"position"`
 	Published *bool  `json:"published"`
 }
 

@@ -46,14 +46,14 @@ type Courses interface {
 type UpdateModuleInput struct {
 	ID        primitive.ObjectID
 	Name      string
-	Position  *int
+	Position  *uint
 	Published *bool
 }
 
 type UpdateLessonInput struct {
 	ID        primitive.ObjectID
 	Name      string
-	Position  *int
+	Position  *uint
 	Published *bool
 }
 

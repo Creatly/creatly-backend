@@ -111,27 +111,27 @@ type Offers interface {
 type CreateModuleInput struct {
 	CourseID string
 	Name     string
-	Position int
+	Position uint
 }
 
 type UpdateModuleInput struct {
 	ID        string
 	Name      string
-	Position  *int
+	Position  *uint
 	Published *bool
 }
 
 type AddLessonInput struct {
 	ModuleID string
 	Name     string
-	Position int
+	Position uint
 }
 
 type UpdateLessonInput struct {
 	LessonID  string
 	Name      string
 	Content   string
-	Position  *int
+	Position  *uint
 	Published *bool
 }
 
