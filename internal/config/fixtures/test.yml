@@ -18,3 +18,7 @@ auth:
   accessTokenTTL: 15m
   refreshTokenTTL: 30m
 
+limiter:
+  rps: 10
+  burst: 2
+  ttl: 10m

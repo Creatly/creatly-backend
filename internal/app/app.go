@@ -2,6 +2,10 @@ package app
 
 import (
 	"context"
+	"os"
+	"os/signal"
+	"syscall"
+
 	"github.com/sirupsen/logrus"
 	"github.com/zhashkevych/courses-backend/internal/config"
 	"github.com/zhashkevych/courses-backend/internal/delivery/http"
@@ -15,9 +19,6 @@ import (
 	"github.com/zhashkevych/courses-backend/pkg/hash"
 	"github.com/zhashkevych/courses-backend/pkg/logger"
 	"github.com/zhashkevych/courses-backend/pkg/payment"
-	"os"
-	"os/signal"
-	"syscall"
 )
 
 // @title Course Platform API
@@ -77,7 +78,7 @@ func Run(configPath string) {
 		services.Offers, services.Modules, services.Orders, services.Payments, services.Admins, tokenManager)
 
 	// HTTP Server
-	srv := server.NewServer(cfg, handlers.Init(cfg.HTTP.Host, cfg.HTTP.Port))
+	srv := server.NewServer(cfg, handlers.Init(cfg.HTTP.Host, cfg.HTTP.Port, cfg.Limiter))
 	go func() {
 		if err := srv.Run(); err != nil {
 			logrus.Errorf("error occurred while running http server: %s\n", err.Error())

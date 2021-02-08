@@ -1,9 +1,10 @@
 package config
 
 import (
-	"github.com/spf13/viper"
 	"strings"
 	"time"
+
+	"github.com/spf13/viper"
 )
 
 const (
@@ -12,6 +13,9 @@ const (
 	defaultHttpMaxHeaderMegabytes = 1
 	defaultAccessTokenTTL         = 15 * time.Minute
 	defaultRefreshTokenTTL        = 24 * time.Hour * 30
+	defaultLimiterRPS             = 10
+	defaultLimiterBurst           = 2
+	defaultLimiterTTL             = 10 * time.Minute
 )
 
 type (
@@ -22,6 +26,7 @@ type (
 		FileStorage FileStorageConfig
 		Email       EmailConfig
 		Payment     PaymentConfig
+		Limiter     LimiterConfig
 		CacheTTL    time.Duration `mapstructure:"ttl"`
 	}
 
@@ -72,6 +77,12 @@ type (
 		WriteTimeout       time.Duration `mapstructure:"writeTimeout"`
 		MaxHeaderMegabytes int           `mapstructure:"maxHeaderBytes"`
 	}
+
+	LimiterConfig struct {
+		RPS   int
+		Burst int
+		TTL   time.Duration
+	}
 )
 
 // Init populates Config struct with values from config file
@@ -118,6 +129,10 @@ func unmarshal(cfg *Config) error {
 		return err
 	}
 
+	if err := viper.UnmarshalKey("limiter", &cfg.Limiter); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -157,6 +172,9 @@ func populateDefaults() {
 	viper.SetDefault("http.timeouts.write", defaultHttpRWTimeout)
 	viper.SetDefault("auth.accessTokenTTL", defaultAccessTokenTTL)
 	viper.SetDefault("auth.refreshTokenTTL", defaultRefreshTokenTTL)
+	viper.SetDefault("limiter.rps", defaultLimiterRPS)
+	viper.SetDefault("limiter.burst", defaultLimiterBurst)
+	viper.SetDefault("limiter.ttl", defaultLimiterTTL)
 }
 
 func parseEnv() error {
