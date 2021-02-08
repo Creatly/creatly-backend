@@ -5,7 +5,7 @@ http:
   writeTimeout: 10s
 
 cache:
-  ttl: 3600s
+  ttl: 60s
 
 mongo:
   databaseName: coursePlatform
