@@ -39,9 +39,9 @@ type LessonContent struct {
 	Content  string             `json:"content" bson:"content"`
 }
 
-type CoursePackages struct {
+type Package struct {
 	ID          primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	Name        string             `json:"name" bson:"name"`
-	Description string             `json:"description" bson:"description"`
+	Description string             `json:"description,omitempty" bson:"description,omitempty"`
 	CourseID    primitive.ObjectID `json:"courseId" bson:"courseId"`
 }

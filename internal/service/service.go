@@ -131,6 +131,17 @@ type Modules interface {
 	DeleteLesson(ctx context.Context, id primitive.ObjectID) error
 }
 
+type CreatePackageInput struct {
+	CourseID    string
+	Name        string
+	Description string
+}
+
+type Packages interface {
+	Create(ctx context.Context, inp CreatePackageInput) (primitive.ObjectID, error)
+	GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Package, error)
+}
+
 type Orders interface {
 	Create(ctx context.Context, studentId, offerId, promocodeId primitive.ObjectID) (string, error)
 	AddTransaction(ctx context.Context, id primitive.ObjectID, transaction domain.Transaction) (domain.Order, error)
@@ -146,6 +157,7 @@ type Services struct {
 	Courses    Courses
 	PromoCodes PromoCodes
 	Offers     Offers
+	Packages   Packages
 	Modules    Modules
 	Payments   Payments
 	Orders     Orders
@@ -187,5 +199,6 @@ func NewServices(deps ServicesDeps) *Services {
 		Payments:   NewPaymentsService(deps.PaymentProvider, ordersService, offersService, studentsService),
 		Orders:     ordersService,
 		Admins:     NewAdminsService(deps.Hasher, deps.TokenManager, deps.Repos.Admins, deps.Repos.Schools, deps.AccessTokenTTL, deps.RefreshTokenTTL),
+		Packages:   NewPackagesService(deps.Repos.Packages),
 	}
 }

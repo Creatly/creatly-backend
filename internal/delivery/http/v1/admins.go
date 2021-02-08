@@ -25,6 +25,8 @@ func (h *Handler) initAdminRoutes(api *gin.RouterGroup) {
 				courses.GET("/:id", h.adminGetCourseById)
 				courses.PUT("/:id", h.adminUpdateCourse)
 				courses.POST("/:id/modules", h.adminCreateModule)
+				courses.POST("/:id/packages", h.adminCreatePackage)
+				courses.GET("/:id/packages", h.adminGetAllPackages)
 			}
 
 			modules := authenticated.Group("/modules")
@@ -42,6 +44,12 @@ func (h *Handler) initAdminRoutes(api *gin.RouterGroup) {
 				lessons.DELETE("/:id", h.adminDeleteLesson)
 			}
 
+			packages := authenticated.Group("/packages")
+			{
+				packages.GET("/:id", h.adminGetPackageById)
+				packages.PUT("/:id", h.adminUpdatePackage)
+				packages.DELETE("/:id", h.adminDeletePackage)
+			}
 		}
 	}
 }
@@ -636,4 +644,102 @@ func (h *Handler) adminDeleteLesson(c *gin.Context) {
 	}
 
 	c.Status(http.StatusOK)
+}
+
+type createPackageInput struct {
+	Name        string `json:"name" binding:"required,min=3"`
+	Description string `json:"description"`
+}
+
+// @Summary Admin Create Package
+// @Security AdminAuth
+// @Tags admins-packages
+// @Description admin create package
+// @ModuleID adminCreatePackage
+// @Accept  json
+// @Produce  json
+// @Param id path string true "course id"
+// @Param input body createPackageInput true "package info"
+// @Success 201 {string} string "id"
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/courses/{id}/packages [post]
+func (h *Handler) adminCreatePackage(c *gin.Context) {
+	id := c.Param("id")
+	if id == "" {
+		newResponse(c, http.StatusBadRequest, "empty id param")
+		return
+	}
+
+	var inp createPackageInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+
+	moduleId, err := h.packagesService.Create(c.Request.Context(), service.CreatePackageInput{
+		CourseID:    id,
+		Name:        inp.Name,
+		Description: inp.Description,
+	})
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, "invalid id param")
+		return
+	}
+
+	c.JSON(http.StatusCreated, map[string]interface{}{
+		"id": moduleId, // TODO create structure for id responses
+	})
+}
+
+type getAllPackagesResponse struct {
+	Packages []domain.Package `json:"packages"`
+}
+
+// @Summary Admin Get All Course Packages
+// @Security AdminAuth
+// @Tags admins-packages
+// @Description admin get all course packages
+// @ModuleID adminGetAllPackages
+// @Accept  json
+// @Produce  json
+// @Param id path string true "course id"
+// @Success 200 {array} domain.Package
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/courses/{id}/packages [get]
+func (h *Handler) adminGetAllPackages(c *gin.Context) {
+	idParam := c.Param("id")
+	if idParam == "" {
+		newResponse(c, http.StatusBadRequest, "empty id param")
+		return
+	}
+
+	id, err := primitive.ObjectIDFromHex(idParam)
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid id param")
+		return
+	}
+
+	packages, err := h.packagesService.GetByCourse(c.Request.Context(), id)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, "invalid id param")
+		return
+	}
+
+	c.JSON(http.StatusCreated, getAllPackagesResponse{Packages: packages})
+}
+
+func (h *Handler) adminGetPackageById(c *gin.Context) {
+
+}
+
+func (h *Handler) adminUpdatePackage(c *gin.Context) {
+
+}
+
+func (h *Handler) adminDeletePackage(c *gin.Context) {
+
 }

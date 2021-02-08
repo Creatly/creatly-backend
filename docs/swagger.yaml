@@ -32,6 +32,17 @@ definitions:
       published:
         type: boolean
     type: object
+  domain.Package:
+    properties:
+      courseId:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+    type: object
   domain.PromoCode:
     properties:
       code:
@@ -93,6 +104,15 @@ definitions:
     properties:
       paymentLink:
         type: string
+    type: object
+  v1.createPackageInput:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    required:
+    - name
     type: object
   v1.getModuleLessonsResponse:
     properties:
@@ -412,6 +432,91 @@ paths:
       summary: Admin Create Module
       tags:
       - admins-modules
+  /admins/courses/{id}/packages:
+    get:
+      consumes:
+      - application/json
+      description: admin get all course packages
+      parameters:
+      - description: course id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Package'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Get All Course Packages
+      tags:
+      - admins-packages
+    post:
+      consumes:
+      - application/json
+      description: admin create package
+      parameters:
+      - description: course id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: package info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.createPackageInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: id
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Create Package
+      tags:
+      - admins-packages
   /admins/lessons/{id}:
     delete:
       consumes:

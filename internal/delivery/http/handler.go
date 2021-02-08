@@ -24,12 +24,13 @@ type Handler struct {
 	ordersService     service.Orders
 	paymentsService   service.Payments
 	adminsService     service.Admins
+	packagesService   service.Packages
 	tokenManager      auth.TokenManager
 }
 
 func NewHandler(schoolsService service.Schools, studentsService service.Students, coursesService service.Courses, promoCodesService service.PromoCodes,
 	offersService service.Offers, modulesService service.Modules, ordersService service.Orders,
-	paymentsService service.Payments, adminsService service.Admins, tokenManager auth.TokenManager) *Handler {
+	paymentsService service.Payments, adminsService service.Admins, packagesService service.Packages, tokenManager auth.TokenManager) *Handler {
 	return &Handler{
 		schoolsService:    schoolsService,
 		studentsService:   studentsService,
@@ -40,6 +41,7 @@ func NewHandler(schoolsService service.Schools, studentsService service.Students
 		ordersService:     ordersService,
 		paymentsService:   paymentsService,
 		adminsService:     adminsService,
+		packagesService:   packagesService,
 		tokenManager:      tokenManager,
 	}
 }
@@ -68,7 +70,7 @@ func (h *Handler) Init(host, port string) *gin.Engine {
 
 func (h *Handler) initAPI(router *gin.Engine) {
 	handlerV1 := v1.NewHandler(h.schoolsService, h.studentsService, h.coursesService, h.promoCodesService,
-		h.offersService, h.modulesService, h.ordersService, h.paymentsService, h.adminsService, h.tokenManager)
+		h.offersService, h.modulesService, h.ordersService, h.paymentsService, h.adminsService, h.packagesService, h.tokenManager)
 	api := router.Group("/api")
 	{
 		handlerV1.Init(api)

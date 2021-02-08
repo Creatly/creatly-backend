@@ -76,6 +76,11 @@ type LessonContent interface {
 	Update(ctx context.Context, lessonId primitive.ObjectID, content string) error
 }
 
+type Packages interface {
+	Create(ctx context.Context, pkg domain.Package) (primitive.ObjectID, error)
+	GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Package, error)
+}
+
 type Offers interface {
 	GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Offer, error)
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.Offer, error)
@@ -96,6 +101,7 @@ type Repositories struct {
 	Students      Students
 	Courses       Courses
 	Modules       Modules
+	Packages      Packages
 	LessonContent LessonContent
 	Offers        Offers
 	PromoCodes    PromoCodes
@@ -114,5 +120,6 @@ func NewRepositories(db *mongo.Database) *Repositories {
 		PromoCodes:    NewPromocodeRepo(db),
 		Orders:        NewOrdersRepo(db),
 		Admins:        NewAdminsRepo(db),
+		Packages:      NewPackagesRepo(db),
 	}
 }
