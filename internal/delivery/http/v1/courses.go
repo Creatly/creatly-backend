@@ -19,7 +19,7 @@ func (h *Handler) initCoursesRoutes(api *gin.RouterGroup) {
 // @Summary  Get All Courses
 // @Tags courses
 // @Description  get all courses
-// @ID getAllCourses
+// @ModuleID getAllCourses
 // @Accept  json
 // @Produce  json
 // @Success 200 {array} domain.Course
@@ -54,14 +54,14 @@ type getCourseByIdResponse struct {
 type module struct {
 	ID       primitive.ObjectID `json:"id" bson:"_id"`
 	Name     string             `json:"name" bson:"name"`
-	Position int                `json:"position" bson:"position"`
+	Position uint               `json:"position" bson:"position"`
 	Lessons  []lesson           `json:"lessons" bson:"lessons"`
 }
 
 type lesson struct {
 	ID       primitive.ObjectID `json:"id" bson:"_id"`
 	Name     string             `json:"name" bson:"name"`
-	Position int                `json:"position" bson:"position"`
+	Position uint               `json:"position" bson:"position"`
 }
 
 func newGetCourseByIdResponse(course domain.Course, courseModules []domain.Module) getCourseByIdResponse {
@@ -94,10 +94,10 @@ func toLessons(lessons []domain.Lesson) []lesson {
 	return out
 }
 
-// @Summary Get Course By ID
+// @Summary Get Course By ModuleID
 // @Tags courses
 // @Description  get course by id
-// @ID getCourseById
+// @ModuleID getCourseById
 // @Accept  json
 // @Produce  json
 // @Param id path string true "course id"

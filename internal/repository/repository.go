@@ -46,7 +46,14 @@ type Courses interface {
 type UpdateModuleInput struct {
 	ID        primitive.ObjectID
 	Name      string
-	Position  *int
+	Position  *uint
+	Published *bool
+}
+
+type UpdateLessonInput struct {
+	ID        primitive.ObjectID
+	Name      string
+	Position  *uint
 	Published *bool
 }
 
@@ -57,13 +64,45 @@ type Modules interface {
 	GetByPackages(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Module, error)
 	Update(ctx context.Context, inp UpdateModuleInput) error
 	Delete(ctx context.Context, id primitive.ObjectID) error
+	AddLesson(ctx context.Context, id primitive.ObjectID, lesson domain.Lesson) error
+	GetByLesson(ctx context.Context, lessonId primitive.ObjectID) (domain.Module, error)
+	UpdateLesson(ctx context.Context, inp UpdateLessonInput) error
+	DeleteLesson(ctx context.Context, id primitive.ObjectID) error
+	AttachPackage(ctx context.Context, modules []primitive.ObjectID, packageId primitive.ObjectID) error
 }
 
 type LessonContent interface {
 	GetByLessons(ctx context.Context, lessonIds []primitive.ObjectID) ([]domain.LessonContent, error)
+	GetByLesson(ctx context.Context, lessonId primitive.ObjectID) (domain.LessonContent, error)
+	Update(ctx context.Context, lessonId primitive.ObjectID, content string) error
+}
+
+type UpdatePackageInput struct {
+	ID          primitive.ObjectID
+	Name        string
+	Description string
+}
+
+type Packages interface {
+	Create(ctx context.Context, pkg domain.Package) (primitive.ObjectID, error)
+	Update(ctx context.Context, inp UpdatePackageInput) error
+	Delete(ctx context.Context, id primitive.ObjectID) error
+	GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Package, error)
+	GetById(ctx context.Context, id primitive.ObjectID) (domain.Package, error)
+}
+
+type UpdateOfferInput struct {
+	ID          primitive.ObjectID
+	Name        string
+	Description string
+	Price       *domain.Price
+	Packages    []primitive.ObjectID
 }
 
 type Offers interface {
+	Create(ctx context.Context, offer domain.Offer) (primitive.ObjectID, error)
+	Update(ctx context.Context, inp UpdateOfferInput) error
+	Delete(ctx context.Context, id primitive.ObjectID) error
 	GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Offer, error)
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.Offer, error)
 }
@@ -83,6 +122,7 @@ type Repositories struct {
 	Students      Students
 	Courses       Courses
 	Modules       Modules
+	Packages      Packages
 	LessonContent LessonContent
 	Offers        Offers
 	PromoCodes    PromoCodes
@@ -101,5 +141,6 @@ func NewRepositories(db *mongo.Database) *Repositories {
 		PromoCodes:    NewPromocodeRepo(db),
 		Orders:        NewOrdersRepo(db),
 		Admins:        NewAdminsRepo(db),
+		Packages:      NewPackagesRepo(db),
 	}
 }

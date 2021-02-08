@@ -51,7 +51,7 @@ func (r *StudentsRepo) SetSession(ctx context.Context, studentId primitive.Objec
 }
 
 func (r *StudentsRepo) GiveAccessToCourseAndModule(ctx context.Context, studentId, courseId, moduleId primitive.ObjectID) error {
-	_, err := r.db.UpdateOne(ctx, bson.M{"_id": studentId}, bson.M{"$push": bson.M{"availableModules": moduleId, "availableCourses": courseId}})
+	_, err := r.db.UpdateOne(ctx, bson.M{"_id": studentId}, bson.M{"$addToSet": bson.M{"availableModules": moduleId, "availableCourses": courseId}})
 	return err
 }
 

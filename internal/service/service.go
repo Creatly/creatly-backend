@@ -22,10 +22,10 @@ type Schools interface {
 }
 
 type StudentSignUpInput struct {
-	Name           string
-	Email          string
-	Password       string
-	SchoolID       primitive.ObjectID
+	Name     string
+	Email    string
+	Password string
+	SchoolID primitive.ObjectID
 }
 
 type SignInInput struct {
@@ -83,25 +83,59 @@ type PromoCodes interface {
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.PromoCode, error)
 }
 
+type CreateOfferInput struct {
+	Name        string
+	Description string
+	SchoolID    primitive.ObjectID
+	Price       domain.Price
+}
+
+type UpdateOfferInput struct {
+	ID          string
+	Name        string
+	Description string
+	Price       *domain.Price
+	Packages    []string
+}
+
 type Offers interface {
+	Create(ctx context.Context, inp CreateOfferInput) (primitive.ObjectID, error)
+	Update(ctx context.Context, inp UpdateOfferInput) error
+	Delete(ctx context.Context, id primitive.ObjectID) error
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.Offer, error)
 	GetByModule(ctx context.Context, schoolId, moduleId primitive.ObjectID) ([]domain.Offer, error)
 	GetByPackage(ctx context.Context, schoolId, packageId primitive.ObjectID) ([]domain.Offer, error)
+	GetAll(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Offer, error)
 }
 
 type CreateModuleInput struct {
 	CourseID string
-	Name string
-	Position int
+	Name     string
+	Position uint
 }
 
 type UpdateModuleInput struct {
 	ID        string
 	Name      string
-	Position  *int
+	Position  *uint
 	Published *bool
 }
 
+type AddLessonInput struct {
+	ModuleID string
+	Name     string
+	Position uint
+}
+
+type UpdateLessonInput struct {
+	LessonID  string
+	Name      string
+	Content   string
+	Position  *uint
+	Published *bool
+}
+
+// TODO: split into Modules and Lessons
 type Modules interface {
 	GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
 	GetById(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
@@ -110,6 +144,31 @@ type Modules interface {
 	Create(ctx context.Context, inp CreateModuleInput) (primitive.ObjectID, error)
 	Update(ctx context.Context, inp UpdateModuleInput) error
 	Delete(ctx context.Context, id primitive.ObjectID) error
+	AddLesson(ctx context.Context, inp AddLessonInput) (primitive.ObjectID, error)
+	GetLesson(ctx context.Context, lessonId primitive.ObjectID) (domain.Lesson, error)
+	UpdateLesson(ctx context.Context, inp UpdateLessonInput) error
+	DeleteLesson(ctx context.Context, id primitive.ObjectID) error
+}
+
+type CreatePackageInput struct {
+	CourseID    string
+	Name        string
+	Description string
+}
+
+type UpdatePackageInput struct {
+	ID          string
+	Name        string
+	Description string
+	Modules     []string
+}
+
+type Packages interface {
+	Create(ctx context.Context, inp CreatePackageInput) (primitive.ObjectID, error)
+	Update(ctx context.Context, inp UpdatePackageInput) error
+	Delete(ctx context.Context, id primitive.ObjectID) error
+	GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Package, error)
+	GetById(ctx context.Context, id primitive.ObjectID) (domain.Package, error)
 }
 
 type Orders interface {
@@ -127,6 +186,7 @@ type Services struct {
 	Courses    Courses
 	PromoCodes PromoCodes
 	Offers     Offers
+	Packages   Packages
 	Modules    Modules
 	Payments   Payments
 	Orders     Orders
@@ -168,5 +228,6 @@ func NewServices(deps ServicesDeps) *Services {
 		Payments:   NewPaymentsService(deps.PaymentProvider, ordersService, offersService, studentsService),
 		Orders:     ordersService,
 		Admins:     NewAdminsService(deps.Hasher, deps.TokenManager, deps.Repos.Admins, deps.Repos.Schools, deps.AccessTokenTTL, deps.RefreshTokenTTL),
+		Packages:   NewPackagesService(deps.Repos.Packages, deps.Repos.Modules),
 	}
 }

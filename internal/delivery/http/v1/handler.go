@@ -16,12 +16,13 @@ type Handler struct {
 	ordersService     service.Orders
 	paymentsService   service.Payments
 	adminsService     service.Admins
+	packagesService   service.Packages
 	tokenManager      auth.TokenManager
 }
 
 func NewHandler(schoolsService service.Schools, studentsService service.Students, coursesService service.Courses, promoCodesService service.PromoCodes,
 	offersService service.Offers, modulesService service.Modules, ordersService service.Orders,
-	paymentsService service.Payments, adminsService service.Admins, tokenManager auth.TokenManager) *Handler {
+	paymentsService service.Payments, adminsService service.Admins, packagesService service.Packages, tokenManager auth.TokenManager) *Handler {
 	return &Handler{
 		schoolsService:    schoolsService,
 		studentsService:   studentsService,
@@ -32,6 +33,7 @@ func NewHandler(schoolsService service.Schools, studentsService service.Students
 		ordersService:     ordersService,
 		paymentsService:   paymentsService,
 		adminsService:     adminsService,
+		packagesService:   packagesService,
 		tokenManager:      tokenManager,
 	}
 }

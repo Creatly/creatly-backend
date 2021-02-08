@@ -19,7 +19,7 @@ type Course struct {
 type Module struct {
 	ID        primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	Name      string             `json:"name" bson:"name"`
-	Position  int                `json:"position" bson:"position"`
+	Position  uint               `json:"position" bson:"position"`
 	Published bool               `json:"published"`
 	CourseID  primitive.ObjectID `json:"courseId" bson:"courseId"`
 	PackageID primitive.ObjectID `json:"packageId,omitempty" bson:"packageId,omitempty"`
@@ -29,9 +29,9 @@ type Module struct {
 type Lesson struct {
 	ID        primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	Name      string             `json:"name" bson:"name"`
-	Position  int                `json:"position" bson:"position"`
+	Position  uint               `json:"position" bson:"position"`
 	Published bool               `json:"published" bson:"published,omitempty"`
-	Content   string             `json:"content,omitempty"`
+	Content   string             `json:"content,omitempty" bson:"content,omitempty"`
 }
 
 type LessonContent struct {
@@ -39,9 +39,9 @@ type LessonContent struct {
 	Content  string             `json:"content" bson:"content"`
 }
 
-type CoursePackages struct {
+type Package struct {
 	ID          primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	Name        string             `json:"name" bson:"name"`
-	Description string             `json:"description" bson:"description"`
+	Description string             `json:"description,omitempty" bson:"description,omitempty"`
 	CourseID    primitive.ObjectID `json:"courseId" bson:"courseId"`
 }
