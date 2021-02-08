@@ -7,30 +7,41 @@ import (
 )
 
 type Handler struct {
-	schoolsService  service.Schools
-	studentsService service.Students
-	coursesService  service.Courses
-	ordersService   service.Orders
-	paymentsService service.Payments
-	tokenManager    auth.TokenManager
+	schoolsService    service.Schools
+	studentsService   service.Students
+	coursesService    service.Courses
+	promoCodesService service.PromoCodes
+	offersService     service.Offers
+	modulesService    service.Modules
+	ordersService     service.Orders
+	paymentsService   service.Payments
+	adminsService     service.Admins
+	tokenManager      auth.TokenManager
 }
 
-func NewHandler(schoolsService service.Schools, studentsService service.Students, coursesService service.Courses, ordersService service.Orders,
-	paymentsService service.Payments, tokenManager auth.TokenManager) *Handler {
+func NewHandler(schoolsService service.Schools, studentsService service.Students, coursesService service.Courses, promoCodesService service.PromoCodes,
+	offersService service.Offers, modulesService service.Modules, ordersService service.Orders,
+	paymentsService service.Payments, adminsService service.Admins, tokenManager auth.TokenManager) *Handler {
 	return &Handler{
-		schoolsService:  schoolsService,
-		studentsService: studentsService,
-		coursesService:  coursesService,
-		ordersService:   ordersService,
-		paymentsService: paymentsService,
-		tokenManager:    tokenManager,
+		schoolsService:    schoolsService,
+		studentsService:   studentsService,
+		coursesService:    coursesService,
+		offersService:     offersService,
+		promoCodesService: promoCodesService,
+		modulesService:    modulesService,
+		ordersService:     ordersService,
+		paymentsService:   paymentsService,
+		adminsService:     adminsService,
+		tokenManager:      tokenManager,
 	}
 }
 
 func (h *Handler) Init(api *gin.RouterGroup) {
 	v1 := api.Group("/v1")
 	{
+		h.initCoursesRoutes(v1)
 		h.initStudentsRoutes(v1)
 		h.initCallbackRoutes(v1)
+		h.initAdminRoutes(v1)
 	}
 }

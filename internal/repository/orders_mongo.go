@@ -1,4 +1,4 @@
-package mdb
+package repository
 
 import (
 	"context"

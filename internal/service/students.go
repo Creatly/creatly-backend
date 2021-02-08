@@ -12,21 +12,24 @@ import (
 )
 
 type StudentsService struct {
-	repo           repository.Students
-	coursesService Courses
-	hasher         hash.PasswordHasher
-	tokenManager   auth.TokenManager
+	repo         repository.Students
+	hasher       hash.PasswordHasher
+	tokenManager auth.TokenManager
+
+	modulesService Modules
+	offersService  Offers
 	emailService   Emails
 
 	accessTokenTTL  time.Duration
 	refreshTokenTTL time.Duration
 }
 
-func NewStudentsService(repo repository.Students, coursesService Courses, hasher hash.PasswordHasher, tokenManager auth.TokenManager,
+func NewStudentsService(repo repository.Students, modulesService Modules, offersService Offers, hasher hash.PasswordHasher, tokenManager auth.TokenManager,
 	emailService Emails, accessTTL, refreshTTL time.Duration) *StudentsService {
 	return &StudentsService{
 		repo:            repo,
-		coursesService:  coursesService,
+		modulesService:  modulesService,
+		offersService:   offersService,
 		hasher:          hasher,
 		emailService:    emailService,
 		tokenManager:    tokenManager,
@@ -63,7 +66,7 @@ func (s *StudentsService) SignUp(ctx context.Context, input StudentSignUpInput) 
 	})
 }
 
-func (s *StudentsService) SignIn(ctx context.Context, input StudentSignInInput) (Tokens, error) {
+func (s *StudentsService) SignIn(ctx context.Context, input SignInInput) (Tokens, error) {
 	student, err := s.repo.GetByCredentials(ctx, input.SchoolID, input.Email, s.hasher.Hash(input.Password))
 	if err != nil {
 		return Tokens{}, err
@@ -85,9 +88,9 @@ func (s *StudentsService) Verify(ctx context.Context, hash string) error {
 	return s.repo.Verify(ctx, hash)
 }
 
-func (s *StudentsService) GetStudentModuleWithLessons(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) ([]domain.Lesson, error) {
+func (s *StudentsService) GetModuleLessons(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) ([]domain.Lesson, error) {
 	// Get module with lessons content, check if it is available for student
-	module, err := s.coursesService.GetModuleWithContent(ctx, moduleId)
+	module, err := s.modulesService.GetWithContent(ctx, moduleId)
 	if err != nil {
 		return nil, err
 	}
@@ -109,7 +112,7 @@ func (s *StudentsService) GetStudentModuleWithLessons(ctx context.Context, schoo
 	logger.Info("Ooops")
 
 	// Find module offers
-	offers, err := s.coursesService.GetPackageOffers(ctx, schoolId, module.PackageID)
+	offers, err := s.offersService.GetByModule(ctx, schoolId, module.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -120,7 +123,7 @@ func (s *StudentsService) GetStudentModuleWithLessons(ctx context.Context, schoo
 
 	// If module has no offers - it's free and available to everyone
 	go func() {
-		if err := s.repo.GiveAccessToModules(ctx, studentId, []primitive.ObjectID{moduleId}); err != nil {
+		if err := s.repo.GiveAccessToCourseAndModule(ctx, studentId, module.CourseID, moduleId); err != nil {
 			logger.Error(err)
 		}
 	}()
@@ -128,12 +131,8 @@ func (s *StudentsService) GetStudentModuleWithLessons(ctx context.Context, schoo
 	return module.Lessons, nil
 }
 
-func (s *StudentsService) GiveAccessToModules(ctx context.Context, studentId primitive.ObjectID, moduleIds []primitive.ObjectID) error {
-	return s.repo.GiveAccessToModules(ctx, studentId, moduleIds)
-}
-
 func (s *StudentsService) GiveAccessToPackages(ctx context.Context, studentId primitive.ObjectID, packageIds []primitive.ObjectID) error {
-	modules, err := s.coursesService.GetPackagesModules(ctx, packageIds)
+	modules, err := s.modulesService.GetByPackages(ctx, packageIds)
 	if err != nil {
 		return err
 	}

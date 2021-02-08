@@ -10,20 +10,23 @@ import (
 )
 
 type OrdersService struct {
-	coursesService  Courses
+	offersService     Offers
+	promoCodesService PromoCodes
+
 	repo            repository.Orders
 	paymentProvider payment.FondyProvider
 
 	callbackURL, responseURL string
 }
 
-func NewOrdersService(repo repository.Orders, coursesService Courses, paymentProvider payment.FondyProvider, callbackURL, responseURL string) *OrdersService {
+func NewOrdersService(repo repository.Orders, offersService Offers, promoCodesService PromoCodes, paymentProvider payment.FondyProvider, callbackURL, responseURL string) *OrdersService {
 	return &OrdersService{
-		repo:            repo,
-		coursesService:  coursesService,
-		paymentProvider: paymentProvider,
-		callbackURL:     callbackURL,
-		responseURL:     responseURL,
+		repo:              repo,
+		offersService:     offersService,
+		promoCodesService: promoCodesService,
+		paymentProvider:   paymentProvider,
+		callbackURL:       callbackURL,
+		responseURL:       responseURL,
 	}
 }
 
@@ -33,7 +36,7 @@ func (s *OrdersService) Create(ctx context.Context, studentId, offerId, promocod
 		return "", err
 	}
 
-	offer, err := s.coursesService.GetOfferById(ctx, offerId)
+	offer, err := s.offersService.GetById(ctx, offerId)
 	if err != nil {
 		return "", err
 	}
@@ -68,14 +71,14 @@ func (s *OrdersService) AddTransaction(ctx context.Context, id primitive.ObjectI
 	return s.repo.AddTransaction(ctx, id, transaction)
 }
 
-func (s *OrdersService) getOrderPromocode(ctx context.Context, promocodeId primitive.ObjectID) (domain.Promocode, error) {
+func (s *OrdersService) getOrderPromocode(ctx context.Context, promocodeId primitive.ObjectID) (domain.PromoCode, error) {
 	var (
-		promocode domain.Promocode
+		promocode domain.PromoCode
 		err       error
 	)
 
 	if !promocodeId.IsZero() {
-		promocode, err = s.coursesService.GetPromocodeById(ctx, promocodeId)
+		promocode, err = s.promoCodesService.GetById(ctx, promocodeId)
 		if err != nil {
 			return promocode, err
 		}
@@ -88,7 +91,7 @@ func (s *OrdersService) getOrderPromocode(ctx context.Context, promocodeId primi
 	return promocode, nil
 }
 
-func (s *OrdersService) calculateOrderPrice(price int, promocode domain.Promocode) int {
+func (s *OrdersService) calculateOrderPrice(price int, promocode domain.PromoCode) int {
 	if promocode.ID.IsZero() {
 		return price
 	} else {

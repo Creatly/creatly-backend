@@ -5,38 +5,32 @@ import (
 	"time"
 )
 
-type CourseEntity struct {
-	Name      string `json:"name" bson:"name"`
-	Position  int    `json:"position" bson:"position"`
-	Published bool   `json:"published"`
-}
-
 type Course struct {
-	ID          primitive.ObjectID `json:"id" bson:"_id"`
-	Name        string             `json:"name" bson:"name"`
-	Code        string             `json:"code" bson:"code"`
-	Description string             `json:"description" bson:"description"`
-	ImageURL    string             `json:"imageUrl" bson:"imageUrl"`
-	CreatedAt   time.Time          `json:"createdAt" bson:"createdAt"`
-	UpdatedAt   time.Time          `json:"updatedAt" bson:"updatedAt"`
-	Published   bool               `json:"published" bson:"published"`
+	ID          primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	Name        string             `json:"name" bson:"name,omitempty"`
+	Code        string             `json:"code" bson:"code,omitempty"`
+	Description string             `json:"description" bson:"description,omitempty"`
+	ImageURL    string             `json:"imageUrl" bson:"imageUrl,omitempty"`
+	CreatedAt   time.Time          `json:"createdAt" bson:"createdAt,omitempty"`
+	UpdatedAt   time.Time          `json:"updatedAt" bson:"updatedAt,omitempty"`
+	Published   bool               `json:"published" bson:"published,omitempty"`
 }
 
 type Module struct {
-	ID        primitive.ObjectID `json:"id" bson:"_id"`
+	ID        primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	Name      string             `json:"name" bson:"name"`
 	Position  int                `json:"position" bson:"position"`
 	Published bool               `json:"published"`
 	CourseID  primitive.ObjectID `json:"courseId" bson:"courseId"`
-	PackageID primitive.ObjectID `json:"packageId" bson:"packageId"`
-	Lessons   []Lesson           `json:"lessons" bson:"lessons"`
+	PackageID primitive.ObjectID `json:"packageId,omitempty" bson:"packageId,omitempty"`
+	Lessons   []Lesson           `json:"lessons,omitempty" bson:"lessons,omitempty"`
 }
 
 type Lesson struct {
-	ID        primitive.ObjectID `json:"id" bson:"_id"`
+	ID        primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	Name      string             `json:"name" bson:"name"`
 	Position  int                `json:"position" bson:"position"`
-	Published bool               `json:"published"`
+	Published bool               `json:"published" bson:"published,omitempty"`
 	Content   string             `json:"content,omitempty"`
 }
 
@@ -46,7 +40,7 @@ type LessonContent struct {
 }
 
 type CoursePackages struct {
-	ID          primitive.ObjectID `json:"id" bson:"_id"`
+	ID          primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	Name        string             `json:"name" bson:"name"`
 	Description string             `json:"description" bson:"description"`
 	CourseID    primitive.ObjectID `json:"courseId" bson:"courseId"`

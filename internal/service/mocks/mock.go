@@ -90,7 +90,7 @@ func (mr *MockStudentsMockRecorder) SignUp(ctx, input interface{}) *gomock.Call 
 }
 
 // SignIn mocks base method
-func (m *MockStudents) SignIn(ctx context.Context, input service.StudentSignInInput) (service.Tokens, error) {
+func (m *MockStudents) SignIn(ctx context.Context, input service.SignInInput) (service.Tokens, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SignIn", ctx, input)
 	ret0, _ := ret[0].(service.Tokens)
@@ -133,33 +133,19 @@ func (mr *MockStudentsMockRecorder) Verify(ctx, hash interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Verify", reflect.TypeOf((*MockStudents)(nil).Verify), ctx, hash)
 }
 
-// GetStudentModuleWithLessons mocks base method
-func (m *MockStudents) GetStudentModuleWithLessons(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) ([]domain.Lesson, error) {
+// GetModuleLessons mocks base method
+func (m *MockStudents) GetModuleLessons(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) ([]domain.Lesson, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetStudentModuleWithLessons", ctx, schoolId, studentId, moduleId)
+	ret := m.ctrl.Call(m, "GetModuleLessons", ctx, schoolId, studentId, moduleId)
 	ret0, _ := ret[0].([]domain.Lesson)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetStudentModuleWithLessons indicates an expected call of GetStudentModuleWithLessons
-func (mr *MockStudentsMockRecorder) GetStudentModuleWithLessons(ctx, schoolId, studentId, moduleId interface{}) *gomock.Call {
+// GetModuleLessons indicates an expected call of GetModuleLessons
+func (mr *MockStudentsMockRecorder) GetModuleLessons(ctx, schoolId, studentId, moduleId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStudentModuleWithLessons", reflect.TypeOf((*MockStudents)(nil).GetStudentModuleWithLessons), ctx, schoolId, studentId, moduleId)
-}
-
-// GiveAccessToModules mocks base method
-func (m *MockStudents) GiveAccessToModules(ctx context.Context, studentId primitive.ObjectID, moduleIds []primitive.ObjectID) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GiveAccessToModules", ctx, studentId, moduleIds)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// GiveAccessToModules indicates an expected call of GiveAccessToModules
-func (mr *MockStudentsMockRecorder) GiveAccessToModules(ctx, studentId, moduleIds interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GiveAccessToModules", reflect.TypeOf((*MockStudents)(nil).GiveAccessToModules), ctx, studentId, moduleIds)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetModuleLessons", reflect.TypeOf((*MockStudents)(nil).GetModuleLessons), ctx, schoolId, studentId, moduleId)
 }
 
 // GiveAccessToPackages mocks base method
@@ -174,6 +160,89 @@ func (m *MockStudents) GiveAccessToPackages(ctx context.Context, studentId primi
 func (mr *MockStudentsMockRecorder) GiveAccessToPackages(ctx, studentId, packageIds interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GiveAccessToPackages", reflect.TypeOf((*MockStudents)(nil).GiveAccessToPackages), ctx, studentId, packageIds)
+}
+
+// MockAdmins is a mock of Admins interface
+type MockAdmins struct {
+	ctrl     *gomock.Controller
+	recorder *MockAdminsMockRecorder
+}
+
+// MockAdminsMockRecorder is the mock recorder for MockAdmins
+type MockAdminsMockRecorder struct {
+	mock *MockAdmins
+}
+
+// NewMockAdmins creates a new mock instance
+func NewMockAdmins(ctrl *gomock.Controller) *MockAdmins {
+	mock := &MockAdmins{ctrl: ctrl}
+	mock.recorder = &MockAdminsMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockAdmins) EXPECT() *MockAdminsMockRecorder {
+	return m.recorder
+}
+
+// SignIn mocks base method
+func (m *MockAdmins) SignIn(ctx context.Context, input service.SignInInput) (service.Tokens, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SignIn", ctx, input)
+	ret0, _ := ret[0].(service.Tokens)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SignIn indicates an expected call of SignIn
+func (mr *MockAdminsMockRecorder) SignIn(ctx, input interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SignIn", reflect.TypeOf((*MockAdmins)(nil).SignIn), ctx, input)
+}
+
+// RefreshTokens mocks base method
+func (m *MockAdmins) RefreshTokens(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (service.Tokens, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RefreshTokens", ctx, schoolId, refreshToken)
+	ret0, _ := ret[0].(service.Tokens)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// RefreshTokens indicates an expected call of RefreshTokens
+func (mr *MockAdminsMockRecorder) RefreshTokens(ctx, schoolId, refreshToken interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RefreshTokens", reflect.TypeOf((*MockAdmins)(nil).RefreshTokens), ctx, schoolId, refreshToken)
+}
+
+// GetCourses mocks base method
+func (m *MockAdmins) GetCourses(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Course, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetCourses", ctx, schoolId)
+	ret0, _ := ret[0].([]domain.Course)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetCourses indicates an expected call of GetCourses
+func (mr *MockAdminsMockRecorder) GetCourses(ctx, schoolId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCourses", reflect.TypeOf((*MockAdmins)(nil).GetCourses), ctx, schoolId)
+}
+
+// GetCourseById mocks base method
+func (m *MockAdmins) GetCourseById(ctx context.Context, schoolId, courseId primitive.ObjectID) (domain.Course, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetCourseById", ctx, schoolId, courseId)
+	ret0, _ := ret[0].(domain.Course)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetCourseById indicates an expected call of GetCourseById
+func (mr *MockAdminsMockRecorder) GetCourseById(ctx, schoolId, courseId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCourseById", reflect.TypeOf((*MockAdmins)(nil).GetCourseById), ctx, schoolId, courseId)
 }
 
 // MockEmails is a mock of Emails interface
@@ -236,139 +305,280 @@ func (m *MockCourses) EXPECT() *MockCoursesMockRecorder {
 	return m.recorder
 }
 
-// GetCourseModules mocks base method
-func (m *MockCourses) GetCourseModules(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error) {
+// Create mocks base method
+func (m *MockCourses) Create(ctx context.Context, schoolId primitive.ObjectID, name string) (primitive.ObjectID, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetCourseModules", ctx, courseId)
-	ret0, _ := ret[0].([]domain.Module)
+	ret := m.ctrl.Call(m, "Create", ctx, schoolId, name)
+	ret0, _ := ret[0].(primitive.ObjectID)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetCourseModules indicates an expected call of GetCourseModules
-func (mr *MockCoursesMockRecorder) GetCourseModules(ctx, courseId interface{}) *gomock.Call {
+// Create indicates an expected call of Create
+func (mr *MockCoursesMockRecorder) Create(ctx, schoolId, name interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCourseModules", reflect.TypeOf((*MockCourses)(nil).GetCourseModules), ctx, courseId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockCourses)(nil).Create), ctx, schoolId, name)
 }
 
-// GetModule mocks base method
-func (m *MockCourses) GetModule(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error) {
+// Update mocks base method
+func (m *MockCourses) Update(ctx context.Context, schoolId primitive.ObjectID, inp service.UpdateCourseInput) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetModule", ctx, moduleId)
-	ret0, _ := ret[0].(domain.Module)
+	ret := m.ctrl.Call(m, "Update", ctx, schoolId, inp)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Update indicates an expected call of Update
+func (mr *MockCoursesMockRecorder) Update(ctx, schoolId, inp interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockCourses)(nil).Update), ctx, schoolId, inp)
+}
+
+// MockPromoCodes is a mock of PromoCodes interface
+type MockPromoCodes struct {
+	ctrl     *gomock.Controller
+	recorder *MockPromoCodesMockRecorder
+}
+
+// MockPromoCodesMockRecorder is the mock recorder for MockPromoCodes
+type MockPromoCodesMockRecorder struct {
+	mock *MockPromoCodes
+}
+
+// NewMockPromoCodes creates a new mock instance
+func NewMockPromoCodes(ctrl *gomock.Controller) *MockPromoCodes {
+	mock := &MockPromoCodes{ctrl: ctrl}
+	mock.recorder = &MockPromoCodesMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockPromoCodes) EXPECT() *MockPromoCodesMockRecorder {
+	return m.recorder
+}
+
+// GetByCode mocks base method
+func (m *MockPromoCodes) GetByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.PromoCode, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByCode", ctx, schoolId, code)
+	ret0, _ := ret[0].(domain.PromoCode)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetModule indicates an expected call of GetModule
-func (mr *MockCoursesMockRecorder) GetModule(ctx, moduleId interface{}) *gomock.Call {
+// GetByCode indicates an expected call of GetByCode
+func (mr *MockPromoCodesMockRecorder) GetByCode(ctx, schoolId, code interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetModule", reflect.TypeOf((*MockCourses)(nil).GetModule), ctx, moduleId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByCode", reflect.TypeOf((*MockPromoCodes)(nil).GetByCode), ctx, schoolId, code)
 }
 
-// GetModuleWithContent mocks base method
-func (m *MockCourses) GetModuleWithContent(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error) {
+// GetById mocks base method
+func (m *MockPromoCodes) GetById(ctx context.Context, id primitive.ObjectID) (domain.PromoCode, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetModuleWithContent", ctx, moduleId)
-	ret0, _ := ret[0].(domain.Module)
+	ret := m.ctrl.Call(m, "GetById", ctx, id)
+	ret0, _ := ret[0].(domain.PromoCode)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetModuleWithContent indicates an expected call of GetModuleWithContent
-func (mr *MockCoursesMockRecorder) GetModuleWithContent(ctx, moduleId interface{}) *gomock.Call {
+// GetById indicates an expected call of GetById
+func (mr *MockPromoCodesMockRecorder) GetById(ctx, id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetModuleWithContent", reflect.TypeOf((*MockCourses)(nil).GetModuleWithContent), ctx, moduleId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetById", reflect.TypeOf((*MockPromoCodes)(nil).GetById), ctx, id)
 }
 
-// GetModuleOffers mocks base method
-func (m *MockCourses) GetModuleOffers(ctx context.Context, schoolId, moduleId primitive.ObjectID) ([]domain.Offer, error) {
+// MockOffers is a mock of Offers interface
+type MockOffers struct {
+	ctrl     *gomock.Controller
+	recorder *MockOffersMockRecorder
+}
+
+// MockOffersMockRecorder is the mock recorder for MockOffers
+type MockOffersMockRecorder struct {
+	mock *MockOffers
+}
+
+// NewMockOffers creates a new mock instance
+func NewMockOffers(ctrl *gomock.Controller) *MockOffers {
+	mock := &MockOffers{ctrl: ctrl}
+	mock.recorder = &MockOffersMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockOffers) EXPECT() *MockOffersMockRecorder {
+	return m.recorder
+}
+
+// GetById mocks base method
+func (m *MockOffers) GetById(ctx context.Context, id primitive.ObjectID) (domain.Offer, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetModuleOffers", ctx, schoolId, moduleId)
-	ret0, _ := ret[0].([]domain.Offer)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetModuleOffers indicates an expected call of GetModuleOffers
-func (mr *MockCoursesMockRecorder) GetModuleOffers(ctx, schoolId, moduleId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetModuleOffers", reflect.TypeOf((*MockCourses)(nil).GetModuleOffers), ctx, schoolId, moduleId)
-}
-
-// GetPackageOffers mocks base method
-func (m *MockCourses) GetPackageOffers(ctx context.Context, schoolId, packageId primitive.ObjectID) ([]domain.Offer, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetPackageOffers", ctx, schoolId, packageId)
-	ret0, _ := ret[0].([]domain.Offer)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetPackageOffers indicates an expected call of GetPackageOffers
-func (mr *MockCoursesMockRecorder) GetPackageOffers(ctx, schoolId, packageId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPackageOffers", reflect.TypeOf((*MockCourses)(nil).GetPackageOffers), ctx, schoolId, packageId)
-}
-
-// GetPackagesModules mocks base method
-func (m *MockCourses) GetPackagesModules(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Module, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetPackagesModules", ctx, packageIds)
-	ret0, _ := ret[0].([]domain.Module)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetPackagesModules indicates an expected call of GetPackagesModules
-func (mr *MockCoursesMockRecorder) GetPackagesModules(ctx, packageIds interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPackagesModules", reflect.TypeOf((*MockCourses)(nil).GetPackagesModules), ctx, packageIds)
-}
-
-// GetPromocodeByCode mocks base method
-func (m *MockCourses) GetPromocodeByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.Promocode, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetPromocodeByCode", ctx, schoolId, code)
-	ret0, _ := ret[0].(domain.Promocode)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetPromocodeByCode indicates an expected call of GetPromocodeByCode
-func (mr *MockCoursesMockRecorder) GetPromocodeByCode(ctx, schoolId, code interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPromocodeByCode", reflect.TypeOf((*MockCourses)(nil).GetPromocodeByCode), ctx, schoolId, code)
-}
-
-// GetPromocodeById mocks base method
-func (m *MockCourses) GetPromocodeById(ctx context.Context, id primitive.ObjectID) (domain.Promocode, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetPromocodeById", ctx, id)
-	ret0, _ := ret[0].(domain.Promocode)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetPromocodeById indicates an expected call of GetPromocodeById
-func (mr *MockCoursesMockRecorder) GetPromocodeById(ctx, id interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPromocodeById", reflect.TypeOf((*MockCourses)(nil).GetPromocodeById), ctx, id)
-}
-
-// GetOfferById mocks base method
-func (m *MockCourses) GetOfferById(ctx context.Context, id primitive.ObjectID) (domain.Offer, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetOfferById", ctx, id)
+	ret := m.ctrl.Call(m, "GetById", ctx, id)
 	ret0, _ := ret[0].(domain.Offer)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetOfferById indicates an expected call of GetOfferById
-func (mr *MockCoursesMockRecorder) GetOfferById(ctx, id interface{}) *gomock.Call {
+// GetById indicates an expected call of GetById
+func (mr *MockOffersMockRecorder) GetById(ctx, id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOfferById", reflect.TypeOf((*MockCourses)(nil).GetOfferById), ctx, id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetById", reflect.TypeOf((*MockOffers)(nil).GetById), ctx, id)
+}
+
+// GetByModule mocks base method
+func (m *MockOffers) GetByModule(ctx context.Context, schoolId, moduleId primitive.ObjectID) ([]domain.Offer, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByModule", ctx, schoolId, moduleId)
+	ret0, _ := ret[0].([]domain.Offer)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByModule indicates an expected call of GetByModule
+func (mr *MockOffersMockRecorder) GetByModule(ctx, schoolId, moduleId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByModule", reflect.TypeOf((*MockOffers)(nil).GetByModule), ctx, schoolId, moduleId)
+}
+
+// GetByPackage mocks base method
+func (m *MockOffers) GetByPackage(ctx context.Context, schoolId, packageId primitive.ObjectID) ([]domain.Offer, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByPackage", ctx, schoolId, packageId)
+	ret0, _ := ret[0].([]domain.Offer)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByPackage indicates an expected call of GetByPackage
+func (mr *MockOffersMockRecorder) GetByPackage(ctx, schoolId, packageId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByPackage", reflect.TypeOf((*MockOffers)(nil).GetByPackage), ctx, schoolId, packageId)
+}
+
+// MockModules is a mock of Modules interface
+type MockModules struct {
+	ctrl     *gomock.Controller
+	recorder *MockModulesMockRecorder
+}
+
+// MockModulesMockRecorder is the mock recorder for MockModules
+type MockModulesMockRecorder struct {
+	mock *MockModules
+}
+
+// NewMockModules creates a new mock instance
+func NewMockModules(ctrl *gomock.Controller) *MockModules {
+	mock := &MockModules{ctrl: ctrl}
+	mock.recorder = &MockModulesMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockModules) EXPECT() *MockModulesMockRecorder {
+	return m.recorder
+}
+
+// GetByCourse mocks base method
+func (m *MockModules) GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByCourse", ctx, courseId)
+	ret0, _ := ret[0].([]domain.Module)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByCourse indicates an expected call of GetByCourse
+func (mr *MockModulesMockRecorder) GetByCourse(ctx, courseId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByCourse", reflect.TypeOf((*MockModules)(nil).GetByCourse), ctx, courseId)
+}
+
+// GetById mocks base method
+func (m *MockModules) GetById(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetById", ctx, moduleId)
+	ret0, _ := ret[0].(domain.Module)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetById indicates an expected call of GetById
+func (mr *MockModulesMockRecorder) GetById(ctx, moduleId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetById", reflect.TypeOf((*MockModules)(nil).GetById), ctx, moduleId)
+}
+
+// GetByPackages mocks base method
+func (m *MockModules) GetByPackages(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Module, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByPackages", ctx, packageIds)
+	ret0, _ := ret[0].([]domain.Module)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByPackages indicates an expected call of GetByPackages
+func (mr *MockModulesMockRecorder) GetByPackages(ctx, packageIds interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByPackages", reflect.TypeOf((*MockModules)(nil).GetByPackages), ctx, packageIds)
+}
+
+// GetWithContent mocks base method
+func (m *MockModules) GetWithContent(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetWithContent", ctx, moduleId)
+	ret0, _ := ret[0].(domain.Module)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetWithContent indicates an expected call of GetWithContent
+func (mr *MockModulesMockRecorder) GetWithContent(ctx, moduleId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetWithContent", reflect.TypeOf((*MockModules)(nil).GetWithContent), ctx, moduleId)
+}
+
+// Create mocks base method
+func (m *MockModules) Create(ctx context.Context, inp service.CreateModuleInput) (primitive.ObjectID, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Create", ctx, inp)
+	ret0, _ := ret[0].(primitive.ObjectID)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Create indicates an expected call of Create
+func (mr *MockModulesMockRecorder) Create(ctx, inp interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockModules)(nil).Create), ctx, inp)
+}
+
+// Update mocks base method
+func (m *MockModules) Update(ctx context.Context, inp service.UpdateModuleInput) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Update", ctx, inp)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Update indicates an expected call of Update
+func (mr *MockModulesMockRecorder) Update(ctx, inp interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockModules)(nil).Update), ctx, inp)
+}
+
+// Delete mocks base method
+func (m *MockModules) Delete(ctx context.Context, id primitive.ObjectID) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Delete", ctx, id)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Delete indicates an expected call of Delete
+func (mr *MockModulesMockRecorder) Delete(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockModules)(nil).Delete), ctx, id)
 }
 
 // MockOrders is a mock of Orders interface

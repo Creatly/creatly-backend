@@ -13,6 +13,7 @@ import (
 const (
 	authorizationHeader = "Authorization"
 	studentCtx          = "userId"
+	adminCtx            = "adminId"
 	schoolCtx           = "school"
 )
 
@@ -43,31 +44,40 @@ func getSchoolFromContext(c *gin.Context) (domain.School, error) {
 	return school, nil
 }
 
-func (h *Handler) userIdentity(c *gin.Context) {
+func (h *Handler) studentIdentity(c *gin.Context) {
+	id, err := h.parseAuthHeader(c)
+	if err != nil {
+		newResponse(c, http.StatusUnauthorized, err.Error())
+	}
+
+	c.Set(studentCtx, id)
+}
+
+func (h *Handler) adminIdentity(c *gin.Context) {
+	id, err := h.parseAuthHeader(c)
+	if err != nil {
+		newResponse(c, http.StatusUnauthorized, err.Error())
+	}
+
+	c.Set(adminCtx, id)
+}
+
+func (h *Handler) parseAuthHeader(c *gin.Context) (string, error) {
 	header := c.GetHeader(authorizationHeader)
 	if header == "" {
-		newResponse(c, http.StatusUnauthorized, "empty auth header")
-		return
+		return "", errors.New("empty auth header")
 	}
 
 	headerParts := strings.Split(header, " ")
 	if len(headerParts) != 2 || headerParts[0] != "Bearer" {
-		newResponse(c, http.StatusUnauthorized, "invalid auth header")
-		return
+		return "", errors.New("invalid auth header")
 	}
 
 	if len(headerParts[1]) == 0 {
-		newResponse(c, http.StatusUnauthorized, "token is empty")
-		return
+		return "", errors.New("token is empty")
 	}
 
-	userId, err := h.tokenManager.Parse(headerParts[1])
-	if err != nil {
-		newResponse(c, http.StatusUnauthorized, err.Error())
-		return
-	}
-
-	c.Set(studentCtx, userId)
+	return h.tokenManager.Parse(headerParts[1])
 }
 
 func getStudentId(c *gin.Context) (primitive.ObjectID, error) {

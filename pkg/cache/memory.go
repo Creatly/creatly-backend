@@ -25,14 +25,16 @@ func NewMemoryCache() *MemoryCache {
 }
 
 func (c *MemoryCache) setTtlTimer() {
-	for now := range time.Tick(time.Second) {
+	for {
 		c.Lock()
 		for k, v := range c.cache {
-			if now.Unix()-v.createdAt > v.ttl {
+			if time.Now().Unix()-v.createdAt > v.ttl {
 				delete(c.cache, k)
 			}
 		}
 		c.Unlock()
+
+		<-time.After(time.Second)
 	}
 }
 

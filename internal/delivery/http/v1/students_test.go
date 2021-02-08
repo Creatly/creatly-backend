@@ -130,16 +130,16 @@ func TestHandler_studentCreateOrder(t *testing.T) {
 }
 
 func TestHandler_studentGetPromocode(t *testing.T) {
-	type mockBehavior func(r *mock_service.MockCourses, schoolId primitive.ObjectID, code string, promocode domain.Promocode)
+	type mockBehavior func(r *mock_service.MockPromoCodes, schoolId primitive.ObjectID, code string, promocode domain.PromoCode)
 
 	schoolId := primitive.NewObjectID()
 
-	promocode := domain.Promocode{
+	promocode := domain.PromoCode{
 		Code:               "GOGOGO25",
 		DiscountPercentage: 25,
 	}
 
-	setResponseBody := func(promocode domain.Promocode) string {
+	setResponseBody := func(promocode domain.PromoCode) string {
 		body, _ := json.Marshal(promocode)
 		return string(body)
 	}
@@ -148,7 +148,7 @@ func TestHandler_studentGetPromocode(t *testing.T) {
 		name         string
 		code         string
 		schoolId     primitive.ObjectID
-		promocode    domain.Promocode
+		promocode    domain.PromoCode
 		mockBehavior mockBehavior
 		statusCode   int
 		responseBody string
@@ -158,8 +158,8 @@ func TestHandler_studentGetPromocode(t *testing.T) {
 			code:      "GOGOGO25",
 			schoolId:  schoolId,
 			promocode: promocode,
-			mockBehavior: func(r *mock_service.MockCourses, schoolId primitive.ObjectID, code string, promocode domain.Promocode) {
-				r.EXPECT().GetPromocodeByCode(context.Background(), schoolId, code).Return(promocode, nil)
+			mockBehavior: func(r *mock_service.MockPromoCodes, schoolId primitive.ObjectID, code string, promocode domain.PromoCode) {
+				r.EXPECT().GetByCode(context.Background(), schoolId, code).Return(promocode, nil)
 			},
 			statusCode:   200,
 			responseBody: setResponseBody(promocode),
@@ -169,7 +169,7 @@ func TestHandler_studentGetPromocode(t *testing.T) {
 			code:         "",
 			schoolId:     schoolId,
 			promocode:    promocode,
-			mockBehavior: func(r *mock_service.MockCourses, schoolId primitive.ObjectID, code string, promocode domain.Promocode) {},
+			mockBehavior: func(r *mock_service.MockPromoCodes, schoolId primitive.ObjectID, code string, promocode domain.PromoCode) {},
 			statusCode:   404,
 			responseBody: `404 page not found`,
 		},
@@ -178,8 +178,8 @@ func TestHandler_studentGetPromocode(t *testing.T) {
 			code:      "GOGOGO25",
 			schoolId:  schoolId,
 			promocode: promocode,
-			mockBehavior: func(r *mock_service.MockCourses, schoolId primitive.ObjectID, code string, promocode domain.Promocode) {
-				r.EXPECT().GetPromocodeByCode(context.Background(), schoolId, code).Return(promocode, errors.New("failed to get promocode"))
+			mockBehavior: func(r *mock_service.MockPromoCodes, schoolId primitive.ObjectID, code string, promocode domain.PromoCode) {
+				r.EXPECT().GetByCode(context.Background(), schoolId, code).Return(promocode, errors.New("failed to get promocode"))
 			},
 			statusCode:   500,
 			responseBody: `{"message":"failed to get promocode"}`,
@@ -192,10 +192,10 @@ func TestHandler_studentGetPromocode(t *testing.T) {
 			c := gomock.NewController(t)
 			defer c.Finish()
 
-			s := mock_service.NewMockCourses(c)
+			s := mock_service.NewMockPromoCodes(c)
 			tt.mockBehavior(s, tt.schoolId, tt.code, tt.promocode)
 
-			handler := Handler{coursesService: s}
+			handler := Handler{promoCodesService: s}
 
 			// Init Endpoint
 			r := gin.New()
@@ -203,7 +203,7 @@ func TestHandler_studentGetPromocode(t *testing.T) {
 				c.Set(schoolCtx, domain.School{
 					ID: schoolId,
 				})
-			}, handler.studentGetPromocode)
+			}, handler.studentGetPromo)
 
 			// Create Request
 			w := httptest.NewRecorder()
@@ -220,7 +220,7 @@ func TestHandler_studentGetPromocode(t *testing.T) {
 }
 
 func TestHandler_studentGetModuleOffers(t *testing.T) {
-	type mockBehavior func(r *mock_service.MockCourses, schoolId, moduleId primitive.ObjectID, offers []domain.Offer)
+	type mockBehavior func(r *mock_service.MockOffers, schoolId, moduleId primitive.ObjectID, offers []domain.Offer)
 
 	schoolId := primitive.NewObjectID()
 	moduleId := primitive.NewObjectID()
@@ -256,8 +256,8 @@ func TestHandler_studentGetModuleOffers(t *testing.T) {
 					},
 				},
 			},
-			mockBehavior: func(r *mock_service.MockCourses, schoolId, moduleId primitive.ObjectID, offers []domain.Offer) {
-				r.EXPECT().GetModuleOffers(context.Background(), schoolId, moduleId).Return(offers, nil)
+			mockBehavior: func(r *mock_service.MockOffers, schoolId, moduleId primitive.ObjectID, offers []domain.Offer) {
+				r.EXPECT().GetByModule(context.Background(), schoolId, moduleId).Return(offers, nil)
 			},
 			statusCode:   200,
 			responseBody: fmt.Sprintf(`{"offers":[{"id":"000000000000000000000000","name":"test offer","description":"description","createdAt":"%s","price":{"value":6900,"currency":"USD"}}]}`, createdAt.Format(time.RFC3339)),
@@ -266,7 +266,7 @@ func TestHandler_studentGetModuleOffers(t *testing.T) {
 			name:         "invalid module id",
 			moduleId:     "123",
 			schoolId:     schoolId,
-			mockBehavior: func(r *mock_service.MockCourses, schoolId, moduleId primitive.ObjectID, offers []domain.Offer) {},
+			mockBehavior: func(r *mock_service.MockOffers, schoolId, moduleId primitive.ObjectID, offers []domain.Offer) {},
 			statusCode:   400,
 			responseBody: `{"message":"invalid id param"}`,
 		},
@@ -274,8 +274,8 @@ func TestHandler_studentGetModuleOffers(t *testing.T) {
 			name:     "service error",
 			moduleId: moduleId.Hex(),
 			schoolId: schoolId,
-			mockBehavior: func(r *mock_service.MockCourses, schoolId, moduleId primitive.ObjectID, offers []domain.Offer) {
-				r.EXPECT().GetModuleOffers(context.Background(), schoolId, moduleId).Return(nil, errors.New("failed to get offers"))
+			mockBehavior: func(r *mock_service.MockOffers, schoolId, moduleId primitive.ObjectID, offers []domain.Offer) {
+				r.EXPECT().GetByModule(context.Background(), schoolId, moduleId).Return(nil, errors.New("failed to get offers"))
 			},
 			statusCode:   500,
 			responseBody: `{"message":"failed to get offers"}`,
@@ -288,12 +288,12 @@ func TestHandler_studentGetModuleOffers(t *testing.T) {
 			c := gomock.NewController(t)
 			defer c.Finish()
 
-			s := mock_service.NewMockCourses(c)
+			s := mock_service.NewMockOffers(c)
 
 			id, _ := primitive.ObjectIDFromHex(tt.moduleId)
 			tt.mockBehavior(s, tt.schoolId, id, tt.offers)
 
-			handler := Handler{coursesService: s}
+			handler := Handler{offersService: s}
 
 			// Init Endpoint
 			r := gin.New()
@@ -348,7 +348,7 @@ func TestHandler_studentGetModuleLessons(t *testing.T) {
 				},
 			},
 			mockBehavior: func(r *mock_service.MockStudents, schoolId, studentId, moduleId primitive.ObjectID, lessons []domain.Lesson) {
-				r.EXPECT().GetStudentModuleWithLessons(context.Background(), schoolId, studentId, moduleId).Return(lessons, nil)
+				r.EXPECT().GetModuleLessons(context.Background(), schoolId, studentId, moduleId).Return(lessons, nil)
 			},
 			statusCode:   200,
 			responseBody: `{"lessons":[{"id":"000000000000000000000000","name":"test lesson","position":0,"published":true,"content":"content"}]}`,
@@ -368,7 +368,7 @@ func TestHandler_studentGetModuleLessons(t *testing.T) {
 			schoolId:  schoolId,
 			studentId: studentId,
 			mockBehavior: func(r *mock_service.MockStudents, schoolId, studentId, moduleId primitive.ObjectID, lessons []domain.Lesson) {
-				r.EXPECT().GetStudentModuleWithLessons(context.Background(), schoolId, studentId, moduleId).Return(lessons, service.ErrModuleIsNotAvailable)
+				r.EXPECT().GetModuleLessons(context.Background(), schoolId, studentId, moduleId).Return(lessons, service.ErrModuleIsNotAvailable)
 			},
 			statusCode:   403,
 			responseBody: fmt.Sprintf(`{"message":"%s"}`, service.ErrModuleIsNotAvailable.Error()),
@@ -379,7 +379,7 @@ func TestHandler_studentGetModuleLessons(t *testing.T) {
 			schoolId:  schoolId,
 			studentId: studentId,
 			mockBehavior: func(r *mock_service.MockStudents, schoolId, studentId, moduleId primitive.ObjectID, lessons []domain.Lesson) {
-				r.EXPECT().GetStudentModuleWithLessons(context.Background(), schoolId, studentId, moduleId).Return(lessons, errors.New("failed to get module"))
+				r.EXPECT().GetModuleLessons(context.Background(), schoolId, studentId, moduleId).Return(lessons, errors.New("failed to get module"))
 			},
 			statusCode:   500,
 			responseBody: `{"message":"failed to get module"}`,
@@ -453,59 +453,59 @@ func TestHandler_studentSignUp(t *testing.T) {
 			statusCode: 201,
 		},
 		{
-			name:        "missing name",
-			requestBody: `{"name":"","email":"test@test.com","password":"qwerty123","registerSource":"test-course"}`,
-			schoolId:    schoolId,
+			name:         "missing name",
+			requestBody:  `{"name":"","email":"test@test.com","password":"qwerty123","registerSource":"test-course"}`,
+			schoolId:     schoolId,
 			mockBehavior: func(r *mock_service.MockStudents, input service.StudentSignUpInput) {},
-			statusCode: 400,
+			statusCode:   400,
 			responseBody: `{"message":"invalid input body"}`,
 		},
 		{
-			name:        "invalid name",
-			requestBody: `{"name":"q","email":"test@test.com","password":"qwerty123","registerSource":"test-course"}`,
-			schoolId:    schoolId,
+			name:         "invalid name",
+			requestBody:  `{"name":"q","email":"test@test.com","password":"qwerty123","registerSource":"test-course"}`,
+			schoolId:     schoolId,
 			mockBehavior: func(r *mock_service.MockStudents, input service.StudentSignUpInput) {},
-			statusCode: 400,
+			statusCode:   400,
 			responseBody: `{"message":"invalid input body"}`,
 		},
 		{
-			name:        "invalid name",
-			requestBody: `{"name":"q","email":"test@test.com","password":"qwerty123","registerSource":"test-course"}`,
-			schoolId:    schoolId,
+			name:         "invalid name",
+			requestBody:  `{"name":"q","email":"test@test.com","password":"qwerty123","registerSource":"test-course"}`,
+			schoolId:     schoolId,
 			mockBehavior: func(r *mock_service.MockStudents, input service.StudentSignUpInput) {},
-			statusCode: 400,
+			statusCode:   400,
 			responseBody: `{"message":"invalid input body"}`,
 		},
 		{
-			name:        "missing email",
-			requestBody: `{"name":"Vasya","email":"","password":"qwerty123","registerSource":"test-course"}`,
-			schoolId:    schoolId,
+			name:         "missing email",
+			requestBody:  `{"name":"Vasya","email":"","password":"qwerty123","registerSource":"test-course"}`,
+			schoolId:     schoolId,
 			mockBehavior: func(r *mock_service.MockStudents, input service.StudentSignUpInput) {},
-			statusCode: 400,
+			statusCode:   400,
 			responseBody: `{"message":"invalid input body"}`,
 		},
 		{
-			name:        "missing password",
-			requestBody: `{"name":"Vasya","email":"test@test.com","password":"","registerSource":"test-course"}`,
-			schoolId:    schoolId,
+			name:         "missing password",
+			requestBody:  `{"name":"Vasya","email":"test@test.com","password":"","registerSource":"test-course"}`,
+			schoolId:     schoolId,
 			mockBehavior: func(r *mock_service.MockStudents, input service.StudentSignUpInput) {},
-			statusCode: 400,
+			statusCode:   400,
 			responseBody: `{"message":"invalid input body"}`,
 		},
 		{
-			name:        "password too short",
-			requestBody: `{"name":"Vasya","email":"test@test.com","password":"qwerty","registerSource":"test-course"}`,
-			schoolId:    schoolId,
+			name:         "password too short",
+			requestBody:  `{"name":"Vasya","email":"test@test.com","password":"qwerty","registerSource":"test-course"}`,
+			schoolId:     schoolId,
 			mockBehavior: func(r *mock_service.MockStudents, input service.StudentSignUpInput) {},
-			statusCode: 400,
+			statusCode:   400,
 			responseBody: `{"message":"invalid input body"}`,
 		},
 		{
-			name:        "missing registerSource",
-			requestBody: `{"name":"Vasya","email":"test@test.com","password":"","registerSource":""}`,
-			schoolId:    schoolId,
+			name:         "missing registerSource",
+			requestBody:  `{"name":"Vasya","email":"test@test.com","password":"","registerSource":""}`,
+			schoolId:     schoolId,
 			mockBehavior: func(r *mock_service.MockStudents, input service.StudentSignUpInput) {},
-			statusCode: 400,
+			statusCode:   400,
 			responseBody: `{"message":"invalid input body"}`,
 		},
 	}

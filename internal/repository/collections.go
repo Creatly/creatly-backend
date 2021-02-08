@@ -1,6 +1,7 @@
-package mdb
+package repository
 
 const (
+	adminsCollection     = "admins"
 	usersCollection      = "users"
 	studentsCollection   = "students"
 	schoolsCollection    = "schools"

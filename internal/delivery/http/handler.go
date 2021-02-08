@@ -15,23 +15,32 @@ import (
 )
 
 type Handler struct {
-	schoolsService  service.Schools
-	studentsService service.Students
-	coursesService  service.Courses
-	ordersService   service.Orders
-	paymentsService service.Payments
-	tokenManager    auth.TokenManager
+	schoolsService    service.Schools
+	studentsService   service.Students
+	coursesService    service.Courses
+	promoCodesService service.PromoCodes
+	offersService     service.Offers
+	modulesService    service.Modules
+	ordersService     service.Orders
+	paymentsService   service.Payments
+	adminsService     service.Admins
+	tokenManager      auth.TokenManager
 }
 
-func NewHandler(schoolsService service.Schools, studentsService service.Students, coursesService service.Courses, ordersService service.Orders,
-	paymentsService service.Payments, tokenManager auth.TokenManager) *Handler {
+func NewHandler(schoolsService service.Schools, studentsService service.Students, coursesService service.Courses, promoCodesService service.PromoCodes,
+	offersService service.Offers, modulesService service.Modules, ordersService service.Orders,
+	paymentsService service.Payments, adminsService service.Admins, tokenManager auth.TokenManager) *Handler {
 	return &Handler{
-		schoolsService:  schoolsService,
-		studentsService: studentsService,
-		coursesService:  coursesService,
-		ordersService:   ordersService,
-		paymentsService: paymentsService,
-		tokenManager:    tokenManager,
+		schoolsService:    schoolsService,
+		studentsService:   studentsService,
+		coursesService:    coursesService,
+		promoCodesService: promoCodesService,
+		offersService:     offersService,
+		modulesService:    modulesService,
+		ordersService:     ordersService,
+		paymentsService:   paymentsService,
+		adminsService:     adminsService,
+		tokenManager:      tokenManager,
 	}
 }
 
@@ -58,7 +67,8 @@ func (h *Handler) Init(host, port string) *gin.Engine {
 }
 
 func (h *Handler) initAPI(router *gin.Engine) {
-	handlerV1 := v1.NewHandler(h.schoolsService, h.studentsService, h.coursesService, h.ordersService, h.paymentsService, h.tokenManager)
+	handlerV1 := v1.NewHandler(h.schoolsService, h.studentsService, h.coursesService, h.promoCodesService,
+		h.offersService, h.modulesService, h.ordersService, h.paymentsService, h.adminsService, h.tokenManager)
 	api := router.Group("/api")
 	{
 		handlerV1.Init(api)

@@ -24,9 +24,9 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/students/courses": {
-            "get": {
-                "description": "student get all courses",
+        "/admins/auth/refresh": {
+            "post": {
+                "description": "admin refresh tokens",
                 "consumes": [
                     "application/json"
                 ],
@@ -34,10 +34,138 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "students"
+                    "admins-auth"
                 ],
-                "summary": "Student Get All Courses",
-                "operationId": "studentGetAllCourses",
+                "summary": "Admin Refresh Tokens",
+                "parameters": [
+                    {
+                        "description": "refresh info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.refreshInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.tokenResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admins/courses": {
+            "get": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "admin get all courses",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admins-courses"
+                ],
+                "summary": "Admin Get All Courses",
+                "operationId": "adminGetAllCourses",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/domain.Course"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "admin create new course",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admins-courses"
+                ],
+                "summary": "Admin Create New Courses",
+                "operationId": "adminCreateCourse",
+                "parameters": [
+                    {
+                        "description": "course info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.createCourseInput"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -75,9 +203,14 @@ var doc = `{
                 }
             }
         },
-        "/students/courses/{id}": {
+        "/admins/courses/{id}": {
             "get": {
-                "description": "student get course by id",
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "admin get course by id",
                 "consumes": [
                     "application/json"
                 ],
@@ -85,10 +218,10 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "students"
+                    "admins-courses"
                 ],
-                "summary": "Student Get Course By ID",
-                "operationId": "studentGetCourseById",
+                "summary": "Admin Get Course By ID",
+                "operationId": "adminGetCourseById",
                 "parameters": [
                     {
                         "type": "string",
@@ -103,6 +236,564 @@ var doc = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/domain.Course"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "admin update course",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admins-courses"
+                ],
+                "summary": "Admin Update Course",
+                "operationId": "adminUpdateCourse",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "course id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "course update info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.adminUpdateCourseInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admins/courses/{id}/modules": {
+            "post": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "admin update course",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admins-modules"
+                ],
+                "summary": "Admin Create Module",
+                "operationId": "adminCreateModule",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "module id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "module info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.createModuleInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "id",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admins/modules/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "admin update course",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admins-modules"
+                ],
+                "summary": "Admin Update Module",
+                "operationId": "adminUpdateModule",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "module id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "update info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.updateModuleInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "admin update course",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admins-modules"
+                ],
+                "summary": "Admin Delete Module",
+                "operationId": "adminDeleteModule",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "module id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admins/modules/{id}/lessons": {
+            "get": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "admin get module content",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admins-lessons"
+                ],
+                "summary": "Admin Get Module Lessons",
+                "operationId": "adminGetLessons",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "module id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admins/sign-in": {
+            "post": {
+                "description": "admin sign in",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admins-auth"
+                ],
+                "summary": "Admin SignIn",
+                "operationId": "adminSignIn",
+                "parameters": [
+                    {
+                        "description": "sign up info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.signInInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.tokenResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/courses": {
+            "get": {
+                "description": "get all courses",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "courses"
+                ],
+                "summary": "Get All Courses",
+                "operationId": "getAllCourses",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/domain.Course"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/courses/{id}": {
+            "get": {
+                "description": "get course by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "courses"
+                ],
+                "summary": "Get Course By ID",
+                "operationId": "getCourseById",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "course id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Course"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/students/auth/refresh": {
+            "post": {
+                "description": "student refresh tokens",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "students-auth"
+                ],
+                "summary": "Student Refresh Tokens",
+                "parameters": [
+                    {
+                        "description": "sign up info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.refreshInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.tokenResponse"
                         }
                     },
                     "400": {
@@ -147,7 +838,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "students"
+                    "students-courses"
                 ],
                 "summary": "Student Get Lessons By Module ID",
                 "operationId": "studentGetModuleLessons",
@@ -164,7 +855,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.studentGetModuleLessonsResponse"
+                            "$ref": "#/definitions/v1.getModuleLessonsResponse"
                         }
                     },
                     "400": {
@@ -209,7 +900,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "students"
+                    "students-courses"
                 ],
                 "summary": "Student Get Offers By Module ID",
                 "operationId": "studentGetModuleOffers",
@@ -271,7 +962,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "students"
+                    "students-courses"
                 ],
                 "summary": "Student CreateOrder",
                 "operationId": "studentCreateOrder",
@@ -335,10 +1026,10 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "students"
+                    "students-courses"
                 ],
-                "summary": "Student Get Promocode By Code",
-                "operationId": "studentGetPromocode",
+                "summary": "Student Get PromoCode By Code",
+                "operationId": "studentGetPromo",
                 "parameters": [
                     {
                         "type": "string",
@@ -352,65 +1043,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Promocode"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/v1.response"
-                        }
-                    },
-                    "404": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/v1.response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/v1.response"
-                        }
-                    },
-                    "default": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/v1.response"
-                        }
-                    }
-                }
-            }
-        },
-        "/students/refresh": {
-            "post": {
-                "description": "student refresh tokens",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "students"
-                ],
-                "summary": "Student Refresh Tokens",
-                "parameters": [
-                    {
-                        "description": "sign up info",
-                        "name": "input",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/v1.refreshInput"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/v1.tokenResponse"
+                            "$ref": "#/definitions/domain.PromoCode"
                         }
                     },
                     "400": {
@@ -450,7 +1083,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "students"
+                    "students-auth"
                 ],
                 "summary": "Student SignIn",
                 "operationId": "studentSignIn",
@@ -461,7 +1094,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.studentSignInInput"
+                            "$ref": "#/definitions/v1.signInInput"
                         }
                     }
                 ],
@@ -509,7 +1142,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "students"
+                    "students-auth"
                 ],
                 "summary": "Student SignUp",
                 "operationId": "studentSignUp",
@@ -568,7 +1201,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "students"
+                    "students-auth"
                 ],
                 "summary": "Student Verify Registration",
                 "operationId": "studentVerify",
@@ -666,7 +1299,7 @@ var doc = `{
                 }
             }
         },
-        "domain.Promocode": {
+        "domain.PromoCode": {
             "type": "object",
             "properties": {
                 "code": {
@@ -689,8 +1322,51 @@ var doc = `{
                 }
             }
         },
+        "v1.adminUpdateCourseInput": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "published": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "v1.createCourseInput": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.createModuleInput": {
+            "type": "object",
+            "required": [
+                "name",
+                "position"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "position": {
+                    "type": "integer"
+                }
+            }
+        },
         "v1.createOrderInput": {
             "type": "object",
+            "required": [
+                "offerId"
+            ],
             "properties": {
                 "offerId": {
                     "type": "string"
@@ -705,6 +1381,17 @@ var doc = `{
             "properties": {
                 "paymentLink": {
                     "type": "string"
+                }
+            }
+        },
+        "v1.getModuleLessonsResponse": {
+            "type": "object",
+            "properties": {
+                "lessons": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Lesson"
+                    }
                 }
             }
         },
@@ -727,18 +1414,7 @@ var doc = `{
                 }
             }
         },
-        "v1.studentGetModuleLessonsResponse": {
-            "type": "object",
-            "properties": {
-                "lessons": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/domain.Lesson"
-                    }
-                }
-            }
-        },
-        "v1.studentSignInInput": {
+        "v1.signInInput": {
             "type": "object",
             "required": [
                 "email",
@@ -758,7 +1434,8 @@ var doc = `{
             "required": [
                 "email",
                 "name",
-                "password"
+                "password",
+                "registerSource"
             ],
             "properties": {
                 "email": {
@@ -783,6 +1460,20 @@ var doc = `{
                 },
                 "refreshToken": {
                     "type": "string"
+                }
+            }
+        },
+        "v1.updateModuleInput": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "position": {
+                    "type": "integer"
+                },
+                "published": {
+                    "type": "boolean"
                 }
             }
         }

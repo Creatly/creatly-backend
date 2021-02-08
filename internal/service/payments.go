@@ -12,15 +12,15 @@ import (
 type PaymentsService struct {
 	paymentProvider payment.FondyProvider
 	ordersService   Orders
-	coursesService  Courses
+	offersService   Offers
 	studentsService Students
 }
 
-func NewPaymentsService(paymentProvider payment.FondyProvider, ordersService Orders, coursesService Courses, studentsService Students) *PaymentsService {
-	return &PaymentsService{paymentProvider: paymentProvider, ordersService: ordersService, coursesService: coursesService, studentsService: studentsService}
+func NewPaymentsService(paymentProvider payment.FondyProvider, ordersService Orders, offersService Offers, studentsService Students) *PaymentsService {
+	return &PaymentsService{paymentProvider: paymentProvider, ordersService: ordersService, offersService: offersService, studentsService: studentsService}
 }
 
-// TODO groom code, add modules, decide with callback validation
+// TODO callback data validation?
 func (s *PaymentsService) ProcessTransaction(ctx context.Context, callbackData payment.Callback) error {
 	orderId, err := primitive.ObjectIDFromHex(callbackData.OrderId)
 	if err != nil {
@@ -41,7 +41,7 @@ func (s *PaymentsService) ProcessTransaction(ctx context.Context, callbackData p
 		return nil
 	}
 
-	offer, err := s.coursesService.GetOfferById(ctx, order.OfferID)
+	offer, err := s.offersService.GetById(ctx, order.OfferID)
 	if err != nil {
 		return err
 	}
