@@ -258,7 +258,6 @@ type studentOffer struct {
 	ID          primitive.ObjectID `json:"id" bson:"_id"`
 	Name        string             `json:"name" bson:"name"`
 	Description string             `json:"description" bson:"description"`
-	CreatedAt   string             `json:"createdAt" bson:"createdAt"`
 	Price       price              `json:"price" bson:"price"`
 }
 
