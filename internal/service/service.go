@@ -22,10 +22,10 @@ type Schools interface {
 }
 
 type StudentSignUpInput struct {
-	Name           string
-	Email          string
-	Password       string
-	SchoolID       primitive.ObjectID
+	Name     string
+	Email    string
+	Password string
+	SchoolID primitive.ObjectID
 }
 
 type SignInInput struct {
@@ -91,7 +91,7 @@ type Offers interface {
 
 type CreateModuleInput struct {
 	CourseID string
-	Name string
+	Name     string
 	Position int
 }
 
@@ -102,6 +102,21 @@ type UpdateModuleInput struct {
 	Published *bool
 }
 
+type AddLessonInput struct {
+	ModuleID string
+	Name     string
+	Position int
+}
+
+type UpdateLessonInput struct {
+	LessonID  string
+	Name      string
+	Content   string
+	Position  *int
+	Published *bool
+}
+
+// TODO: split into Modules and Lessons
 type Modules interface {
 	GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
 	GetById(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
@@ -110,6 +125,10 @@ type Modules interface {
 	Create(ctx context.Context, inp CreateModuleInput) (primitive.ObjectID, error)
 	Update(ctx context.Context, inp UpdateModuleInput) error
 	Delete(ctx context.Context, id primitive.ObjectID) error
+	AddLesson(ctx context.Context, inp AddLessonInput) (primitive.ObjectID, error)
+	GetLesson(ctx context.Context, lessonId primitive.ObjectID) (domain.Lesson, error)
+	UpdateLesson(ctx context.Context, inp UpdateLessonInput) error
+	DeleteLesson(ctx context.Context, id primitive.ObjectID) error
 }
 
 type Orders interface {

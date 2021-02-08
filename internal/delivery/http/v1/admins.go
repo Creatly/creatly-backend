@@ -8,6 +8,8 @@ import (
 	"net/http"
 )
 
+// TODO: review response error messages
+
 func (h *Handler) initAdminRoutes(api *gin.RouterGroup) {
 	students := api.Group("/admins", h.setSchoolFromRequest)
 	{
@@ -29,8 +31,15 @@ func (h *Handler) initAdminRoutes(api *gin.RouterGroup) {
 			{
 				modules.PUT("/:id", h.adminUpdateModule)
 				modules.DELETE("/:id", h.adminDeleteModule)
-				modules.GET(":id/lessons", h.adminGetLessons)
-				modules.POST("id/lessons", h.adminCreateLesson)
+				modules.GET("/:id/lessons", h.adminGetLessons)
+				modules.POST("/:id/lessons", h.adminCreateLesson)
+			}
+
+			lessons := authenticated.Group("/lessons")
+			{
+				lessons.GET("/:id", h.adminGetLessonById)
+				lessons.PUT("/:id", h.adminUpdateLesson)
+				lessons.DELETE("/:id", h.adminDeleteLesson)
 			}
 
 		}
@@ -40,7 +49,7 @@ func (h *Handler) initAdminRoutes(api *gin.RouterGroup) {
 // @Summary Admin SignIn
 // @Tags admins-auth
 // @Description admin sign in
-// @ID adminSignIn
+// @ModuleID adminSignIn
 // @Accept  json
 // @Produce  json
 // @Param input body signInInput true "sign up info"
@@ -122,7 +131,7 @@ type createCourseInput struct {
 // @Security AdminAuth
 // @Tags admins-courses
 // @Description admin create new course
-// @ID adminCreateCourse
+// @ModuleID adminCreateCourse
 // @Accept  json
 // @Produce  json
 // @Param input body createCourseInput true "course info"
@@ -159,7 +168,7 @@ func (h *Handler) adminCreateCourse(c *gin.Context) {
 // @Security AdminAuth
 // @Tags admins-courses
 // @Description admin get all courses
-// @ID adminGetAllCourses
+// @ModuleID adminGetAllCourses
 // @Accept  json
 // @Produce  json
 // @Success 200 {array} domain.Course
@@ -192,7 +201,7 @@ type adminGetCourseByIdResponse struct {
 // @Security AdminAuth
 // @Tags admins-courses
 // @Description admin get course by id
-// @ID adminGetCourseById
+// @ModuleID adminGetCourseById
 // @Accept  json
 // @Produce  json
 // @Param id path string true "course id"
@@ -249,7 +258,7 @@ type adminUpdateCourseInput struct {
 // @Security AdminAuth
 // @Tags admins-courses
 // @Description admin update course
-// @ID adminUpdateCourse
+// @ModuleID adminUpdateCourse
 // @Accept  json
 // @Produce  json
 // @Param id path string true "course id"
@@ -301,7 +310,7 @@ type createModuleInput struct {
 // @Security AdminAuth
 // @Tags admins-modules
 // @Description admin update course
-// @ID adminCreateModule
+// @ModuleID adminCreateModule
 // @Accept  json
 // @Produce  json
 // @Param id path string true "module id"
@@ -335,7 +344,7 @@ func (h *Handler) adminCreateModule(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, map[string]interface{}{
-		"id": moduleId,
+		"id": moduleId, // TODO create structure for id responses
 	})
 }
 
@@ -349,7 +358,7 @@ type updateModuleInput struct {
 // @Security AdminAuth
 // @Tags admins-modules
 // @Description admin update course
-// @ID adminUpdateModule
+// @ModuleID adminUpdateModule
 // @Accept  json
 // @Produce  json
 // @Param id path string true "module id"
@@ -390,7 +399,7 @@ func (h *Handler) adminUpdateModule(c *gin.Context) {
 // @Security AdminAuth
 // @Tags admins-modules
 // @Description admin update course
-// @ID adminDeleteModule
+// @ModuleID adminDeleteModule
 // @Accept  json
 // @Produce  json
 // @Param id path string true "module id"
@@ -424,8 +433,8 @@ func (h *Handler) adminDeleteModule(c *gin.Context) {
 // @Summary Admin Get Module Lessons
 // @Security AdminAuth
 // @Tags admins-lessons
-// @Description admin get module content
-// @ID adminGetLessons
+// @Description admin get module lessons with content
+// @ModuleID adminGetLessons
 // @Accept  json
 // @Produce  json
 // @Param id path string true "module id"
@@ -463,14 +472,168 @@ func (h *Handler) adminGetLessons(c *gin.Context) {
 	})
 }
 
+type createLessonInput struct {
+	Name     string `json:"name"`
+	Position int    `json:"position"`
+}
+
+// @Summary Admin Create Lesson
+// @Security AdminAuth
+// @Tags admins-lessons
+// @Description admin create lesson
+// @ModuleID adminCreateLesson
+// @Accept  json
+// @Produce  json
+// @Param id path string true "module id"
+// @Param input body createLessonInput true "lesson info"
+// @Success 201 {string} string "id"
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/modules/{id}/lessons [post]
 func (h *Handler) adminCreateLesson(c *gin.Context) {
+	id := c.Param("id")
+	if id == "" {
+		newResponse(c, http.StatusBadRequest, "empty id param")
+		return
+	}
 
+	var inp createLessonInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+
+	lessonId, err := h.modulesService.AddLesson(c.Request.Context(), service.AddLessonInput{
+		ModuleID: id,
+		Name:     inp.Name,
+		Position: inp.Position,
+	})
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusCreated, map[string]interface{}{
+		"id": lessonId, // TODO create structure for id responses
+	})
 }
 
+// @Summary Admin Get Lesson By Id
+// @Security AdminAuth
+// @Tags admins-lessons
+// @Description admin get lesson by Id
+// @ModuleID adminGetLessonById
+// @Accept  json
+// @Produce  json
+// @Param id path string true "module id"
+// @Success 200 {string} string "ok"
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/lessons/{id} [get]
+func (h *Handler) adminGetLessonById(c *gin.Context) {
+	idParam := c.Param("id")
+	if idParam == "" {
+		newResponse(c, http.StatusBadRequest, "empty id param")
+		return
+	}
+
+	id, err := primitive.ObjectIDFromHex(idParam)
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid id param")
+		return
+	}
+
+	lesson, err := h.modulesService.GetLesson(c.Request.Context(), id)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, lesson)
+}
+
+type updateLessonInput struct {
+	Name      string `json:"name"`
+	Content   string `json:"content"`
+	Position  *int   `json:"position"`
+	Published *bool  `json:"published"`
+}
+
+// @Summary Admin Update Lesson
+// @Security AdminAuth
+// @Tags admins-lessons
+// @Description admin update lesson
+// @ModuleID adminUpdateLesson
+// @Accept  json
+// @Produce  json
+// @Param id path string true "lesson id"
+// @Param input body updateLessonInput true "update info"
+// @Success 200 {string} string "ok"
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/lessons/{id} [put]
 func (h *Handler) adminUpdateLesson(c *gin.Context) {
+	id := c.Param("id")
+	if id == "" {
+		newResponse(c, http.StatusBadRequest, "empty id param")
+		return
+	}
 
+	var inp updateLessonInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+
+	err := h.modulesService.UpdateLesson(c.Request.Context(), service.UpdateLessonInput{
+		LessonID:  id,
+		Name:      inp.Name,
+		Content:   inp.Content,
+		Position:  inp.Position,
+		Published: inp.Published,
+	})
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.Status(http.StatusOK)
 }
 
+// @Summary Admin Delete Lesson
+// @Security AdminAuth
+// @Tags admins-lessons
+// @Description admin delete lesson
+// @ModuleID adminDeleteLesson
+// @Accept  json
+// @Produce  json
+// @Param id path string true "lesson id"
+// @Success 200 {string} string "ok"
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/lessons/{id} [delete]
 func (h *Handler) adminDeleteLesson(c *gin.Context) {
+	idParam := c.Param("id")
+	if idParam == "" {
+		newResponse(c, http.StatusBadRequest, "empty id param")
+		return
+	}
 
+	id, err := primitive.ObjectIDFromHex(idParam)
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid id param")
+		return
+	}
+
+	err = h.modulesService.DeleteLesson(c.Request.Context(), id)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.Status(http.StatusOK)
 }

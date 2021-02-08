@@ -6,6 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type LessonContentRepo struct {
@@ -29,4 +30,18 @@ func (r *LessonContentRepo) GetByLessons(ctx context.Context, lessonIds []primit
 	}
 
 	return content, nil
+}
+
+func (r *LessonContentRepo) GetByLesson(ctx context.Context, lessonId primitive.ObjectID) (domain.LessonContent, error) {
+	var content domain.LessonContent
+	err := r.db.FindOne(ctx, bson.M{"lessonId": lessonId}).Decode(&content)
+	return content, err
+}
+
+func (r *LessonContentRepo) Update(ctx context.Context, lessonId primitive.ObjectID, content string) error {
+	opts := &options.UpdateOptions{}
+	opts.SetUpsert(true)
+
+	_, err := r.db.UpdateOne(ctx, bson.M{"lessonId": lessonId}, bson.M{"$set": bson.M{"content": content}}, opts)
+	return err
 }

@@ -40,7 +40,7 @@ type studentSignUpInput struct {
 // @Summary Student SignUp
 // @Tags students-auth
 // @Description create student account
-// @ID studentSignUp
+// @ModuleID studentSignUp
 // @Accept  json
 // @Produce  json
 // @Param input body studentSignUpInput true "sign up info"
@@ -88,7 +88,7 @@ type tokenResponse struct {
 // @Summary Student SignIn
 // @Tags students-auth
 // @Description student sign in
-// @ID studentSignIn
+// @ModuleID studentSignIn
 // @Accept  json
 // @Produce  json
 // @Param input body signInInput true "sign up info"
@@ -169,7 +169,7 @@ func (h *Handler) studentRefresh(c *gin.Context) {
 // @Summary Student Verify Registration
 // @Tags students-auth
 // @Description student verify registration
-// @ID studentVerify
+// @ModuleID studentVerify
 // @Accept  json
 // @Produce  json
 // @Param code path string true "verification code"
@@ -197,11 +197,11 @@ type getModuleLessonsResponse struct {
 	Lessons []domain.Lesson `json:"lessons"`
 }
 
-// @Summary Student Get Lessons By Module ID
+// @Summary Student Get Lessons By Module ModuleID
 // @Security StudentsAuth
 // @Tags students-courses
 // @Description student get lessons by module id
-// @ID studentGetModuleLessons
+// @ModuleID studentGetModuleLessons
 // @Accept  json
 // @Produce  json
 // @Param id path string true "module id"
@@ -291,11 +291,11 @@ func toStudentOffer(offer domain.Offer) studentOffer {
 	}
 }
 
-// @Summary Student Get Offers By Module ID
+// @Summary Student Get Offers By Module ModuleID
 // @Security StudentsAuth
 // @Tags students-courses
 // @Description student get offers by module id
-// @ID studentGetModuleOffers
+// @ModuleID studentGetModuleOffers
 // @Accept  json
 // @Produce  json
 // @Param id path string true "module id"
@@ -338,7 +338,7 @@ func (h *Handler) studentGetModuleOffers(c *gin.Context) {
 // @Security StudentsAuth
 // @Tags students-courses
 // @Description student get promocode by code
-// @ID studentGetPromo
+// @ModuleID studentGetPromo
 // @Accept  json
 // @Produce  json
 // @Param code path string true "code"
@@ -382,7 +382,7 @@ type createOrderResponse struct {
 // @Security StudentsAuth
 // @Tags students-courses
 // @Description student create order
-// @ID studentCreateOrder
+// @ModuleID studentCreateOrder
 // @Accept  json
 // @Produce  json
 // @Param input body createOrderInput true "order info"

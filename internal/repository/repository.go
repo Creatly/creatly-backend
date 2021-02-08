@@ -50,6 +50,13 @@ type UpdateModuleInput struct {
 	Published *bool
 }
 
+type UpdateLessonInput struct {
+	ID        primitive.ObjectID
+	Name      string
+	Position  *int
+	Published *bool
+}
+
 type Modules interface {
 	Create(ctx context.Context, module domain.Module) (primitive.ObjectID, error)
 	GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
@@ -57,10 +64,16 @@ type Modules interface {
 	GetByPackages(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Module, error)
 	Update(ctx context.Context, inp UpdateModuleInput) error
 	Delete(ctx context.Context, id primitive.ObjectID) error
+	AddLesson(ctx context.Context, id primitive.ObjectID, lesson domain.Lesson) error
+	GetByLesson(ctx context.Context, lessonId primitive.ObjectID) (domain.Module, error)
+	UpdateLesson(ctx context.Context, inp UpdateLessonInput) error
+	DeleteLesson(ctx context.Context, id primitive.ObjectID) error
 }
 
 type LessonContent interface {
 	GetByLessons(ctx context.Context, lessonIds []primitive.ObjectID) ([]domain.LessonContent, error)
+	GetByLesson(ctx context.Context, lessonId primitive.ObjectID) (domain.LessonContent, error)
+	Update(ctx context.Context, lessonId primitive.ObjectID, content string) error
 }
 
 type Offers interface {

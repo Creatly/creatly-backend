@@ -31,7 +31,7 @@ type Lesson struct {
 	Name      string             `json:"name" bson:"name"`
 	Position  int                `json:"position" bson:"position"`
 	Published bool               `json:"published" bson:"published,omitempty"`
-	Content   string             `json:"content,omitempty"`
+	Content   string             `json:"content,omitempty" bson:"content,omitempty"`
 }
 
 type LessonContent struct {
