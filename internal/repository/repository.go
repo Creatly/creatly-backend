@@ -68,6 +68,7 @@ type Modules interface {
 	GetByLesson(ctx context.Context, lessonId primitive.ObjectID) (domain.Module, error)
 	UpdateLesson(ctx context.Context, inp UpdateLessonInput) error
 	DeleteLesson(ctx context.Context, id primitive.ObjectID) error
+	AttachPackage(ctx context.Context, modules []primitive.ObjectID, packageId primitive.ObjectID) error
 }
 
 type LessonContent interface {
@@ -76,12 +77,32 @@ type LessonContent interface {
 	Update(ctx context.Context, lessonId primitive.ObjectID, content string) error
 }
 
+type UpdatePackageInput struct {
+	ID          primitive.ObjectID
+	Name        string
+	Description string
+}
+
 type Packages interface {
 	Create(ctx context.Context, pkg domain.Package) (primitive.ObjectID, error)
+	Update(ctx context.Context, inp UpdatePackageInput) error
+	Delete(ctx context.Context, id primitive.ObjectID) error
 	GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Package, error)
+	GetById(ctx context.Context, id primitive.ObjectID) (domain.Package, error)
+}
+
+type UpdateOfferInput struct {
+	ID          primitive.ObjectID
+	Name        string
+	Description string
+	Price       *domain.Price
+	Packages    []primitive.ObjectID
 }
 
 type Offers interface {
+	Create(ctx context.Context, offer domain.Offer) (primitive.ObjectID, error)
+	Update(ctx context.Context, inp UpdateOfferInput) error
+	Delete(ctx context.Context, id primitive.ObjectID) error
 	GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Offer, error)
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.Offer, error)
 }

@@ -6,7 +6,6 @@ import (
 	"github.com/zhashkevych/courses-backend/internal/service"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
-	"time"
 )
 
 // TODO: return time.Time in RFC3339
@@ -18,7 +17,7 @@ func (h *Handler) initStudentsRoutes(api *gin.RouterGroup) {
 		students.POST("/sign-in", h.studentSignIn)
 		students.POST("/auth/refresh", h.studentRefresh)
 		students.POST("/verify/:code", h.studentVerify)
-		students.GET("/courses") // TODO
+		students.GET("/courses")     // TODO
 		students.GET("/courses/:id") // TODO
 
 		authenticated := students.Group("/", h.studentIdentity)
@@ -32,9 +31,9 @@ func (h *Handler) initStudentsRoutes(api *gin.RouterGroup) {
 }
 
 type studentSignUpInput struct {
-	Name           string `json:"name" binding:"required,min=2,max=64"`
-	Email          string `json:"email" binding:"required,email,max=64"`
-	Password       string `json:"password" binding:"required,min=8,max=64"`
+	Name     string `json:"name" binding:"required,min=2,max=64"`
+	Email    string `json:"email" binding:"required,email,max=64"`
+	Password string `json:"password" binding:"required,min=8,max=64"`
 }
 
 // @Summary Student SignUp
@@ -63,10 +62,10 @@ func (h *Handler) studentSignUp(c *gin.Context) {
 	}
 
 	if err := h.studentsService.SignUp(c.Request.Context(), service.StudentSignUpInput{
-		Name:           inp.Name,
-		Email:          inp.Email,
-		Password:       inp.Password,
-		SchoolID:       school.ID,
+		Name:     inp.Name,
+		Email:    inp.Email,
+		Password: inp.Password,
+		SchoolID: school.ID,
 	}); err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -264,8 +263,8 @@ type studentOffer struct {
 }
 
 type price struct {
-	Value    int    `json:"value"`
-	Currency string `json:"currency"`
+	Value    int    `json:"value" binding:"required,min=1"`
+	Currency string `json:"currency" binding:"required,min=3"`
 }
 
 func toStudentOffers(offers []domain.Offer) []studentOffer {
@@ -283,7 +282,6 @@ func toStudentOffer(offer domain.Offer) studentOffer {
 		ID:          offer.ID,
 		Name:        offer.Name,
 		Description: offer.Description,
-		CreatedAt:   offer.CreatedAt.Format(time.RFC3339),
 		Price: price{
 			Value:    offer.Price.Value,
 			Currency: offer.Price.Currency,

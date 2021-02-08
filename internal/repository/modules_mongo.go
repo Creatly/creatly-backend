@@ -111,3 +111,8 @@ func (r *ModulesRepo) DeleteLesson(ctx context.Context, id primitive.ObjectID) e
 	_, err := r.db.UpdateOne(ctx, bson.M{"lessons._id": id}, bson.M{"$pull": bson.M{"lessons": bson.M{"_id": id}}})
 	return err
 }
+
+func (r *ModulesRepo) AttachPackage(ctx context.Context, modules []primitive.ObjectID, packageId primitive.ObjectID) error {
+	_, err := r.db.UpdateMany(ctx, bson.M{"_id": bson.M{"$in": modules}}, bson.M{"$set": bson.M{"packageId": packageId}})
+	return err
+}

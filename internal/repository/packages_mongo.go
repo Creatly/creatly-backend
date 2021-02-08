@@ -26,12 +26,40 @@ func (r *PackagesRepo) Create(ctx context.Context, pkg domain.Package) (primitiv
 }
 
 func (r *PackagesRepo) GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Package, error) {
-	var pkgs []domain.Package
+	var packages []domain.Package
 	cur, err := r.db.Find(ctx, bson.M{"courseId": courseId})
 	if err != nil {
-		return pkgs, err
+		return packages, err
 	}
 
-	err = cur.All(ctx, &pkgs)
-	return pkgs, err
+	err = cur.All(ctx, &packages)
+	return packages, err
+}
+
+func (r *PackagesRepo) GetById(ctx context.Context, id primitive.ObjectID) (domain.Package, error) {
+	var pkg domain.Package
+	err := r.db.FindOne(ctx, bson.M{"_id": id}).Decode(&pkg)
+	return pkg, err
+}
+
+func (r *PackagesRepo) Update(ctx context.Context, inp UpdatePackageInput) error {
+	updateQuery := bson.M{}
+
+	if inp.Name != "" {
+		updateQuery["name"] = inp.Name
+	}
+
+	if inp.Description != "" {
+		updateQuery["description"] = inp.Description
+	}
+
+	_, err := r.db.UpdateOne(ctx,
+		bson.M{"_id": inp.ID}, bson.M{"$set": updateQuery})
+
+	return err
+}
+
+func (r *PackagesRepo) Delete(ctx context.Context, id primitive.ObjectID) error {
+	_, err := r.db.DeleteOne(ctx, bson.M{"_id": id})
+	return err
 }

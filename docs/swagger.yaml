@@ -32,6 +32,23 @@ definitions:
       published:
         type: boolean
     type: object
+  domain.Offer:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      packages:
+        items:
+          type: string
+        type: array
+      price:
+        $ref: '#/definitions/domain.Price'
+      schoolId:
+        type: string
+    type: object
   domain.Package:
     properties:
       courseId:
@@ -42,6 +59,13 @@ definitions:
         type: string
       name:
         type: string
+    type: object
+  domain.Price:
+    properties:
+      currency:
+        type: string
+      value:
+        type: integer
     type: object
   domain.PromoCode:
     properties:
@@ -57,17 +81,6 @@ definitions:
         items:
           type: string
         type: array
-    type: object
-  v1.adminUpdateCourseInput:
-    properties:
-      code:
-        type: string
-      description:
-        type: string
-      name:
-        type: string
-      published:
-        type: boolean
     type: object
   v1.createCourseInput:
     properties:
@@ -90,6 +103,18 @@ definitions:
     required:
     - name
     - position
+    type: object
+  v1.createOfferInput:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      price:
+        $ref: '#/definitions/v1.price'
+    required:
+    - name
+    - price
     type: object
   v1.createOrderInput:
     properties:
@@ -114,12 +139,36 @@ definitions:
     required:
     - name
     type: object
+  v1.getAllOffersResponse:
+    properties:
+      offers:
+        items:
+          $ref: '#/definitions/domain.Offer'
+        type: array
+    type: object
+  v1.getAllPackagesResponse:
+    properties:
+      packages:
+        items:
+          $ref: '#/definitions/domain.Package'
+        type: array
+    type: object
   v1.getModuleLessonsResponse:
     properties:
       lessons:
         items:
           $ref: '#/definitions/domain.Lesson'
         type: array
+    type: object
+  v1.price:
+    properties:
+      currency:
+        type: string
+      value:
+        type: integer
+    required:
+    - currency
+    - value
     type: object
   v1.refreshInput:
     properties:
@@ -163,6 +212,17 @@ definitions:
       refreshToken:
         type: string
     type: object
+  v1.updateCourseInput:
+    properties:
+      code:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+      published:
+        type: boolean
+    type: object
   v1.updateLessonInput:
     properties:
       content:
@@ -182,6 +242,30 @@ definitions:
         type: integer
       published:
         type: boolean
+    type: object
+  v1.updateOfferInput:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      packages:
+        items:
+          type: string
+        type: array
+      price:
+        $ref: '#/definitions/v1.price'
+    type: object
+  v1.updatePackageInput:
+    properties:
+      description:
+        type: string
+      modules:
+        items:
+          type: string
+        type: array
+      name:
+        type: string
     type: object
 host: localhost:8000
 info:
@@ -358,7 +442,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/v1.adminUpdateCourseInput'
+          $ref: '#/definitions/v1.updateCourseInput'
       produces:
       - application/json
       responses:
@@ -449,9 +533,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/domain.Package'
-            type: array
+            $ref: '#/definitions/v1.getAllPackagesResponse'
         "400":
           description: Bad Request
           schema:
@@ -804,6 +886,326 @@ paths:
       summary: Admin Create Lesson
       tags:
       - admins-lessons
+  /admins/offers:
+    get:
+      consumes:
+      - application/json
+      description: admin get all offers
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.getAllOffersResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Get All Offers
+      tags:
+      - admins-offers
+    post:
+      consumes:
+      - application/json
+      description: admin create offer
+      parameters:
+      - description: package info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.createOfferInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: id
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Create Offer
+      tags:
+      - admins-offers
+  /admins/offers/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: admin delete offer
+      parameters:
+      - description: offer id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Delete Offer
+      tags:
+      - admins-offers
+    get:
+      consumes:
+      - application/json
+      description: admin get offer by id
+      parameters:
+      - description: offer id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Offer'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Get Offer By Id
+      tags:
+      - admins-offers
+    put:
+      consumes:
+      - application/json
+      description: admin updateOffer
+      parameters:
+      - description: offer id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: update info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.updateOfferInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Update Offer
+      tags:
+      - admins-offers
+  /admins/packages/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: admin delete package
+      parameters:
+      - description: package id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            items:
+              type: string
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Delete Package
+      tags:
+      - admins-packages
+    get:
+      consumes:
+      - application/json
+      description: admin get package by id
+      parameters:
+      - description: package id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Package'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Get Package By ID
+      tags:
+      - admins-packages
+    put:
+      consumes:
+      - application/json
+      description: admin update package
+      parameters:
+      - description: package id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: update input
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.updatePackageInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Package'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Update Package
+      tags:
+      - admins-packages
   /admins/sign-in:
     post:
       consumes:
