@@ -18,8 +18,8 @@ func (h *Handler) initStudentsRoutes(api *gin.RouterGroup) {
 		students.POST("/sign-in", h.studentSignIn)
 		students.POST("/auth/refresh", h.studentRefresh)
 		students.POST("/verify/:code", h.studentVerify)
-		students.GET("/courses", h.getAllCourses)
-		students.GET("/courses/:id", h.getCourseById)
+		students.GET("/courses") // TODO
+		students.GET("/courses/:id") // TODO
 
 		authenticated := students.Group("/", h.studentIdentity)
 		{
@@ -35,7 +35,6 @@ type studentSignUpInput struct {
 	Name           string `json:"name" binding:"required,min=2,max=64"`
 	Email          string `json:"email" binding:"required,email,max=64"`
 	Password       string `json:"password" binding:"required,min=8,max=64"`
-	RegisterSource string `json:"registerSource" binding:"required,max=64"`
 }
 
 // @Summary Student SignUp
@@ -67,7 +66,6 @@ func (h *Handler) studentSignUp(c *gin.Context) {
 		Name:           inp.Name,
 		Email:          inp.Email,
 		Password:       inp.Password,
-		RegisterSource: inp.RegisterSource,
 		SchoolID:       school.ID,
 	}); err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())

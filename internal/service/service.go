@@ -26,7 +26,6 @@ type StudentSignUpInput struct {
 	Email          string
 	Password       string
 	SchoolID       primitive.ObjectID
-	RegisterSource string
 }
 
 type SignInInput struct {
@@ -59,7 +58,6 @@ type Admins interface {
 type AddToListInput struct {
 	Email            string
 	Name             string
-	RegisterSource   string
 	VerificationCode string
 }
 

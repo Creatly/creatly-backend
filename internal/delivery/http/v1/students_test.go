@@ -444,7 +444,6 @@ func TestHandler_studentSignUp(t *testing.T) {
 				Name:           "Vasya",
 				Email:          "test@test.com",
 				Password:       "qwerty123",
-				RegisterSource: "test-course",
 				SchoolID:       schoolId,
 			},
 			mockBehavior: func(r *mock_service.MockStudents, input service.StudentSignUpInput) {

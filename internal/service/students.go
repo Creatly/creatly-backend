@@ -47,7 +47,6 @@ func (s *StudentsService) SignUp(ctx context.Context, input StudentSignUpInput) 
 		RegisteredAt:   time.Now(),
 		LastVisitAt:    time.Now(),
 		SchoolID:       input.SchoolID,
-		RegisterSource: input.RegisterSource,
 		Verification: domain.Verification{
 			Code: verificationCode,
 		},
@@ -61,7 +60,6 @@ func (s *StudentsService) SignUp(ctx context.Context, input StudentSignUpInput) 
 	return s.emailService.AddToList(AddToListInput{
 		Email:            student.Email,
 		Name:             student.Name,
-		RegisterSource:   student.RegisterSource,
 		VerificationCode: verificationCode.Hex(),
 	})
 }
