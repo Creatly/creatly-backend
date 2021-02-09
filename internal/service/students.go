@@ -41,12 +41,12 @@ func NewStudentsService(repo repository.Students, modulesService Modules, offers
 func (s *StudentsService) SignUp(ctx context.Context, input StudentSignUpInput) error {
 	verificationCode := primitive.NewObjectID()
 	student := domain.Student{
-		Name:           input.Name,
-		Password:       s.hasher.Hash(input.Password),
-		Email:          input.Email,
-		RegisteredAt:   time.Now(),
-		LastVisitAt:    time.Now(),
-		SchoolID:       input.SchoolID,
+		Name:         input.Name,
+		Password:     s.hasher.Hash(input.Password),
+		Email:        input.Email,
+		RegisteredAt: time.Now(),
+		LastVisitAt:  time.Now(),
+		SchoolID:     input.SchoolID,
 		Verification: domain.Verification{
 			Code: verificationCode,
 		},
@@ -135,12 +135,19 @@ func (s *StudentsService) GiveAccessToPackages(ctx context.Context, studentId pr
 		return err
 	}
 
-	ids := make([]primitive.ObjectID, len(modules))
+	moduleIds := make([]primitive.ObjectID, len(modules))
+	courses := map[primitive.ObjectID]struct{}{}
 	for i := range modules {
-		ids[i] = modules[i].ID
+		moduleIds[i] = modules[i].ID
+		courses[modules[i].CourseID] = struct{}{}
 	}
 
-	return s.repo.GiveAccessToModules(ctx, studentId, ids)
+	courseIds := make([]primitive.ObjectID, 0)
+	for id := range courses {
+		courseIds = append(courseIds, id)
+	}
+
+	return s.repo.GiveAccessToCoursesAndModules(ctx, studentId, courseIds, moduleIds)
 }
 
 func (s *StudentsService) createSession(ctx context.Context, studentId primitive.ObjectID) (Tokens, error) {
