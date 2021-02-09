@@ -1,4 +1,4 @@
-package middleware
+package limiter
 
 import (
 	"net"

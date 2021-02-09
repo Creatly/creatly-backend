@@ -9,10 +9,10 @@ import (
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 	"github.com/zhashkevych/courses-backend/docs"
 	"github.com/zhashkevych/courses-backend/internal/config"
-	"github.com/zhashkevych/courses-backend/internal/delivery/http/middleware"
 	v1 "github.com/zhashkevych/courses-backend/internal/delivery/http/v1"
 	"github.com/zhashkevych/courses-backend/internal/service"
 	"github.com/zhashkevych/courses-backend/pkg/auth"
+	"github.com/zhashkevych/courses-backend/pkg/limiter"
 
 	_ "github.com/zhashkevych/courses-backend/docs"
 )
@@ -55,7 +55,7 @@ func (h *Handler) Init(host, port string, limiterConfig config.LimiterConfig) *g
 	router.Use(
 		gin.Recovery(),
 		gin.Logger(),
-		middleware.Limit(limiterConfig.RPS, limiterConfig.Burst, limiterConfig.TTL),
+		limiter.Limit(limiterConfig.RPS, limiterConfig.Burst, limiterConfig.TTL),
 	)
 
 	docs.SwaggerInfo.Host = fmt.Sprintf("%s:%s", host, port)
