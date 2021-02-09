@@ -7,9 +7,19 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+type UpdateSchoolSettingsInput struct {
+	SchoolID    primitive.ObjectID
+	Color       string
+	Domain      string
+	Email       string
+	ContactData string
+	Pages       *domain.Pages
+}
+
 type Schools interface {
 	GetByDomain(ctx context.Context, domain string) (domain.School, error)
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.School, error)
+	UpdateSettings(ctx context.Context, inp UpdateSchoolSettingsInput) error
 }
 
 type Students interface {

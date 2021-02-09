@@ -1,11 +1,12 @@
 package v1
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/zhashkevych/courses-backend/internal/domain"
 	"github.com/zhashkevych/courses-backend/internal/service"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"net/http"
 )
 
 // TODO: review response error messages
@@ -58,6 +59,11 @@ func (h *Handler) initAdminRoutes(api *gin.RouterGroup) {
 				offers.GET("/:id", h.adminGetOfferById)
 				offers.PUT("/:id", h.adminUpdateOffer)
 				offers.DELETE("/:id", h.adminDeleteOffer)
+			}
+
+			school := authenticated.Group("/school")
+			{
+				school.PUT("/settings", h.adminUpdateSchoolSettings)
 			}
 		}
 	}
@@ -1061,6 +1067,70 @@ func (h *Handler) adminDeleteOffer(c *gin.Context) {
 
 	err = h.offersService.Delete(c.Request.Context(), id)
 	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.Status(http.StatusOK)
+}
+
+type pages struct {
+	Confidential     string `json:"confidential"`
+	ServiceAgreement string `json:"serviceAgreement"`
+	RefundPolicy     string `json:"refundPolicy"`
+}
+
+type updateSchoolSettingsInput struct {
+	Color       string `json:"color"`
+	Domain      string `json:"domain"`
+	Email       string `json:"email"`
+	ContactData string `json:"contactData"`
+	Pages       *pages `json:"pages"`
+}
+
+// @Summary Admin Update School settings
+// @Security AdminAuth
+// @Tags admins-school
+// @Description admin update school settings
+// @ModuleID adminUpdateSchoolSettings
+// @Accept  json
+// @Produce  json
+// @Param input body updateSchoolSettingsInput true "update school settings"
+// @Success 200 {string} string "ok"
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/school/settings [put]
+func (h *Handler) adminUpdateSchoolSettings(c *gin.Context) {
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	var inp updateSchoolSettingsInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+
+	updateInput := service.UpdateSchoolSettingsInput{
+		SchoolID:    school.ID,
+		Color:       inp.Color,
+		Domain:      inp.Domain,
+		Email:       inp.Email,
+		ContactData: inp.ContactData,
+	}
+
+	if inp.Pages != nil {
+		updateInput.Pages = &domain.Pages{
+			Confidential:     inp.Pages.Confidential,
+			ServiceAgreement: inp.Pages.ServiceAgreement,
+			RefundPolicy:     inp.Pages.RefundPolicy,
+		}
+	}
+
+	if err := h.schoolsService.UpdateSettings(c.Request.Context(), updateInput); err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}

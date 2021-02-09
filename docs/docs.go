@@ -1473,6 +1473,69 @@ var doc = `{
                 }
             }
         },
+        "/admins/school/settings": {
+            "put": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "admin update school settings",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admins-school"
+                ],
+                "summary": "Admin Update School settings",
+                "parameters": [
+                    {
+                        "description": "update school settings",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.updateSchoolSettingsInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
         "/admins/sign-in": {
             "post": {
                 "description": "admin sign in",
@@ -2367,6 +2430,20 @@ var doc = `{
                 }
             }
         },
+        "v1.pages": {
+            "type": "object",
+            "properties": {
+                "confidential": {
+                    "type": "string"
+                },
+                "refundPolicy": {
+                    "type": "string"
+                },
+                "serviceAgreement": {
+                    "type": "string"
+                }
+            }
+        },
         "v1.price": {
             "type": "object",
             "required": [
@@ -2531,6 +2608,26 @@ var doc = `{
                 },
                 "name": {
                     "type": "string"
+                }
+            }
+        },
+        "v1.updateSchoolSettingsInput": {
+            "type": "object",
+            "properties": {
+                "color": {
+                    "type": "string"
+                },
+                "contactData": {
+                    "type": "string"
+                },
+                "domain": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "pages": {
+                    "$ref": "#/definitions/v1.pages"
                 }
             }
         }

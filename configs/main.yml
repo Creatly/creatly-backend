@@ -20,5 +20,5 @@ auth:
 
 limiter:
   rps: 10
-  burst: 2
+  burst: 20
   ttl: 10m

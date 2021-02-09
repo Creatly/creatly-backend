@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+
 	"github.com/zhashkevych/courses-backend/internal/domain"
 	"github.com/zhashkevych/courses-backend/internal/repository"
 	"github.com/zhashkevych/courses-backend/pkg/cache"
@@ -29,4 +30,15 @@ func (s *SchoolsService) GetByDomain(ctx context.Context, domainName string) (do
 
 	s.cache.Set(domainName, school, s.ttl)
 	return school, nil
+}
+
+func (s *SchoolsService) UpdateSettings(ctx context.Context, inp UpdateSchoolSettingsInput) error {
+	return s.repo.UpdateSettings(ctx, repository.UpdateSchoolSettingsInput{
+		SchoolID:    inp.SchoolID,
+		Color:       inp.Color,
+		Domain:      inp.Domain,
+		Email:       inp.Email,
+		ContactData: inp.ContactData,
+		Pages:       inp.Pages,
+	})
 }
