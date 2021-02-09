@@ -110,6 +110,11 @@ func TestInit(t *testing.T) {
 					CallbackURL: "https://zhashkevych.com/callback",
 					ResponseURL: "https://zhashkevych.com/",
 				},
+				Limiter: LimiterConfig{
+					RPS:   10,
+					Burst: 2,
+					TTL:   time.Minute * 10,
+				},
 			},
 		},
 	}

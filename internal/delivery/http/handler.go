@@ -2,14 +2,17 @@ package http
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 	"github.com/zhashkevych/courses-backend/docs"
+	"github.com/zhashkevych/courses-backend/internal/config"
 	v1 "github.com/zhashkevych/courses-backend/internal/delivery/http/v1"
 	"github.com/zhashkevych/courses-backend/internal/service"
 	"github.com/zhashkevych/courses-backend/pkg/auth"
-	"net/http"
+	"github.com/zhashkevych/courses-backend/pkg/limiter"
 
 	_ "github.com/zhashkevych/courses-backend/docs"
 )
@@ -46,12 +49,13 @@ func NewHandler(schoolsService service.Schools, studentsService service.Students
 	}
 }
 
-func (h *Handler) Init(host, port string) *gin.Engine {
+func (h *Handler) Init(host, port string, limiterConfig config.LimiterConfig) *gin.Engine {
 	// Init gin handler
 	router := gin.Default()
 	router.Use(
 		gin.Recovery(),
 		gin.Logger(),
+		limiter.Limit(limiterConfig.RPS, limiterConfig.Burst, limiterConfig.TTL),
 	)
 
 	docs.SwaggerInfo.Host = fmt.Sprintf("%s:%s", host, port)
