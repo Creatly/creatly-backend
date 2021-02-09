@@ -521,7 +521,7 @@ func (h *Handler) adminCreateLesson(c *gin.Context) {
 		return
 	}
 
-	lessonId, err := h.modulesService.AddLesson(c.Request.Context(), service.AddLessonInput{
+	lessonId, err := h.lessonsService.Create(c.Request.Context(), service.AddLessonInput{
 		ModuleID: id,
 		Name:     inp.Name,
 		Position: inp.Position,
@@ -562,7 +562,7 @@ func (h *Handler) adminGetLessonById(c *gin.Context) {
 		return
 	}
 
-	lesson, err := h.modulesService.GetLesson(c.Request.Context(), id)
+	lesson, err := h.lessonsService.GetById(c.Request.Context(), id)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -605,7 +605,7 @@ func (h *Handler) adminUpdateLesson(c *gin.Context) {
 		return
 	}
 
-	err := h.modulesService.UpdateLesson(c.Request.Context(), service.UpdateLessonInput{
+	err := h.lessonsService.Update(c.Request.Context(), service.UpdateLessonInput{
 		LessonID:  id,
 		Name:      inp.Name,
 		Content:   inp.Content,
@@ -646,7 +646,7 @@ func (h *Handler) adminDeleteLesson(c *gin.Context) {
 		return
 	}
 
-	err = h.modulesService.DeleteLesson(c.Request.Context(), id)
+	err = h.lessonsService.Delete(c.Request.Context(), id)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return

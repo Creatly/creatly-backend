@@ -121,6 +121,16 @@ type UpdateModuleInput struct {
 	Published *bool
 }
 
+type Modules interface {
+	Create(ctx context.Context, inp CreateModuleInput) (primitive.ObjectID, error)
+	Update(ctx context.Context, inp UpdateModuleInput) error
+	Delete(ctx context.Context, id primitive.ObjectID) error
+	GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
+	GetById(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
+	GetByPackages(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Module, error)
+	GetWithContent(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
+}
+
 type AddLessonInput struct {
 	ModuleID string
 	Name     string
@@ -135,19 +145,11 @@ type UpdateLessonInput struct {
 	Published *bool
 }
 
-// TODO: split into Modules and Lessons
-type Modules interface {
-	GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
-	GetById(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
-	GetByPackages(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Module, error)
-	GetWithContent(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
-	Create(ctx context.Context, inp CreateModuleInput) (primitive.ObjectID, error)
-	Update(ctx context.Context, inp UpdateModuleInput) error
+type Lessons interface {
+	Create(ctx context.Context, inp AddLessonInput) (primitive.ObjectID, error)
+	GetById(ctx context.Context, lessonId primitive.ObjectID) (domain.Lesson, error)
+	Update(ctx context.Context, inp UpdateLessonInput) error
 	Delete(ctx context.Context, id primitive.ObjectID) error
-	AddLesson(ctx context.Context, inp AddLessonInput) (primitive.ObjectID, error)
-	GetLesson(ctx context.Context, lessonId primitive.ObjectID) (domain.Lesson, error)
-	UpdateLesson(ctx context.Context, inp UpdateLessonInput) error
-	DeleteLesson(ctx context.Context, id primitive.ObjectID) error
 }
 
 type CreatePackageInput struct {
@@ -188,6 +190,7 @@ type Services struct {
 	Offers     Offers
 	Packages   Packages
 	Modules    Modules
+	Lessons    Lessons
 	Payments   Payments
 	Orders     Orders
 	Admins     Admins
@@ -229,5 +232,6 @@ func NewServices(deps ServicesDeps) *Services {
 		Orders:     ordersService,
 		Admins:     NewAdminsService(deps.Hasher, deps.TokenManager, deps.Repos.Admins, deps.Repos.Schools, deps.AccessTokenTTL, deps.RefreshTokenTTL),
 		Packages:   NewPackagesService(deps.Repos.Packages, deps.Repos.Modules),
+		Lessons:    NewLessonsService(deps.Repos.Modules, deps.Repos.LessonContent),
 	}
 }

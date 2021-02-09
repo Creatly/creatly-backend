@@ -75,7 +75,7 @@ func Run(configPath string) {
 		CacheTTL:           int64(cfg.CacheTTL.Seconds()),
 	})
 	handlers := http.NewHandler(services.Schools, services.Students, services.Courses, services.PromoCodes,
-		services.Offers, services.Modules, services.Orders, services.Payments, services.Admins, services.Packages, tokenManager)
+		services.Offers, services.Modules, services.Orders, services.Payments, services.Admins, services.Packages, services.Lessons, tokenManager)
 
 	// HTTP Server
 	srv := server.NewServer(cfg, handlers.Init(cfg.HTTP.Host, cfg.HTTP.Port, cfg.Limiter))
