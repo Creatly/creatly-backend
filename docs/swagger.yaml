@@ -4,6 +4,8 @@ definitions:
     properties:
       code:
         type: string
+      color:
+        type: string
       createdAt:
         type: string
       description:
@@ -93,6 +95,8 @@ definitions:
         type: string
       position:
         type: integer
+    required:
+    - name
     type: object
   v1.createModuleInput:
     properties:
@@ -102,7 +106,6 @@ definitions:
         type: integer
     required:
     - name
-    - position
     type: object
   v1.createOfferInput:
     properties:
@@ -215,6 +218,8 @@ definitions:
   v1.updateCourseInput:
     properties:
       code:
+        type: string
+      color:
         type: string
       description:
         type: string

@@ -70,6 +70,7 @@ type UpdateCourseInput struct {
 	Name        string
 	Code        string
 	Description string
+	Color       string
 	Published   *bool
 }
 

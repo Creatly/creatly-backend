@@ -40,6 +40,10 @@ func (r *CoursesRepo) Update(ctx context.Context, schoolId primitive.ObjectID, i
 		updateQuery["courses.$.code"] = inp.Code
 	}
 
+	if inp.Color != "" {
+		updateQuery["courses.$.color"] = inp.Color
+	}
+
 	if inp.Published != nil {
 		updateQuery["courses.$.published"] = *inp.Published
 	}

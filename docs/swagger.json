@@ -2106,6 +2106,9 @@
                 "code": {
                     "type": "string"
                 },
+                "color": {
+                    "type": "string"
+                },
                 "createdAt": {
                     "type": "string"
                 },
@@ -2236,6 +2239,9 @@
         },
         "v1.createLessonInput": {
             "type": "object",
+            "required": [
+                "name"
+            ],
             "properties": {
                 "name": {
                     "type": "string"
@@ -2248,8 +2254,7 @@
         "v1.createModuleInput": {
             "type": "object",
             "required": [
-                "name",
-                "position"
+                "name"
             ],
             "properties": {
                 "name": {
@@ -2430,6 +2435,9 @@
             "type": "object",
             "properties": {
                 "code": {
+                    "type": "string"
+                },
+                "color": {
                     "type": "string"
                 },
                 "description": {

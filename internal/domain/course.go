@@ -10,6 +10,7 @@ type Course struct {
 	Name        string             `json:"name" bson:"name,omitempty"`
 	Code        string             `json:"code" bson:"code,omitempty"`
 	Description string             `json:"description" bson:"description,omitempty"`
+	Color       string             `json:"color" bson:"color,omitempty"`
 	ImageURL    string             `json:"imageUrl" bson:"imageUrl,omitempty"`
 	CreatedAt   time.Time          `json:"createdAt" bson:"createdAt,omitempty"`
 	UpdatedAt   time.Time          `json:"updatedAt" bson:"updatedAt,omitempty"`

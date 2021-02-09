@@ -268,6 +268,7 @@ type updateCourseInput struct {
 	Name        string `json:"name"`
 	Code        string `json:"code"`
 	Description string `json:"description"`
+	Color       string `json:"color"`
 	Published   *bool  `json:"published"`
 }
 
@@ -309,6 +310,7 @@ func (h *Handler) adminUpdateCourse(c *gin.Context) {
 		Name:        inp.Name,
 		Description: inp.Description,
 		Code:        inp.Code,
+		Color:       inp.Color,
 		Published:   inp.Published,
 	}); err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
@@ -574,7 +576,7 @@ func (h *Handler) adminGetLessonById(c *gin.Context) {
 type updateLessonInput struct {
 	Name      string `json:"name"`
 	Content   string `json:"content"`
-	Position  *uint   `json:"position"`
+	Position  *uint  `json:"position"`
 	Published *bool  `json:"published"`
 }
 

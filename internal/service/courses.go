@@ -29,6 +29,7 @@ func (s *CoursesService) Update(ctx context.Context, schoolId primitive.ObjectID
 		Name:        inp.Name,
 		Code:        inp.Code,
 		Description: inp.Description,
+		Color:       inp.Color,
 		Published:   inp.Published,
 	}
 

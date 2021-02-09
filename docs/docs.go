@@ -2121,6 +2121,9 @@ var doc = `{
                 "code": {
                     "type": "string"
                 },
+                "color": {
+                    "type": "string"
+                },
                 "createdAt": {
                     "type": "string"
                 },
@@ -2251,6 +2254,9 @@ var doc = `{
         },
         "v1.createLessonInput": {
             "type": "object",
+            "required": [
+                "name"
+            ],
             "properties": {
                 "name": {
                     "type": "string"
@@ -2263,8 +2269,7 @@ var doc = `{
         "v1.createModuleInput": {
             "type": "object",
             "required": [
-                "name",
-                "position"
+                "name"
             ],
             "properties": {
                 "name": {
@@ -2445,6 +2450,9 @@ var doc = `{
             "type": "object",
             "properties": {
                 "code": {
+                    "type": "string"
+                },
+                "color": {
                     "type": "string"
                 },
                 "description": {
