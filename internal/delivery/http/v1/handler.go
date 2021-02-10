@@ -47,5 +47,7 @@ func (h *Handler) Init(api *gin.RouterGroup) {
 		h.initStudentsRoutes(v1)
 		h.initCallbackRoutes(v1)
 		h.initAdminRoutes(v1)
+
+		v1.GET("/settings", h.setSchoolFromRequest, h.getSchoolSettings)
 	}
 }

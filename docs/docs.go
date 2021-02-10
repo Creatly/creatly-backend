@@ -1700,6 +1700,50 @@ var doc = `{
                 }
             }
         },
+        "/settings": {
+            "get": {
+                "description": "school get settings",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "school-settings"
+                ],
+                "summary": "School GetSettings",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Settings"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
         "/students/auth/refresh": {
             "post": {
                 "description": "student refresh tokens",
@@ -2273,6 +2317,20 @@ var doc = `{
                 }
             }
         },
+        "domain.Pages": {
+            "type": "object",
+            "properties": {
+                "confidential": {
+                    "type": "string"
+                },
+                "refundPolicy": {
+                    "type": "string"
+                },
+                "serviceAgreement": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.Price": {
             "type": "object",
             "properties": {
@@ -2304,6 +2362,26 @@ var doc = `{
                     "items": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "domain.Settings": {
+            "type": "object",
+            "properties": {
+                "color": {
+                    "type": "string"
+                },
+                "contactData": {
+                    "type": "string"
+                },
+                "domain": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "pages": {
+                    "$ref": "#/definitions/domain.Pages"
                 }
             }
         },
