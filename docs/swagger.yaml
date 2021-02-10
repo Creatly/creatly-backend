@@ -62,6 +62,15 @@ definitions:
       name:
         type: string
     type: object
+  domain.Pages:
+    properties:
+      confidential:
+        type: string
+      refundPolicy:
+        type: string
+      serviceAgreement:
+        type: string
+    type: object
   domain.Price:
     properties:
       currency:
@@ -83,6 +92,19 @@ definitions:
         items:
           type: string
         type: array
+    type: object
+  domain.Settings:
+    properties:
+      color:
+        type: string
+      contactData:
+        type: string
+      domain:
+        type: string
+      email:
+        type: string
+      pages:
+        $ref: '#/definitions/domain.Pages'
     type: object
   v1.createCourseInput:
     properties:
@@ -1381,6 +1403,35 @@ paths:
       summary: Get Course By ModuleID
       tags:
       - courses
+  /settings:
+    get:
+      description: school get settings
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Settings'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      summary: School GetSettings
+      tags:
+      - school-settings
   /students/auth/refresh:
     post:
       consumes:
