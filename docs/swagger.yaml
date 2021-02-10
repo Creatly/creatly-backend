@@ -163,6 +163,15 @@ definitions:
           $ref: '#/definitions/domain.Lesson'
         type: array
     type: object
+  v1.pages:
+    properties:
+      confidential:
+        type: string
+      refundPolicy:
+        type: string
+      serviceAgreement:
+        type: string
+    type: object
   v1.price:
     properties:
       currency:
@@ -271,6 +280,19 @@ definitions:
         type: array
       name:
         type: string
+    type: object
+  v1.updateSchoolSettingsInput:
+    properties:
+      color:
+        type: string
+      contactData:
+        type: string
+      domain:
+        type: string
+      email:
+        type: string
+      pages:
+        $ref: '#/definitions/v1.pages'
     type: object
 host: localhost:8000
 info:
@@ -1211,6 +1233,46 @@ paths:
       summary: Admin Update Package
       tags:
       - admins-packages
+  /admins/school/settings:
+    put:
+      consumes:
+      - application/json
+      description: admin update school settings
+      parameters:
+      - description: update school settings
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.updateSchoolSettingsInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Update School settings
+      tags:
+      - admins-school
   /admins/sign-in:
     post:
       consumes:

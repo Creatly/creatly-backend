@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"time"
+
 	"github.com/zhashkevych/courses-backend/internal/domain"
 	"github.com/zhashkevych/courses-backend/internal/repository"
 	"github.com/zhashkevych/courses-backend/pkg/auth"
@@ -10,15 +12,24 @@ import (
 	"github.com/zhashkevych/courses-backend/pkg/hash"
 	"github.com/zhashkevych/courses-backend/pkg/payment"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"time"
 )
 
 //go:generate mockgen -source=service.go -destination=mocks/mock.go
 
 // TODO handle "not found" errors
 
+type UpdateSchoolSettingsInput struct {
+	SchoolID    primitive.ObjectID
+	Color       string
+	Domain      string
+	Email       string
+	ContactData string
+	Pages       *domain.Pages
+}
+
 type Schools interface {
 	GetByDomain(ctx context.Context, domainName string) (domain.School, error)
+	UpdateSettings(ctx context.Context, input UpdateSchoolSettingsInput) error
 }
 
 type StudentSignUpInput struct {

@@ -52,6 +52,20 @@ func (mr *MockSchoolsMockRecorder) GetByDomain(ctx, domainName interface{}) *gom
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByDomain", reflect.TypeOf((*MockSchools)(nil).GetByDomain), ctx, domainName)
 }
 
+// UpdateSettings mocks base method
+func (m *MockSchools) UpdateSettings(ctx context.Context, input service.UpdateSchoolSettingsInput) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateSettings", ctx, input)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateSettings indicates an expected call of UpdateSettings
+func (mr *MockSchoolsMockRecorder) UpdateSettings(ctx, input interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateSettings", reflect.TypeOf((*MockSchools)(nil).UpdateSettings), ctx, input)
+}
+
 // MockStudents is a mock of Students interface
 type MockStudents struct {
 	ctrl     *gomock.Controller
