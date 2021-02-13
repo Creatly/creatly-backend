@@ -158,7 +158,7 @@ type createCourseInput struct {
 // @Accept  json
 // @Produce  json
 // @Param input body createCourseInput true "course info"
-// @Success 200 {array} domain.Course
+// @Success 200 {object} idResponse
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
@@ -182,9 +182,7 @@ func (h *Handler) adminCreateCourse(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, map[string]interface{}{
-		"id": id,
-	})
+	c.JSON(http.StatusCreated, idResponse{id})
 }
 
 // @Summary Admin Get All Courses
@@ -194,7 +192,7 @@ func (h *Handler) adminCreateCourse(c *gin.Context) {
 // @ModuleID adminGetAllCourses
 // @Accept  json
 // @Produce  json
-// @Success 200 {array} domain.Course
+// @Success 200 {object} dataResponse
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
@@ -212,7 +210,7 @@ func (h *Handler) adminGetAllCourses(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, courses)
+	c.JSON(http.StatusOK, dataResponse{courses})
 }
 
 type adminGetCourseByIdResponse struct {
@@ -340,7 +338,7 @@ type createModuleInput struct {
 // @Produce  json
 // @Param id path string true "module id"
 // @Param input body createModuleInput true "module info"
-// @Success 201 {string} string "id"
+// @Success 201 {object} idResponse
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
@@ -368,9 +366,7 @@ func (h *Handler) adminCreateModule(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, map[string]interface{}{
-		"id": moduleId, // TODO create structure for id responses
-	})
+	c.JSON(http.StatusCreated, idResponse{moduleId})
 }
 
 type updateModuleInput struct {
@@ -463,7 +459,7 @@ func (h *Handler) adminDeleteModule(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Param id path string true "module id"
-// @Success 200 {string} string "ok"
+// @Success 200 {object} dataResponse
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
@@ -492,9 +488,7 @@ func (h *Handler) adminGetLessons(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, getModuleLessonsResponse{
-		Lessons: module.Lessons,
-	})
+	c.JSON(http.StatusOK, dataResponse{module.Lessons})
 }
 
 type createLessonInput struct {
@@ -511,7 +505,7 @@ type createLessonInput struct {
 // @Produce  json
 // @Param id path string true "module id"
 // @Param input body createLessonInput true "lesson info"
-// @Success 201 {string} string "id"
+// @Success 201 {object} idResponse
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
@@ -539,9 +533,7 @@ func (h *Handler) adminCreateLesson(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, map[string]interface{}{
-		"id": lessonId, // TODO create structure for id responses
-	})
+	c.JSON(http.StatusCreated, idResponse{lessonId})
 }
 
 // @Summary Admin Get Lesson By Id
@@ -677,7 +669,7 @@ type createPackageInput struct {
 // @Produce  json
 // @Param id path string true "course id"
 // @Param input body createPackageInput true "package info"
-// @Success 201 {string} string "id"
+// @Success 201 {object} idResponse
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
@@ -705,13 +697,7 @@ func (h *Handler) adminCreatePackage(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, map[string]interface{}{
-		"id": moduleId, // TODO create structure for id responses
-	})
-}
-
-type getAllPackagesResponse struct {
-	Packages []domain.Package `json:"packages"`
+	c.JSON(http.StatusCreated, idResponse{moduleId})
 }
 
 // @Summary Admin Get All Course Packages
@@ -722,7 +708,7 @@ type getAllPackagesResponse struct {
 // @Accept  json
 // @Produce  json
 // @Param id path string true "course id"
-// @Success 200 {object} getAllPackagesResponse
+// @Success 200 {object} dataResponse
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
@@ -746,7 +732,7 @@ func (h *Handler) adminGetAllPackages(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, getAllPackagesResponse{Packages: packages})
+	c.JSON(http.StatusOK, dataResponse{packages})
 }
 
 // @Summary Admin Get Package By ID
@@ -879,7 +865,7 @@ type createOfferInput struct {
 // @Accept  json
 // @Produce  json
 // @Param input body createOfferInput true "package info"
-// @Success 201 {string} string "id"
+// @Success 201 {object} idResponse
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
@@ -911,13 +897,7 @@ func (h *Handler) adminCreateOffer(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, map[string]interface{}{
-		"id": id, // TODO create structure for id responses
-	})
-}
-
-type getAllOffersResponse struct {
-	Offers []domain.Offer `json:"offers"`
+	c.JSON(http.StatusCreated, idResponse{id})
 }
 
 // @Summary Admin Get All Offers
@@ -927,7 +907,7 @@ type getAllOffersResponse struct {
 // @ModuleID adminGetAllOffers
 // @Accept  json
 // @Produce  json
-// @Success 200 {object} getAllOffersResponse
+// @Success 200 {object} dataResponse
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
@@ -945,7 +925,7 @@ func (h *Handler) adminGetAllOffers(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, getAllOffersResponse{offers})
+	c.JSON(http.StatusOK, dataResponse{offers})
 }
 
 // @Summary Admin Get Offer By Id

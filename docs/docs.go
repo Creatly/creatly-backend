@@ -104,10 +104,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/domain.Course"
-                            }
+                            "$ref": "#/definitions/v1.dataResponse"
                         }
                     },
                     "400": {
@@ -168,10 +165,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/domain.Course"
-                            }
+                            "$ref": "#/definitions/v1.idResponse"
                         }
                     },
                     "400": {
@@ -368,9 +362,9 @@ var doc = `{
                 ],
                 "responses": {
                     "201": {
-                        "description": "id",
+                        "description": "Created",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/v1.idResponse"
                         }
                     },
                     "400": {
@@ -431,7 +425,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.getAllPackagesResponse"
+                            "$ref": "#/definitions/v1.dataResponse"
                         }
                     },
                     "400": {
@@ -497,9 +491,9 @@ var doc = `{
                 ],
                 "responses": {
                     "201": {
-                        "description": "id",
+                        "description": "Created",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/v1.idResponse"
                         }
                     },
                     "400": {
@@ -875,9 +869,9 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "ok",
+                        "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/v1.dataResponse"
                         }
                     },
                     "400": {
@@ -943,9 +937,9 @@ var doc = `{
                 ],
                 "responses": {
                     "201": {
-                        "description": "id",
+                        "description": "Created",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/v1.idResponse"
                         }
                     },
                     "400": {
@@ -997,7 +991,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.getAllOffersResponse"
+                            "$ref": "#/definitions/v1.dataResponse"
                         }
                     },
                     "400": {
@@ -1056,9 +1050,9 @@ var doc = `{
                 ],
                 "responses": {
                     "201": {
-                        "description": "id",
+                        "description": "Created",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/v1.idResponse"
                         }
                     },
                     "400": {
@@ -1611,10 +1605,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/domain.Course"
-                            }
+                            "$ref": "#/definitions/v1.dataResponse"
                         }
                     },
                     "400": {
@@ -1726,10 +1717,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/domain.Offer"
-                            }
+                            "$ref": "#/definitions/v1.dataResponse"
                         }
                     },
                     "400": {
@@ -1861,6 +1849,58 @@ var doc = `{
                 }
             }
         },
+        "/students/courses/": {
+            "get": {
+                "security": [
+                    {
+                        "StudentsAuth": []
+                    }
+                ],
+                "description": "student get opened courses",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "students-courses"
+                ],
+                "summary": "Student Get Opened Courses",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.dataResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
         "/students/modules/{id}/lessons": {
             "get": {
                 "security": [
@@ -1892,7 +1932,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.getModuleLessonsResponse"
+                            "$ref": "#/definitions/v1.dataResponse"
                         }
                     },
                     "400": {
@@ -1951,9 +1991,9 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "ok",
+                        "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/v1.dataResponse"
                         }
                     },
                     "400": {
@@ -2313,26 +2353,6 @@ var doc = `{
                 }
             }
         },
-        "domain.Lesson": {
-            "type": "object",
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "position": {
-                    "type": "integer"
-                },
-                "published": {
-                    "type": "boolean"
-                }
-            }
-        },
         "domain.Offer": {
             "type": "object",
             "properties": {
@@ -2534,36 +2554,19 @@ var doc = `{
                 }
             }
         },
-        "v1.getAllOffersResponse": {
+        "v1.dataResponse": {
             "type": "object",
             "properties": {
-                "offers": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/domain.Offer"
-                    }
+                "data": {
+                    "type": "object"
                 }
             }
         },
-        "v1.getAllPackagesResponse": {
+        "v1.idResponse": {
             "type": "object",
             "properties": {
-                "packages": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/domain.Package"
-                    }
-                }
-            }
-        },
-        "v1.getModuleLessonsResponse": {
-            "type": "object",
-            "properties": {
-                "lessons": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/domain.Lesson"
-                    }
+                "id": {
+                    "type": "object"
                 }
             }
         },

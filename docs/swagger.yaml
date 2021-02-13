@@ -21,19 +21,6 @@ definitions:
       updatedAt:
         type: string
     type: object
-  domain.Lesson:
-    properties:
-      content:
-        type: string
-      id:
-        type: string
-      name:
-        type: string
-      position:
-        type: integer
-      published:
-        type: boolean
-    type: object
   domain.Offer:
     properties:
       description:
@@ -164,26 +151,15 @@ definitions:
     required:
     - name
     type: object
-  v1.getAllOffersResponse:
+  v1.dataResponse:
     properties:
-      offers:
-        items:
-          $ref: '#/definitions/domain.Offer'
-        type: array
+      data:
+        type: object
     type: object
-  v1.getAllPackagesResponse:
+  v1.idResponse:
     properties:
-      packages:
-        items:
-          $ref: '#/definitions/domain.Package'
-        type: array
-    type: object
-  v1.getModuleLessonsResponse:
-    properties:
-      lessons:
-        items:
-          $ref: '#/definitions/domain.Lesson'
-        type: array
+      id:
+        type: object
     type: object
   v1.pages:
     properties:
@@ -372,9 +348,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/domain.Course'
-            type: array
+            $ref: '#/definitions/v1.dataResponse'
         "400":
           description: Bad Request
           schema:
@@ -413,9 +387,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/domain.Course'
-            type: array
+            $ref: '#/definitions/v1.idResponse'
         "400":
           description: Bad Request
           schema:
@@ -541,9 +513,9 @@ paths:
       - application/json
       responses:
         "201":
-          description: id
+          description: Created
           schema:
-            type: string
+            $ref: '#/definitions/v1.idResponse'
         "400":
           description: Bad Request
           schema:
@@ -582,7 +554,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1.getAllPackagesResponse'
+            $ref: '#/definitions/v1.dataResponse'
         "400":
           description: Bad Request
           schema:
@@ -624,9 +596,9 @@ paths:
       - application/json
       responses:
         "201":
-          description: id
+          description: Created
           schema:
-            type: string
+            $ref: '#/definitions/v1.idResponse'
         "400":
           description: Bad Request
           schema:
@@ -867,9 +839,9 @@ paths:
       - application/json
       responses:
         "200":
-          description: ok
+          description: OK
           schema:
-            type: string
+            $ref: '#/definitions/v1.dataResponse'
         "400":
           description: Bad Request
           schema:
@@ -911,9 +883,9 @@ paths:
       - application/json
       responses:
         "201":
-          description: id
+          description: Created
           schema:
-            type: string
+            $ref: '#/definitions/v1.idResponse'
         "400":
           description: Bad Request
           schema:
@@ -946,7 +918,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1.getAllOffersResponse'
+            $ref: '#/definitions/v1.dataResponse'
         "400":
           description: Bad Request
           schema:
@@ -983,9 +955,9 @@ paths:
       - application/json
       responses:
         "201":
-          description: id
+          description: Created
           schema:
-            type: string
+            $ref: '#/definitions/v1.idResponse'
         "400":
           description: Bad Request
           schema:
@@ -1344,9 +1316,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/domain.Course'
-            type: array
+            $ref: '#/definitions/v1.dataResponse'
         "400":
           description: Bad Request
           schema:
@@ -1420,9 +1390,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/domain.Offer'
-            type: array
+            $ref: '#/definitions/v1.dataResponse'
         "400":
           description: Bad Request
           schema:
@@ -1509,6 +1477,39 @@ paths:
       summary: Student Refresh Tokens
       tags:
       - students-auth
+  /students/courses/:
+    get:
+      consumes:
+      - application/json
+      description: student get opened courses
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.dataResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - StudentsAuth: []
+      summary: Student Get Opened Courses
+      tags:
+      - students-courses
   /students/modules/{id}/lessons:
     get:
       consumes:
@@ -1526,7 +1527,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1.getModuleLessonsResponse'
+            $ref: '#/definitions/v1.dataResponse'
         "400":
           description: Bad Request
           schema:
@@ -1563,9 +1564,9 @@ paths:
       - application/json
       responses:
         "200":
-          description: ok
+          description: OK
           schema:
-            type: string
+            $ref: '#/definitions/v1.dataResponse'
         "400":
           description: Bad Request
           schema:

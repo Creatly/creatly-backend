@@ -93,21 +93,15 @@ func (s *StudentsService) GetModuleLessons(ctx context.Context, schoolId, studen
 		return nil, err
 	}
 
-	logger.Info(module)
-
 	student, err := s.repo.GetById(ctx, studentId)
 	if err != nil {
 		return nil, err
 	}
 
-	logger.Info(student)
-
 	if student.IsModuleAvailable(module) {
 		logger.Info("Module is available")
 		return module.Lessons, nil
 	}
-
-	logger.Info("Ooops")
 
 	// Find module offers
 	offers, err := s.offersService.GetByModule(ctx, schoolId, module.ID)
@@ -148,6 +142,24 @@ func (s *StudentsService) GiveAccessToPackages(ctx context.Context, studentId pr
 	}
 
 	return s.repo.GiveAccessToCoursesAndModules(ctx, studentId, courseIds, moduleIds)
+}
+
+func (s *StudentsService) GetAvailableCourses(ctx context.Context, school domain.School, studentId primitive.ObjectID) ([]domain.Course, error) {
+	student, err := s.repo.GetById(ctx, studentId)
+	if err != nil {
+		return nil, err
+	}
+
+	courses := make([]domain.Course, 0)
+	for _, id := range student.AvailableCourses {
+		for _, course := range school.Courses {
+			if id == course.ID {
+				courses = append(courses, course)
+			}
+		}
+	}
+
+	return courses, nil
 }
 
 func (s *StudentsService) createSession(ctx context.Context, studentId primitive.ObjectID) (Tokens, error) {

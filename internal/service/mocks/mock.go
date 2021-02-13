@@ -176,6 +176,21 @@ func (mr *MockStudentsMockRecorder) GiveAccessToPackages(ctx, studentId, package
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GiveAccessToPackages", reflect.TypeOf((*MockStudents)(nil).GiveAccessToPackages), ctx, studentId, packageIds)
 }
 
+// GetAvailableCourses mocks base method
+func (m *MockStudents) GetAvailableCourses(ctx context.Context, school domain.School, studentId primitive.ObjectID) ([]domain.Course, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAvailableCourses", ctx, school, studentId)
+	ret0, _ := ret[0].([]domain.Course)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAvailableCourses indicates an expected call of GetAvailableCourses
+func (mr *MockStudentsMockRecorder) GetAvailableCourses(ctx, school, studentId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAvailableCourses", reflect.TypeOf((*MockStudents)(nil).GetAvailableCourses), ctx, school, studentId)
+}
+
 // MockAdmins is a mock of Admins interface
 type MockAdmins struct {
 	ctrl     *gomock.Controller
@@ -510,6 +525,21 @@ func (m *MockOffers) GetByPackage(ctx context.Context, schoolId, packageId primi
 func (mr *MockOffersMockRecorder) GetByPackage(ctx, schoolId, packageId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByPackage", reflect.TypeOf((*MockOffers)(nil).GetByPackage), ctx, schoolId, packageId)
+}
+
+// GetByCourse mocks base method
+func (m *MockOffers) GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Offer, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByCourse", ctx, courseId)
+	ret0, _ := ret[0].([]domain.Offer)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByCourse indicates an expected call of GetByCourse
+func (mr *MockOffersMockRecorder) GetByCourse(ctx, courseId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByCourse", reflect.TypeOf((*MockOffers)(nil).GetByCourse), ctx, courseId)
 }
 
 // GetAll mocks base method

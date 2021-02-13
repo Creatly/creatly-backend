@@ -23,7 +23,7 @@ func (h *Handler) initCoursesRoutes(api *gin.RouterGroup) {
 // @ModuleID getAllCourses
 // @Accept  json
 // @Produce  json
-// @Success 200 {array} domain.Course
+// @Success 200 {object} dataResponse
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
@@ -44,7 +44,7 @@ func (h *Handler) getAllCourses(c *gin.Context) {
 		}
 	}
 
-	c.JSON(http.StatusOK, courses)
+	c.JSON(http.StatusOK, dataResponse{courses})
 }
 
 type getCourseByIdResponse struct {
@@ -157,7 +157,7 @@ func studentGetSchoolCourse(school domain.School, courseId string) (domain.Cours
 // @Accept  json
 // @Produce  json
 // @Param id path string true "course id"
-// @Success 200 {array} domain.Offer
+// @Success 200 {object} dataResponse
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
@@ -181,5 +181,5 @@ func (h *Handler) getCourseOffers(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, offers)
+	c.JSON(http.StatusOK, dataResponse{offers})
 }

@@ -257,7 +257,7 @@ func TestHandler_studentGetModuleOffers(t *testing.T) {
 				r.EXPECT().GetByModule(context.Background(), schoolId, moduleId).Return(offers, nil)
 			},
 			statusCode:   200,
-			responseBody:`{"offers":[{"id":"000000000000000000000000","name":"test offer","description":"description","price":{"value":6900,"currency":"USD"}}]}`,
+			responseBody:`{"data":[{"id":"000000000000000000000000","name":"test offer","description":"description","price":{"value":6900,"currency":"USD"}}]}`,
 		},
 		{
 			name:         "invalid module id",
@@ -348,7 +348,7 @@ func TestHandler_studentGetModuleLessons(t *testing.T) {
 				r.EXPECT().GetModuleLessons(context.Background(), schoolId, studentId, moduleId).Return(lessons, nil)
 			},
 			statusCode:   200,
-			responseBody: `{"lessons":[{"id":"000000000000000000000000","name":"test lesson","position":0,"published":true,"content":"content"}]}`,
+			responseBody: `{"data":[{"id":"000000000000000000000000","name":"test lesson","position":0,"published":true,"content":"content"}]}`,
 		},
 		{
 			name:         "invalid module id",

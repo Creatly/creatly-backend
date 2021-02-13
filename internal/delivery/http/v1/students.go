@@ -17,8 +17,7 @@ func (h *Handler) initStudentsRoutes(api *gin.RouterGroup) {
 		students.POST("/sign-in", h.studentSignIn)
 		students.POST("/auth/refresh", h.studentRefresh)
 		students.POST("/verify/:code", h.studentVerify)
-		students.GET("/courses")     // TODO
-		students.GET("/courses/:id") // TODO
+		students.GET("/courses", h.studentGetCourses)
 
 		authenticated := students.Group("/", h.studentIdentity)
 		{
@@ -192,10 +191,6 @@ func (h *Handler) studentVerify(c *gin.Context) {
 	newResponse(c, http.StatusOK, "success")
 }
 
-type getModuleLessonsResponse struct {
-	Lessons []domain.Lesson `json:"lessons"`
-}
-
 // @Summary Student Get Lessons By Module ModuleID
 // @Security StudentsAuth
 // @Tags students-courses
@@ -204,7 +199,7 @@ type getModuleLessonsResponse struct {
 // @Accept  json
 // @Produce  json
 // @Param id path string true "module id"
-// @Success 200 {object} getModuleLessonsResponse
+// @Success 200 {object} dataResponse
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
@@ -245,13 +240,7 @@ func (h *Handler) studentGetModuleLessons(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, getModuleLessonsResponse{
-		Lessons: lessons,
-	})
-}
-
-type studentGetModuleOffersResponse struct {
-	Offers []studentOffer `json:"offers"`
+	c.JSON(http.StatusOK, dataResponse{lessons})
 }
 
 type studentOffer struct {
@@ -296,7 +285,7 @@ func toStudentOffer(offer domain.Offer) studentOffer {
 // @Accept  json
 // @Produce  json
 // @Param id path string true "module id"
-// @Success 200 {string} string "ok"
+// @Success 200 {object} dataResponse
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
@@ -326,9 +315,7 @@ func (h *Handler) studentGetModuleOffers(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, studentGetModuleOffersResponse{
-		Offers: toStudentOffers(offers),
-	})
+	c.JSON(http.StatusOK, dataResponse{toStudentOffers(offers)})
 }
 
 // @Summary Student Get PromoCode By Code
@@ -425,4 +412,38 @@ func (h *Handler) studentCreateOrder(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, createOrderResponse{paymentLink})
+}
+
+// @Summary Student Get Opened Courses
+// @Security StudentsAuth
+// @Tags students-courses
+// @Description student get opened courses
+// @ModuleID studentGetCourses
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} dataResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /students/courses/ [get]
+func (h *Handler) studentGetCourses(c *gin.Context) {
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	studentId, err := getStudentId(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	courses, err := h.studentsService.GetAvailableCourses(c.Request.Context(), school, studentId)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, dataResponse{courses})
 }

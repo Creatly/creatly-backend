@@ -5,6 +5,14 @@ import (
 	"github.com/zhashkevych/courses-backend/pkg/logger"
 )
 
+type dataResponse struct {
+	Data interface{} `json:"data"`
+}
+
+type idResponse struct {
+	ID interface{} `json:"id"`
+}
+
 type response struct {
 	Message string `json:"message"`
 }
