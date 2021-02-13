@@ -13,6 +13,7 @@ func (h *Handler) initCoursesRoutes(api *gin.RouterGroup) {
 	{
 		courses.GET("/", h.getAllCourses)
 		courses.GET("/:id", h.getCourseById)
+		courses.GET("/:id/offers", h.getCourseOffers)
 	}
 }
 
@@ -106,7 +107,6 @@ func toLessons(lessons []domain.Lesson) []lesson {
 // @Failure 500 {object} response
 // @Failure default {object} response
 // @Router /courses/{id} [get]
-// TODO cover with test
 func (h *Handler) getCourseById(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
@@ -148,4 +148,38 @@ func studentGetSchoolCourse(school domain.School, courseId string) (domain.Cours
 	}
 
 	return searchedCourse, nil
+}
+
+// @Summary Get Course Offers
+// @Tags courses
+// @Description  get course offers
+// @ModuleID getCourseOffers
+// @Accept  json
+// @Produce  json
+// @Param id path string true "course id"
+// @Success 200 {array} domain.Offer
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /courses/{id}/offers [get]
+func (h *Handler) getCourseOffers(c *gin.Context) {
+	id := c.Param("id")
+	if id == "" {
+		newResponse(c, http.StatusBadRequest, "empty id param")
+		return
+	}
+
+	courseId, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid id param")
+		return
+	}
+
+	offers, err := h.offersService.GetByCourse(c.Request.Context(), courseId)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, offers)
 }

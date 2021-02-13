@@ -1403,6 +1403,45 @@ paths:
       summary: Get Course By ModuleID
       tags:
       - courses
+  /courses/{id}/offers:
+    get:
+      consumes:
+      - application/json
+      description: get course offers
+      parameters:
+      - description: course id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Offer'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      summary: Get Course Offers
+      tags:
+      - courses
   /settings:
     get:
       description: school get settings

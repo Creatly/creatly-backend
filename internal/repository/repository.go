@@ -116,6 +116,7 @@ type Offers interface {
 	Delete(ctx context.Context, id primitive.ObjectID) error
 	GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Offer, error)
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.Offer, error)
+	GetByPackages(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Offer, error)
 }
 
 type PromoCodes interface {

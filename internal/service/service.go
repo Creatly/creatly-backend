@@ -117,6 +117,7 @@ type Offers interface {
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.Offer, error)
 	GetByModule(ctx context.Context, schoolId, moduleId primitive.ObjectID) ([]domain.Offer, error)
 	GetByPackage(ctx context.Context, schoolId, packageId primitive.ObjectID) ([]domain.Offer, error)
+	GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Offer, error)
 	GetAll(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Offer, error)
 }
 
@@ -227,7 +228,8 @@ func NewServices(deps ServicesDeps) *Services {
 	emailsService := NewEmailsService(deps.EmailProvider, deps.EmailListId)
 	coursesService := NewCoursesService(deps.Repos.Courses)
 	modulesService := NewModulesService(deps.Repos.Modules, deps.Repos.LessonContent)
-	offersService := NewOffersService(deps.Repos.Offers, modulesService)
+	packagesService := NewPackagesService(deps.Repos.Packages, deps.Repos.Modules)
+	offersService := NewOffersService(deps.Repos.Offers, modulesService, packagesService)
 	promoCodesService := NewPromoCodeService(deps.Repos.PromoCodes)
 	ordersService := NewOrdersService(deps.Repos.Orders, offersService, promoCodesService, deps.PaymentProvider, deps.PaymentCallbackURL, deps.PaymentResponseURL)
 	studentsService := NewStudentsService(deps.Repos.Students, modulesService, offersService, deps.Hasher,
@@ -243,7 +245,7 @@ func NewServices(deps ServicesDeps) *Services {
 		Payments:   NewPaymentsService(deps.PaymentProvider, ordersService, offersService, studentsService),
 		Orders:     ordersService,
 		Admins:     NewAdminsService(deps.Hasher, deps.TokenManager, deps.Repos.Admins, deps.Repos.Schools, deps.AccessTokenTTL, deps.RefreshTokenTTL),
-		Packages:   NewPackagesService(deps.Repos.Packages, deps.Repos.Modules),
+		Packages:   packagesService,
 		Lessons:    NewLessonsService(deps.Repos.Modules, deps.Repos.LessonContent),
 	}
 }

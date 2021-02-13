@@ -8,12 +8,13 @@ import (
 )
 
 type OffersService struct {
-	repo           repository.Offers
-	modulesService Modules
+	repo            repository.Offers
+	modulesService  Modules
+	packagesService Packages
 }
 
-func NewOffersService(repo repository.Offers, modulesService Modules) *OffersService {
-	return &OffersService{repo: repo, modulesService: modulesService}
+func NewOffersService(repo repository.Offers, modulesService Modules, packagesService Packages) *OffersService {
+	return &OffersService{repo: repo, modulesService: modulesService, packagesService: packagesService}
 }
 
 func (s *OffersService) GetById(ctx context.Context, id primitive.ObjectID) (domain.Offer, error) {
@@ -43,6 +44,24 @@ func (s *OffersService) GetByModule(ctx context.Context, schoolId, moduleId prim
 	}
 
 	return s.GetByPackage(ctx, schoolId, module.PackageID)
+}
+
+func (s *OffersService) GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Offer, error) {
+	packages, err := s.packagesService.GetByCourse(ctx, courseId)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(packages) == 0 {
+		return []domain.Offer{}, nil
+	}
+
+	packageIds := make([]primitive.ObjectID, len(packages))
+	for i, pkg := range packages {
+		packageIds[i] = pkg.ID
+	}
+
+	return s.repo.GetByPackages(ctx, packageIds)
 }
 
 func (s *OffersService) Create(ctx context.Context, inp CreateOfferInput) (primitive.ObjectID, error) {

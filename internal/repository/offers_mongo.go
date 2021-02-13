@@ -35,6 +35,17 @@ func (r *OffersRepo) GetById(ctx context.Context, id primitive.ObjectID) (domain
 	return offer, err
 }
 
+func (r *OffersRepo) GetByPackages(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Offer, error) {
+	cur, err := r.db.Find(ctx, bson.M{"packages": bson.M{"$in": packageIds}})
+	if err != nil {
+		return nil, err
+	}
+
+	var offers []domain.Offer
+	err = cur.All(ctx, &offers)
+	return offers, err
+}
+
 func (r *OffersRepo) Create(ctx context.Context, offer domain.Offer) (primitive.ObjectID, error) {
 	res, err := r.db.InsertOne(ctx, offer)
 	if err != nil {
