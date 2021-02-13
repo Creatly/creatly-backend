@@ -4,6 +4,8 @@ definitions:
     properties:
       code:
         type: string
+      color:
+        type: string
       createdAt:
         type: string
       description:
@@ -19,18 +21,49 @@ definitions:
       updatedAt:
         type: string
     type: object
-  domain.Lesson:
+  domain.Offer:
     properties:
-      content:
+      description:
         type: string
       id:
         type: string
       name:
         type: string
-      position:
+      packages:
+        items:
+          type: string
+        type: array
+      price:
+        $ref: '#/definitions/domain.Price'
+      schoolId:
+        type: string
+    type: object
+  domain.Package:
+    properties:
+      courseId:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  domain.Pages:
+    properties:
+      confidential:
+        type: string
+      refundPolicy:
+        type: string
+      serviceAgreement:
+        type: string
+    type: object
+  domain.Price:
+    properties:
+      currency:
+        type: string
+      value:
         type: integer
-      published:
-        type: boolean
     type: object
   domain.PromoCode:
     properties:
@@ -47,21 +80,32 @@ definitions:
           type: string
         type: array
     type: object
-  v1.adminUpdateCourseInput:
+  domain.Settings:
     properties:
-      code:
+      color:
         type: string
-      description:
+      contactData:
         type: string
-      name:
+      domain:
         type: string
-      published:
-        type: boolean
+      email:
+        type: string
+      pages:
+        $ref: '#/definitions/domain.Pages'
     type: object
   v1.createCourseInput:
     properties:
       name:
         type: string
+    type: object
+  v1.createLessonInput:
+    properties:
+      name:
+        type: string
+      position:
+        type: integer
+    required:
+    - name
     type: object
   v1.createModuleInput:
     properties:
@@ -71,7 +115,18 @@ definitions:
         type: integer
     required:
     - name
-    - position
+    type: object
+  v1.createOfferInput:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      price:
+        $ref: '#/definitions/v1.price'
+    required:
+    - name
+    - price
     type: object
   v1.createOrderInput:
     properties:
@@ -87,12 +142,43 @@ definitions:
       paymentLink:
         type: string
     type: object
-  v1.getModuleLessonsResponse:
+  v1.createPackageInput:
     properties:
-      lessons:
-        items:
-          $ref: '#/definitions/domain.Lesson'
-        type: array
+      description:
+        type: string
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  v1.dataResponse:
+    properties:
+      data:
+        type: object
+    type: object
+  v1.idResponse:
+    properties:
+      id:
+        type: object
+    type: object
+  v1.pages:
+    properties:
+      confidential:
+        type: string
+      refundPolicy:
+        type: string
+      serviceAgreement:
+        type: string
+    type: object
+  v1.price:
+    properties:
+      currency:
+        type: string
+      value:
+        type: integer
+    required:
+    - currency
+    - value
     type: object
   v1.refreshInput:
     properties:
@@ -124,13 +210,10 @@ definitions:
         type: string
       password:
         type: string
-      registerSource:
-        type: string
     required:
     - email
     - name
     - password
-    - registerSource
     type: object
   v1.tokenResponse:
     properties:
@@ -138,6 +221,30 @@ definitions:
         type: string
       refreshToken:
         type: string
+    type: object
+  v1.updateCourseInput:
+    properties:
+      code:
+        type: string
+      color:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+      published:
+        type: boolean
+    type: object
+  v1.updateLessonInput:
+    properties:
+      content:
+        type: string
+      name:
+        type: string
+      position:
+        type: integer
+      published:
+        type: boolean
     type: object
   v1.updateModuleInput:
     properties:
@@ -147,6 +254,43 @@ definitions:
         type: integer
       published:
         type: boolean
+    type: object
+  v1.updateOfferInput:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      packages:
+        items:
+          type: string
+        type: array
+      price:
+        $ref: '#/definitions/v1.price'
+    type: object
+  v1.updatePackageInput:
+    properties:
+      description:
+        type: string
+      modules:
+        items:
+          type: string
+        type: array
+      name:
+        type: string
+    type: object
+  v1.updateSchoolSettingsInput:
+    properties:
+      color:
+        type: string
+      contactData:
+        type: string
+      domain:
+        type: string
+      email:
+        type: string
+      pages:
+        $ref: '#/definitions/v1.pages'
     type: object
 host: localhost:8000
 info:
@@ -198,16 +342,13 @@ paths:
       consumes:
       - application/json
       description: admin get all courses
-      operationId: adminGetAllCourses
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/domain.Course'
-            type: array
+            $ref: '#/definitions/v1.dataResponse'
         "400":
           description: Bad Request
           schema:
@@ -233,7 +374,6 @@ paths:
       consumes:
       - application/json
       description: admin create new course
-      operationId: adminCreateCourse
       parameters:
       - description: course info
         in: body
@@ -247,9 +387,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/domain.Course'
-            type: array
+            $ref: '#/definitions/v1.idResponse'
         "400":
           description: Bad Request
           schema:
@@ -276,7 +414,6 @@ paths:
       consumes:
       - application/json
       description: admin get course by id
-      operationId: adminGetCourseById
       parameters:
       - description: course id
         in: path
@@ -315,7 +452,6 @@ paths:
       consumes:
       - application/json
       description: admin update course
-      operationId: adminUpdateCourse
       parameters:
       - description: course id
         in: path
@@ -327,7 +463,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/v1.adminUpdateCourseInput'
+          $ref: '#/definitions/v1.updateCourseInput'
       produces:
       - application/json
       responses:
@@ -361,7 +497,6 @@ paths:
       consumes:
       - application/json
       description: admin update course
-      operationId: adminCreateModule
       parameters:
       - description: module id
         in: path
@@ -378,9 +513,9 @@ paths:
       - application/json
       responses:
         "201":
-          description: id
+          description: Created
           schema:
-            type: string
+            $ref: '#/definitions/v1.idResponse'
         "400":
           description: Bad Request
           schema:
@@ -402,12 +537,215 @@ paths:
       summary: Admin Create Module
       tags:
       - admins-modules
+  /admins/courses/{id}/packages:
+    get:
+      consumes:
+      - application/json
+      description: admin get all course packages
+      parameters:
+      - description: course id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.dataResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Get All Course Packages
+      tags:
+      - admins-packages
+    post:
+      consumes:
+      - application/json
+      description: admin create package
+      parameters:
+      - description: course id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: package info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.createPackageInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/v1.idResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Create Package
+      tags:
+      - admins-packages
+  /admins/lessons/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: admin delete lesson
+      parameters:
+      - description: lesson id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Delete Lesson
+      tags:
+      - admins-lessons
+    get:
+      consumes:
+      - application/json
+      description: admin get lesson by Id
+      parameters:
+      - description: module id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Get Lesson By Id
+      tags:
+      - admins-lessons
+    put:
+      consumes:
+      - application/json
+      description: admin update lesson
+      parameters:
+      - description: lesson id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: update info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.updateLessonInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Update Lesson
+      tags:
+      - admins-lessons
   /admins/modules/{id}:
     delete:
       consumes:
       - application/json
       description: admin update course
-      operationId: adminDeleteModule
       parameters:
       - description: module id
         in: path
@@ -446,7 +784,6 @@ paths:
       consumes:
       - application/json
       description: admin update course
-      operationId: adminUpdateModule
       parameters:
       - description: module id
         in: path
@@ -491,10 +828,164 @@ paths:
     get:
       consumes:
       - application/json
-      description: admin get module content
-      operationId: adminGetLessons
+      description: admin get module lessons with content
       parameters:
       - description: module id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.dataResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Get Module Lessons
+      tags:
+      - admins-lessons
+    post:
+      consumes:
+      - application/json
+      description: admin create lesson
+      parameters:
+      - description: module id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: lesson info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.createLessonInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/v1.idResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Create Lesson
+      tags:
+      - admins-lessons
+  /admins/offers:
+    get:
+      consumes:
+      - application/json
+      description: admin get all offers
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.dataResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Get All Offers
+      tags:
+      - admins-offers
+    post:
+      consumes:
+      - application/json
+      description: admin create offer
+      parameters:
+      - description: package info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.createOfferInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/v1.idResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Create Offer
+      tags:
+      - admins-offers
+  /admins/offers/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: admin delete offer
+      parameters:
+      - description: offer id
         in: path
         name: id
         required: true
@@ -524,15 +1015,263 @@ paths:
             $ref: '#/definitions/v1.response'
       security:
       - AdminAuth: []
-      summary: Admin Get Module Lessons
+      summary: Admin Delete Offer
       tags:
-      - admins-lessons
+      - admins-offers
+    get:
+      consumes:
+      - application/json
+      description: admin get offer by id
+      parameters:
+      - description: offer id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Offer'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Get Offer By Id
+      tags:
+      - admins-offers
+    put:
+      consumes:
+      - application/json
+      description: admin updateOffer
+      parameters:
+      - description: offer id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: update info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.updateOfferInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Update Offer
+      tags:
+      - admins-offers
+  /admins/packages/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: admin delete package
+      parameters:
+      - description: package id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            items:
+              type: string
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Delete Package
+      tags:
+      - admins-packages
+    get:
+      consumes:
+      - application/json
+      description: admin get package by id
+      parameters:
+      - description: package id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Package'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Get Package By ID
+      tags:
+      - admins-packages
+    put:
+      consumes:
+      - application/json
+      description: admin update package
+      parameters:
+      - description: package id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: update input
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.updatePackageInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Package'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Update Package
+      tags:
+      - admins-packages
+  /admins/school/settings:
+    put:
+      consumes:
+      - application/json
+      description: admin update school settings
+      parameters:
+      - description: update school settings
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.updateSchoolSettingsInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Update School settings
+      tags:
+      - admins-school
   /admins/sign-in:
     post:
       consumes:
       - application/json
       description: admin sign in
-      operationId: adminSignIn
       parameters:
       - description: sign up info
         in: body
@@ -571,16 +1310,13 @@ paths:
       consumes:
       - application/json
       description: get all courses
-      operationId: getAllCourses
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/domain.Course'
-            type: array
+            $ref: '#/definitions/v1.dataResponse'
         "400":
           description: Bad Request
           schema:
@@ -605,7 +1341,6 @@ paths:
       consumes:
       - application/json
       description: get course by id
-      operationId: getCourseById
       parameters:
       - description: course id
         in: path
@@ -635,9 +1370,75 @@ paths:
           description: ""
           schema:
             $ref: '#/definitions/v1.response'
-      summary: Get Course By ID
+      summary: Get Course By ModuleID
       tags:
       - courses
+  /courses/{id}/offers:
+    get:
+      consumes:
+      - application/json
+      description: get course offers
+      parameters:
+      - description: course id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.dataResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      summary: Get Course Offers
+      tags:
+      - courses
+  /settings:
+    get:
+      description: school get settings
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Settings'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      summary: School GetSettings
+      tags:
+      - school-settings
   /students/auth/refresh:
     post:
       consumes:
@@ -676,12 +1477,44 @@ paths:
       summary: Student Refresh Tokens
       tags:
       - students-auth
+  /students/courses/:
+    get:
+      consumes:
+      - application/json
+      description: student get opened courses
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.dataResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - StudentsAuth: []
+      summary: Student Get Opened Courses
+      tags:
+      - students-courses
   /students/modules/{id}/lessons:
     get:
       consumes:
       - application/json
       description: student get lessons by module id
-      operationId: studentGetModuleLessons
       parameters:
       - description: module id
         in: path
@@ -694,7 +1527,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1.getModuleLessonsResponse'
+            $ref: '#/definitions/v1.dataResponse'
         "400":
           description: Bad Request
           schema:
@@ -713,7 +1546,7 @@ paths:
             $ref: '#/definitions/v1.response'
       security:
       - StudentsAuth: []
-      summary: Student Get Lessons By Module ID
+      summary: Student Get Lessons By Module ModuleID
       tags:
       - students-courses
   /students/modules/{id}/offers:
@@ -721,7 +1554,6 @@ paths:
       consumes:
       - application/json
       description: student get offers by module id
-      operationId: studentGetModuleOffers
       parameters:
       - description: module id
         in: path
@@ -732,9 +1564,9 @@ paths:
       - application/json
       responses:
         "200":
-          description: ok
+          description: OK
           schema:
-            type: string
+            $ref: '#/definitions/v1.dataResponse'
         "400":
           description: Bad Request
           schema:
@@ -753,7 +1585,7 @@ paths:
             $ref: '#/definitions/v1.response'
       security:
       - StudentsAuth: []
-      summary: Student Get Offers By Module ID
+      summary: Student Get Offers By Module ModuleID
       tags:
       - students-courses
   /students/order:
@@ -761,7 +1593,6 @@ paths:
       consumes:
       - application/json
       description: student create order
-      operationId: studentCreateOrder
       parameters:
       - description: order info
         in: body
@@ -802,7 +1633,6 @@ paths:
       consumes:
       - application/json
       description: student get promocode by code
-      operationId: studentGetPromo
       parameters:
       - description: code
         in: path
@@ -842,7 +1672,6 @@ paths:
       consumes:
       - application/json
       description: student sign in
-      operationId: studentSignIn
       parameters:
       - description: sign up info
         in: body
@@ -881,7 +1710,6 @@ paths:
       consumes:
       - application/json
       description: create student account
-      operationId: studentSignUp
       parameters:
       - description: sign up info
         in: body
@@ -920,7 +1748,6 @@ paths:
       consumes:
       - application/json
       description: student verify registration
-      operationId: studentVerify
       parameters:
       - description: verification code
         in: path

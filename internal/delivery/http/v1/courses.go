@@ -13,16 +13,17 @@ func (h *Handler) initCoursesRoutes(api *gin.RouterGroup) {
 	{
 		courses.GET("/", h.getAllCourses)
 		courses.GET("/:id", h.getCourseById)
+		courses.GET("/:id/offers", h.getCourseOffers)
 	}
 }
 
 // @Summary  Get All Courses
 // @Tags courses
 // @Description  get all courses
-// @ID getAllCourses
+// @ModuleID getAllCourses
 // @Accept  json
 // @Produce  json
-// @Success 200 {array} domain.Course
+// @Success 200 {object} dataResponse
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
@@ -43,7 +44,7 @@ func (h *Handler) getAllCourses(c *gin.Context) {
 		}
 	}
 
-	c.JSON(http.StatusOK, courses)
+	c.JSON(http.StatusOK, dataResponse{courses})
 }
 
 type getCourseByIdResponse struct {
@@ -54,14 +55,14 @@ type getCourseByIdResponse struct {
 type module struct {
 	ID       primitive.ObjectID `json:"id" bson:"_id"`
 	Name     string             `json:"name" bson:"name"`
-	Position int                `json:"position" bson:"position"`
+	Position uint               `json:"position" bson:"position"`
 	Lessons  []lesson           `json:"lessons" bson:"lessons"`
 }
 
 type lesson struct {
 	ID       primitive.ObjectID `json:"id" bson:"_id"`
 	Name     string             `json:"name" bson:"name"`
-	Position int                `json:"position" bson:"position"`
+	Position uint               `json:"position" bson:"position"`
 }
 
 func newGetCourseByIdResponse(course domain.Course, courseModules []domain.Module) getCourseByIdResponse {
@@ -94,10 +95,10 @@ func toLessons(lessons []domain.Lesson) []lesson {
 	return out
 }
 
-// @Summary Get Course By ID
+// @Summary Get Course By ModuleID
 // @Tags courses
 // @Description  get course by id
-// @ID getCourseById
+// @ModuleID getCourseById
 // @Accept  json
 // @Produce  json
 // @Param id path string true "course id"
@@ -106,7 +107,6 @@ func toLessons(lessons []domain.Lesson) []lesson {
 // @Failure 500 {object} response
 // @Failure default {object} response
 // @Router /courses/{id} [get]
-// TODO cover with test
 func (h *Handler) getCourseById(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
@@ -148,4 +148,38 @@ func studentGetSchoolCourse(school domain.School, courseId string) (domain.Cours
 	}
 
 	return searchedCourse, nil
+}
+
+// @Summary Get Course Offers
+// @Tags courses
+// @Description  get course offers
+// @ModuleID getCourseOffers
+// @Accept  json
+// @Produce  json
+// @Param id path string true "course id"
+// @Success 200 {object} dataResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /courses/{id}/offers [get]
+func (h *Handler) getCourseOffers(c *gin.Context) {
+	id := c.Param("id")
+	if id == "" {
+		newResponse(c, http.StatusBadRequest, "empty id param")
+		return
+	}
+
+	courseId, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid id param")
+		return
+	}
+
+	offers, err := h.offersService.GetByCourse(c.Request.Context(), courseId)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, dataResponse{offers})
 }

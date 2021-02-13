@@ -5,7 +5,7 @@ http:
   writeTimeout: 10s
 
 cache:
-  ttl: 3600s
+  ttl: 60s
 
 mongo:
   databaseName: coursePlatform
@@ -18,3 +18,7 @@ auth:
   accessTokenTTL: 120m
   refreshTokenTTL: 43200m #30 days
 
+limiter:
+  rps: 10
+  burst: 20
+  ttl: 10m

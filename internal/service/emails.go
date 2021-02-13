@@ -4,7 +4,6 @@ import "github.com/zhashkevych/courses-backend/pkg/email"
 
 const (
 	nameField             = "name"
-	registerSourceField   = "registerSource"
 	verificationCodeField = "verificationCode"
 )
 
@@ -23,7 +22,6 @@ func (s *EmailService) AddToList(input AddToListInput) error {
 		ListID: s.listId,
 		Variables: map[string]string{
 			nameField:             input.Name,
-			registerSourceField:   input.RegisterSource,
 			verificationCodeField: input.VerificationCode,
 		},
 	})

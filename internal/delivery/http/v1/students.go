@@ -6,7 +6,6 @@ import (
 	"github.com/zhashkevych/courses-backend/internal/service"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
-	"time"
 )
 
 // TODO: return time.Time in RFC3339
@@ -18,8 +17,7 @@ func (h *Handler) initStudentsRoutes(api *gin.RouterGroup) {
 		students.POST("/sign-in", h.studentSignIn)
 		students.POST("/auth/refresh", h.studentRefresh)
 		students.POST("/verify/:code", h.studentVerify)
-		students.GET("/courses", h.getAllCourses)
-		students.GET("/courses/:id", h.getCourseById)
+		students.GET("/courses", h.studentGetCourses)
 
 		authenticated := students.Group("/", h.studentIdentity)
 		{
@@ -32,16 +30,15 @@ func (h *Handler) initStudentsRoutes(api *gin.RouterGroup) {
 }
 
 type studentSignUpInput struct {
-	Name           string `json:"name" binding:"required,min=2,max=64"`
-	Email          string `json:"email" binding:"required,email,max=64"`
-	Password       string `json:"password" binding:"required,min=8,max=64"`
-	RegisterSource string `json:"registerSource" binding:"required,max=64"`
+	Name     string `json:"name" binding:"required,min=2,max=64"`
+	Email    string `json:"email" binding:"required,email,max=64"`
+	Password string `json:"password" binding:"required,min=8,max=64"`
 }
 
 // @Summary Student SignUp
 // @Tags students-auth
 // @Description create student account
-// @ID studentSignUp
+// @ModuleID studentSignUp
 // @Accept  json
 // @Produce  json
 // @Param input body studentSignUpInput true "sign up info"
@@ -64,11 +61,10 @@ func (h *Handler) studentSignUp(c *gin.Context) {
 	}
 
 	if err := h.studentsService.SignUp(c.Request.Context(), service.StudentSignUpInput{
-		Name:           inp.Name,
-		Email:          inp.Email,
-		Password:       inp.Password,
-		RegisterSource: inp.RegisterSource,
-		SchoolID:       school.ID,
+		Name:     inp.Name,
+		Email:    inp.Email,
+		Password: inp.Password,
+		SchoolID: school.ID,
 	}); err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -90,7 +86,7 @@ type tokenResponse struct {
 // @Summary Student SignIn
 // @Tags students-auth
 // @Description student sign in
-// @ID studentSignIn
+// @ModuleID studentSignIn
 // @Accept  json
 // @Produce  json
 // @Param input body signInInput true "sign up info"
@@ -171,7 +167,7 @@ func (h *Handler) studentRefresh(c *gin.Context) {
 // @Summary Student Verify Registration
 // @Tags students-auth
 // @Description student verify registration
-// @ID studentVerify
+// @ModuleID studentVerify
 // @Accept  json
 // @Produce  json
 // @Param code path string true "verification code"
@@ -195,19 +191,15 @@ func (h *Handler) studentVerify(c *gin.Context) {
 	newResponse(c, http.StatusOK, "success")
 }
 
-type getModuleLessonsResponse struct {
-	Lessons []domain.Lesson `json:"lessons"`
-}
-
-// @Summary Student Get Lessons By Module ID
+// @Summary Student Get Lessons By Module ModuleID
 // @Security StudentsAuth
 // @Tags students-courses
 // @Description student get lessons by module id
-// @ID studentGetModuleLessons
+// @ModuleID studentGetModuleLessons
 // @Accept  json
 // @Produce  json
 // @Param id path string true "module id"
-// @Success 200 {object} getModuleLessonsResponse
+// @Success 200 {object} dataResponse
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
@@ -248,26 +240,19 @@ func (h *Handler) studentGetModuleLessons(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, getModuleLessonsResponse{
-		Lessons: lessons,
-	})
-}
-
-type studentGetModuleOffersResponse struct {
-	Offers []studentOffer `json:"offers"`
+	c.JSON(http.StatusOK, dataResponse{lessons})
 }
 
 type studentOffer struct {
 	ID          primitive.ObjectID `json:"id" bson:"_id"`
 	Name        string             `json:"name" bson:"name"`
 	Description string             `json:"description" bson:"description"`
-	CreatedAt   string             `json:"createdAt" bson:"createdAt"`
 	Price       price              `json:"price" bson:"price"`
 }
 
 type price struct {
-	Value    int    `json:"value"`
-	Currency string `json:"currency"`
+	Value    int    `json:"value" binding:"required,min=1"`
+	Currency string `json:"currency" binding:"required,min=3"`
 }
 
 func toStudentOffers(offers []domain.Offer) []studentOffer {
@@ -285,7 +270,6 @@ func toStudentOffer(offer domain.Offer) studentOffer {
 		ID:          offer.ID,
 		Name:        offer.Name,
 		Description: offer.Description,
-		CreatedAt:   offer.CreatedAt.Format(time.RFC3339),
 		Price: price{
 			Value:    offer.Price.Value,
 			Currency: offer.Price.Currency,
@@ -293,15 +277,15 @@ func toStudentOffer(offer domain.Offer) studentOffer {
 	}
 }
 
-// @Summary Student Get Offers By Module ID
+// @Summary Student Get Offers By Module ModuleID
 // @Security StudentsAuth
 // @Tags students-courses
 // @Description student get offers by module id
-// @ID studentGetModuleOffers
+// @ModuleID studentGetModuleOffers
 // @Accept  json
 // @Produce  json
 // @Param id path string true "module id"
-// @Success 200 {string} string "ok"
+// @Success 200 {object} dataResponse
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
@@ -331,16 +315,14 @@ func (h *Handler) studentGetModuleOffers(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, studentGetModuleOffersResponse{
-		Offers: toStudentOffers(offers),
-	})
+	c.JSON(http.StatusOK, dataResponse{toStudentOffers(offers)})
 }
 
 // @Summary Student Get PromoCode By Code
 // @Security StudentsAuth
 // @Tags students-courses
 // @Description student get promocode by code
-// @ID studentGetPromo
+// @ModuleID studentGetPromo
 // @Accept  json
 // @Produce  json
 // @Param code path string true "code"
@@ -384,7 +366,7 @@ type createOrderResponse struct {
 // @Security StudentsAuth
 // @Tags students-courses
 // @Description student create order
-// @ID studentCreateOrder
+// @ModuleID studentCreateOrder
 // @Accept  json
 // @Produce  json
 // @Param input body createOrderInput true "order info"
@@ -430,4 +412,38 @@ func (h *Handler) studentCreateOrder(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, createOrderResponse{paymentLink})
+}
+
+// @Summary Student Get Opened Courses
+// @Security StudentsAuth
+// @Tags students-courses
+// @Description student get opened courses
+// @ModuleID studentGetCourses
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} dataResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /students/courses/ [get]
+func (h *Handler) studentGetCourses(c *gin.Context) {
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	studentId, err := getStudentId(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	courses, err := h.studentsService.GetAvailableCourses(c.Request.Context(), school, studentId)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, dataResponse{courses})
 }

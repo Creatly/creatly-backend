@@ -15,7 +15,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http/httptest"
 	"testing"
-	"time"
 )
 
 const (
@@ -225,7 +224,6 @@ func TestHandler_studentGetModuleOffers(t *testing.T) {
 	schoolId := primitive.NewObjectID()
 	moduleId := primitive.NewObjectID()
 
-	createdAt := time.Now()
 	packageIds := []primitive.ObjectID{
 		primitive.NewObjectID(), primitive.NewObjectID(),
 	}
@@ -247,7 +245,6 @@ func TestHandler_studentGetModuleOffers(t *testing.T) {
 				{
 					Name:        "test offer",
 					Description: "description",
-					CreatedAt:   createdAt,
 					SchoolID:    schoolId,
 					PackageIDs:  packageIds,
 					Price: domain.Price{
@@ -260,7 +257,7 @@ func TestHandler_studentGetModuleOffers(t *testing.T) {
 				r.EXPECT().GetByModule(context.Background(), schoolId, moduleId).Return(offers, nil)
 			},
 			statusCode:   200,
-			responseBody: fmt.Sprintf(`{"offers":[{"id":"000000000000000000000000","name":"test offer","description":"description","createdAt":"%s","price":{"value":6900,"currency":"USD"}}]}`, createdAt.Format(time.RFC3339)),
+			responseBody:`{"data":[{"id":"000000000000000000000000","name":"test offer","description":"description","price":{"value":6900,"currency":"USD"}}]}`,
 		},
 		{
 			name:         "invalid module id",
@@ -351,7 +348,7 @@ func TestHandler_studentGetModuleLessons(t *testing.T) {
 				r.EXPECT().GetModuleLessons(context.Background(), schoolId, studentId, moduleId).Return(lessons, nil)
 			},
 			statusCode:   200,
-			responseBody: `{"lessons":[{"id":"000000000000000000000000","name":"test lesson","position":0,"published":true,"content":"content"}]}`,
+			responseBody: `{"data":[{"id":"000000000000000000000000","name":"test lesson","position":0,"published":true,"content":"content"}]}`,
 		},
 		{
 			name:         "invalid module id",
@@ -444,7 +441,6 @@ func TestHandler_studentSignUp(t *testing.T) {
 				Name:           "Vasya",
 				Email:          "test@test.com",
 				Password:       "qwerty123",
-				RegisterSource: "test-course",
 				SchoolID:       schoolId,
 			},
 			mockBehavior: func(r *mock_service.MockStudents, input service.StudentSignUpInput) {
@@ -495,14 +491,6 @@ func TestHandler_studentSignUp(t *testing.T) {
 		{
 			name:         "password too short",
 			requestBody:  `{"name":"Vasya","email":"test@test.com","password":"qwerty","registerSource":"test-course"}`,
-			schoolId:     schoolId,
-			mockBehavior: func(r *mock_service.MockStudents, input service.StudentSignUpInput) {},
-			statusCode:   400,
-			responseBody: `{"message":"invalid input body"}`,
-		},
-		{
-			name:         "missing registerSource",
-			requestBody:  `{"name":"Vasya","email":"test@test.com","password":"","registerSource":""}`,
 			schoolId:     schoolId,
 			mockBehavior: func(r *mock_service.MockStudents, input service.StudentSignUpInput) {},
 			statusCode:   400,

@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"time"
+
 	"github.com/zhashkevych/courses-backend/internal/domain"
 	"github.com/zhashkevych/courses-backend/internal/repository"
 	"github.com/zhashkevych/courses-backend/pkg/auth"
@@ -10,23 +12,31 @@ import (
 	"github.com/zhashkevych/courses-backend/pkg/hash"
 	"github.com/zhashkevych/courses-backend/pkg/payment"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"time"
 )
 
 //go:generate mockgen -source=service.go -destination=mocks/mock.go
 
 // TODO handle "not found" errors
 
+type UpdateSchoolSettingsInput struct {
+	SchoolID    primitive.ObjectID
+	Color       string
+	Domain      string
+	Email       string
+	ContactData string
+	Pages       *domain.Pages
+}
+
 type Schools interface {
 	GetByDomain(ctx context.Context, domainName string) (domain.School, error)
+	UpdateSettings(ctx context.Context, input UpdateSchoolSettingsInput) error
 }
 
 type StudentSignUpInput struct {
-	Name           string
-	Email          string
-	Password       string
-	SchoolID       primitive.ObjectID
-	RegisterSource string
+	Name     string
+	Email    string
+	Password string
+	SchoolID primitive.ObjectID
 }
 
 type SignInInput struct {
@@ -47,6 +57,7 @@ type Students interface {
 	Verify(ctx context.Context, hash string) error
 	GetModuleLessons(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) ([]domain.Lesson, error)
 	GiveAccessToPackages(ctx context.Context, studentId primitive.ObjectID, packageIds []primitive.ObjectID) error
+	GetAvailableCourses(ctx context.Context, school domain.School, studentId primitive.ObjectID) ([]domain.Course, error)
 }
 
 type Admins interface {
@@ -59,7 +70,6 @@ type Admins interface {
 type AddToListInput struct {
 	Email            string
 	Name             string
-	RegisterSource   string
 	VerificationCode string
 }
 
@@ -72,6 +82,7 @@ type UpdateCourseInput struct {
 	Name        string
 	Code        string
 	Description string
+	Color       string
 	Published   *bool
 }
 
@@ -85,33 +96,95 @@ type PromoCodes interface {
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.PromoCode, error)
 }
 
+type CreateOfferInput struct {
+	Name        string
+	Description string
+	SchoolID    primitive.ObjectID
+	Price       domain.Price
+}
+
+type UpdateOfferInput struct {
+	ID          string
+	Name        string
+	Description string
+	Price       *domain.Price
+	Packages    []string
+}
+
 type Offers interface {
+	Create(ctx context.Context, inp CreateOfferInput) (primitive.ObjectID, error)
+	Update(ctx context.Context, inp UpdateOfferInput) error
+	Delete(ctx context.Context, id primitive.ObjectID) error
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.Offer, error)
 	GetByModule(ctx context.Context, schoolId, moduleId primitive.ObjectID) ([]domain.Offer, error)
 	GetByPackage(ctx context.Context, schoolId, packageId primitive.ObjectID) ([]domain.Offer, error)
+	GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Offer, error)
+	GetAll(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Offer, error)
 }
 
 type CreateModuleInput struct {
 	CourseID string
-	Name string
-	Position int
+	Name     string
+	Position uint
 }
 
 type UpdateModuleInput struct {
 	ID        string
 	Name      string
-	Position  *int
+	Position  *uint
 	Published *bool
 }
 
 type Modules interface {
+	Create(ctx context.Context, inp CreateModuleInput) (primitive.ObjectID, error)
+	Update(ctx context.Context, inp UpdateModuleInput) error
+	Delete(ctx context.Context, id primitive.ObjectID) error
 	GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
 	GetById(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
 	GetByPackages(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Module, error)
 	GetWithContent(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
-	Create(ctx context.Context, inp CreateModuleInput) (primitive.ObjectID, error)
-	Update(ctx context.Context, inp UpdateModuleInput) error
+}
+
+type AddLessonInput struct {
+	ModuleID string
+	Name     string
+	Position uint
+}
+
+type UpdateLessonInput struct {
+	LessonID  string
+	Name      string
+	Content   string
+	Position  *uint
+	Published *bool
+}
+
+type Lessons interface {
+	Create(ctx context.Context, inp AddLessonInput) (primitive.ObjectID, error)
+	GetById(ctx context.Context, lessonId primitive.ObjectID) (domain.Lesson, error)
+	Update(ctx context.Context, inp UpdateLessonInput) error
 	Delete(ctx context.Context, id primitive.ObjectID) error
+}
+
+type CreatePackageInput struct {
+	CourseID    string
+	Name        string
+	Description string
+}
+
+type UpdatePackageInput struct {
+	ID          string
+	Name        string
+	Description string
+	Modules     []string
+}
+
+type Packages interface {
+	Create(ctx context.Context, inp CreatePackageInput) (primitive.ObjectID, error)
+	Update(ctx context.Context, inp UpdatePackageInput) error
+	Delete(ctx context.Context, id primitive.ObjectID) error
+	GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Package, error)
+	GetById(ctx context.Context, id primitive.ObjectID) (domain.Package, error)
 }
 
 type Orders interface {
@@ -129,7 +202,9 @@ type Services struct {
 	Courses    Courses
 	PromoCodes PromoCodes
 	Offers     Offers
+	Packages   Packages
 	Modules    Modules
+	Lessons    Lessons
 	Payments   Payments
 	Orders     Orders
 	Admins     Admins
@@ -154,7 +229,8 @@ func NewServices(deps ServicesDeps) *Services {
 	emailsService := NewEmailsService(deps.EmailProvider, deps.EmailListId)
 	coursesService := NewCoursesService(deps.Repos.Courses)
 	modulesService := NewModulesService(deps.Repos.Modules, deps.Repos.LessonContent)
-	offersService := NewOffersService(deps.Repos.Offers, modulesService)
+	packagesService := NewPackagesService(deps.Repos.Packages, deps.Repos.Modules)
+	offersService := NewOffersService(deps.Repos.Offers, modulesService, packagesService)
 	promoCodesService := NewPromoCodeService(deps.Repos.PromoCodes)
 	ordersService := NewOrdersService(deps.Repos.Orders, offersService, promoCodesService, deps.PaymentProvider, deps.PaymentCallbackURL, deps.PaymentResponseURL)
 	studentsService := NewStudentsService(deps.Repos.Students, modulesService, offersService, deps.Hasher,
@@ -170,5 +246,7 @@ func NewServices(deps ServicesDeps) *Services {
 		Payments:   NewPaymentsService(deps.PaymentProvider, ordersService, offersService, studentsService),
 		Orders:     ordersService,
 		Admins:     NewAdminsService(deps.Hasher, deps.TokenManager, deps.Repos.Admins, deps.Repos.Schools, deps.AccessTokenTTL, deps.RefreshTokenTTL),
+		Packages:   packagesService,
+		Lessons:    NewLessonsService(deps.Repos.Modules, deps.Repos.LessonContent),
 	}
 }

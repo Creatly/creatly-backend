@@ -8,12 +8,13 @@ import (
 )
 
 type OffersService struct {
-	repo           repository.Offers
-	modulesService Modules
+	repo            repository.Offers
+	modulesService  Modules
+	packagesService Packages
 }
 
-func NewOffersService(repo repository.Offers, modulesService Modules) *OffersService {
-	return &OffersService{repo: repo, modulesService: modulesService}
+func NewOffersService(repo repository.Offers, modulesService Modules, packagesService Packages) *OffersService {
+	return &OffersService{repo: repo, modulesService: modulesService, packagesService: packagesService}
 }
 
 func (s *OffersService) GetById(ctx context.Context, id primitive.ObjectID) (domain.Offer, error) {
@@ -43,6 +44,64 @@ func (s *OffersService) GetByModule(ctx context.Context, schoolId, moduleId prim
 	}
 
 	return s.GetByPackage(ctx, schoolId, module.PackageID)
+}
+
+func (s *OffersService) GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Offer, error) {
+	packages, err := s.packagesService.GetByCourse(ctx, courseId)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(packages) == 0 {
+		return []domain.Offer{}, nil
+	}
+
+	packageIds := make([]primitive.ObjectID, len(packages))
+	for i, pkg := range packages {
+		packageIds[i] = pkg.ID
+	}
+
+	return s.repo.GetByPackages(ctx, packageIds)
+}
+
+func (s *OffersService) Create(ctx context.Context, inp CreateOfferInput) (primitive.ObjectID, error) {
+	return s.repo.Create(ctx, domain.Offer{
+		SchoolID:    inp.SchoolID,
+		Name:        inp.Name,
+		Description: inp.Description,
+		Price:       inp.Price,
+	})
+}
+
+func (s *OffersService) GetAll(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Offer, error) {
+	return s.repo.GetBySchool(ctx, schoolId)
+}
+
+func (s *OffersService) Update(ctx context.Context, inp UpdateOfferInput) error {
+	id, err := primitive.ObjectIDFromHex(inp.ID)
+	if err != nil {
+		return err
+	}
+
+	updateInput := repository.UpdateOfferInput{
+		ID:          id,
+		Name:        inp.Name,
+		Description: inp.Description,
+		Price:       inp.Price,
+	}
+
+	if inp.Packages != nil {
+		updateInput.Packages, err = stringArrayToObjectId(inp.Packages)
+		if err != nil {
+			return err
+		}
+	}
+
+	return s.repo.Update(ctx, updateInput)
+}
+
+func (s *OffersService) Delete(ctx context.Context, id primitive.ObjectID) error {
+	return s.repo.Delete(ctx, id)
 }
 
 func inArray(array []primitive.ObjectID, searchedItem primitive.ObjectID) bool {

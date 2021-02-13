@@ -51,12 +51,13 @@ func (r *StudentsRepo) SetSession(ctx context.Context, studentId primitive.Objec
 }
 
 func (r *StudentsRepo) GiveAccessToCourseAndModule(ctx context.Context, studentId, courseId, moduleId primitive.ObjectID) error {
-	_, err := r.db.UpdateOne(ctx, bson.M{"_id": studentId}, bson.M{"$push": bson.M{"availableModules": moduleId, "availableCourses": courseId}})
+	_, err := r.db.UpdateOne(ctx, bson.M{"_id": studentId}, bson.M{"$addToSet": bson.M{"availableModules": moduleId, "availableCourses": courseId}})
 	return err
 }
 
-func (r *StudentsRepo) GiveAccessToModules(ctx context.Context, studentId primitive.ObjectID, moduleIds []primitive.ObjectID) error {
-	_, err := r.db.UpdateOne(ctx, bson.M{"_id": studentId}, bson.M{"$push": bson.M{"availableModules": bson.M{"$each": moduleIds}}})
+func (r *StudentsRepo) GiveAccessToCoursesAndModules(ctx context.Context, studentId primitive.ObjectID, courseIds, moduleIds []primitive.ObjectID) error {
+	_, err := r.db.UpdateOne(ctx, bson.M{"_id": studentId}, bson.M{"$addToSet": bson.M{"availableModules": bson.M{"$each": moduleIds},
+		"availableCourses": bson.M{"$each": courseIds}}})
 	return err
 }
 

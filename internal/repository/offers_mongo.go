@@ -34,3 +34,53 @@ func (r *OffersRepo) GetById(ctx context.Context, id primitive.ObjectID) (domain
 	err := r.db.FindOne(ctx, bson.M{"_id": id}).Decode(&offer)
 	return offer, err
 }
+
+func (r *OffersRepo) GetByPackages(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Offer, error) {
+	cur, err := r.db.Find(ctx, bson.M{"packages": bson.M{"$in": packageIds}})
+	if err != nil {
+		return nil, err
+	}
+
+	var offers []domain.Offer
+	err = cur.All(ctx, &offers)
+	return offers, err
+}
+
+func (r *OffersRepo) Create(ctx context.Context, offer domain.Offer) (primitive.ObjectID, error) {
+	res, err := r.db.InsertOne(ctx, offer)
+	if err != nil {
+		return primitive.ObjectID{}, err
+	}
+
+	return res.InsertedID.(primitive.ObjectID), nil
+}
+
+func (r *OffersRepo) Update(ctx context.Context, inp UpdateOfferInput) error {
+	updateQuery := bson.M{}
+
+	if inp.Name != "" {
+		updateQuery["name"] = inp.Name
+	}
+
+	if inp.Description != "" {
+		updateQuery["description"] = inp.Description
+	}
+
+	if inp.Price != nil {
+		updateQuery["price"] = inp.Price
+	}
+
+	if inp.Packages != nil {
+		updateQuery["packages"] = inp.Packages
+	}
+
+	_, err := r.db.UpdateOne(ctx,
+		bson.M{"_id": inp.ID}, bson.M{"$set": updateQuery})
+
+	return err
+}
+
+func (r *OffersRepo) Delete(ctx context.Context, id primitive.ObjectID) error {
+	_, err := r.db.DeleteOne(ctx, bson.M{"_id": id})
+	return err
+}

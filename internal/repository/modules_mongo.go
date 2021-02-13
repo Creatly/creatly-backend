@@ -74,3 +74,45 @@ func (r *ModulesRepo) Delete(ctx context.Context, id primitive.ObjectID) error {
 	_, err := r.db.DeleteOne(ctx, bson.M{"_id": id})
 	return err
 }
+
+func (r *ModulesRepo) AddLesson(ctx context.Context, id primitive.ObjectID, lesson domain.Lesson) error {
+	_, err := r.db.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$push": bson.M{"lessons": lesson}})
+	return err
+}
+
+func (r *ModulesRepo) GetByLesson(ctx context.Context, lessonId primitive.ObjectID) (domain.Module, error) {
+	var module domain.Module
+	err := r.db.FindOne(ctx, bson.M{"lessons._id": lessonId}).Decode(&module)
+	return module, err
+}
+
+func (r *ModulesRepo) UpdateLesson(ctx context.Context, inp UpdateLessonInput) error {
+	updateQuery := bson.M{}
+
+	if inp.Name != "" {
+		updateQuery["lessons.$.name"] = inp.Name
+	}
+
+	if inp.Position != nil {
+		updateQuery["lessons.$.position"] = *inp.Position
+	}
+
+	if inp.Published != nil {
+		updateQuery["lessons.$.published"] = *inp.Published
+	}
+
+	_, err := r.db.UpdateOne(ctx,
+		bson.M{"lessons._id": inp.ID}, bson.M{"$set": updateQuery})
+
+	return err
+}
+
+func (r *ModulesRepo) DeleteLesson(ctx context.Context, id primitive.ObjectID) error {
+	_, err := r.db.UpdateOne(ctx, bson.M{"lessons._id": id}, bson.M{"$pull": bson.M{"lessons": bson.M{"_id": id}}})
+	return err
+}
+
+func (r *ModulesRepo) AttachPackage(ctx context.Context, modules []primitive.ObjectID, packageId primitive.ObjectID) error {
+	_, err := r.db.UpdateMany(ctx, bson.M{"_id": bson.M{"$in": modules}}, bson.M{"$set": bson.M{"packageId": packageId}})
+	return err
+}

@@ -10,16 +10,16 @@ import (
 )
 
 type CoursesRepo struct {
-	db *mongo.Database
+	db *mongo.Collection
 }
 
 func NewCoursesRepo(db *mongo.Database) *CoursesRepo {
-	return &CoursesRepo{db: db}
+	return &CoursesRepo{db: db.Collection(schoolsCollection)}
 }
 
 func (r *CoursesRepo) Create(ctx context.Context, schoolId primitive.ObjectID, course domain.Course) (primitive.ObjectID, error) {
 	course.ID = primitive.NewObjectID()
-	_, err := r.db.Collection(schoolsCollection).UpdateOne(ctx, bson.M{"_id": schoolId}, bson.M{"$push": bson.M{"courses": course}})
+	_, err := r.db.UpdateOne(ctx, bson.M{"_id": schoolId}, bson.M{"$push": bson.M{"courses": course}})
 	return course.ID, err
 }
 
@@ -40,11 +40,15 @@ func (r *CoursesRepo) Update(ctx context.Context, schoolId primitive.ObjectID, i
 		updateQuery["courses.$.code"] = inp.Code
 	}
 
+	if inp.Color != "" {
+		updateQuery["courses.$.color"] = inp.Color
+	}
+
 	if inp.Published != nil {
 		updateQuery["courses.$.published"] = *inp.Published
 	}
 
-	_, err := r.db.Collection(schoolsCollection).UpdateOne(ctx,
+	_, err := r.db.UpdateOne(ctx,
 		bson.M{"_id": schoolId, "courses._id": inp.ID}, bson.M{"$set": updateQuery})
 
 	return err

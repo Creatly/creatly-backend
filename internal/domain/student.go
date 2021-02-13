@@ -13,7 +13,6 @@ type Student struct {
 	RegisteredAt     time.Time            `json:"registeredAt" bson:"registeredAt"`
 	LastVisitAt      time.Time            `json:"lastVisitAt" bson:"lastVisitAt"`
 	SchoolID         primitive.ObjectID   `json:"schoolId" bson:"schoolId"`
-	RegisterSource   string               `json:"registerSource" bson:"registerSource,omitempty"`
 	AvailableModules []primitive.ObjectID `json:"availableModules" bson:"availableModules,omitempty"`
 	AvailableCourses []primitive.ObjectID `json:"availableCourses" bson:"availableCourses,omitempty"`
 	Verification     Verification         `json:"verification" bson:"verification"`
