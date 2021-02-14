@@ -1,0 +1,39 @@
+version: '3.4'
+
+services:
+  app:
+    image: "${BACKEND_IMAGE_URL}"
+    container_name: courses-backend-app-stage
+    ports:
+      - 8000:8000
+    depends_on:
+      - mongodb
+    environment:
+      - MONGO_URI
+      - MONGO_USER
+      - MONGO_PASS
+      - PASSWORD_SALT
+      - JWT_SIGNING_KEY
+      - SENDPULSE_LISTID
+      - SENDPULSE_ID
+      - SENDPULSE_SECRET
+      - HTTP_HOST
+      - FONDY_MERCHANT_ID
+      - FONDY_MERCHANT_PASS
+      - PAYMENT_CALLBACK_URL
+      - PAYMENT_REDIRECT_URL
+
+  mongodb:
+    image: mongo:4.4-bionic
+    container_name: "mongodb"
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/data/dblogs
+      - MONGODB_DATABASE=coursePlatform
+      - MONGO_INITDB_ROOT_USERNAME="${MONGO_USER}"
+      - MONGO_INITDB_ROOT_PASSWORD="${MONGO_PASS}"
+    volumes:
+      - ./.data/db:/data/db
+      - ./.data/dblogs:/data/dblogs
+    ports:
+      - 27017:27017
