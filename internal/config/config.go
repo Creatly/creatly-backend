@@ -16,6 +16,7 @@ const (
 	defaultLimiterRPS             = 10
 	defaultLimiterBurst           = 2
 	defaultLimiterTTL             = 10 * time.Minute
+	defaultVerificationCodeLength = 8
 )
 
 type (
@@ -38,8 +39,9 @@ type (
 	}
 
 	AuthConfig struct {
-		JWT          JWTConfig
-		PasswordSalt string
+		JWT                    JWTConfig
+		PasswordSalt           string
+		VerificationCodeLength int `mapstructure:"verificationCodeLength"`
 	}
 
 	JWTConfig struct {
@@ -125,6 +127,10 @@ func unmarshal(cfg *Config) error {
 		return err
 	}
 
+	if err := viper.UnmarshalKey("auth.verificationCodeLength", &cfg.Auth.VerificationCodeLength); err != nil {
+		return err
+	}
+
 	if err := viper.UnmarshalKey("fileStorage", &cfg.FileStorage); err != nil {
 		return err
 	}
@@ -172,6 +178,7 @@ func populateDefaults() {
 	viper.SetDefault("http.timeouts.write", defaultHttpRWTimeout)
 	viper.SetDefault("auth.accessTokenTTL", defaultAccessTokenTTL)
 	viper.SetDefault("auth.refreshTokenTTL", defaultRefreshTokenTTL)
+	viper.SetDefault("auth.verificationCodeLength", defaultVerificationCodeLength)
 	viper.SetDefault("limiter.rps", defaultLimiterRPS)
 	viper.SetDefault("limiter.burst", defaultLimiterBurst)
 	viper.SetDefault("limiter.ttl", defaultLimiterTTL)

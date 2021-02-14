@@ -61,18 +61,19 @@ func Run(configPath string) {
 	// Services, Repos & API Handlers
 	repos := repository.NewRepositories(db)
 	services := service.NewServices(service.ServicesDeps{
-		Repos:              repos,
-		Cache:              memCache,
-		Hasher:             hasher,
-		TokenManager:       tokenManager,
-		EmailProvider:      emailProvider,
-		EmailListId:        cfg.Email.ListID,
-		PaymentProvider:    paymentProvider,
-		AccessTokenTTL:     cfg.Auth.JWT.AccessTokenTTL,
-		RefreshTokenTTL:    cfg.Auth.JWT.RefreshTokenTTL,
-		PaymentResponseURL: cfg.Payment.ResponseURL,
-		PaymentCallbackURL: cfg.Payment.CallbackURL,
-		CacheTTL:           int64(cfg.CacheTTL.Seconds()),
+		Repos:                  repos,
+		Cache:                  memCache,
+		Hasher:                 hasher,
+		TokenManager:           tokenManager,
+		EmailProvider:          emailProvider,
+		EmailListId:            cfg.Email.ListID,
+		PaymentProvider:        paymentProvider,
+		AccessTokenTTL:         cfg.Auth.JWT.AccessTokenTTL,
+		RefreshTokenTTL:        cfg.Auth.JWT.RefreshTokenTTL,
+		PaymentResponseURL:     cfg.Payment.ResponseURL,
+		PaymentCallbackURL:     cfg.Payment.CallbackURL,
+		CacheTTL:               int64(cfg.CacheTTL.Seconds()),
+		VerificationCodeLength: cfg.Auth.VerificationCodeLength,
 	})
 	handlers := http.NewHandler(services.Schools, services.Students, services.Courses, services.PromoCodes,
 		services.Offers, services.Modules, services.Orders, services.Payments, services.Admins, services.Packages, services.Lessons, tokenManager)
