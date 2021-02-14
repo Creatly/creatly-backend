@@ -2,11 +2,12 @@ package repository
 
 import (
 	"context"
+	"time"
+
 	"github.com/zhashkevych/courses-backend/internal/domain"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"time"
 )
 
 type StudentsRepo struct {
@@ -62,14 +63,9 @@ func (r *StudentsRepo) GiveAccessToCoursesAndModules(ctx context.Context, studen
 }
 
 func (r *StudentsRepo) Verify(ctx context.Context, code string) error {
-	codeId, err := primitive.ObjectIDFromHex(code)
-	if err != nil {
-		return err
-	}
-
-	_, err = r.db.UpdateOne(ctx,
-		bson.M{"verification.code": codeId},
-		bson.M{"$set": bson.M{"verification.verified": true}})
+	_, err := r.db.UpdateOne(ctx,
+		bson.M{"verification.code": code},
+		bson.M{"$set": bson.M{"verification.verified": true, "verification.code": ""}})
 
 	return err
 }

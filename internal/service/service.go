@@ -211,18 +211,19 @@ type Services struct {
 }
 
 type ServicesDeps struct {
-	Repos              *repository.Repositories
-	Cache              cache.Cache
-	Hasher             hash.PasswordHasher
-	TokenManager       auth.TokenManager
-	EmailProvider      email.Provider
-	EmailListId        string
-	PaymentProvider    payment.FondyProvider
-	AccessTokenTTL     time.Duration
-	RefreshTokenTTL    time.Duration
-	PaymentCallbackURL string
-	PaymentResponseURL string
-	CacheTTL           int64
+	Repos                  *repository.Repositories
+	Cache                  cache.Cache
+	Hasher                 hash.PasswordHasher
+	TokenManager           auth.TokenManager
+	EmailProvider          email.Provider
+	EmailListId            string
+	PaymentProvider        payment.FondyProvider
+	AccessTokenTTL         time.Duration
+	RefreshTokenTTL        time.Duration
+	PaymentCallbackURL     string
+	PaymentResponseURL     string
+	CacheTTL               int64
+	VerificationCodeLength int
 }
 
 func NewServices(deps ServicesDeps) *Services {
@@ -234,7 +235,7 @@ func NewServices(deps ServicesDeps) *Services {
 	promoCodesService := NewPromoCodeService(deps.Repos.PromoCodes)
 	ordersService := NewOrdersService(deps.Repos.Orders, offersService, promoCodesService, deps.PaymentProvider, deps.PaymentCallbackURL, deps.PaymentResponseURL)
 	studentsService := NewStudentsService(deps.Repos.Students, modulesService, offersService, deps.Hasher,
-		deps.TokenManager, emailsService, deps.AccessTokenTTL, deps.RefreshTokenTTL)
+		deps.TokenManager, emailsService, deps.AccessTokenTTL, deps.RefreshTokenTTL, deps.VerificationCodeLength)
 
 	return &Services{
 		Schools:    NewSchoolsService(deps.Repos.Schools, deps.Cache, deps.CacheTTL),

@@ -86,6 +86,7 @@ func TestInit(t *testing.T) {
 						AccessTokenTTL:  time.Minute * 15,
 						SigningKey:      "key",
 					},
+					VerificationCodeLength: 10,
 				},
 				Mongo: MongoConfig{
 					Name:     "testDatabase",

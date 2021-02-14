@@ -1,8 +1,9 @@
 package domain
 
 import (
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type Student struct {
@@ -29,6 +30,6 @@ func (s Student) IsModuleAvailable(m Module) bool {
 }
 
 type Verification struct {
-	Code     primitive.ObjectID `json:"code" bson:"code"`
-	Verified bool               `json:"verified" bson:"verified"`
+	Code     string `json:"code" bson:"code"`
+	Verified bool   `json:"verified" bson:"verified"`
 }
