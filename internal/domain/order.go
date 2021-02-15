@@ -17,6 +17,7 @@ type Order struct {
 	StudentID    primitive.ObjectID `json:"studentId" bson:"studentId"`
 	OfferID      primitive.ObjectID `json:"offerId" bson:"offerId"`
 	PromoID      primitive.ObjectID `json:"promoId" bson:"promoId"`
+	CreatedAt    time.Time          `json:"createdAt" bson:"createdAt"`
 	Amount       int                `json:"amount" bson:"amount"`
 	Status       string             `json:"status" bson:"status"`
 	Transactions []Transaction      `json:"transactions" bson:"transactions"`
