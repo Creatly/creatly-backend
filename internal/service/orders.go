@@ -13,6 +13,7 @@ import (
 type OrdersService struct {
 	offersService     Offers
 	promoCodesService PromoCodes
+	studentsService   Students
 
 	repo            repository.Orders
 	paymentProvider payment.FondyProvider
@@ -20,11 +21,12 @@ type OrdersService struct {
 	callbackURL, responseURL string
 }
 
-func NewOrdersService(repo repository.Orders, offersService Offers, promoCodesService PromoCodes, paymentProvider payment.FondyProvider, callbackURL, responseURL string) *OrdersService {
+func NewOrdersService(repo repository.Orders, offersService Offers, promoCodesService PromoCodes, studentsService Students, paymentProvider payment.FondyProvider, callbackURL, responseURL string) *OrdersService {
 	return &OrdersService{
 		repo:              repo,
 		offersService:     offersService,
 		promoCodesService: promoCodesService,
+		studentsService:   studentsService,
 		paymentProvider:   paymentProvider,
 		callbackURL:       callbackURL,
 		responseURL:       responseURL,
@@ -38,6 +40,11 @@ func (s *OrdersService) Create(ctx context.Context, studentId, offerId, promocod
 	}
 
 	offer, err := s.offersService.GetById(ctx, offerId)
+	if err != nil {
+		return "", err
+	}
+
+	student, err := s.studentsService.GetById(ctx, studentId)
 	if err != nil {
 		return "", err
 	}
@@ -59,10 +66,21 @@ func (s *OrdersService) Create(ctx context.Context, studentId, offerId, promocod
 	}
 
 	if err := s.repo.Create(ctx, domain.Order{
-		ID:           id,
-		StudentID:    studentId,
-		OfferID:      offerId,
-		PromoID:      promocodeId,
+		ID:       id,
+		SchoolId: offer.SchoolID,
+		Student: domain.OrderStudentInfo{
+			ID:    student.ID,
+			Name:  student.Name,
+			Email: student.Email,
+		},
+		Offer: domain.OrderOfferInfo{
+			ID:   offer.ID,
+			Name: offer.Name,
+		},
+		Promo: domain.OrderPromoInfo{
+			ID:   promocode.ID,
+			Code: promocode.Code,
+		},
 		Amount:       orderAmount,
 		CreatedAt:    time.Now(),
 		Status:       domain.OrderStatusCreated,

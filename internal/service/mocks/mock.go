@@ -191,6 +191,21 @@ func (mr *MockStudentsMockRecorder) GetAvailableCourses(ctx, school, studentId i
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAvailableCourses", reflect.TypeOf((*MockStudents)(nil).GetAvailableCourses), ctx, school, studentId)
 }
 
+// GetById mocks base method
+func (m *MockStudents) GetById(ctx context.Context, id primitive.ObjectID) (domain.Student, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetById", ctx, id)
+	ret0, _ := ret[0].(domain.Student)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetById indicates an expected call of GetById
+func (mr *MockStudentsMockRecorder) GetById(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetById", reflect.TypeOf((*MockStudents)(nil).GetById), ctx, id)
+}
+
 // MockAdmins is a mock of Admins interface
 type MockAdmins struct {
 	ctrl     *gomock.Controller

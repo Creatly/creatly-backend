@@ -167,6 +167,10 @@ func (s *StudentsService) GetAvailableCourses(ctx context.Context, school domain
 	return courses, nil
 }
 
+func (s *StudentsService) GetById(ctx context.Context, id primitive.ObjectID) (domain.Student, error) {
+	return s.repo.GetById(ctx, id)
+}
+
 func (s *StudentsService) createSession(ctx context.Context, studentId primitive.ObjectID) (Tokens, error) {
 	var (
 		res Tokens
