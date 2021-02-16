@@ -171,6 +171,10 @@ func (s *StudentsService) GetById(ctx context.Context, id primitive.ObjectID) (d
 	return s.repo.GetById(ctx, id)
 }
 
+func (s *StudentsService) GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Student, error) {
+	return s.repo.GetBySchool(ctx, schoolId)
+}
+
 func (s *StudentsService) createSession(ctx context.Context, studentId primitive.ObjectID) (Tokens, error) {
 	var (
 		res Tokens

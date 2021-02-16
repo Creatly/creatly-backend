@@ -206,6 +206,21 @@ func (mr *MockStudentsMockRecorder) GetById(ctx, id interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetById", reflect.TypeOf((*MockStudents)(nil).GetById), ctx, id)
 }
 
+// GetBySchool mocks base method
+func (m *MockStudents) GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Student, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetBySchool", ctx, schoolId)
+	ret0, _ := ret[0].([]domain.Student)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetBySchool indicates an expected call of GetBySchool
+func (mr *MockStudentsMockRecorder) GetBySchool(ctx, schoolId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBySchool", reflect.TypeOf((*MockStudents)(nil).GetBySchool), ctx, schoolId)
+}
+
 // MockAdmins is a mock of Admins interface
 type MockAdmins struct {
 	ctrl     *gomock.Controller
@@ -926,6 +941,21 @@ func (m *MockOrders) AddTransaction(ctx context.Context, id primitive.ObjectID, 
 func (mr *MockOrdersMockRecorder) AddTransaction(ctx, id, transaction interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddTransaction", reflect.TypeOf((*MockOrders)(nil).AddTransaction), ctx, id, transaction)
+}
+
+// GetBySchool mocks base method
+func (m *MockOrders) GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Order, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetBySchool", ctx, schoolId)
+	ret0, _ := ret[0].([]domain.Order)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetBySchool indicates an expected call of GetBySchool
+func (mr *MockOrdersMockRecorder) GetBySchool(ctx, schoolId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBySchool", reflect.TypeOf((*MockOrders)(nil).GetBySchool), ctx, schoolId)
 }
 
 // MockPayments is a mock of Payments interface

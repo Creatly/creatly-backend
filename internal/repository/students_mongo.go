@@ -46,6 +46,17 @@ func (r *StudentsRepo) GetById(ctx context.Context, id primitive.ObjectID) (doma
 	return student, err
 }
 
+func (r *StudentsRepo) GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Student, error) {
+	cur, err := r.db.Find(ctx, bson.M{"schoolId": schoolId})
+	if err != nil {
+		return nil, err
+	}
+
+	var students []domain.Student
+	err = cur.All(ctx, &students)
+	return students, err
+}
+
 func (r *StudentsRepo) SetSession(ctx context.Context, studentId primitive.ObjectID, session domain.Session) error {
 	_, err := r.db.UpdateOne(ctx, bson.M{"_id": studentId}, bson.M{"$set": bson.M{"session": session, "lastVisitAt": time.Now()}})
 	return err

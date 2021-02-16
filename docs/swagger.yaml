@@ -1338,6 +1338,39 @@ paths:
       summary: Admin SignIn
       tags:
       - admins-auth
+  /admins/students:
+    get:
+      consumes:
+      - application/json
+      description: admin get all students
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.dataResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Get Students
+      tags:
+      - admins-orders
   /courses:
     get:
       consumes:

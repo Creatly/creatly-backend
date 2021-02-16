@@ -2,6 +2,7 @@ package v1
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/zhashkevych/courses-backend/internal/domain"
@@ -67,6 +68,7 @@ func (h *Handler) initAdminRoutes(api *gin.RouterGroup) {
 			}
 
 			authenticated.GET("/orders", h.adminGetOrders)
+			authenticated.GET("/students", h.adminGetStudents)
 		}
 	}
 }
@@ -1146,4 +1148,52 @@ func (h *Handler) adminGetOrders(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, dataResponse{orders})
+}
+
+type studentResponse struct {
+	ID           primitive.ObjectID `json:"id"`
+	Name         string             `json:"name"`
+	Email        string             `json:"email"`
+	RegisteredAt time.Time          `json:"registeredAt"`
+	LastVisitAt  time.Time          `json:"lastVisitAt"`
+}
+
+func toStudentsResponse(students []domain.Student) []studentResponse {
+	out := make([]studentResponse, len(students))
+	for i, student := range students {
+		out[i].ID = student.ID
+		out[i].Name = student.Name
+		out[i].Email = student.Email
+		out[i].RegisteredAt = student.RegisteredAt
+		out[i].LastVisitAt = student.LastVisitAt
+	}
+	return out
+}
+
+// @Summary Admin Get Students
+// @Security AdminAuth
+// @Tags admins-orders
+// @Description admin get all students
+// @ModuleID adminGetStudents
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} dataResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/students [get]
+func (h *Handler) adminGetStudents(c *gin.Context) {
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	students, err := h.studentsService.GetBySchool(c.Request.Context(), school.ID)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, dataResponse{toStudentsResponse(students)})
 }
