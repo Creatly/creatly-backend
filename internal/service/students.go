@@ -2,13 +2,15 @@ package service
 
 import (
 	"context"
+	"time"
+
+	"github.com/xlzd/gotp"
 	"github.com/zhashkevych/courses-backend/internal/domain"
 	"github.com/zhashkevych/courses-backend/internal/repository"
 	"github.com/zhashkevych/courses-backend/pkg/auth"
 	"github.com/zhashkevych/courses-backend/pkg/hash"
 	"github.com/zhashkevych/courses-backend/pkg/logger"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"time"
 )
 
 type StudentsService struct {
@@ -20,26 +22,29 @@ type StudentsService struct {
 	offersService  Offers
 	emailService   Emails
 
-	accessTokenTTL  time.Duration
-	refreshTokenTTL time.Duration
+	accessTokenTTL         time.Duration
+	refreshTokenTTL        time.Duration
+	verificationCodeLength int
 }
 
 func NewStudentsService(repo repository.Students, modulesService Modules, offersService Offers, hasher hash.PasswordHasher, tokenManager auth.TokenManager,
-	emailService Emails, accessTTL, refreshTTL time.Duration) *StudentsService {
+	emailService Emails, accessTTL, refreshTTL time.Duration, verificationCodeLength int) *StudentsService {
 	return &StudentsService{
-		repo:            repo,
-		modulesService:  modulesService,
-		offersService:   offersService,
-		hasher:          hasher,
-		emailService:    emailService,
-		tokenManager:    tokenManager,
-		accessTokenTTL:  accessTTL,
-		refreshTokenTTL: refreshTTL,
+		repo:                   repo,
+		modulesService:         modulesService,
+		offersService:          offersService,
+		hasher:                 hasher,
+		emailService:           emailService,
+		tokenManager:           tokenManager,
+		accessTokenTTL:         accessTTL,
+		refreshTokenTTL:        refreshTTL,
+		verificationCodeLength: verificationCodeLength,
 	}
 }
 
 func (s *StudentsService) SignUp(ctx context.Context, input StudentSignUpInput) error {
-	verificationCode := primitive.NewObjectID()
+	// it's possible to use OTP apps (Google Authenticator, Authy) compatibility mode here, in the future
+	verificationCode := gotp.RandomSecret(s.verificationCodeLength)
 	student := domain.Student{
 		Name:         input.Name,
 		Password:     s.hasher.Hash(input.Password),
@@ -60,7 +65,7 @@ func (s *StudentsService) SignUp(ctx context.Context, input StudentSignUpInput) 
 	return s.emailService.AddToList(AddToListInput{
 		Email:            student.Email,
 		Name:             student.Name,
-		VerificationCode: verificationCode.Hex(),
+		VerificationCode: verificationCode,
 	})
 }
 
@@ -160,6 +165,10 @@ func (s *StudentsService) GetAvailableCourses(ctx context.Context, school domain
 	}
 
 	return courses, nil
+}
+
+func (s *StudentsService) GetById(ctx context.Context, id primitive.ObjectID) (domain.Student, error) {
+	return s.repo.GetById(ctx, id)
 }
 
 func (s *StudentsService) createSession(ctx context.Context, studentId primitive.ObjectID) (Tokens, error) {

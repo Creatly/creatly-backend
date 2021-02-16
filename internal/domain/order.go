@@ -14,12 +14,30 @@ const (
 
 type Order struct {
 	ID           primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	StudentID    primitive.ObjectID `json:"studentId" bson:"studentId"`
-	OfferID      primitive.ObjectID `json:"offerId" bson:"offerId"`
-	PromoID      primitive.ObjectID `json:"promoId" bson:"promoId"`
+	SchoolId     primitive.ObjectID `json:"schoolId" bson:"schoolId"`
+	Student      OrderStudentInfo   `json:"student" bson:"student"`
+	Offer        OrderOfferInfo     `json:"offer" bson:"offer"`
+	Promo        OrderPromoInfo     `json:"promo" bson:"promo"`
+	CreatedAt    time.Time          `json:"createdAt" bson:"createdAt"`
 	Amount       int                `json:"amount" bson:"amount"`
 	Status       string             `json:"status" bson:"status"`
 	Transactions []Transaction      `json:"transactions" bson:"transactions"`
+}
+
+type OrderStudentInfo struct {
+	ID    primitive.ObjectID `json:"id" bson:"id"`
+	Name  string             `json:"name" bson:"name"`
+	Email string             `json:"email" bson:"email"`
+}
+
+type OrderOfferInfo struct {
+	ID   primitive.ObjectID `json:"id" bson:"id"`
+	Name string             `json:"name" bson:"name"`
+}
+
+type OrderPromoInfo struct {
+	ID   primitive.ObjectID `json:"id" bson:"id"`
+	Code string             `json:"code" bson:"code"`
 }
 
 type Transaction struct {

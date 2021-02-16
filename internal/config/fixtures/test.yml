@@ -17,6 +17,7 @@ fileStorage:
 auth:
   accessTokenTTL: 15m
   refreshTokenTTL: 30m
+  verificationCodeLength: 10
 
 limiter:
   rps: 10

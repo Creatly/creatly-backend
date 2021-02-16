@@ -15,6 +15,6 @@ WORKDIR /root/
 COPY --from=0 /github.com/zhashkevych/courses-backend/.bin/app .
 COPY --from=0 /github.com/zhashkevych/courses-backend/configs configs/
 
-EXPOSE 80
+EXPOSE 8000
 
 CMD ["./app"]

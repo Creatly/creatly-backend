@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/zhashkevych/courses-backend/internal/domain"
 	"github.com/zhashkevych/courses-backend/internal/repository"
+	"github.com/zhashkevych/courses-backend/pkg/logger"
 	"github.com/zhashkevych/courses-backend/pkg/payment"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
@@ -12,6 +13,7 @@ import (
 type OrdersService struct {
 	offersService     Offers
 	promoCodesService PromoCodes
+	studentsService   Students
 
 	repo            repository.Orders
 	paymentProvider payment.FondyProvider
@@ -19,11 +21,12 @@ type OrdersService struct {
 	callbackURL, responseURL string
 }
 
-func NewOrdersService(repo repository.Orders, offersService Offers, promoCodesService PromoCodes, paymentProvider payment.FondyProvider, callbackURL, responseURL string) *OrdersService {
+func NewOrdersService(repo repository.Orders, offersService Offers, promoCodesService PromoCodes, studentsService Students, paymentProvider payment.FondyProvider, callbackURL, responseURL string) *OrdersService {
 	return &OrdersService{
 		repo:              repo,
 		offersService:     offersService,
 		promoCodesService: promoCodesService,
+		studentsService:   studentsService,
 		paymentProvider:   paymentProvider,
 		callbackURL:       callbackURL,
 		responseURL:       responseURL,
@@ -41,23 +44,15 @@ func (s *OrdersService) Create(ctx context.Context, studentId, offerId, promocod
 		return "", err
 	}
 
-	orderAmount := s.calculateOrderPrice(offer.Price.Value, promocode)
-
-	id := primitive.NewObjectID()
-	if err := s.repo.Create(ctx, domain.Order{
-		ID:           id,
-		StudentID:    studentId,
-		OfferID:      offerId,
-		PromoID:      promocodeId,
-		Amount:       orderAmount,
-		Status:       domain.OrderStatusCreated,
-		Transactions: make([]domain.Transaction, 0),
-	}); err != nil {
+	student, err := s.studentsService.GetById(ctx, studentId)
+	if err != nil {
 		return "", err
 	}
 
-	// TODO what if it fails?
-	return s.paymentProvider.GeneratePaymentLink(payment.GeneratePaymentLinkInput{
+	orderAmount := s.calculateOrderPrice(offer.Price.Value, promocode)
+
+	id := primitive.NewObjectID()
+	paymentLink, err := s.paymentProvider.GeneratePaymentLink(payment.GeneratePaymentLinkInput{
 		OrderId:     id.Hex(),
 		Amount:      orderAmount,
 		Currency:    offer.Price.Currency,
@@ -65,6 +60,36 @@ func (s *OrdersService) Create(ctx context.Context, studentId, offerId, promocod
 		CallbackURL: s.callbackURL,
 		ResponseURL: s.responseURL,
 	})
+	if err != nil {
+		logger.Error("Failed to generate payment link: ", err.Error())
+		return "", err
+	}
+
+	if err := s.repo.Create(ctx, domain.Order{
+		ID:       id,
+		SchoolId: offer.SchoolID,
+		Student: domain.OrderStudentInfo{
+			ID:    student.ID,
+			Name:  student.Name,
+			Email: student.Email,
+		},
+		Offer: domain.OrderOfferInfo{
+			ID:   offer.ID,
+			Name: offer.Name,
+		},
+		Promo: domain.OrderPromoInfo{
+			ID:   promocode.ID,
+			Code: promocode.Code,
+		},
+		Amount:       orderAmount,
+		CreatedAt:    time.Now(),
+		Status:       domain.OrderStatusCreated,
+		Transactions: make([]domain.Transaction, 0),
+	}); err != nil {
+		return "", err
+	}
+
+	return paymentLink, nil
 }
 
 func (s *OrdersService) AddTransaction(ctx context.Context, id primitive.ObjectID, transaction domain.Transaction) (domain.Order, error) {

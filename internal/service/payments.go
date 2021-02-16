@@ -41,12 +41,12 @@ func (s *PaymentsService) ProcessTransaction(ctx context.Context, callbackData p
 		return nil
 	}
 
-	offer, err := s.offersService.GetById(ctx, order.OfferID)
+	offer, err := s.offersService.GetById(ctx, order.Offer.ID)
 	if err != nil {
 		return err
 	}
 
-	return s.studentsService.GiveAccessToPackages(ctx, order.StudentID, offer.PackageIDs)
+	return s.studentsService.GiveAccessToPackages(ctx, order.Student.ID, offer.PackageIDs)
 }
 
 func createTransaction(callbackData payment.Callback) (domain.Transaction, error) {
