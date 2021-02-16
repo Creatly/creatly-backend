@@ -65,7 +65,7 @@ func (s *OrdersService) Create(ctx context.Context, studentId, offerId, promocod
 		return "", err
 	}
 
-	if err := s.repo.Create(ctx, domain.Order{
+	order := domain.Order{
 		ID:       id,
 		SchoolId: offer.SchoolID,
 		Student: domain.OrderStudentInfo{
@@ -77,15 +77,20 @@ func (s *OrdersService) Create(ctx context.Context, studentId, offerId, promocod
 			ID:   offer.ID,
 			Name: offer.Name,
 		},
-		Promo: domain.OrderPromoInfo{
-			ID:   promocode.ID,
-			Code: promocode.Code,
-		},
 		Amount:       orderAmount,
 		CreatedAt:    time.Now(),
 		Status:       domain.OrderStatusCreated,
 		Transactions: make([]domain.Transaction, 0),
-	}); err != nil {
+	}
+
+	if !promocode.ID.IsZero() {
+		order.Promo = domain.OrderPromoInfo{
+			ID:   promocode.ID,
+			Code: promocode.Code,
+		}
+	}
+
+	if err := s.repo.Create(ctx, order); err != nil {
 		return "", err
 	}
 
@@ -94,6 +99,10 @@ func (s *OrdersService) Create(ctx context.Context, studentId, offerId, promocod
 
 func (s *OrdersService) AddTransaction(ctx context.Context, id primitive.ObjectID, transaction domain.Transaction) (domain.Order, error) {
 	return s.repo.AddTransaction(ctx, id, transaction)
+}
+
+func (s *OrdersService) GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Order, error) {
+	return s.repo.GetBySchool(ctx, schoolId)
 }
 
 func (s *OrdersService) getOrderPromocode(ctx context.Context, promocodeId primitive.ObjectID) (domain.PromoCode, error) {

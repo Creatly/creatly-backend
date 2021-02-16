@@ -17,10 +17,10 @@ func (h *Handler) initStudentsRoutes(api *gin.RouterGroup) {
 		students.POST("/sign-in", h.studentSignIn)
 		students.POST("/auth/refresh", h.studentRefresh)
 		students.POST("/verify/:code", h.studentVerify)
-		students.GET("/courses", h.studentGetCourses)
 
 		authenticated := students.Group("/", h.studentIdentity)
 		{
+			authenticated.GET("/courses", h.studentGetCourses)
 			authenticated.GET("/modules/:id/lessons", h.studentGetModuleLessons)
 			authenticated.GET("/modules/:id/offers", h.studentGetModuleOffers)
 			authenticated.GET("/promocodes/:code", h.studentGetPromo)

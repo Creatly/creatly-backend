@@ -65,6 +65,8 @@ func (h *Handler) initAdminRoutes(api *gin.RouterGroup) {
 			{
 				school.PUT("/settings", h.adminUpdateSchoolSettings)
 			}
+
+			authenticated.GET("/orders", h.adminGetOrders)
 		}
 	}
 }
@@ -1116,4 +1118,32 @@ func (h *Handler) adminUpdateSchoolSettings(c *gin.Context) {
 	}
 
 	c.Status(http.StatusOK)
+}
+
+// @Summary Admin Get Orders
+// @Security AdminAuth
+// @Tags admins-orders
+// @Description admin get all orders
+// @ModuleID adminGetOrders
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} dataResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/orders [get]
+func (h *Handler) adminGetOrders(c *gin.Context) {
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	orders, err := h.ordersService.GetBySchool(c.Request.Context(), school.ID)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, dataResponse{orders})
 }

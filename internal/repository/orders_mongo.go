@@ -40,3 +40,14 @@ func (r *OrdersRepo) AddTransaction(ctx context.Context, id primitive.ObjectID, 
 	err := res.Decode(&order)
 	return order, err
 }
+
+func (r *OrdersRepo) GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Order, error) {
+	cur, err := r.db.Find(ctx, bson.M{"schoolId": schoolId})
+	if err != nil {
+		return nil, err
+	}
+
+	var orders []domain.Order
+	err = cur.All(ctx, &orders)
+	return orders, err
+}

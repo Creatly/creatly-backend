@@ -191,6 +191,7 @@ type Packages interface {
 type Orders interface {
 	Create(ctx context.Context, studentId, offerId, promocodeId primitive.ObjectID) (string, error)
 	AddTransaction(ctx context.Context, id primitive.ObjectID, transaction domain.Transaction) (domain.Order, error)
+	GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Order, error)
 }
 
 type Payments interface {
