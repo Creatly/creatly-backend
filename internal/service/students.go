@@ -2,9 +2,9 @@ package service
 
 import (
 	"context"
+	"github.com/zhashkevych/courses-backend/pkg/otp"
 	"time"
 
-	"github.com/xlzd/gotp"
 	"github.com/zhashkevych/courses-backend/internal/domain"
 	"github.com/zhashkevych/courses-backend/internal/repository"
 	"github.com/zhashkevych/courses-backend/pkg/auth"
@@ -17,6 +17,7 @@ type StudentsService struct {
 	repo         repository.Students
 	hasher       hash.PasswordHasher
 	tokenManager auth.TokenManager
+	otpGenerator otp.Generator
 
 	modulesService Modules
 	offersService  Offers
@@ -28,7 +29,7 @@ type StudentsService struct {
 }
 
 func NewStudentsService(repo repository.Students, modulesService Modules, offersService Offers, hasher hash.PasswordHasher, tokenManager auth.TokenManager,
-	emailService Emails, accessTTL, refreshTTL time.Duration, verificationCodeLength int) *StudentsService {
+	emailService Emails, accessTTL, refreshTTL time.Duration, otpGenerator otp.Generator, verificationCodeLength int) *StudentsService {
 	return &StudentsService{
 		repo:                   repo,
 		modulesService:         modulesService,
@@ -38,13 +39,14 @@ func NewStudentsService(repo repository.Students, modulesService Modules, offers
 		tokenManager:           tokenManager,
 		accessTokenTTL:         accessTTL,
 		refreshTokenTTL:        refreshTTL,
+		otpGenerator:           otpGenerator,
 		verificationCodeLength: verificationCodeLength,
 	}
 }
 
 func (s *StudentsService) SignUp(ctx context.Context, input StudentSignUpInput) error {
 	// it's possible to use OTP apps (Google Authenticator, Authy) compatibility mode here, in the future
-	verificationCode := gotp.RandomSecret(s.verificationCodeLength)
+	verificationCode := s.otpGenerator.RandomSecret(s.verificationCodeLength)
 	student := domain.Student{
 		Name:         input.Name,
 		Password:     s.hasher.Hash(input.Password),

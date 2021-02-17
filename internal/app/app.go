@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"github.com/zhashkevych/courses-backend/pkg/otp"
 	"os"
 	"os/signal"
 	"syscall"
@@ -62,6 +63,7 @@ func Run(configPath string) {
 		logger.Error(err)
 		return
 	}
+	otpGenerator := otp.NewGOTPGenerator()
 
 	// Services, Repos & API Handlers
 	repos := repository.NewRepositories(db)
@@ -78,6 +80,7 @@ func Run(configPath string) {
 		PaymentResponseURL:     cfg.Payment.ResponseURL,
 		PaymentCallbackURL:     cfg.Payment.CallbackURL,
 		CacheTTL:               int64(cfg.CacheTTL.Seconds()),
+		OtpGenerator:           otpGenerator,
 		VerificationCodeLength: cfg.Auth.VerificationCodeLength,
 	})
 	handlers := http.NewHandler(services, tokenManager)

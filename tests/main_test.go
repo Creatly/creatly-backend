@@ -3,7 +3,7 @@ package tests
 import (
 	"context"
 	"github.com/stretchr/testify/suite"
-	"github.com/zhashkevych/courses-backend/internal/delivery/http"
+	v1 "github.com/zhashkevych/courses-backend/internal/delivery/http/v1"
 	"github.com/zhashkevych/courses-backend/internal/repository"
 	"github.com/zhashkevych/courses-backend/internal/service"
 	"github.com/zhashkevych/courses-backend/pkg/auth"
@@ -11,6 +11,7 @@ import (
 	"github.com/zhashkevych/courses-backend/pkg/database/mongodb"
 	emailmock "github.com/zhashkevych/courses-backend/pkg/email/mock"
 	"github.com/zhashkevych/courses-backend/pkg/hash"
+	"github.com/zhashkevych/courses-backend/pkg/otp"
 	"github.com/zhashkevych/courses-backend/pkg/payment"
 	"go.mongodb.org/mongo-driver/mongo"
 	"os"
@@ -18,22 +19,24 @@ import (
 	"time"
 )
 
+const (
+	listId = "123456"
+)
+
 var (
-	dbURI, dbUsername, dbPassword string
-	dbName                        = "coursesTesting"
+	dbURI, dbName string
 )
 
 func init() {
 	dbURI = os.Getenv("DB_URI")
-	dbUsername = os.Getenv("DB_USERNAME")
-	dbPassword = os.Getenv("DB_PASSWORD")
+	dbName = os.Getenv("DB_NAME")
 }
 
 type APITestSuite struct {
 	suite.Suite
 
 	db       *mongo.Database
-	handler  *http.Handler
+	handler  *v1.Handler
 	services *service.Services
 	repos    *repository.Repositories
 
@@ -42,6 +45,7 @@ type APITestSuite struct {
 
 type mocks struct {
 	emailProvider *emailmock.EmailProvider
+	otpGenerator  *otp.MockGenerator
 }
 
 func TestAPISuite(t *testing.T) {
@@ -53,7 +57,7 @@ func TestAPISuite(t *testing.T) {
 }
 
 func (s *APITestSuite) SetupSuite() {
-	if client, err := mongodb.NewClient(dbURI, dbUsername, dbPassword); err != nil {
+	if client, err := mongodb.NewClient(dbURI, "", ""); err != nil {
 		s.FailNow("Failed to connect to mongo", err)
 	} else {
 		s.db = client.Database(dbName)
@@ -85,20 +89,23 @@ func (s *APITestSuite) initDeps() {
 		TokenManager:           tokenManager,
 		PaymentProvider:        paymentProvider,
 		EmailProvider:          s.mocks.emailProvider,
+		EmailListId:            listId,
 		AccessTokenTTL:         time.Minute * 15,
 		RefreshTokenTTL:        time.Minute * 15,
 		CacheTTL:               int64(time.Minute.Seconds()),
+		OtpGenerator:           s.mocks.otpGenerator,
 		VerificationCodeLength: 8,
 	})
 
 	s.repos = repos
 	s.services = services
-	s.handler = http.NewHandler(services, tokenManager)
+	s.handler = v1.NewHandler(services, tokenManager)
 }
 
 func (s *APITestSuite) initMocks() {
 	s.mocks = &mocks{
 		emailProvider: new(emailmock.EmailProvider),
+		otpGenerator:  new(otp.MockGenerator),
 	}
 }
 func TestMain(m *testing.M) {

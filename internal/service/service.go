@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"github.com/zhashkevych/courses-backend/pkg/otp"
 	"time"
 
 	"github.com/zhashkevych/courses-backend/internal/domain"
@@ -226,6 +227,7 @@ type Deps struct {
 	PaymentCallbackURL     string
 	PaymentResponseURL     string
 	CacheTTL               int64
+	OtpGenerator           otp.Generator
 	VerificationCodeLength int
 }
 
@@ -237,7 +239,7 @@ func NewServices(deps Deps) *Services {
 	offersService := NewOffersService(deps.Repos.Offers, modulesService, packagesService)
 	promoCodesService := NewPromoCodeService(deps.Repos.PromoCodes)
 	studentsService := NewStudentsService(deps.Repos.Students, modulesService, offersService, deps.Hasher,
-		deps.TokenManager, emailsService, deps.AccessTokenTTL, deps.RefreshTokenTTL, deps.VerificationCodeLength)
+		deps.TokenManager, emailsService, deps.AccessTokenTTL, deps.RefreshTokenTTL, deps.OtpGenerator, deps.VerificationCodeLength)
 	ordersService := NewOrdersService(deps.Repos.Orders, offersService, promoCodesService, studentsService, deps.PaymentProvider, deps.PaymentCallbackURL, deps.PaymentResponseURL)
 
 	return &Services{

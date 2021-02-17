@@ -12,17 +12,19 @@ test:
 	go test --short -coverprofile=cover.out -v ./...
 	make test.coverage
 
-# Testing Vars
-export DB_URI=mongodb://localhost:27019
-export DB_USERNAME=test
-export DB_PASSWORD=qwerty123
-export CONTAINER_NAME=test_db
-
 build.test.seed:
 	docker build -t mongo_seed ./tests/data/
 
+# Testing Vars
+export DB_URI=mongodb://localhost:27019
+export DB_NAME=test
+export CONTAINER_NAME=test_db
+
+#TODO: pass .json files with initial data without image re-building
 test.integration:
-	docker run --rm -d -p 27019:27017 --name $$CONTAINER_NAME mongo:4.4-bionic
+	docker run --rm -d -p 27019:27017 --name $$CONTAINER_NAME \
+				-e MONGODB_DATABASE=$$DB_NAME mongo:4.4-bionic
+
 	docker run --rm --name mongo_test_seed --link=$$CONTAINER_NAME:mongodb mongo_seed
 
 	GIN_MODE=release go test -coverprofile=cover.out -v ./tests/ || :
