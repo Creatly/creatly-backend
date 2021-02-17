@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"github.com/zhashkevych/courses-backend/pkg/otp"
+	"go.mongodb.org/mongo-driver/mongo"
 	"time"
 
 	"github.com/zhashkevych/courses-backend/internal/domain"
@@ -74,6 +75,9 @@ func (s *StudentsService) SignUp(ctx context.Context, input StudentSignUpInput) 
 func (s *StudentsService) SignIn(ctx context.Context, input SignInInput) (Tokens, error) {
 	student, err := s.repo.GetByCredentials(ctx, input.SchoolID, input.Email, s.hasher.Hash(input.Password))
 	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return Tokens{}, ErrUserNotFound
+		}
 		return Tokens{}, err
 	}
 

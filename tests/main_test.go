@@ -40,6 +40,7 @@ type APITestSuite struct {
 	services *service.Services
 	repos    *repository.Repositories
 
+	hasher hash.PasswordHasher
 	mocks *mocks
 }
 
@@ -100,6 +101,7 @@ func (s *APITestSuite) initDeps() {
 	s.repos = repos
 	s.services = services
 	s.handler = v1.NewHandler(services, tokenManager)
+	s.hasher = hasher
 }
 
 func (s *APITestSuite) initMocks() {

@@ -112,6 +112,11 @@ func (h *Handler) studentSignIn(c *gin.Context) {
 		Password: inp.Password,
 	})
 	if err != nil {
+		if err == service.ErrUserNotFound {
+			newResponse(c, http.StatusBadRequest, err.Error())
+			return
+		}
+
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
