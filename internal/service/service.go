@@ -213,7 +213,7 @@ type Services struct {
 	Admins     Admins
 }
 
-type ServicesDeps struct {
+type Deps struct {
 	Repos                  *repository.Repositories
 	Cache                  cache.Cache
 	Hasher                 hash.PasswordHasher
@@ -229,7 +229,7 @@ type ServicesDeps struct {
 	VerificationCodeLength int
 }
 
-func NewServices(deps ServicesDeps) *Services {
+func NewServices(deps Deps) *Services {
 	emailsService := NewEmailsService(deps.EmailProvider, deps.EmailListId)
 	coursesService := NewCoursesService(deps.Repos.Courses)
 	modulesService := NewModulesService(deps.Repos.Modules, deps.Repos.LessonContent)

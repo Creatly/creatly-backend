@@ -45,7 +45,12 @@ func Run(configPath string) {
 	}
 
 	// Dependencies
-	mongoClient := mongodb.NewClient(cfg.Mongo.URI, cfg.Mongo.User, cfg.Mongo.Password)
+	mongoClient, err := mongodb.NewClient(cfg.Mongo.URI, cfg.Mongo.User, cfg.Mongo.Password)
+	if err != nil {
+		logger.Error(err)
+		return
+	}
+
 	db := mongoClient.Database(cfg.Mongo.Name)
 
 	memCache := cache.NewMemoryCache()
@@ -60,7 +65,7 @@ func Run(configPath string) {
 
 	// Services, Repos & API Handlers
 	repos := repository.NewRepositories(db)
-	services := service.NewServices(service.ServicesDeps{
+	services := service.NewServices(service.Deps{
 		Repos:                  repos,
 		Cache:                  memCache,
 		Hasher:                 hasher,
@@ -75,8 +80,7 @@ func Run(configPath string) {
 		CacheTTL:               int64(cfg.CacheTTL.Seconds()),
 		VerificationCodeLength: cfg.Auth.VerificationCodeLength,
 	})
-	handlers := http.NewHandler(services.Schools, services.Students, services.Courses, services.PromoCodes,
-		services.Offers, services.Modules, services.Orders, services.Payments, services.Admins, services.Packages, services.Lessons, tokenManager)
+	handlers := http.NewHandler(services, tokenManager)
 
 	// HTTP Server
 	srv := server.NewServer(cfg, handlers.Init(cfg.HTTP.Host, cfg.HTTP.Port, cfg.Limiter))

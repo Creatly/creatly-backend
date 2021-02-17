@@ -98,7 +98,7 @@ func (h *Handler) adminSignIn(c *gin.Context) {
 		return
 	}
 
-	res, err := h.adminsService.SignIn(c.Request.Context(), service.SignInInput{
+	res, err := h.services.Admins.SignIn(c.Request.Context(), service.SignInInput{
 		Email:    inp.Email,
 		Password: inp.Password,
 		SchoolID: school.ID,
@@ -138,7 +138,7 @@ func (h *Handler) adminRefresh(c *gin.Context) {
 		return
 	}
 
-	res, err := h.adminsService.RefreshTokens(c.Request.Context(), school.ID, inp.Token)
+	res, err := h.services.Admins.RefreshTokens(c.Request.Context(), school.ID, inp.Token)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -180,7 +180,7 @@ func (h *Handler) adminCreateCourse(c *gin.Context) {
 		return
 	}
 
-	id, err := h.coursesService.Create(c.Request.Context(), school.ID, inp.Name)
+	id, err := h.services.Courses.Create(c.Request.Context(), school.ID, inp.Name)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -208,7 +208,7 @@ func (h *Handler) adminGetAllCourses(c *gin.Context) {
 		return
 	}
 
-	courses, err := h.adminsService.GetCourses(c.Request.Context(), school.ID)
+	courses, err := h.services.Admins.GetCourses(c.Request.Context(), school.ID)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -254,13 +254,13 @@ func (h *Handler) adminGetCourseById(c *gin.Context) {
 		return
 	}
 
-	course, err := h.adminsService.GetCourseById(c.Request.Context(), school.ID, id)
+	course, err := h.services.Admins.GetCourseById(c.Request.Context(), school.ID, id)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	modules, err := h.modulesService.GetByCourse(c.Request.Context(), course.ID)
+	modules, err := h.services.Modules.GetByCourse(c.Request.Context(), course.ID)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -313,7 +313,7 @@ func (h *Handler) adminUpdateCourse(c *gin.Context) {
 		return
 	}
 
-	if err := h.coursesService.Update(c.Request.Context(), school.ID, service.UpdateCourseInput{
+	if err := h.services.Courses.Update(c.Request.Context(), school.ID, service.UpdateCourseInput{
 		CourseID:    idParam,
 		Name:        inp.Name,
 		Description: inp.Description,
@@ -360,7 +360,7 @@ func (h *Handler) adminCreateModule(c *gin.Context) {
 		return
 	}
 
-	moduleId, err := h.modulesService.Create(c.Request.Context(), service.CreateModuleInput{
+	moduleId, err := h.services.Modules.Create(c.Request.Context(), service.CreateModuleInput{
 		CourseID: id,
 		Name:     inp.Name,
 		Position: inp.Position,
@@ -406,7 +406,7 @@ func (h *Handler) adminUpdateModule(c *gin.Context) {
 		return
 	}
 
-	err := h.modulesService.Update(c.Request.Context(), service.UpdateModuleInput{
+	err := h.services.Modules.Update(c.Request.Context(), service.UpdateModuleInput{
 		ID:        id,
 		Name:      inp.Name,
 		Position:  inp.Position,
@@ -446,7 +446,7 @@ func (h *Handler) adminDeleteModule(c *gin.Context) {
 		return
 	}
 
-	err = h.modulesService.Delete(c.Request.Context(), id)
+	err = h.services.Modules.Delete(c.Request.Context(), id)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -481,7 +481,7 @@ func (h *Handler) adminGetLessons(c *gin.Context) {
 		return
 	}
 
-	module, err := h.modulesService.GetWithContent(c.Request.Context(), moduleId)
+	module, err := h.services.Modules.GetWithContent(c.Request.Context(), moduleId)
 	if err != nil {
 		if err == service.ErrModuleIsNotAvailable {
 			newResponse(c, http.StatusForbidden, err.Error())
@@ -527,7 +527,7 @@ func (h *Handler) adminCreateLesson(c *gin.Context) {
 		return
 	}
 
-	lessonId, err := h.lessonsService.Create(c.Request.Context(), service.AddLessonInput{
+	lessonId, err := h.services.Lessons.Create(c.Request.Context(), service.AddLessonInput{
 		ModuleID: id,
 		Name:     inp.Name,
 		Position: inp.Position,
@@ -566,7 +566,7 @@ func (h *Handler) adminGetLessonById(c *gin.Context) {
 		return
 	}
 
-	lesson, err := h.lessonsService.GetById(c.Request.Context(), id)
+	lesson, err := h.services.Lessons.GetById(c.Request.Context(), id)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -609,7 +609,7 @@ func (h *Handler) adminUpdateLesson(c *gin.Context) {
 		return
 	}
 
-	err := h.lessonsService.Update(c.Request.Context(), service.UpdateLessonInput{
+	err := h.services.Lessons.Update(c.Request.Context(), service.UpdateLessonInput{
 		LessonID:  id,
 		Name:      inp.Name,
 		Content:   inp.Content,
@@ -650,7 +650,7 @@ func (h *Handler) adminDeleteLesson(c *gin.Context) {
 		return
 	}
 
-	err = h.lessonsService.Delete(c.Request.Context(), id)
+	err = h.services.Lessons.Delete(c.Request.Context(), id)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -691,7 +691,7 @@ func (h *Handler) adminCreatePackage(c *gin.Context) {
 		return
 	}
 
-	moduleId, err := h.packagesService.Create(c.Request.Context(), service.CreatePackageInput{
+	moduleId, err := h.services.Packages.Create(c.Request.Context(), service.CreatePackageInput{
 		CourseID:    id,
 		Name:        inp.Name,
 		Description: inp.Description,
@@ -730,7 +730,7 @@ func (h *Handler) adminGetAllPackages(c *gin.Context) {
 		return
 	}
 
-	packages, err := h.packagesService.GetByCourse(c.Request.Context(), id)
+	packages, err := h.services.Packages.GetByCourse(c.Request.Context(), id)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, "invalid id param")
 		return
@@ -765,7 +765,7 @@ func (h *Handler) adminGetPackageById(c *gin.Context) {
 		return
 	}
 
-	pkg, err := h.packagesService.GetById(c.Request.Context(), id)
+	pkg, err := h.services.Packages.GetById(c.Request.Context(), id)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, "invalid id param")
 		return
@@ -807,7 +807,7 @@ func (h *Handler) adminUpdatePackage(c *gin.Context) {
 		return
 	}
 
-	if err := h.packagesService.Update(c.Request.Context(), service.UpdatePackageInput{
+	if err := h.services.Packages.Update(c.Request.Context(), service.UpdatePackageInput{
 		ID:          id,
 		Name:        inp.Name,
 		Description: inp.Description,
@@ -846,7 +846,7 @@ func (h *Handler) adminDeletePackage(c *gin.Context) {
 		return
 	}
 
-	err = h.packagesService.Delete(c.Request.Context(), id)
+	err = h.services.Packages.Delete(c.Request.Context(), id)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, "invalid id param")
 		return
@@ -887,7 +887,7 @@ func (h *Handler) adminCreateOffer(c *gin.Context) {
 		return
 	}
 
-	id, err := h.offersService.Create(c.Request.Context(), service.CreateOfferInput{
+	id, err := h.services.Offers.Create(c.Request.Context(), service.CreateOfferInput{
 		SchoolID:    school.ID,
 		Name:        inp.Name,
 		Description: inp.Description,
@@ -923,7 +923,7 @@ func (h *Handler) adminGetAllOffers(c *gin.Context) {
 		return
 	}
 
-	offers, err := h.offersService.GetAll(c.Request.Context(), school.ID)
+	offers, err := h.services.Offers.GetAll(c.Request.Context(), school.ID)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -958,7 +958,7 @@ func (h *Handler) adminGetOfferById(c *gin.Context) {
 		return
 	}
 
-	offer, err := h.offersService.GetById(c.Request.Context(), id)
+	offer, err := h.services.Offers.GetById(c.Request.Context(), id)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -1015,7 +1015,7 @@ func (h *Handler) adminUpdateOffer(c *gin.Context) {
 		}
 	}
 
-	if err := h.offersService.Update(c.Request.Context(), updateInput); err != nil {
+	if err := h.services.Offers.Update(c.Request.Context(), updateInput); err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -1049,7 +1049,7 @@ func (h *Handler) adminDeleteOffer(c *gin.Context) {
 		return
 	}
 
-	err = h.offersService.Delete(c.Request.Context(), id)
+	err = h.services.Offers.Delete(c.Request.Context(), id)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -1114,7 +1114,7 @@ func (h *Handler) adminUpdateSchoolSettings(c *gin.Context) {
 		}
 	}
 
-	if err := h.schoolsService.UpdateSettings(c.Request.Context(), updateInput); err != nil {
+	if err := h.services.Schools.UpdateSettings(c.Request.Context(), updateInput); err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -1141,7 +1141,7 @@ func (h *Handler) adminGetOrders(c *gin.Context) {
 		return
 	}
 
-	orders, err := h.ordersService.GetBySchool(c.Request.Context(), school.ID)
+	orders, err := h.services.Orders.GetBySchool(c.Request.Context(), school.ID)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -1189,7 +1189,7 @@ func (h *Handler) adminGetStudents(c *gin.Context) {
 		return
 	}
 
-	students, err := h.studentsService.GetBySchool(c.Request.Context(), school.ID)
+	students, err := h.services.Students.GetBySchool(c.Request.Context(), school.ID)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return

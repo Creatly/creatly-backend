@@ -126,7 +126,7 @@ func (h *Handler) getCourseById(c *gin.Context) {
 		return
 	}
 
-	modules, err := h.modulesService.GetByCourse(c.Request.Context(), course.ID)
+	modules, err := h.services.Modules.GetByCourse(c.Request.Context(), course.ID)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -175,7 +175,7 @@ func (h *Handler) getCourseOffers(c *gin.Context) {
 		return
 	}
 
-	offers, err := h.offersService.GetByCourse(c.Request.Context(), courseId)
+	offers, err := h.services.Offers.GetByCourse(c.Request.Context(), courseId)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return

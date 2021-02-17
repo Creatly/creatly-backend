@@ -20,7 +20,7 @@ const (
 func (h *Handler) setSchoolFromRequest(c *gin.Context) {
 	domainName := strings.Split(c.Request.Host, ":")[0]
 
-	school, err := h.schoolsService.GetByDomain(c.Request.Context(), domainName)
+	school, err := h.services.Schools.GetByDomain(c.Request.Context(), domainName)
 	if err != nil {
 		logger.Error(err)
 		c.AbortWithStatus(http.StatusForbidden)

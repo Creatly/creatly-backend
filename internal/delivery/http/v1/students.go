@@ -8,8 +8,6 @@ import (
 	"net/http"
 )
 
-// TODO: return time.Time in RFC3339
-
 func (h *Handler) initStudentsRoutes(api *gin.RouterGroup) {
 	students := api.Group("/students", h.setSchoolFromRequest)
 	{
@@ -60,7 +58,7 @@ func (h *Handler) studentSignUp(c *gin.Context) {
 		return
 	}
 
-	if err := h.studentsService.SignUp(c.Request.Context(), service.StudentSignUpInput{
+	if err := h.services.Students.SignUp(c.Request.Context(), service.StudentSignUpInput{
 		Name:     inp.Name,
 		Email:    inp.Email,
 		Password: inp.Password,
@@ -108,7 +106,7 @@ func (h *Handler) studentSignIn(c *gin.Context) {
 		return
 	}
 
-	res, err := h.studentsService.SignIn(c.Request.Context(), service.SignInInput{
+	res, err := h.services.Students.SignIn(c.Request.Context(), service.SignInInput{
 		SchoolID: school.ID,
 		Email:    inp.Email,
 		Password: inp.Password,
@@ -152,7 +150,7 @@ func (h *Handler) studentRefresh(c *gin.Context) {
 		return
 	}
 
-	res, err := h.studentsService.RefreshTokens(c.Request.Context(), school.ID, inp.Token)
+	res, err := h.services.Students.RefreshTokens(c.Request.Context(), school.ID, inp.Token)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -183,7 +181,7 @@ func (h *Handler) studentVerify(c *gin.Context) {
 		return
 	}
 
-	if err := h.studentsService.Verify(c.Request.Context(), code); err != nil {
+	if err := h.services.Students.Verify(c.Request.Context(), code); err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -229,7 +227,7 @@ func (h *Handler) studentGetModuleLessons(c *gin.Context) {
 		return
 	}
 
-	lessons, err := h.studentsService.GetModuleLessons(c.Request.Context(), school.ID, studentId, moduleId)
+	lessons, err := h.services.Students.GetModuleLessons(c.Request.Context(), school.ID, studentId, moduleId)
 	if err != nil {
 		if err == service.ErrModuleIsNotAvailable {
 			newResponse(c, http.StatusForbidden, err.Error())
@@ -309,7 +307,7 @@ func (h *Handler) studentGetModuleOffers(c *gin.Context) {
 		return
 	}
 
-	offers, err := h.offersService.GetByModule(c.Request.Context(), school.ID, moduleId)
+	offers, err := h.services.Offers.GetByModule(c.Request.Context(), school.ID, moduleId)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -344,7 +342,7 @@ func (h *Handler) studentGetPromo(c *gin.Context) {
 		return
 	}
 
-	promocode, err := h.promoCodesService.GetByCode(c.Request.Context(), school.ID, code)
+	promocode, err := h.services.PromoCodes.GetByCode(c.Request.Context(), school.ID, code)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -405,7 +403,7 @@ func (h *Handler) studentCreateOrder(c *gin.Context) {
 		return
 	}
 
-	paymentLink, err := h.ordersService.Create(c.Request.Context(), studentId, offerId, promoId)
+	paymentLink, err := h.services.Orders.Create(c.Request.Context(), studentId, offerId, promoId)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -439,7 +437,7 @@ func (h *Handler) studentGetCourses(c *gin.Context) {
 		return
 	}
 
-	courses, err := h.studentsService.GetAvailableCourses(c.Request.Context(), school, studentId)
+	courses, err := h.services.Students.GetAvailableCourses(c.Request.Context(), school, studentId)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
