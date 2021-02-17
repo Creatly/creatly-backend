@@ -1,0 +1,75 @@
+[{
+  "_id": {
+    "$oid": "6008090356fabf0d0b34635b"
+  },
+  "name": "Zhashkevych Workshop",
+  "description": "Programming & Web Development Courses",
+  "registeredAt": {
+    "$timestamp": {
+      "t": 0,
+      "i": 0
+    }
+  },
+  "courses": [
+    {
+      "_id": {
+        "$oid": "60080cf03dab4fb0573d1f86"
+      },
+      "name": "Язык Go Для Начинающих",
+      "code": "go-for-beginners",
+      "description": "Твой старт в мире разработки на Go",
+      "imageUrl": "https://thumb.tildacdn.com/tild3163-3035-4530-b235-303864616535/-/resize/800x/-/format/webp/Book.png",
+      "createdAt": {
+        "$date": "2021-01-23T10:28:53.851Z"
+      },
+      "updatedAt": {
+        "$date": "2021-01-23T10:29:02.101Z"
+      },
+      "published": true
+    },
+    {
+      "_id": {
+        "$oid": "600830683dab4fb0573d1fa2"
+      },
+      "name": "Архитектура Современных Веб-Приложений",
+      "description": "Backend разработка простым языком",
+      "imageUrl": "https://thumb.tildacdn.com/tild3762-6634-4361-b431-323832633563/-/resize/920x/-/format/webp/cover_new_final.png",
+      "createdAt": {
+        "$date": "2021-01-23T10:29:46.827Z"
+      },
+      "updatedAt": {
+        "$date": "2021-01-23T10:29:46.827Z"
+      },
+      "published": false
+    },
+    {
+      "_id": {
+        "$oid": "601c0ff2f23be0d7120b9cdb"
+      },
+      "name": "test course 01",
+      "createdAt": {
+        "$date": "2021-02-04T15:17:06.826Z"
+      },
+      "updatedAt": {
+        "$date": "2021-02-04T15:17:06.826Z"
+      },
+      "published": true,
+      "description": "test description"
+    },
+    {
+      "_id": {
+        "$oid": "601c104bf23be0d7120b9cdc"
+      },
+      "name": "test course 02",
+      "createdAt": {
+        "$date": "2021-02-04T15:18:35.749Z"
+      },
+      "updatedAt": {
+        "$date": "2021-02-04T15:18:35.749Z"
+      }
+    }
+  ],
+  "settings": {
+    "domain": "localhost"
+  }
+}]
