@@ -8,14 +8,12 @@ import (
 	"github.com/zhashkevych/courses-backend/internal/domain"
 	"github.com/zhashkevych/courses-backend/pkg/email"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
 	"net/http/httptest"
 )
 
 const (
 	verificationCode = "CODE1234"
-	schoolIdStr      = "6008090356fabf0d0b34635b"
 )
 
 func (s *APITestSuite) TestStudentSignUp() {
@@ -113,11 +111,10 @@ func (s *APITestSuite) TestStudentSignInVerified() {
 
 	// populate DB data
 	studentEmail, password := "test4@test.com", "qwerty123"
-	schoolId, _ := primitive.ObjectIDFromHex(schoolIdStr)
 	s.db.Collection("students").InsertOne(context.Background(), domain.Student{
 		Email:        studentEmail,
 		Password:     s.hasher.Hash(password),
-		SchoolID:     schoolId,
+		SchoolID:     school.ID,
 		Verification: domain.Verification{Verified: true},
 	})
 
