@@ -73,5 +73,24 @@ var (
 				},
 			},
 		},
+		domain.Module{
+			ID:        primitive.NewObjectID(),
+			Name:      "Module #1", // Part of unpublished course
+			CourseID:  school.Courses[1].ID,
+			Published: true,
+			PackageID: packages[0].(domain.Package).ID,
+			Lessons: []domain.Lesson{
+				{
+					ID: primitive.NewObjectID(),
+					Name: "Lesson #1",
+					Published: true,
+				},
+				{
+					ID: primitive.NewObjectID(),
+					Name: "Lesson #2",
+					Published: true,
+				},
+			},
+		},
 	}
 )
