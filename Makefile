@@ -18,13 +18,10 @@ export DB_NAME=test
 export CONTAINER_NAME=test_db
 
 test.integration:
-	docker run --rm -d -p 27019:27017 --name $$CONTAINER_NAME \
-				-e MONGODB_DATABASE=$$DB_NAME mongo:4.4-bionic
+	docker run --rm -d -p 27019:27017 --name $$CONTAINER_NAME -e MONGODB_DATABASE=$$DB_NAME mongo:4.4-bionic
 
-	GIN_MODE=release go test -coverprofile=cover.out -v ./tests/ || :
-
+	GIN_MODE=release go test -v ./tests/ || :
 	docker stop $$CONTAINER_NAME
-	make test.coverage
 
 test.coverage:
 	go tool cover -func=cover.out

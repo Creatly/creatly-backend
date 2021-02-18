@@ -130,11 +130,11 @@ func (s *APITestSuite) populateDB() error {
 		return err
 	}
 
-	_, err = s.db.Collection("offers").InsertOne(context.Background(), offers)
+	_, err = s.db.Collection("offers").InsertMany(context.Background(), offers)
 	if err != nil {
 		return err
 	}
 
-	_, err = s.db.Collection("modules").InsertOne(context.Background(), modules)
+	_, err = s.db.Collection("modules").InsertMany(context.Background(), modules)
 	return err
 }
