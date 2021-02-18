@@ -254,8 +254,8 @@ type studentOffer struct {
 }
 
 type price struct {
-	Value    int    `json:"value" binding:"required,min=1"`
-	Currency string `json:"currency" binding:"required,min=3"`
+	Value    uint   `json:"value" binding:"required,min=1"`
+	Currency string `json:"currency" binding:"required,min=3"` // TODO validate currency input
 }
 
 func toStudentOffers(offers []domain.Offer) []studentOffer {

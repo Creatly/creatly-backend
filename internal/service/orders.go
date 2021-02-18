@@ -125,10 +125,10 @@ func (s *OrdersService) getOrderPromocode(ctx context.Context, promocodeId primi
 	return promocode, nil
 }
 
-func (s *OrdersService) calculateOrderPrice(price int, promocode domain.PromoCode) int {
+func (s *OrdersService) calculateOrderPrice(price uint, promocode domain.PromoCode) uint {
 	if promocode.ID.IsZero() {
 		return price
 	} else {
-		return (price * (100 - promocode.DiscountPercentage)) / 100
+		return (price * uint(100 - promocode.DiscountPercentage)) / 100
 	}
 }

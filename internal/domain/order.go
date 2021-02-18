@@ -19,7 +19,7 @@ type Order struct {
 	Offer        OrderOfferInfo     `json:"offer" bson:"offer"`
 	Promo        OrderPromoInfo     `json:"promo" bson:"promo,omitempty"`
 	CreatedAt    time.Time          `json:"createdAt" bson:"createdAt"`
-	Amount       int                `json:"amount" bson:"amount"`
+	Amount       uint               `json:"amount" bson:"amount"`
 	Status       string             `json:"status" bson:"status"`
 	Transactions []Transaction      `json:"transactions" bson:"transactions"`
 }

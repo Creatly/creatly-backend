@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/stretchr/testify/suite"
 	v1 "github.com/zhashkevych/courses-backend/internal/delivery/http/v1"
-	"github.com/zhashkevych/courses-backend/internal/domain"
 	"github.com/zhashkevych/courses-backend/internal/repository"
 	"github.com/zhashkevych/courses-backend/internal/service"
 	"github.com/zhashkevych/courses-backend/pkg/auth"
@@ -14,7 +13,6 @@ import (
 	"github.com/zhashkevych/courses-backend/pkg/hash"
 	"github.com/zhashkevych/courses-backend/pkg/otp"
 	"github.com/zhashkevych/courses-backend/pkg/payment"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"os"
 	"testing"
@@ -27,10 +25,6 @@ const (
 
 var (
 	dbURI, dbName string
-
-	school = domain.School{
-		ID: primitive.NewObjectID(),
-	}
 )
 
 func init() {
@@ -127,5 +121,20 @@ func TestMain(m *testing.M) {
 
 func (s *APITestSuite) populateDB() error {
 	_, err := s.db.Collection("schools").InsertOne(context.Background(), school)
+	if err != nil {
+		return err
+	}
+
+	_, err = s.db.Collection("packages").InsertMany(context.Background(), packages)
+	if err != nil {
+		return err
+	}
+
+	_, err = s.db.Collection("offers").InsertOne(context.Background(), offers)
+	if err != nil {
+		return err
+	}
+
+	_, err = s.db.Collection("modules").InsertOne(context.Background(), modules)
 	return err
 }
