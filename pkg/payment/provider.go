@@ -2,7 +2,7 @@ package payment
 
 type GeneratePaymentLinkInput struct {
 	OrderId     string
-	Amount      int
+	Amount      uint
 	Currency    string
 	OrderDesc   string
 	CallbackURL string

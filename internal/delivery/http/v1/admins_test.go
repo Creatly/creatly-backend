@@ -89,7 +89,8 @@ func TestHandler_adminUpdateSchoolSettings(t *testing.T) {
 			s := mock_service.NewMockSchools(c)
 			tt.mockBehavior(s, tt.input)
 
-			handler := Handler{schoolsService: s}
+			services := &service.Services{Schools: s}
+			handler := Handler{services: services}
 
 			// Init Endpoint
 			r := gin.New()

@@ -105,7 +105,8 @@ func TestHandler_studentCreateOrder(t *testing.T) {
 			s := mock_service.NewMockOrders(c)
 			tt.mockBehavior(s, tt.studentId, tt.offerId, tt.promoId)
 
-			handler := Handler{ordersService: s}
+			services := &service.Services{Orders: s}
+			handler := Handler{services: services}
 
 			// Init Endpoint
 			r := gin.New()
@@ -194,7 +195,8 @@ func TestHandler_studentGetPromocode(t *testing.T) {
 			s := mock_service.NewMockPromoCodes(c)
 			tt.mockBehavior(s, tt.schoolId, tt.code, tt.promocode)
 
-			handler := Handler{promoCodesService: s}
+			services := &service.Services{PromoCodes: s}
+			handler := Handler{services: services}
 
 			// Init Endpoint
 			r := gin.New()
@@ -290,7 +292,8 @@ func TestHandler_studentGetModuleOffers(t *testing.T) {
 			id, _ := primitive.ObjectIDFromHex(tt.moduleId)
 			tt.mockBehavior(s, tt.schoolId, id, tt.offers)
 
-			handler := Handler{offersService: s}
+			services := &service.Services{Offers: s}
+			handler := Handler{services: services}
 
 			// Init Endpoint
 			r := gin.New()
@@ -394,7 +397,8 @@ func TestHandler_studentGetModuleLessons(t *testing.T) {
 			id, _ := primitive.ObjectIDFromHex(tt.moduleId)
 			tt.mockBehavior(s, tt.schoolId, tt.studentId, id, tt.lessons)
 
-			handler := Handler{studentsService: s}
+			services := &service.Services{Students: s}
+			handler := Handler{services: services}
 
 			// Init Endpoint
 			r := gin.New()
@@ -508,7 +512,8 @@ func TestHandler_studentSignUp(t *testing.T) {
 
 			tt.mockBehavior(s, tt.serviceInput)
 
-			handler := Handler{studentsService: s}
+			services := &service.Services{Students: s}
+			handler := Handler{services: services}
 
 			// Init Endpoint
 			r := gin.New()

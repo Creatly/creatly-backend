@@ -26,7 +26,7 @@ func (h *Handler) handleFondyCallback(c *gin.Context) {
 		return
 	}
 
-	if err := h.paymentsService.ProcessTransaction(c.Request.Context(), inp); err != nil {
+	if err := h.services.Payments.ProcessTransaction(c.Request.Context(), inp); err != nil {
 		if err == service.ErrTransactionInvalid {
 			newResponse(c, http.StatusBadRequest, err.Error())
 			return
