@@ -85,6 +85,7 @@ func (s *OrdersService) Create(ctx context.Context, studentId, offerId, promocod
 			Name: offer.Name,
 		},
 		Amount:       orderAmount,
+		Currency:     offer.Price.Currency,
 		CreatedAt:    time.Now(),
 		Status:       domain.OrderStatusCreated,
 		Transactions: make([]domain.Transaction, 0),

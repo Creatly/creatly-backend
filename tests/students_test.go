@@ -235,6 +235,15 @@ func (s *APITestSuite) TestStudentCreateOrderWithoutPromocode() {
 	router.ServeHTTP(resp, req)
 
 	r.Equal(http.StatusOK, resp.Result().StatusCode)
+
+	var order domain.Order
+	err = s.db.Collection("orders").FindOne(context.Background(), bson.M{
+		"student.id": id,
+	}).Decode(&order)
+	s.NoError(err)
+
+	r.Equal(offers[0].(domain.Offer).Price.Value, order.Amount)
+	r.Equal(offers[0].(domain.Offer).Price.Currency, order.Currency)
 }
 
 func (s *APITestSuite) TestStudentCreateOrderWrongOffer() {
@@ -257,6 +266,83 @@ func (s *APITestSuite) TestStudentCreateOrderWrongOffer() {
 	s.NoError(err)
 
 	orderData := fmt.Sprintf(`{"offerId":"%s"}`, id.Hex())
+
+	req, _ := http.NewRequest("POST", "/api/v1/students/order", bytes.NewBuffer([]byte(orderData)))
+	req.Header.Set("Content-type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+jwt)
+
+	resp := httptest.NewRecorder()
+	router.ServeHTTP(resp, req)
+
+	r.Equal(http.StatusBadRequest, resp.Result().StatusCode)
+}
+
+func (s *APITestSuite) TestStudentCreateOrderWithPromocode() {
+	router := gin.New()
+	s.handler.Init(router.Group("/api"))
+	r := s.Require()
+
+	// populate DB data
+	id := primitive.NewObjectID()
+	studentEmail, password := "test4@test.com", "qwerty123"
+	s.db.Collection("students").InsertOne(context.Background(), domain.Student{
+		ID:           id,
+		Email:        studentEmail,
+		Password:     s.hasher.Hash(password),
+		SchoolID:     school.ID,
+		Verification: domain.Verification{Verified: true},
+	})
+
+	jwt, err := s.getJwt(id)
+	s.NoError(err)
+
+	orderData := fmt.Sprintf(`{"offerId":"%s", "promoId": "%s"}`,
+		offers[0].(domain.Offer).ID.Hex(), promocodes[0].(domain.PromoCode).ID.Hex())
+
+	req, _ := http.NewRequest("POST", "/api/v1/students/order", bytes.NewBuffer([]byte(orderData)))
+	req.Header.Set("Content-type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+jwt)
+
+	resp := httptest.NewRecorder()
+	router.ServeHTTP(resp, req)
+
+	r.Equal(http.StatusOK, resp.Result().StatusCode)
+
+	var order domain.Order
+	err = s.db.Collection("orders").FindOne(context.Background(), bson.M{
+		"student.id": id,
+	}).Decode(&order)
+	s.NoError(err)
+
+	offerPrice := offers[0].(domain.Offer).Price.Value
+	promocodeDiscount := promocodes[0].(domain.PromoCode).DiscountPercentage
+	orderPrice := (offerPrice * uint(100-promocodeDiscount)) / 100
+
+	r.Equal(orderPrice, order.Amount)
+	r.Equal(offers[0].(domain.Offer).Price.Currency, order.Currency)
+}
+
+func (s *APITestSuite) TestStudentCreateOrderWrongPromo() {
+	router := gin.New()
+	s.handler.Init(router.Group("/api"))
+	r := s.Require()
+
+	// populate DB data
+	id := primitive.NewObjectID()
+	studentEmail, password := "test4@test.com", "qwerty123"
+	s.db.Collection("students").InsertOne(context.Background(), domain.Student{
+		ID:           id,
+		Email:        studentEmail,
+		Password:     s.hasher.Hash(password),
+		SchoolID:     school.ID,
+		Verification: domain.Verification{Verified: true},
+	})
+
+	jwt, err := s.getJwt(id)
+	s.NoError(err)
+
+	orderData := fmt.Sprintf(`{"offerId":"%s", "promoId": "%s"}`,
+		offers[0].(domain.Offer).ID.Hex(), id.Hex())
 
 	req, _ := http.NewRequest("POST", "/api/v1/students/order", bytes.NewBuffer([]byte(orderData)))
 	req.Header.Set("Content-type", "application/json")
