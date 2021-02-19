@@ -2,6 +2,7 @@ package v1
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/zhashkevych/courses-backend/internal/service"
 	"net/http"
 )
 
@@ -32,6 +33,10 @@ func (h *Handler) getPromo(c *gin.Context) {
 
 	promocode, err := h.services.PromoCodes.GetByCode(c.Request.Context(), school.ID, code)
 	if err != nil {
+		if err == service.ErrPromoNotFound {
+			newResponse(c, http.StatusBadRequest, err.Error())
+			return
+		}
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}

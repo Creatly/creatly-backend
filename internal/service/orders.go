@@ -36,6 +36,10 @@ func NewOrdersService(repo repository.Orders, offersService Offers, promoCodesSe
 func (s *OrdersService) Create(ctx context.Context, studentId, offerId, promocodeId primitive.ObjectID) (string, error) {
 	offer, err := s.offersService.GetById(ctx, offerId)
 	if err != nil {
+		if err == repository.ErrOfferNotFound {
+			return "", ErrOfferNotFound
+		}
+
 		return "", err
 	}
 
@@ -46,6 +50,9 @@ func (s *OrdersService) Create(ctx context.Context, studentId, offerId, promocod
 
 	student, err := s.studentsService.GetById(ctx, studentId)
 	if err != nil {
+		if err == repository.ErrUserNotFound {
+			return "", ErrUserNotFound
+		}
 		return "", err
 	}
 

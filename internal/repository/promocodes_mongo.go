@@ -18,12 +18,26 @@ func NewPromocodeRepo(db *mongo.Database) *PromocodesRepo {
 
 func (r *PromocodesRepo) GetByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.PromoCode, error) {
 	var promocode domain.PromoCode
-	err := r.db.FindOne(ctx, bson.M{"schoolId": schoolId, "code": code}).Decode(&promocode)
-	return promocode, err
+	if err := r.db.FindOne(ctx, bson.M{"schoolId": schoolId, "code": code}).Decode(&promocode); err != nil {
+		if err == mongo.ErrNoDocuments {
+			return domain.PromoCode{}, ErrPromoNotFound
+		}
+
+		return domain.PromoCode{}, err
+	}
+
+	return promocode, nil
 }
 
 func (r *PromocodesRepo) GetById(ctx context.Context, schoolId, id primitive.ObjectID) (domain.PromoCode, error) {
 	var promocode domain.PromoCode
-	err := r.db.FindOne(ctx, bson.M{"_id": id, "schoolId": schoolId}).Decode(&promocode)
-	return promocode, err
+	if err := r.db.FindOne(ctx, bson.M{"_id": id, "schoolId": schoolId}).Decode(&promocode); err != nil {
+		if err == mongo.ErrNoDocuments {
+			return domain.PromoCode{}, ErrPromoNotFound
+		}
+
+		return domain.PromoCode{}, err
+	}
+
+	return promocode, nil
 }

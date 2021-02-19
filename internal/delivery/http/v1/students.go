@@ -374,8 +374,14 @@ func (h *Handler) studentCreateOrder(c *gin.Context) {
 
 	paymentLink, err := h.services.Orders.Create(c.Request.Context(), studentId, offerId, promoId)
 	if err != nil {
-		newResponse(c, http.StatusInternalServerError, err.Error())
-		return
+		switch err {
+		case service.ErrPromoNotFound, service.ErrOfferNotFound, service.ErrUserNotFound, service.ErrPromocodeExpired:
+			newResponse(c, http.StatusBadRequest, err.Error())
+			return
+		default:
+			newResponse(c, http.StatusInternalServerError, err.Error())
+			return
+		}
 	}
 
 	c.JSON(http.StatusOK, createOrderResponse{paymentLink})
