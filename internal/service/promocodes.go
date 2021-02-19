@@ -19,6 +19,6 @@ func (s *PromoCodeService) GetByCode(ctx context.Context, schoolId primitive.Obj
 	return s.repo.GetByCode(ctx, schoolId, code)
 }
 
-func (s *PromoCodeService) GetById(ctx context.Context, id primitive.ObjectID) (domain.PromoCode, error) {
-	return s.repo.GetById(ctx, id)
+func (s *PromoCodeService) GetById(ctx context.Context, schoolId, id primitive.ObjectID) (domain.PromoCode, error) {
+	return s.repo.GetById(ctx, schoolId, id)
 }

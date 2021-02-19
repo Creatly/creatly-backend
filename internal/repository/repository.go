@@ -122,7 +122,7 @@ type Offers interface {
 
 type PromoCodes interface {
 	GetByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.PromoCode, error)
-	GetById(ctx context.Context, id primitive.ObjectID) (domain.PromoCode, error)
+	GetById(ctx context.Context, schoolId, id primitive.ObjectID) (domain.PromoCode, error)
 }
 
 type Orders interface {

@@ -34,12 +34,12 @@ func NewOrdersService(repo repository.Orders, offersService Offers, promoCodesSe
 }
 
 func (s *OrdersService) Create(ctx context.Context, studentId, offerId, promocodeId primitive.ObjectID) (string, error) {
-	promocode, err := s.getOrderPromocode(ctx, promocodeId)
+	offer, err := s.offersService.GetById(ctx, offerId)
 	if err != nil {
 		return "", err
 	}
 
-	offer, err := s.offersService.GetById(ctx, offerId)
+	promocode, err := s.getOrderPromocode(ctx, offer.SchoolID, promocodeId)
 	if err != nil {
 		return "", err
 	}
@@ -105,14 +105,14 @@ func (s *OrdersService) GetBySchool(ctx context.Context, schoolId primitive.Obje
 	return s.repo.GetBySchool(ctx, schoolId)
 }
 
-func (s *OrdersService) getOrderPromocode(ctx context.Context, promocodeId primitive.ObjectID) (domain.PromoCode, error) {
+func (s *OrdersService) getOrderPromocode(ctx context.Context, schoolId, promocodeId primitive.ObjectID) (domain.PromoCode, error) {
 	var (
 		promocode domain.PromoCode
 		err       error
 	)
 
 	if !promocodeId.IsZero() {
-		promocode, err = s.promoCodesService.GetById(ctx, promocodeId)
+		promocode, err = s.promoCodesService.GetById(ctx, schoolId, promocodeId)
 		if err != nil {
 			return promocode, err
 		}
@@ -129,6 +129,6 @@ func (s *OrdersService) calculateOrderPrice(price uint, promocode domain.PromoCo
 	if promocode.ID.IsZero() {
 		return price
 	} else {
-		return (price * uint(100 - promocode.DiscountPercentage)) / 100
+		return (price * uint(100-promocode.DiscountPercentage)) / 100
 	}
 }

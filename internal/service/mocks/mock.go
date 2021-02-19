@@ -432,18 +432,18 @@ func (mr *MockPromoCodesMockRecorder) GetByCode(ctx, schoolId, code interface{})
 }
 
 // GetById mocks base method
-func (m *MockPromoCodes) GetById(ctx context.Context, id primitive.ObjectID) (domain.PromoCode, error) {
+func (m *MockPromoCodes) GetById(ctx context.Context, schoolId, id primitive.ObjectID) (domain.PromoCode, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetById", ctx, id)
+	ret := m.ctrl.Call(m, "GetById", ctx, schoolId, id)
 	ret0, _ := ret[0].(domain.PromoCode)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetById indicates an expected call of GetById
-func (mr *MockPromoCodesMockRecorder) GetById(ctx, id interface{}) *gomock.Call {
+func (mr *MockPromoCodesMockRecorder) GetById(ctx, schoolId, id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetById", reflect.TypeOf((*MockPromoCodes)(nil).GetById), ctx, id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetById", reflect.TypeOf((*MockPromoCodes)(nil).GetById), ctx, schoolId, id)
 }
 
 // MockOffers is a mock of Offers interface
