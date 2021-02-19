@@ -16,9 +16,27 @@ func NewPromoCodeService(repo repository.PromoCodes) *PromoCodeService {
 }
 
 func (s *PromoCodeService) GetByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.PromoCode, error) {
-	return s.repo.GetByCode(ctx, schoolId, code)
+	promo, err := s.repo.GetByCode(ctx, schoolId, code)
+	if err != nil {
+		if err == repository.ErrPromoNotFound {
+			return domain.PromoCode{}, ErrPromoNotFound
+		}
+
+		return domain.PromoCode{}, err
+	}
+
+	return promo, nil
 }
 
-func (s *PromoCodeService) GetById(ctx context.Context, id primitive.ObjectID) (domain.PromoCode, error) {
-	return s.repo.GetById(ctx, id)
+func (s *PromoCodeService) GetById(ctx context.Context, schoolId, id primitive.ObjectID) (domain.PromoCode, error) {
+	promo, err := s.repo.GetById(ctx, schoolId, id)
+	if err != nil {
+		if err == repository.ErrPromoNotFound {
+			return domain.PromoCode{}, ErrPromoNotFound
+		}
+
+		return domain.PromoCode{}, err
+	}
+
+	return promo, nil
 }

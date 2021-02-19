@@ -31,8 +31,15 @@ func (r *OffersRepo) GetBySchool(ctx context.Context, schoolId primitive.ObjectI
 
 func (r *OffersRepo) GetById(ctx context.Context, id primitive.ObjectID) (domain.Offer, error) {
 	var offer domain.Offer
-	err := r.db.FindOne(ctx, bson.M{"_id": id}).Decode(&offer)
-	return offer, err
+	if err := r.db.FindOne(ctx, bson.M{"_id": id}).Decode(&offer); err != nil {
+		if err == mongo.ErrNoDocuments {
+			return domain.Offer{}, ErrOfferNotFound
+		}
+
+		return domain.Offer{}, err
+	}
+
+	return offer, nil
 }
 
 func (r *OffersRepo) GetByPackages(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Offer, error) {

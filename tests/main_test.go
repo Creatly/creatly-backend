@@ -40,8 +40,9 @@ type APITestSuite struct {
 	services *service.Services
 	repos    *repository.Repositories
 
-	hasher hash.PasswordHasher
-	mocks  *mocks
+	hasher       hash.PasswordHasher
+	tokenManager auth.TokenManager
+	mocks        *mocks
 }
 
 type mocks struct {
@@ -106,6 +107,7 @@ func (s *APITestSuite) initDeps() {
 	s.services = services
 	s.handler = v1.NewHandler(services, tokenManager)
 	s.hasher = hasher
+	s.tokenManager = tokenManager
 }
 
 func (s *APITestSuite) initMocks() {
@@ -136,5 +138,14 @@ func (s *APITestSuite) populateDB() error {
 	}
 
 	_, err = s.db.Collection("modules").InsertMany(context.Background(), modules)
-	return err
+	if err != nil {
+		return err
+	}
+
+	_, err = s.db.Collection("promocodes").InsertMany(context.Background(), promocodes)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

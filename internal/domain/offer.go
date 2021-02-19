@@ -14,6 +14,6 @@ type Offer struct {
 }
 
 type Price struct {
-	Value    uint    `json:"value" bson:"value"`
+	Value    uint   `json:"value" bson:"value"`
 	Currency string `json:"currency" bson:"currency"`
 }
