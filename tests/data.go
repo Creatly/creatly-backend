@@ -3,6 +3,7 @@ package tests
 import (
 	"github.com/zhashkevych/courses-backend/internal/domain"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"time"
 )
 
 var (
@@ -40,6 +41,17 @@ var (
 		},
 	}
 
+	promocodes = []interface{}{
+		domain.PromoCode{
+			ID:                 primitive.NewObjectID(),
+			Code:               "TEST25",
+			DiscountPercentage: 25,
+			ExpiresAt:          time.Now().Add(time.Hour),
+			OfferIDs:           []primitive.ObjectID{offers[0].(domain.Offer).ID},
+			SchoolId:           school.ID,
+		},
+	}
+
 	modules = []interface{}{
 		domain.Module{
 			ID:        primitive.NewObjectID(),
@@ -48,8 +60,8 @@ var (
 			Published: true,
 			Lessons: []domain.Lesson{
 				{
-					ID: primitive.NewObjectID(),
-					Name: "Lesson #1",
+					ID:        primitive.NewObjectID(),
+					Name:      "Lesson #1",
 					Published: true,
 				},
 			},
@@ -62,13 +74,13 @@ var (
 			PackageID: packages[0].(domain.Package).ID,
 			Lessons: []domain.Lesson{
 				{
-					ID: primitive.NewObjectID(),
-					Name: "Lesson #1",
+					ID:        primitive.NewObjectID(),
+					Name:      "Lesson #1",
 					Published: true,
 				},
 				{
-					ID: primitive.NewObjectID(),
-					Name: "Lesson #2",
+					ID:        primitive.NewObjectID(),
+					Name:      "Lesson #2",
 					Published: true,
 				},
 			},
@@ -81,13 +93,13 @@ var (
 			PackageID: packages[0].(domain.Package).ID,
 			Lessons: []domain.Lesson{
 				{
-					ID: primitive.NewObjectID(),
-					Name: "Lesson #1",
+					ID:        primitive.NewObjectID(),
+					Name:      "Lesson #1",
 					Published: true,
 				},
 				{
-					ID: primitive.NewObjectID(),
-					Name: "Lesson #2",
+					ID:        primitive.NewObjectID(),
+					Name:      "Lesson #2",
 					Published: true,
 				},
 			},

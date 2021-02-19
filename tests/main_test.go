@@ -136,5 +136,14 @@ func (s *APITestSuite) populateDB() error {
 	}
 
 	_, err = s.db.Collection("modules").InsertMany(context.Background(), modules)
-	return err
+	if err != nil {
+		return err
+	}
+
+	_, err = s.db.Collection("promocodes").InsertMany(context.Background(), promocodes)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
