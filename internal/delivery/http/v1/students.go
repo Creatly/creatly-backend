@@ -190,7 +190,7 @@ func (h *Handler) studentVerify(c *gin.Context) {
 		return
 	}
 
-	newResponse(c, http.StatusOK, "success")
+	c.JSON(http.StatusOK, response{"success"})
 }
 
 // @Summary Student Get Lessons By Module ModuleID

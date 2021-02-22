@@ -32,7 +32,7 @@ func (h *Handler) handleFondyCallback(c *gin.Context) {
 			return
 		}
 
-		newResponse(c, http.StatusInternalServerError, err.Error()) // TODO Log as critical error
+		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 

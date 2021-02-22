@@ -21,18 +21,26 @@ func NewPaymentsService(paymentProvider payment.Provider, ordersService Orders, 
 	return &PaymentsService{paymentProvider: paymentProvider, ordersService: ordersService, offersService: offersService, studentsService: studentsService}
 }
 
-// TODO callback data validation?
-func (s *PaymentsService) ProcessTransaction(ctx context.Context, callbackData fondy.Callback) error {
-	if err := s.paymentProvider.ValidateCallback(callbackData); err != nil {
+func (s *PaymentsService) ProcessTransaction(ctx context.Context, callback interface{}) error {
+	switch callback.(type) {
+	case fondy.Callback:
+		return s.processFondyCallback(ctx, callback.(fondy.Callback))
+	default:
+		return ErrUnknownCallbackType
+	}
+}
+
+func (s *PaymentsService) processFondyCallback(ctx context.Context, callback fondy.Callback) error {
+	if err := s.paymentProvider.ValidateCallback(callback); err != nil {
 		return ErrTransactionInvalid
 	}
-	
-	orderId, err := primitive.ObjectIDFromHex(callbackData.OrderId)
+
+	orderId, err := primitive.ObjectIDFromHex(callback.OrderId)
 	if err != nil {
 		return err
 	}
 
-	transaction, err := createTransaction(callbackData)
+	transaction, err := createTransaction(callback)
 	if err != nil {
 		return err
 	}
