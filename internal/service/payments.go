@@ -5,23 +5,28 @@ import (
 	"encoding/json"
 	"github.com/zhashkevych/courses-backend/internal/domain"
 	"github.com/zhashkevych/courses-backend/pkg/payment"
+	"github.com/zhashkevych/courses-backend/pkg/payment/fondy"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
 )
 
 type PaymentsService struct {
-	paymentProvider payment.FondyProvider
+	paymentProvider payment.Provider
 	ordersService   Orders
 	offersService   Offers
 	studentsService Students
 }
 
-func NewPaymentsService(paymentProvider payment.FondyProvider, ordersService Orders, offersService Offers, studentsService Students) *PaymentsService {
+func NewPaymentsService(paymentProvider payment.Provider, ordersService Orders, offersService Offers, studentsService Students) *PaymentsService {
 	return &PaymentsService{paymentProvider: paymentProvider, ordersService: ordersService, offersService: offersService, studentsService: studentsService}
 }
 
 // TODO callback data validation?
-func (s *PaymentsService) ProcessTransaction(ctx context.Context, callbackData payment.Callback) error {
+func (s *PaymentsService) ProcessTransaction(ctx context.Context, callbackData fondy.Callback) error {
+	if err := s.paymentProvider.ValidateCallback(callbackData); err != nil {
+		return ErrTransactionInvalid
+	}
+	
 	orderId, err := primitive.ObjectIDFromHex(callbackData.OrderId)
 	if err != nil {
 		return err
@@ -49,7 +54,7 @@ func (s *PaymentsService) ProcessTransaction(ctx context.Context, callbackData p
 	return s.studentsService.GiveAccessToPackages(ctx, order.Student.ID, offer.PackageIDs)
 }
 
-func createTransaction(callbackData payment.Callback) (domain.Transaction, error) {
+func createTransaction(callbackData fondy.Callback) (domain.Transaction, error) {
 	var status string
 	if !callbackData.Success() {
 		status = domain.OrderStatusFailed

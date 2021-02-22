@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"github.com/zhashkevych/courses-backend/pkg/otp"
+	"github.com/zhashkevych/courses-backend/pkg/payment/fondy"
 	"os"
 	"os/signal"
 	"syscall"
@@ -19,7 +20,6 @@ import (
 	"github.com/zhashkevych/courses-backend/pkg/email/sendpulse"
 	"github.com/zhashkevych/courses-backend/pkg/hash"
 	"github.com/zhashkevych/courses-backend/pkg/logger"
-	"github.com/zhashkevych/courses-backend/pkg/payment"
 )
 
 // @title Course Platform API
@@ -57,7 +57,7 @@ func Run(configPath string) {
 	memCache := cache.NewMemoryCache()
 	hasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
 	emailProvider := sendpulse.NewClient(cfg.Email.ClientID, cfg.Email.ClientSecret, memCache)
-	paymentProvider := payment.NewFondyClient(cfg.Payment.Fondy.MerchantId, cfg.Payment.Fondy.MerchantPassword)
+	paymentProvider := fondy.NewFondyClient(cfg.Payment.Fondy.MerchantId, cfg.Payment.Fondy.MerchantPassword)
 	tokenManager, err := auth.NewManager(cfg.Auth.JWT.SigningKey)
 	if err != nil {
 		logger.Error(err)

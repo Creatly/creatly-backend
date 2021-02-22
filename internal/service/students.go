@@ -124,11 +124,9 @@ func (s *StudentsService) GetModuleLessons(ctx context.Context, schoolId, studen
 	}
 
 	// If module has no offers - it's free and available to everyone
-	go func() {
-		if err := s.repo.GiveAccessToCourseAndModule(ctx, studentId, module.CourseID, moduleId); err != nil {
-			logger.Error(err)
-		}
-	}()
+	if err := s.repo.GiveAccessToCourseAndModule(ctx, studentId, module.CourseID, moduleId); err != nil {
+		return nil, err
+	}
 
 	return module.Lessons, nil
 }

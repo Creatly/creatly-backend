@@ -1,4 +1,4 @@
-package payment
+package fondy
 
 import (
 	"bytes"
@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/fatih/structs"
+	"github.com/zhashkevych/courses-backend/pkg/payment"
 	"io/ioutil"
 	"net/http"
 	"sort"
@@ -186,7 +187,7 @@ func NewFondyClient(merchantId string, merchantPassword string) *FondyClient {
 }
 
 // GeneratePaymentLink returns payment URL for provided order info
-func (c *FondyClient) GeneratePaymentLink(input GeneratePaymentLinkInput) (string, error) {
+func (c *FondyClient) GeneratePaymentLink(input payment.GeneratePaymentLinkInput) (string, error) {
 	checkoutReq := &checkoutRequest{
 		OrderId:           input.OrderId,
 		MerchantId:        c.merchantId,
@@ -228,9 +229,15 @@ func (c *FondyClient) GeneratePaymentLink(input GeneratePaymentLinkInput) (strin
 	return "", errors.New(apiResp.Response.ErrorMessage)
 }
 
-func (c *FondyClient) ValidateCallback(input Callback) error {
-	if !input.validateSignature(c.merchantPassword) {
+func (c *FondyClient) ValidateCallback(input interface{}) error {
+	callback, ok := input.(Callback)
+	if !ok {
+		return errors.New("invalid callback data")
+	}
+
+	if !callback.validateSignature(c.merchantPassword) {
 		return errors.New("invalid signature")
 	}
+
 	return nil
 }

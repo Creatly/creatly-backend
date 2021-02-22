@@ -3,7 +3,7 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/zhashkevych/courses-backend/internal/service"
-	"github.com/zhashkevych/courses-backend/pkg/payment"
+	"github.com/zhashkevych/courses-backend/pkg/payment/fondy"
 	"net/http"
 )
 
@@ -15,12 +15,12 @@ func (h *Handler) initCallbackRoutes(api *gin.RouterGroup) {
 }
 
 func (h *Handler) handleFondyCallback(c *gin.Context) {
-	if c.Request.UserAgent() != payment.FondyUserAgent {
+	if c.Request.UserAgent() != fondy.FondyUserAgent {
 		newResponse(c, http.StatusForbidden, "forbidden")
 		return
 	}
 
-	var inp payment.Callback
+	var inp fondy.Callback
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
 		return

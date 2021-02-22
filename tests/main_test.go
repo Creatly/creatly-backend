@@ -12,7 +12,7 @@ import (
 	emailmock "github.com/zhashkevych/courses-backend/pkg/email/mock"
 	"github.com/zhashkevych/courses-backend/pkg/hash"
 	"github.com/zhashkevych/courses-backend/pkg/otp"
-	"github.com/zhashkevych/courses-backend/pkg/payment"
+	"github.com/zhashkevych/courses-backend/pkg/payment/fondy"
 	"go.mongodb.org/mongo-driver/mongo"
 	"os"
 	"testing"
@@ -86,7 +86,7 @@ func (s *APITestSuite) initDeps() {
 	if err != nil {
 		s.FailNow("Failed to initialize token manager", err)
 	}
-	paymentProvider := payment.NewFondyClient("1396424", "test") // Fondy Testing Credentials
+	paymentProvider := fondy.NewFondyClient("1396424", "test") // Fondy Testing Credentials
 
 	services := service.NewServices(service.Deps{
 		Repos:                  repos,

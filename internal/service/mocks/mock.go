@@ -9,7 +9,7 @@ import (
 	gomock "github.com/golang/mock/gomock"
 	domain "github.com/zhashkevych/courses-backend/internal/domain"
 	service "github.com/zhashkevych/courses-backend/internal/service"
-	payment "github.com/zhashkevych/courses-backend/pkg/payment"
+	"github.com/zhashkevych/courses-backend/pkg/payment/fondy"
 	primitive "go.mongodb.org/mongo-driver/bson/primitive"
 	reflect "reflect"
 )
@@ -982,7 +982,7 @@ func (m *MockPayments) EXPECT() *MockPaymentsMockRecorder {
 }
 
 // ProcessTransaction mocks base method
-func (m *MockPayments) ProcessTransaction(ctx context.Context, callbackData payment.Callback) error {
+func (m *MockPayments) ProcessTransaction(ctx context.Context, callbackData fondy.Callback) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ProcessTransaction", ctx, callbackData)
 	ret0, _ := ret[0].(error)

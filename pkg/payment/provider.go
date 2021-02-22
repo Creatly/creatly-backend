@@ -9,7 +9,7 @@ type GeneratePaymentLinkInput struct {
 	ResponseURL string
 }
 
-type FondyProvider interface {
+type Provider interface {
 	GeneratePaymentLink(input GeneratePaymentLinkInput) (string, error)
-	ValidateCallback(input Callback) error
+	ValidateCallback(input interface{}) error
 }

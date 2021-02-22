@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"github.com/zhashkevych/courses-backend/pkg/otp"
+	"github.com/zhashkevych/courses-backend/pkg/payment/fondy"
 	"time"
 
 	"github.com/zhashkevych/courses-backend/internal/domain"
@@ -197,7 +198,7 @@ type Orders interface {
 }
 
 type Payments interface {
-	ProcessTransaction(ctx context.Context, callbackData payment.Callback) error
+	ProcessTransaction(ctx context.Context, callbackData fondy.Callback) error
 }
 
 type Services struct {
@@ -221,7 +222,7 @@ type Deps struct {
 	TokenManager           auth.TokenManager
 	EmailProvider          email.Provider
 	EmailListId            string
-	PaymentProvider        payment.FondyProvider
+	PaymentProvider        payment.Provider
 	AccessTokenTTL         time.Duration
 	RefreshTokenTTL        time.Duration
 	PaymentCallbackURL     string

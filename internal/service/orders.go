@@ -16,12 +16,12 @@ type OrdersService struct {
 	studentsService   Students
 
 	repo            repository.Orders
-	paymentProvider payment.FondyProvider
+	paymentProvider payment.Provider
 
 	callbackURL, responseURL string
 }
 
-func NewOrdersService(repo repository.Orders, offersService Offers, promoCodesService PromoCodes, studentsService Students, paymentProvider payment.FondyProvider, callbackURL, responseURL string) *OrdersService {
+func NewOrdersService(repo repository.Orders, offersService Offers, promoCodesService PromoCodes, studentsService Students, paymentProvider payment.Provider, callbackURL, responseURL string) *OrdersService {
 	return &OrdersService{
 		repo:              repo,
 		offersService:     offersService,
