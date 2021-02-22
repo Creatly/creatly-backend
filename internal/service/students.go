@@ -2,9 +2,10 @@ package service
 
 import (
 	"context"
+	"time"
+
 	"github.com/zhashkevych/courses-backend/pkg/otp"
 	"go.mongodb.org/mongo-driver/mongo"
-	"time"
 
 	"github.com/zhashkevych/courses-backend/internal/domain"
 	"github.com/zhashkevych/courses-backend/internal/repository"
@@ -64,13 +65,12 @@ func (s *StudentsService) SignUp(ctx context.Context, input StudentSignUpInput) 
 		return err
 	}
 
-	return nil
 	// TODO: If it fails, what then?
-	//return s.emailService.AddToList(AddToListInput{
-	//	Email:            student.Email,
-	//	Name:             student.Name,
-	//	VerificationCode: verificationCode,
-	//})
+	return s.emailService.AddToList(AddToListInput{
+		Email:            student.Email,
+		Name:             student.Name,
+		VerificationCode: verificationCode,
+	})
 }
 
 func (s *StudentsService) SignIn(ctx context.Context, input SignInInput) (Tokens, error) {
