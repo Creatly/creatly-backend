@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+
 	"github.com/zhashkevych/courses-backend/internal/domain"
 	"github.com/zhashkevych/courses-backend/internal/repository"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -58,6 +59,10 @@ func (s *ModulesService) GetWithContent(ctx context.Context, moduleId primitive.
 
 func (s *ModulesService) GetByPackages(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Module, error) {
 	return s.repo.GetByPackages(ctx, packageIds)
+}
+
+func (s *ModulesService) GetByLesson(ctx context.Context, lessonId primitive.ObjectID) (domain.Module, error) {
+	return s.repo.GetByLesson(ctx, lessonId)
 }
 
 func (s *ModulesService) Create(ctx context.Context, inp CreateModuleInput) (primitive.ObjectID, error) {

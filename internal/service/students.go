@@ -64,12 +64,13 @@ func (s *StudentsService) SignUp(ctx context.Context, input StudentSignUpInput) 
 		return err
 	}
 
+	return nil
 	// TODO: If it fails, what then?
-	return s.emailService.AddToList(AddToListInput{
-		Email:            student.Email,
-		Name:             student.Name,
-		VerificationCode: verificationCode,
-	})
+	//return s.emailService.AddToList(AddToListInput{
+	//	Email:            student.Email,
+	//	Name:             student.Name,
+	//	VerificationCode: verificationCode,
+	//})
 }
 
 func (s *StudentsService) SignIn(ctx context.Context, input SignInInput) (Tokens, error) {
@@ -132,6 +133,24 @@ func (s *StudentsService) GetModuleLessons(ctx context.Context, schoolId, studen
 	}()
 
 	return module.Lessons, nil
+}
+
+func (s *StudentsService) IsLessonAvailable(ctx context.Context, studentId, lessonId primitive.ObjectID) error {
+	module, err := s.modulesService.GetByLesson(ctx, lessonId)
+	if err != nil {
+		return err
+	}
+
+	student, err := s.GetById(ctx, studentId)
+	if err != nil {
+		return err
+	}
+
+	if !student.IsModuleAvailable(module) {
+		return ErrModuleIsNotAvailable
+	}
+
+	return nil
 }
 
 func (s *StudentsService) GiveAccessToPackages(ctx context.Context, studentId primitive.ObjectID, packageIds []primitive.ObjectID) error {

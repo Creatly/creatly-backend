@@ -2,8 +2,9 @@ package service
 
 import (
 	"context"
-	"github.com/zhashkevych/courses-backend/pkg/otp"
 	"time"
+
+	"github.com/zhashkevych/courses-backend/pkg/otp"
 
 	"github.com/zhashkevych/courses-backend/internal/domain"
 	"github.com/zhashkevych/courses-backend/internal/repository"
@@ -57,10 +58,16 @@ type Students interface {
 	RefreshTokens(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (Tokens, error)
 	Verify(ctx context.Context, hash string) error
 	GetModuleLessons(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) ([]domain.Lesson, error)
+	IsLessonAvailable(ctx context.Context, studentId, lessonId primitive.ObjectID) error
 	GiveAccessToPackages(ctx context.Context, studentId primitive.ObjectID, packageIds []primitive.ObjectID) error
 	GetAvailableCourses(ctx context.Context, school domain.School, studentId primitive.ObjectID) ([]domain.Course, error)
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.Student, error)
 	GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Student, error)
+}
+
+type StudentLessons interface {
+	AddFinished(ctx context.Context, studentId, lessonId primitive.ObjectID) error
+	SetLastOpened(ctx context.Context, studentId, lessonId primitive.ObjectID) error
 }
 
 type Admins interface {
@@ -146,6 +153,7 @@ type Modules interface {
 	GetById(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
 	GetByPackages(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Module, error)
 	GetWithContent(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
+	GetByLesson(ctx context.Context, lessonId primitive.ObjectID) (domain.Module, error)
 }
 
 type AddLessonInput struct {
@@ -201,17 +209,18 @@ type Payments interface {
 }
 
 type Services struct {
-	Schools    Schools
-	Students   Students
-	Courses    Courses
-	PromoCodes PromoCodes
-	Offers     Offers
-	Packages   Packages
-	Modules    Modules
-	Lessons    Lessons
-	Payments   Payments
-	Orders     Orders
-	Admins     Admins
+	Schools        Schools
+	Students       Students
+	StudentLessons StudentLessons
+	Courses        Courses
+	PromoCodes     PromoCodes
+	Offers         Offers
+	Packages       Packages
+	Modules        Modules
+	Lessons        Lessons
+	Payments       Payments
+	Orders         Orders
+	Admins         Admins
 }
 
 type Deps struct {
@@ -240,19 +249,21 @@ func NewServices(deps Deps) *Services {
 	promoCodesService := NewPromoCodeService(deps.Repos.PromoCodes)
 	studentsService := NewStudentsService(deps.Repos.Students, modulesService, offersService, deps.Hasher,
 		deps.TokenManager, emailsService, deps.AccessTokenTTL, deps.RefreshTokenTTL, deps.OtpGenerator, deps.VerificationCodeLength)
+	studentLessonsService := NewStudentLessonsService(deps.Repos.StudentLessons)
 	ordersService := NewOrdersService(deps.Repos.Orders, offersService, promoCodesService, studentsService, deps.PaymentProvider, deps.PaymentCallbackURL, deps.PaymentResponseURL)
 
 	return &Services{
-		Schools:    NewSchoolsService(deps.Repos.Schools, deps.Cache, deps.CacheTTL),
-		Students:   studentsService,
-		Courses:    coursesService,
-		PromoCodes: promoCodesService,
-		Offers:     offersService,
-		Modules:    modulesService,
-		Payments:   NewPaymentsService(deps.PaymentProvider, ordersService, offersService, studentsService),
-		Orders:     ordersService,
-		Admins:     NewAdminsService(deps.Hasher, deps.TokenManager, deps.Repos.Admins, deps.Repos.Schools, deps.AccessTokenTTL, deps.RefreshTokenTTL),
-		Packages:   packagesService,
-		Lessons:    NewLessonsService(deps.Repos.Modules, deps.Repos.LessonContent),
+		Schools:        NewSchoolsService(deps.Repos.Schools, deps.Cache, deps.CacheTTL),
+		Students:       studentsService,
+		StudentLessons: studentLessonsService,
+		Courses:        coursesService,
+		PromoCodes:     promoCodesService,
+		Offers:         offersService,
+		Modules:        modulesService,
+		Payments:       NewPaymentsService(deps.PaymentProvider, ordersService, offersService, studentsService),
+		Orders:         ordersService,
+		Admins:         NewAdminsService(deps.Hasher, deps.TokenManager, deps.Repos.Admins, deps.Repos.Schools, deps.AccessTokenTTL, deps.RefreshTokenTTL),
+		Packages:       packagesService,
+		Lessons:        NewLessonsService(deps.Repos.Modules, deps.Repos.LessonContent),
 	}
 }

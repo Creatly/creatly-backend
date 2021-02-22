@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+
 	"github.com/zhashkevych/courses-backend/internal/domain"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -32,6 +33,11 @@ type Students interface {
 	GiveAccessToCourseAndModule(ctx context.Context, studentId, courseId, moduleId primitive.ObjectID) error
 	GiveAccessToCoursesAndModules(ctx context.Context, studentId primitive.ObjectID, courseIds, moduleIds []primitive.ObjectID) error
 	Verify(ctx context.Context, code string) error
+}
+
+type StudentLessons interface {
+	AddFinished(ctx context.Context, studentId, lessonId primitive.ObjectID) error
+	SetLastOpened(ctx context.Context, studentId, lessonId primitive.ObjectID) error
 }
 
 type Admins interface {
@@ -132,29 +138,31 @@ type Orders interface {
 }
 
 type Repositories struct {
-	Schools       Schools
-	Students      Students
-	Courses       Courses
-	Modules       Modules
-	Packages      Packages
-	LessonContent LessonContent
-	Offers        Offers
-	PromoCodes    PromoCodes
-	Orders        Orders
-	Admins        Admins
+	Schools        Schools
+	Students       Students
+	StudentLessons StudentLessons
+	Courses        Courses
+	Modules        Modules
+	Packages       Packages
+	LessonContent  LessonContent
+	Offers         Offers
+	PromoCodes     PromoCodes
+	Orders         Orders
+	Admins         Admins
 }
 
 func NewRepositories(db *mongo.Database) *Repositories {
 	return &Repositories{
-		Schools:       NewSchoolsRepo(db),
-		Students:      NewStudentsRepo(db),
-		Courses:       NewCoursesRepo(db),
-		Modules:       NewModulesRepo(db),
-		LessonContent: NewLessonContentRepo(db),
-		Offers:        NewOffersRepo(db),
-		PromoCodes:    NewPromocodeRepo(db),
-		Orders:        NewOrdersRepo(db),
-		Admins:        NewAdminsRepo(db),
-		Packages:      NewPackagesRepo(db),
+		Schools:        NewSchoolsRepo(db),
+		Students:       NewStudentsRepo(db),
+		StudentLessons: NewStudentLessonsRepo(db),
+		Courses:        NewCoursesRepo(db),
+		Modules:        NewModulesRepo(db),
+		LessonContent:  NewLessonContentRepo(db),
+		Offers:         NewOffersRepo(db),
+		PromoCodes:     NewPromocodeRepo(db),
+		Orders:         NewOrdersRepo(db),
+		Admins:         NewAdminsRepo(db),
+		Packages:       NewPackagesRepo(db),
 	}
 }
