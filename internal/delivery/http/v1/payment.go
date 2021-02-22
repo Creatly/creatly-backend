@@ -8,9 +8,9 @@ import (
 )
 
 func (h *Handler) initCallbackRoutes(api *gin.RouterGroup) {
-	students := api.Group("/callback")
+	callback := api.Group("/callback")
 	{
-		students.POST("/fondy", h.handleFondyCallback)
+		callback.POST("/fondy", h.handleFondyCallback)
 	}
 }
 
