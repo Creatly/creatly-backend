@@ -162,18 +162,33 @@ func (mr *MockStudentsMockRecorder) GetModuleLessons(ctx, schoolId, studentId, m
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetModuleLessons", reflect.TypeOf((*MockStudents)(nil).GetModuleLessons), ctx, schoolId, studentId, moduleId)
 }
 
-// IsLessonAvailable mocks base method
-func (m *MockStudents) IsLessonAvailable(ctx context.Context, studentId, lessonId primitive.ObjectID) error {
+// GetLesson mocks base method
+func (m *MockStudents) GetLesson(ctx context.Context, studentId, lessonId primitive.ObjectID) (domain.Lesson, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "IsLessonAvailable", ctx, studentId, lessonId)
+	ret := m.ctrl.Call(m, "GetLesson", ctx, studentId, lessonId)
+	ret0, _ := ret[0].(domain.Lesson)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetLesson indicates an expected call of GetLesson
+func (mr *MockStudentsMockRecorder) GetLesson(ctx, studentId, lessonId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetLesson", reflect.TypeOf((*MockStudents)(nil).GetLesson), ctx, studentId, lessonId)
+}
+
+// SetLessonFinished mocks base method
+func (m *MockStudents) SetLessonFinished(ctx context.Context, studentId, lessonId primitive.ObjectID) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SetLessonFinished", ctx, studentId, lessonId)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// IsLessonAvailable indicates an expected call of IsLessonAvailable
-func (mr *MockStudentsMockRecorder) IsLessonAvailable(ctx, studentId, lessonId interface{}) *gomock.Call {
+// SetLessonFinished indicates an expected call of SetLessonFinished
+func (mr *MockStudentsMockRecorder) SetLessonFinished(ctx, studentId, lessonId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsLessonAvailable", reflect.TypeOf((*MockStudents)(nil).IsLessonAvailable), ctx, studentId, lessonId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetLessonFinished", reflect.TypeOf((*MockStudents)(nil).SetLessonFinished), ctx, studentId, lessonId)
 }
 
 // GiveAccessToPackages mocks base method

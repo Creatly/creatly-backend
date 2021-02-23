@@ -58,7 +58,8 @@ type Students interface {
 	RefreshTokens(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (Tokens, error)
 	Verify(ctx context.Context, hash string) error
 	GetModuleLessons(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) ([]domain.Lesson, error)
-	IsLessonAvailable(ctx context.Context, studentId, lessonId primitive.ObjectID) error
+	GetLesson(ctx context.Context, studentId, lessonId primitive.ObjectID) (domain.Lesson, error)
+	SetLessonFinished(ctx context.Context, studentId, lessonId primitive.ObjectID) error
 	GiveAccessToPackages(ctx context.Context, studentId primitive.ObjectID, packageIds []primitive.ObjectID) error
 	GetAvailableCourses(ctx context.Context, school domain.School, studentId primitive.ObjectID) ([]domain.Course, error)
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.Student, error)
@@ -247,9 +248,10 @@ func NewServices(deps Deps) *Services {
 	packagesService := NewPackagesService(deps.Repos.Packages, deps.Repos.Modules)
 	offersService := NewOffersService(deps.Repos.Offers, modulesService, packagesService)
 	promoCodesService := NewPromoCodeService(deps.Repos.PromoCodes)
-	studentsService := NewStudentsService(deps.Repos.Students, modulesService, offersService, deps.Hasher,
-		deps.TokenManager, emailsService, deps.AccessTokenTTL, deps.RefreshTokenTTL, deps.OtpGenerator, deps.VerificationCodeLength)
+	lessonsService := NewLessonsService(deps.Repos.Modules, deps.Repos.LessonContent)
 	studentLessonsService := NewStudentLessonsService(deps.Repos.StudentLessons)
+	studentsService := NewStudentsService(deps.Repos.Students, modulesService, offersService, lessonsService, deps.Hasher,
+		deps.TokenManager, emailsService, studentLessonsService, deps.AccessTokenTTL, deps.RefreshTokenTTL, deps.OtpGenerator, deps.VerificationCodeLength)
 	ordersService := NewOrdersService(deps.Repos.Orders, offersService, promoCodesService, studentsService, deps.PaymentProvider, deps.PaymentCallbackURL, deps.PaymentResponseURL)
 
 	return &Services{
@@ -264,6 +266,6 @@ func NewServices(deps Deps) *Services {
 		Orders:         ordersService,
 		Admins:         NewAdminsService(deps.Hasher, deps.TokenManager, deps.Repos.Admins, deps.Repos.Schools, deps.AccessTokenTTL, deps.RefreshTokenTTL),
 		Packages:       packagesService,
-		Lessons:        NewLessonsService(deps.Repos.Modules, deps.Repos.LessonContent),
+		Lessons:        lessonsService,
 	}
 }

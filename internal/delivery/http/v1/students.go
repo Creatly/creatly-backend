@@ -281,23 +281,12 @@ func (h *Handler) studentGetLesson(c *gin.Context) {
 		return
 	}
 
-	err = h.services.Students.IsLessonAvailable(c.Request.Context(), studentId, lessonId)
+	lesson, err := h.services.Students.GetLesson(c.Request.Context(), studentId, lessonId)
 	if err != nil {
 		if err == service.ErrModuleIsNotAvailable {
 			newResponse(c, http.StatusForbidden, err.Error())
 			return
 		}
-		newResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	lesson, err := h.services.Lessons.GetById(c.Request.Context(), lessonId)
-	if err != nil {
-		newResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	if err := h.services.StudentLessons.SetLastOpened(c.Request.Context(), studentId, lessonId); err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -337,17 +326,11 @@ func (h *Handler) studentSetLessonFinished(c *gin.Context) {
 		return
 	}
 
-	err = h.services.Students.IsLessonAvailable(c.Request.Context(), studentId, lessonId)
-	if err != nil {
+	if err := h.services.Students.SetLessonFinished(c.Request.Context(), studentId, lessonId); err != nil {
 		if err == service.ErrModuleIsNotAvailable {
 			newResponse(c, http.StatusForbidden, err.Error())
 			return
 		}
-		newResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	if err := h.services.StudentLessons.AddFinished(c.Request.Context(), studentId, lessonId); err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
