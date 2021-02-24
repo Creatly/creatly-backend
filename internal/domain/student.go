@@ -33,3 +33,9 @@ type Verification struct {
 	Code     string `json:"code" bson:"code"`
 	Verified bool   `json:"verified" bson:"verified"`
 }
+
+type StudentLessons struct {
+	StudentID  primitive.ObjectID   `json:"studentId" bson:"studentId"`
+	Finished   []primitive.ObjectID `json:"finished" bson:"finished"`
+	LastOpened primitive.ObjectID   `json:"lastOpened" bson:"lastOpened"`
+}

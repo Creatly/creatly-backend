@@ -2,8 +2,9 @@ package service
 
 import (
 	"context"
-	"github.com/zhashkevych/courses-backend/pkg/otp"
 	"time"
+
+	"github.com/zhashkevych/courses-backend/pkg/otp"
 
 	"github.com/zhashkevych/courses-backend/internal/domain"
 	"github.com/zhashkevych/courses-backend/internal/repository"
@@ -19,23 +20,27 @@ type StudentsService struct {
 	tokenManager auth.TokenManager
 	otpGenerator otp.Generator
 
-	modulesService Modules
-	offersService  Offers
-	emailService   Emails
+	modulesService        Modules
+	offersService         Offers
+	emailService          Emails
+	lessonsService        Lessons
+	studentLessonsService StudentLessons
 
 	accessTokenTTL         time.Duration
 	refreshTokenTTL        time.Duration
 	verificationCodeLength int
 }
 
-func NewStudentsService(repo repository.Students, modulesService Modules, offersService Offers, hasher hash.PasswordHasher, tokenManager auth.TokenManager,
-	emailService Emails, accessTTL, refreshTTL time.Duration, otpGenerator otp.Generator, verificationCodeLength int) *StudentsService {
+func NewStudentsService(repo repository.Students, modulesService Modules, offersService Offers, lessonsService Lessons, hasher hash.PasswordHasher, tokenManager auth.TokenManager,
+	emailService Emails, studentLessonsService StudentLessons, accessTTL, refreshTTL time.Duration, otpGenerator otp.Generator, verificationCodeLength int) *StudentsService {
 	return &StudentsService{
 		repo:                   repo,
 		modulesService:         modulesService,
 		offersService:          offersService,
 		hasher:                 hasher,
 		emailService:           emailService,
+		lessonsService:         lessonsService,
+		studentLessonsService:  studentLessonsService,
 		tokenManager:           tokenManager,
 		accessTokenTTL:         accessTTL,
 		refreshTokenTTL:        refreshTTL,
@@ -131,6 +136,36 @@ func (s *StudentsService) GetModuleLessons(ctx context.Context, schoolId, studen
 	return module.Lessons, nil
 }
 
+func (s *StudentsService) GetLesson(ctx context.Context, studentId, lessonId primitive.ObjectID) (domain.Lesson, error) {
+	if err := s.isLessonAvailable(ctx, studentId, lessonId); err != nil {
+		return domain.Lesson{}, err
+	}
+
+	lesson, err := s.lessonsService.GetById(ctx, lessonId)
+	if err != nil {
+		return domain.Lesson{}, err
+	}
+
+	if err := s.studentLessonsService.SetLastOpened(ctx, studentId, lessonId); err != nil {
+		return domain.Lesson{}, err
+	}
+
+	return lesson, nil
+}
+
+func (s *StudentsService) SetLessonFinished(ctx context.Context, studentId, lessonId primitive.ObjectID) error {
+	err := s.isLessonAvailable(ctx, studentId, lessonId)
+	if err != nil {
+		return err
+	}
+
+	if err := s.studentLessonsService.AddFinished(ctx, studentId, lessonId); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (s *StudentsService) GiveAccessToPackages(ctx context.Context, studentId primitive.ObjectID, packageIds []primitive.ObjectID) error {
 	modules, err := s.modulesService.GetByPackages(ctx, packageIds)
 	if err != nil {
@@ -201,4 +236,22 @@ func (s *StudentsService) createSession(ctx context.Context, studentId primitive
 
 	err = s.repo.SetSession(ctx, studentId, session)
 	return res, err
+}
+
+func (s *StudentsService) isLessonAvailable(ctx context.Context, studentId, lessonId primitive.ObjectID) error {
+	module, err := s.modulesService.GetByLesson(ctx, lessonId)
+	if err != nil {
+		return err
+	}
+
+	student, err := s.GetById(ctx, studentId)
+	if err != nil {
+		return err
+	}
+
+	if !student.IsModuleAvailable(module) {
+		return ErrModuleIsNotAvailable
+	}
+
+	return nil
 }
