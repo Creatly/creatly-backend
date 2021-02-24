@@ -42,7 +42,7 @@ func NewHandler(services *service.Services, tokenManager auth.TokenManager) *Han
 	}
 }
 
-func (h *Handler) Init(host, port string, limiterConfig config.LimiterConfig) *gin.Engine {
+func (h *Handler) Init(host, port string, limiterConfig config.LimiterConfig, corsConfig config.CorsConfig) *gin.Engine {
 	// Init gin handler
 	router := gin.Default()
 	router.Use(
@@ -50,7 +50,7 @@ func (h *Handler) Init(host, port string, limiterConfig config.LimiterConfig) *g
 		gin.Logger(),
 		limiter.Limit(limiterConfig.RPS, limiterConfig.Burst, limiterConfig.TTL),
 		cors.New(cors.Config{
-			AllowOrigins:     []string{"http://localhost", "http://localhost:1337"},
+			AllowOrigins:     corsConfig.AllowOrigins,
 			AllowMethods:     []string{"*"},
 			AllowHeaders:     []string{"*"},
 			ExposeHeaders:    []string{"Content-Length"},

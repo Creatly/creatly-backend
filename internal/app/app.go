@@ -86,7 +86,7 @@ func Run(configPath string) {
 	handlers := http.NewHandler(services, tokenManager)
 
 	// HTTP Server
-	srv := server.NewServer(cfg, handlers.Init(cfg.HTTP.Host, cfg.HTTP.Port, cfg.Limiter))
+	srv := server.NewServer(cfg, handlers.Init(cfg.HTTP.Host, cfg.HTTP.Port, cfg.Limiter, cfg.Cors))
 	go func() {
 		if err := srv.Run(); err != nil {
 			logrus.Errorf("error occurred while running http server: %s\n", err.Error())
