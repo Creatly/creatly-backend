@@ -104,7 +104,7 @@ type Courses interface {
 
 type PromoCodes interface {
 	GetByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.PromoCode, error)
-	GetById(ctx context.Context, id primitive.ObjectID) (domain.PromoCode, error)
+	GetById(ctx context.Context, schoolId, id primitive.ObjectID) (domain.PromoCode, error)
 }
 
 type CreateOfferInput struct {
@@ -206,7 +206,7 @@ type Orders interface {
 }
 
 type Payments interface {
-	ProcessTransaction(ctx context.Context, callbackData payment.Callback) error
+	ProcessTransaction(ctx context.Context, callback interface{}) error
 }
 
 type Services struct {
@@ -231,7 +231,7 @@ type Deps struct {
 	TokenManager           auth.TokenManager
 	EmailProvider          email.Provider
 	EmailListId            string
-	PaymentProvider        payment.FondyProvider
+	PaymentProvider        payment.Provider
 	AccessTokenTTL         time.Duration
 	RefreshTokenTTL        time.Duration
 	PaymentCallbackURL     string

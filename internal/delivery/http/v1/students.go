@@ -24,7 +24,6 @@ func (h *Handler) initStudentsRoutes(api *gin.RouterGroup) {
 			authenticated.GET("/modules/:id/offers", h.studentGetModuleOffers)
 			authenticated.GET("/lessons/:id", h.studentGetLesson)
 			authenticated.POST("/lessons/:id/finished", h.studentSetLessonFinished)
-			authenticated.GET("/promocodes/:code", h.studentGetPromo)
 			authenticated.POST("/order", h.studentCreateOrder)
 		}
 	}
@@ -194,7 +193,7 @@ func (h *Handler) studentVerify(c *gin.Context) {
 		return
 	}
 
-	newResponse(c, http.StatusOK, "success")
+	c.JSON(http.StatusOK, response{"success"})
 }
 
 // @Summary Student Get Lessons By Module ModuleID
@@ -413,41 +412,6 @@ func (h *Handler) studentGetModuleOffers(c *gin.Context) {
 	c.JSON(http.StatusOK, dataResponse{toStudentOffers(offers)})
 }
 
-// @Summary Student Get PromoCode By Code
-// @Security StudentsAuth
-// @Tags students-courses
-// @Description student get promocode by code
-// @ModuleID studentGetPromo
-// @Accept  json
-// @Produce  json
-// @Param code path string true "code"
-// @Success 200 {object} domain.PromoCode
-// @Failure 400,404 {object} response
-// @Failure 500 {object} response
-// @Failure default {object} response
-// @Router /students/promocodes/{code} [get]
-func (h *Handler) studentGetPromo(c *gin.Context) {
-	code := c.Param("code")
-	if code == "" {
-		newResponse(c, http.StatusBadRequest, "empty code param")
-		return
-	}
-
-	school, err := getSchoolFromContext(c)
-	if err != nil {
-		newResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	promocode, err := h.services.PromoCodes.GetByCode(c.Request.Context(), school.ID, code)
-	if err != nil {
-		newResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	c.JSON(http.StatusOK, promocode)
-}
-
 type createOrderInput struct {
 	OfferId string `json:"offerId" binding:"required"`
 	PromoId string `json:"promoId"`
@@ -502,8 +466,14 @@ func (h *Handler) studentCreateOrder(c *gin.Context) {
 
 	paymentLink, err := h.services.Orders.Create(c.Request.Context(), studentId, offerId, promoId)
 	if err != nil {
-		newResponse(c, http.StatusInternalServerError, err.Error())
-		return
+		switch err {
+		case service.ErrPromoNotFound, service.ErrOfferNotFound, service.ErrUserNotFound, service.ErrPromocodeExpired:
+			newResponse(c, http.StatusBadRequest, err.Error())
+			return
+		default:
+			newResponse(c, http.StatusInternalServerError, err.Error())
+			return
+		}
 	}
 
 	c.JSON(http.StatusOK, createOrderResponse{paymentLink})

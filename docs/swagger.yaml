@@ -1490,6 +1490,43 @@ paths:
       summary: Get Course Offers
       tags:
       - courses
+  /promocodes/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get promocode by code
+      parameters:
+      - description: code
+        in: path
+        name: code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.PromoCode'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      summary: Get PromoCode By Code
+      tags:
+      - promocodes
   /settings:
     get:
       description: school get settings
@@ -1789,45 +1826,6 @@ paths:
       security:
       - StudentsAuth: []
       summary: Student CreateOrder
-      tags:
-      - students-courses
-  /students/promocodes/{code}:
-    get:
-      consumes:
-      - application/json
-      description: student get promocode by code
-      parameters:
-      - description: code
-        in: path
-        name: code
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/domain.PromoCode'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/v1.response'
-        "404":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/v1.response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/v1.response'
-        default:
-          description: ""
-          schema:
-            $ref: '#/definitions/v1.response'
-      security:
-      - StudentsAuth: []
-      summary: Student Get PromoCode By Code
       tags:
       - students-courses
   /students/sign-in:

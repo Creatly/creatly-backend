@@ -20,7 +20,7 @@ export CONTAINER_NAME=test_db
 test.integration:
 	docker run --rm -d -p 27019:27017 --name $$CONTAINER_NAME -e MONGODB_DATABASE=$$DB_NAME mongo:4.4-bionic
 
-	GIN_MODE=release go test -v ./tests/ || :
+	GIN_MODE=release go test -v ./tests/
 	docker stop $$CONTAINER_NAME
 
 test.coverage:

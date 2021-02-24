@@ -16,12 +16,12 @@ type OrdersService struct {
 	studentsService   Students
 
 	repo            repository.Orders
-	paymentProvider payment.FondyProvider
+	paymentProvider payment.Provider
 
 	callbackURL, responseURL string
 }
 
-func NewOrdersService(repo repository.Orders, offersService Offers, promoCodesService PromoCodes, studentsService Students, paymentProvider payment.FondyProvider, callbackURL, responseURL string) *OrdersService {
+func NewOrdersService(repo repository.Orders, offersService Offers, promoCodesService PromoCodes, studentsService Students, paymentProvider payment.Provider, callbackURL, responseURL string) *OrdersService {
 	return &OrdersService{
 		repo:              repo,
 		offersService:     offersService,
@@ -34,18 +34,25 @@ func NewOrdersService(repo repository.Orders, offersService Offers, promoCodesSe
 }
 
 func (s *OrdersService) Create(ctx context.Context, studentId, offerId, promocodeId primitive.ObjectID) (string, error) {
-	promocode, err := s.getOrderPromocode(ctx, promocodeId)
+	offer, err := s.offersService.GetById(ctx, offerId)
 	if err != nil {
+		if err == repository.ErrOfferNotFound {
+			return "", ErrOfferNotFound
+		}
+
 		return "", err
 	}
 
-	offer, err := s.offersService.GetById(ctx, offerId)
+	promocode, err := s.getOrderPromocode(ctx, offer.SchoolID, promocodeId)
 	if err != nil {
 		return "", err
 	}
 
 	student, err := s.studentsService.GetById(ctx, studentId)
 	if err != nil {
+		if err == repository.ErrUserNotFound {
+			return "", ErrUserNotFound
+		}
 		return "", err
 	}
 
@@ -78,6 +85,7 @@ func (s *OrdersService) Create(ctx context.Context, studentId, offerId, promocod
 			Name: offer.Name,
 		},
 		Amount:       orderAmount,
+		Currency:     offer.Price.Currency,
 		CreatedAt:    time.Now(),
 		Status:       domain.OrderStatusCreated,
 		Transactions: make([]domain.Transaction, 0),
@@ -105,14 +113,14 @@ func (s *OrdersService) GetBySchool(ctx context.Context, schoolId primitive.Obje
 	return s.repo.GetBySchool(ctx, schoolId)
 }
 
-func (s *OrdersService) getOrderPromocode(ctx context.Context, promocodeId primitive.ObjectID) (domain.PromoCode, error) {
+func (s *OrdersService) getOrderPromocode(ctx context.Context, schoolId, promocodeId primitive.ObjectID) (domain.PromoCode, error) {
 	var (
 		promocode domain.PromoCode
 		err       error
 	)
 
 	if !promocodeId.IsZero() {
-		promocode, err = s.promoCodesService.GetById(ctx, promocodeId)
+		promocode, err = s.promoCodesService.GetById(ctx, schoolId, promocodeId)
 		if err != nil {
 			return promocode, err
 		}
@@ -129,6 +137,6 @@ func (s *OrdersService) calculateOrderPrice(price uint, promocode domain.PromoCo
 	if promocode.ID.IsZero() {
 		return price
 	} else {
-		return (price * uint(100 - promocode.DiscountPercentage)) / 100
+		return (price * uint(100-promocode.DiscountPercentage)) / 100
 	}
 }

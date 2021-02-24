@@ -2,7 +2,9 @@ package http
 
 import (
 	"fmt"
+	"github.com/gin-contrib/cors"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -47,6 +49,14 @@ func (h *Handler) Init(host, port string, limiterConfig config.LimiterConfig) *g
 		gin.Recovery(),
 		gin.Logger(),
 		limiter.Limit(limiterConfig.RPS, limiterConfig.Burst, limiterConfig.TTL),
+		cors.New(cors.Config{
+			AllowOrigins:     []string{"http://localhost", "http://localhost:1337"},
+			AllowMethods:     []string{"*"},
+			AllowHeaders:     []string{"*"},
+			ExposeHeaders:    []string{"Content-Length"},
+			AllowCredentials: true,
+			MaxAge:           12 * time.Hour,
+		}),
 	)
 
 	docs.SwaggerInfo.Host = fmt.Sprintf("%s:%s", host, port)

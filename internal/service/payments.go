@@ -5,29 +5,42 @@ import (
 	"encoding/json"
 	"github.com/zhashkevych/courses-backend/internal/domain"
 	"github.com/zhashkevych/courses-backend/pkg/payment"
+	"github.com/zhashkevych/courses-backend/pkg/payment/fondy"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
 )
 
 type PaymentsService struct {
-	paymentProvider payment.FondyProvider
+	paymentProvider payment.Provider
 	ordersService   Orders
 	offersService   Offers
 	studentsService Students
 }
 
-func NewPaymentsService(paymentProvider payment.FondyProvider, ordersService Orders, offersService Offers, studentsService Students) *PaymentsService {
+func NewPaymentsService(paymentProvider payment.Provider, ordersService Orders, offersService Offers, studentsService Students) *PaymentsService {
 	return &PaymentsService{paymentProvider: paymentProvider, ordersService: ordersService, offersService: offersService, studentsService: studentsService}
 }
 
-// TODO callback data validation?
-func (s *PaymentsService) ProcessTransaction(ctx context.Context, callbackData payment.Callback) error {
-	orderId, err := primitive.ObjectIDFromHex(callbackData.OrderId)
+func (s *PaymentsService) ProcessTransaction(ctx context.Context, callback interface{}) error {
+	switch callback.(type) {
+	case fondy.Callback:
+		return s.processFondyCallback(ctx, callback.(fondy.Callback))
+	default:
+		return ErrUnknownCallbackType
+	}
+}
+
+func (s *PaymentsService) processFondyCallback(ctx context.Context, callback fondy.Callback) error {
+	if err := s.paymentProvider.ValidateCallback(callback); err != nil {
+		return ErrTransactionInvalid
+	}
+
+	orderId, err := primitive.ObjectIDFromHex(callback.OrderId)
 	if err != nil {
 		return err
 	}
 
-	transaction, err := createTransaction(callbackData)
+	transaction, err := createTransaction(callback)
 	if err != nil {
 		return err
 	}
@@ -49,7 +62,7 @@ func (s *PaymentsService) ProcessTransaction(ctx context.Context, callbackData p
 	return s.studentsService.GiveAccessToPackages(ctx, order.Student.ID, offer.PackageIDs)
 }
 
-func createTransaction(callbackData payment.Callback) (domain.Transaction, error) {
+func createTransaction(callbackData fondy.Callback) (domain.Transaction, error) {
 	var status string
 	if !callbackData.Success() {
 		status = domain.OrderStatusFailed

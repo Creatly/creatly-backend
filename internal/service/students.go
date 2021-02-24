@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/zhashkevych/courses-backend/pkg/otp"
-	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/zhashkevych/courses-backend/internal/domain"
 	"github.com/zhashkevych/courses-backend/internal/repository"
@@ -80,7 +79,7 @@ func (s *StudentsService) SignUp(ctx context.Context, input StudentSignUpInput) 
 func (s *StudentsService) SignIn(ctx context.Context, input SignInInput) (Tokens, error) {
 	student, err := s.repo.GetByCredentials(ctx, input.SchoolID, input.Email, s.hasher.Hash(input.Password))
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
+		if err == repository.ErrUserNotFound {
 			return Tokens{}, ErrUserNotFound
 		}
 		return Tokens{}, err
@@ -130,11 +129,9 @@ func (s *StudentsService) GetModuleLessons(ctx context.Context, schoolId, studen
 	}
 
 	// If module has no offers - it's free and available to everyone
-	go func() {
-		if err := s.repo.GiveAccessToCourseAndModule(ctx, studentId, module.CourseID, moduleId); err != nil {
-			logger.Error(err)
-		}
-	}()
+	if err := s.repo.GiveAccessToCourseAndModule(ctx, studentId, module.CourseID, moduleId); err != nil {
+		return nil, err
+	}
 
 	return module.Lessons, nil
 }

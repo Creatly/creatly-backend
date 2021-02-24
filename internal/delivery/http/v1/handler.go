@@ -27,5 +27,6 @@ func (h *Handler) Init(api *gin.RouterGroup) {
 		h.initAdminRoutes(v1)
 
 		v1.GET("/settings", h.setSchoolFromRequest, h.getSchoolSettings)
+		v1.GET("/promocodes/:code", h.setSchoolFromRequest, h.getPromo)
 	}
 }

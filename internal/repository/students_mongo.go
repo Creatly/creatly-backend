@@ -27,23 +27,44 @@ func (r *StudentsRepo) Create(ctx context.Context, student domain.Student) error
 
 func (r *StudentsRepo) GetByCredentials(ctx context.Context, schoolId primitive.ObjectID, email, password string) (domain.Student, error) {
 	var student domain.Student
-	err := r.db.FindOne(ctx, bson.M{"email": email, "password": password, "schoolId": schoolId, "verification.verified": true}).Decode(&student)
-	return student, err
+	if err := r.db.FindOne(ctx, bson.M{"email": email, "password": password, "schoolId": schoolId, "verification.verified": true}).
+		Decode(&student); err != nil {
+		if err == mongo.ErrNoDocuments {
+			return domain.Student{}, ErrUserNotFound
+		}
+
+		return domain.Student{}, err
+	}
+
+	return student, nil
 }
 
 func (r *StudentsRepo) GetByRefreshToken(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (domain.Student, error) {
 	var student domain.Student
-	err := r.db.FindOne(ctx, bson.M{"session.refreshToken": refreshToken, "schoolId": schoolId,
-		"session.expiresAt": bson.M{"$gt": time.Now()}}).Decode(&student)
+	if err := r.db.FindOne(ctx, bson.M{"session.refreshToken": refreshToken, "schoolId": schoolId,
+		"session.expiresAt": bson.M{"$gt": time.Now()}}).Decode(&student); err != nil {
+		if err == mongo.ErrNoDocuments {
+			return domain.Student{}, ErrUserNotFound
+		}
 
-	return student, err
+		return domain.Student{}, err
+	}
+
+	return student, nil
 }
 
 func (r *StudentsRepo) GetById(ctx context.Context, id primitive.ObjectID) (domain.Student, error) {
 	var student domain.Student
 	err := r.db.FindOne(ctx, bson.M{"_id": id, "verification.verified": true}).Decode(&student)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return domain.Student{}, ErrUserNotFound
+		}
 
-	return student, err
+		return domain.Student{}, err
+	}
+
+	return student, nil
 }
 
 func (r *StudentsRepo) GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Student, error) {
