@@ -23,3 +23,6 @@ limiter:
   rps: 10
   burst: 2
   ttl: 10m
+
+cors:
+  allow_origins: ["http://localhost"]

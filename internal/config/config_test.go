@@ -116,6 +116,7 @@ func TestInit(t *testing.T) {
 					Burst: 2,
 					TTL:   time.Minute * 10,
 				},
+				Cors: CorsConfig{AllowOrigins: []string{"http://localhost"}},
 			},
 		},
 	}

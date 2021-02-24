@@ -23,3 +23,6 @@ limiter:
   rps: 10
   burst: 20
   ttl: 10m
+
+cors:
+  allow_origins: ["http://localhost", "http://localhost:1337", "http://104.236.31.192", "http://104.236.31.192:8000", "http://104.236.31.192:1337"]

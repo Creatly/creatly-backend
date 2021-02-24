@@ -29,6 +29,7 @@ type (
 		Payment     PaymentConfig
 		Limiter     LimiterConfig
 		CacheTTL    time.Duration `mapstructure:"ttl"`
+		Cors        CorsConfig
 	}
 
 	MongoConfig struct {
@@ -85,6 +86,10 @@ type (
 		Burst int
 		TTL   time.Duration
 	}
+
+	CorsConfig struct {
+		AllowOrigins []string `mapstructure:"allow_origins"`
+	}
 )
 
 // Init populates Config struct with values from config file
@@ -136,6 +141,10 @@ func unmarshal(cfg *Config) error {
 	}
 
 	if err := viper.UnmarshalKey("limiter", &cfg.Limiter); err != nil {
+		return err
+	}
+
+	if err := viper.UnmarshalKey("cors.allow_origins", &cfg.Cors.AllowOrigins); err != nil {
 		return err
 	}
 
