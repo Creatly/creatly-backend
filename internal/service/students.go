@@ -100,7 +100,7 @@ func (s *StudentsService) RefreshTokens(ctx context.Context, schoolId primitive.
 func (s *StudentsService) Verify(ctx context.Context, hash string) error {
 	err := s.repo.Verify(ctx, hash)
 	if err != nil {
-		if err == repository.ErrUserNotFound {
+		if err == repository.ErrVerificationCodeInvalid {
 			return ErrVerificationCodeInvalid
 		}
 
