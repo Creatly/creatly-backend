@@ -189,6 +189,11 @@ func (h *Handler) studentVerify(c *gin.Context) {
 	}
 
 	if err := h.services.Students.Verify(c.Request.Context(), code); err != nil {
+		if err == service.ErrVerificationCodeInvalid {
+			newResponse(c, http.StatusBadRequest, err.Error())
+			return
+		}
+
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}

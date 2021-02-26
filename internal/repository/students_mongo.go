@@ -95,9 +95,16 @@ func (r *StudentsRepo) GiveAccessToCoursesAndModules(ctx context.Context, studen
 }
 
 func (r *StudentsRepo) Verify(ctx context.Context, code string) error {
-	_, err := r.db.UpdateOne(ctx,
+	res, err := r.db.UpdateOne(ctx,
 		bson.M{"verification.code": code},
 		bson.M{"$set": bson.M{"verification.verified": true, "verification.code": ""}})
+	if err != nil {
+		return err
+	}
 
-	return err
+	if res.ModifiedCount == 0 {
+		return ErrVerificationCodeInvalid
+	}
+
+	return nil
 }
