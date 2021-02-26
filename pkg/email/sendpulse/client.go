@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/zhashkevych/courses-backend/pkg/cache"
 	"github.com/zhashkevych/courses-backend/pkg/email"
+	"github.com/zhashkevych/courses-backend/pkg/logger"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -95,6 +96,13 @@ func (c *Client) AddEmailToList(input email.AddEmailInput) error {
 	}
 
 	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	logger.Infof("SendPulse response: %s", string(body))
 
 	if resp.StatusCode != 200 {
 		return errors.New("status code is not OK")
