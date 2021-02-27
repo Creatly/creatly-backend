@@ -22,6 +22,7 @@ func TestInit(t *testing.T) {
 		fondyMerchantPass  string
 		paymentCallbackURL string
 		paymentResponseURL string
+		frontendUrl        string
 	}
 
 	type args struct {
@@ -43,6 +44,7 @@ func TestInit(t *testing.T) {
 		os.Setenv("FONDY_MERCHANT_PASS", env.fondyMerchantPass)
 		os.Setenv("PAYMENT_CALLBACK_URL", env.paymentCallbackURL)
 		os.Setenv("PAYMENT_RESPONSE_URL", env.paymentResponseURL)
+		os.Setenv("FRONTEND_URL", env.frontendUrl)
 	}
 
 	tests := []struct {
@@ -69,6 +71,7 @@ func TestInit(t *testing.T) {
 					fondyMerchantPass:  "fondy",
 					paymentResponseURL: "https://zhashkevych.com/",
 					paymentCallbackURL: "https://zhashkevych.com/callback",
+					frontendUrl:        "http://localhost:1337",
 				}},
 			want: &Config{
 				CacheTTL: time.Second * 3600,
@@ -116,7 +119,8 @@ func TestInit(t *testing.T) {
 					Burst: 2,
 					TTL:   time.Minute * 10,
 				},
-				Cors: CorsConfig{AllowOrigins: []string{"http://localhost"}},
+				Cors:        CorsConfig{AllowOrigins: []string{"http://localhost"}},
+				FrontendURL: "http://localhost:1337",
 			},
 		},
 	}

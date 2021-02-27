@@ -30,6 +30,7 @@ type (
 		Limiter     LimiterConfig
 		CacheTTL    time.Duration `mapstructure:"ttl"`
 		Cors        CorsConfig
+		FrontendURL string
 	}
 
 	MongoConfig struct {
@@ -169,6 +170,8 @@ func setFromEnv(cfg *Config) {
 	cfg.Payment.Fondy.MerchantPassword = viper.GetString("merchant_pass")
 	cfg.Payment.CallbackURL = viper.GetString("callback_url")
 	cfg.Payment.ResponseURL = viper.GetString("response_url")
+
+	cfg.FrontendURL = viper.GetString("url")
 }
 
 func parseConfigFile(filepath string) error {
@@ -215,6 +218,10 @@ func parseEnv() error {
 	}
 
 	if err := parsePaymentEnvVariables(); err != nil {
+		return err
+	}
+
+	if err := parseFrontendHostFromEnv(); err != nil {
 		return err
 	}
 
@@ -287,4 +294,9 @@ func parseJWTFromEnv() error {
 func parseHostFromEnv() error {
 	viper.SetEnvPrefix("http")
 	return viper.BindEnv("host")
+}
+
+func parseFrontendHostFromEnv() error {
+	viper.SetEnvPrefix("frontend")
+	return viper.BindEnv("url")
 }
