@@ -98,7 +98,16 @@ func (s *StudentsService) RefreshTokens(ctx context.Context, schoolId primitive.
 }
 
 func (s *StudentsService) Verify(ctx context.Context, hash string) error {
-	return s.repo.Verify(ctx, hash)
+	err := s.repo.Verify(ctx, hash)
+	if err != nil {
+		if err == repository.ErrVerificationCodeInvalid {
+			return ErrVerificationCodeInvalid
+		}
+
+		return err
+	}
+
+	return nil
 }
 
 func (s *StudentsService) GetModuleLessons(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) ([]domain.Lesson, error) {

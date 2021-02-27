@@ -239,10 +239,11 @@ type Deps struct {
 	CacheTTL               int64
 	OtpGenerator           otp.Generator
 	VerificationCodeLength int
+	FrontendURL            string
 }
 
 func NewServices(deps Deps) *Services {
-	emailsService := NewEmailsService(deps.EmailProvider, deps.EmailListId)
+	emailsService := NewEmailsService(deps.EmailProvider, deps.EmailListId, deps.FrontendURL)
 	coursesService := NewCoursesService(deps.Repos.Courses)
 	modulesService := NewModulesService(deps.Repos.Modules, deps.Repos.LessonContent)
 	packagesService := NewPackagesService(deps.Repos.Packages, deps.Repos.Modules)

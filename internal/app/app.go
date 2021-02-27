@@ -82,6 +82,7 @@ func Run(configPath string) {
 		CacheTTL:               int64(cfg.CacheTTL.Seconds()),
 		OtpGenerator:           otpGenerator,
 		VerificationCodeLength: cfg.Auth.VerificationCodeLength,
+		FrontendURL:            cfg.FrontendURL,
 	})
 	handlers := http.NewHandler(services, tokenManager)
 

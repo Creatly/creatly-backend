@@ -35,7 +35,7 @@ func (s *APITestSuite) TestStudentSignUp() {
 		ListID: listId,
 		Variables: map[string]string{
 			"name":             name,
-			"verificationCode": verificationCode,
+			"verificationLink": fmt.Sprintf("http://localhost:1337/verification?code=%s", verificationCode),
 		},
 	}).Return(nil)
 

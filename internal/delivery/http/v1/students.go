@@ -25,6 +25,7 @@ func (h *Handler) initStudentsRoutes(api *gin.RouterGroup) {
 			authenticated.GET("/lessons/:id", h.studentGetLesson)
 			authenticated.POST("/lessons/:id/finished", h.studentSetLessonFinished)
 			authenticated.POST("/order", h.studentCreateOrder)
+			authenticated.GET("/account", h.studentGetAccount)
 		}
 	}
 }
@@ -189,6 +190,11 @@ func (h *Handler) studentVerify(c *gin.Context) {
 	}
 
 	if err := h.services.Students.Verify(c.Request.Context(), code); err != nil {
+		if err == service.ErrVerificationCodeInvalid {
+			newResponse(c, http.StatusBadRequest, err.Error())
+			return
+		}
+
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -511,4 +517,40 @@ func (h *Handler) studentGetCourses(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, dataResponse{courses})
+}
+
+type studentAccountResponse struct {
+	Name  string `json:"name"`
+	Email string `json:"email"`
+}
+
+// @Summary Student Get Account Info
+// @Security StudentsAuth
+// @Tags students-account
+// @Description student get account info
+// @ModuleID studentGetAccount
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} studentAccountResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /students/account [get]
+func (h *Handler) studentGetAccount(c *gin.Context) {
+	studentId, err := getStudentId(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	student, err := h.services.Students.GetById(c.Request.Context(), studentId)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, studentAccountResponse{
+		Name:  student.Name,
+		Email: student.Email,
+	})
 }
