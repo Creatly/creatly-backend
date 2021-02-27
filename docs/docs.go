@@ -1951,6 +1951,58 @@ var doc = `{
                 }
             }
         },
+        "/students/account": {
+            "get": {
+                "security": [
+                    {
+                        "StudentsAuth": []
+                    }
+                ],
+                "description": "student get account info",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "students-account"
+                ],
+                "summary": "Student Get Account Info",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.studentAccountResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
         "/students/auth/refresh": {
             "post": {
                 "description": "student refresh tokens",
@@ -2694,6 +2746,9 @@ var doc = `{
                     "items": {
                         "type": "string"
                     }
+                },
+                "schoolId": {
+                    "type": "string"
                 }
             }
         },
@@ -2883,6 +2938,17 @@ var doc = `{
                     "type": "string"
                 },
                 "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.studentAccountResponse": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "name": {
                     "type": "string"
                 }
             }
