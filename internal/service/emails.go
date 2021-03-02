@@ -2,33 +2,47 @@ package service
 
 import (
 	"fmt"
-	"github.com/zhashkevych/courses-backend/pkg/email"
+	emailProvider "github.com/zhashkevych/courses-backend/pkg/email"
 )
 
 const (
-	nameField              = "name"
-	verificationLinklField = "verificationLink"
-	verificationLinkTmpl   = "%s/verification?code=%s" // <frontend_url>/verification?code=<verification_code>
+	nameField            = "name"
+	verificationLinkTmpl = "%s/verification?code=%s" // <frontend_url>/verification?code=<verification_code>
+
+	// TODO: manage email templates. Store in config
+	verificationEmailSubject = "Спасибо за регистрацию, %s!"
+	verificationEmailTmpl    = `<h1>Спасибо за регистрацию!</h1><br>Чтобы подтвердить свой аккаунт, <a href="%s">переходи по ссылке</a>`
 )
 
 type EmailService struct {
-	provider    email.Provider
+	provider    emailProvider.Provider
+	sender      emailProvider.Sender
 	listId      string
 	frontendUrl string
 }
 
-func NewEmailsService(provider email.Provider, listId, frontendUrl string) *EmailService {
-	return &EmailService{provider: provider, listId: listId, frontendUrl: frontendUrl}
+func NewEmailsService(provider emailProvider.Provider, sender emailProvider.Sender, listId, frontendUrl string) *EmailService {
+	return &EmailService{provider: provider, sender: sender, listId: listId, frontendUrl: frontendUrl}
 }
 
-func (s *EmailService) AddToList(input AddToListInput) error {
-	return s.provider.AddEmailToList(email.AddEmailInput{
-		Email:  input.Email,
+func (s *EmailService) AddToList(name, email string) error {
+	return s.provider.AddEmailToList(emailProvider.AddEmailInput{
+		Email:  email,
 		ListID: s.listId,
 		Variables: map[string]string{
-			nameField:              input.Name,
-			verificationLinklField: s.createVerificationLink(input.VerificationCode),
+			nameField: name,
 		},
+	})
+}
+
+func (s *EmailService) SendVerificationEmail(input SendVerificationEmailInput) error {
+	subject := fmt.Sprintf(verificationEmailSubject, input.Name)
+	body := fmt.Sprintf(verificationEmailTmpl, s.createVerificationLink(input.VerificationCode))
+
+	return s.sender.Send(emailProvider.SendEmailInput{
+		To:      input.Email,
+		Subject: subject,
+		Body:    body,
 	})
 }
 

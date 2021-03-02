@@ -31,6 +31,7 @@ type (
 		CacheTTL    time.Duration `mapstructure:"ttl"`
 		Cors        CorsConfig
 		FrontendURL string
+		SMTP        SMTPConfig
 	}
 
 	MongoConfig struct {
@@ -91,6 +92,13 @@ type (
 	CorsConfig struct {
 		AllowOrigins []string `mapstructure:"allow_origins"`
 	}
+
+	SMTPConfig struct {
+		Host string `mapstructure:"host"`
+		Port int    `mapstructure:"port"`
+		From string `mapstructure:"from"`
+		Pass string
+	}
 )
 
 // Init populates Config struct with values from config file
@@ -149,6 +157,10 @@ func unmarshal(cfg *Config) error {
 		return err
 	}
 
+	if err := viper.UnmarshalKey("smtp", &cfg.SMTP); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -172,6 +184,8 @@ func setFromEnv(cfg *Config) {
 	cfg.Payment.ResponseURL = viper.GetString("response_url")
 
 	cfg.FrontendURL = viper.GetString("url")
+
+	cfg.SMTP.Pass = viper.GetString("password")
 }
 
 func parseConfigFile(filepath string) error {
@@ -222,6 +236,10 @@ func parseEnv() error {
 	}
 
 	if err := parseFrontendHostFromEnv(); err != nil {
+		return err
+	}
+
+	if err := parseSMTPPassFromEnv(); err != nil {
 		return err
 	}
 
@@ -299,4 +317,9 @@ func parseHostFromEnv() error {
 func parseFrontendHostFromEnv() error {
 	viper.SetEnvPrefix("frontend")
 	return viper.BindEnv("url")
+}
+
+func parseSMTPPassFromEnv() error {
+	viper.SetEnvPrefix("smtp")
+	return viper.BindEnv("password")
 }

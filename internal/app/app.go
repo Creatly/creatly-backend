@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"github.com/zhashkevych/courses-backend/pkg/email/smtp"
 	"github.com/zhashkevych/courses-backend/pkg/otp"
 	"github.com/zhashkevych/courses-backend/pkg/payment/fondy"
 	"os"
@@ -57,6 +58,7 @@ func Run(configPath string) {
 	memCache := cache.NewMemoryCache()
 	hasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
 	emailProvider := sendpulse.NewClient(cfg.Email.ClientID, cfg.Email.ClientSecret, memCache)
+	emailSender := smtp.NewSMTPSender(cfg.SMTP.From, cfg.SMTP.Pass, cfg.SMTP.Host, cfg.SMTP.Port)
 	paymentProvider := fondy.NewFondyClient(cfg.Payment.Fondy.MerchantId, cfg.Payment.Fondy.MerchantPassword)
 	tokenManager, err := auth.NewManager(cfg.Auth.JWT.SigningKey)
 	if err != nil {
@@ -73,6 +75,7 @@ func Run(configPath string) {
 		Hasher:                 hasher,
 		TokenManager:           tokenManager,
 		EmailProvider:          emailProvider,
+		EmailSender:            emailSender,
 		EmailListId:            cfg.Email.ListID,
 		PaymentProvider:        paymentProvider,
 		AccessTokenTTL:         cfg.Auth.JWT.AccessTokenTTL,
