@@ -9,7 +9,6 @@ import (
 	gomock "github.com/golang/mock/gomock"
 	domain "github.com/zhashkevych/courses-backend/internal/domain"
 	service "github.com/zhashkevych/courses-backend/internal/service"
-	"github.com/zhashkevych/courses-backend/pkg/payment/fondy"
 	primitive "go.mongodb.org/mongo-driver/bson/primitive"
 	reflect "reflect"
 )
@@ -408,17 +407,31 @@ func (m *MockEmails) EXPECT() *MockEmailsMockRecorder {
 }
 
 // AddToList mocks base method
-func (m *MockEmails) AddToList(arg0 service.AddToListInput) error {
+func (m *MockEmails) AddToList(name, email string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddToList", arg0)
+	ret := m.ctrl.Call(m, "AddToList", name, email)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // AddToList indicates an expected call of AddToList
-func (mr *MockEmailsMockRecorder) AddToList(arg0 interface{}) *gomock.Call {
+func (mr *MockEmailsMockRecorder) AddToList(name, email interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddToList", reflect.TypeOf((*MockEmails)(nil).AddToList), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddToList", reflect.TypeOf((*MockEmails)(nil).AddToList), name, email)
+}
+
+// SendVerificationEmail mocks base method
+func (m *MockEmails) SendVerificationEmail(arg0 service.SendVerificationEmailInput) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SendVerificationEmail", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SendVerificationEmail indicates an expected call of SendVerificationEmail
+func (mr *MockEmailsMockRecorder) SendVerificationEmail(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendVerificationEmail", reflect.TypeOf((*MockEmails)(nil).SendVerificationEmail), arg0)
 }
 
 // MockCourses is a mock of Courses interface
@@ -1077,15 +1090,15 @@ func (m *MockPayments) EXPECT() *MockPaymentsMockRecorder {
 }
 
 // ProcessTransaction mocks base method
-func (m *MockPayments) ProcessTransaction(ctx context.Context, callbackData fondy.Callback) error {
+func (m *MockPayments) ProcessTransaction(ctx context.Context, callback interface{}) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ProcessTransaction", ctx, callbackData)
+	ret := m.ctrl.Call(m, "ProcessTransaction", ctx, callback)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // ProcessTransaction indicates an expected call of ProcessTransaction
-func (mr *MockPaymentsMockRecorder) ProcessTransaction(ctx, callbackData interface{}) *gomock.Call {
+func (mr *MockPaymentsMockRecorder) ProcessTransaction(ctx, callback interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ProcessTransaction", reflect.TypeOf((*MockPayments)(nil).ProcessTransaction), ctx, callbackData)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ProcessTransaction", reflect.TypeOf((*MockPayments)(nil).ProcessTransaction), ctx, callback)
 }
