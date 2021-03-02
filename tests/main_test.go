@@ -47,6 +47,7 @@ type APITestSuite struct {
 
 type mocks struct {
 	emailProvider *emailmock.EmailProvider
+	emailSender   *emailmock.EmailSender
 	otpGenerator  *otp.MockGenerator
 }
 
@@ -95,6 +96,7 @@ func (s *APITestSuite) initDeps() {
 		TokenManager:           tokenManager,
 		PaymentProvider:        paymentProvider,
 		EmailProvider:          s.mocks.emailProvider,
+		EmailSender:            s.mocks.emailSender,
 		EmailListId:            listId,
 		AccessTokenTTL:         time.Minute * 15,
 		RefreshTokenTTL:        time.Minute * 15,
@@ -114,6 +116,7 @@ func (s *APITestSuite) initDeps() {
 func (s *APITestSuite) initMocks() {
 	s.mocks = &mocks{
 		emailProvider: new(emailmock.EmailProvider),
+		emailSender:   new(emailmock.EmailSender),
 		otpGenerator:  new(otp.MockGenerator),
 	}
 }

@@ -23,6 +23,7 @@ func TestInit(t *testing.T) {
 		paymentCallbackURL string
 		paymentResponseURL string
 		frontendUrl        string
+		smtpPassword       string
 	}
 
 	type args struct {
@@ -45,6 +46,7 @@ func TestInit(t *testing.T) {
 		os.Setenv("PAYMENT_CALLBACK_URL", env.paymentCallbackURL)
 		os.Setenv("PAYMENT_RESPONSE_URL", env.paymentResponseURL)
 		os.Setenv("FRONTEND_URL", env.frontendUrl)
+		os.Setenv("SMTP_PASSWORD", env.smtpPassword)
 	}
 
 	tests := []struct {
@@ -72,6 +74,7 @@ func TestInit(t *testing.T) {
 					paymentResponseURL: "https://zhashkevych.com/",
 					paymentCallbackURL: "https://zhashkevych.com/callback",
 					frontendUrl:        "http://localhost:1337",
+					smtpPassword:       "qwerty123",
 				}},
 			want: &Config{
 				CacheTTL: time.Second * 3600,
@@ -121,6 +124,12 @@ func TestInit(t *testing.T) {
 				},
 				Cors:        CorsConfig{AllowOrigins: []string{"http://localhost"}},
 				FrontendURL: "http://localhost:1337",
+				SMTP: SMTPConfig{
+					Host: "mail.privateemail.com",
+					Port: 587,
+					From: "maksim@zhashkevych.com",
+					Pass: "qwerty123",
+				},
 			},
 		},
 	}

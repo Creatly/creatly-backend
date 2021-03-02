@@ -78,14 +78,15 @@ type Admins interface {
 	GetCourseById(ctx context.Context, schoolId, courseId primitive.ObjectID) (domain.Course, error)
 }
 
-type AddToListInput struct {
+type SendVerificationEmailInput struct {
 	Email            string
 	Name             string
 	VerificationCode string
 }
 
 type Emails interface {
-	AddToList(AddToListInput) error
+	AddToList(name, email string) error
+	SendVerificationEmail(SendVerificationEmailInput) error
 }
 
 type UpdateCourseInput struct {
@@ -230,6 +231,7 @@ type Deps struct {
 	Hasher                 hash.PasswordHasher
 	TokenManager           auth.TokenManager
 	EmailProvider          email.Provider
+	EmailSender            email.Sender
 	EmailListId            string
 	PaymentProvider        payment.Provider
 	AccessTokenTTL         time.Duration
@@ -243,7 +245,7 @@ type Deps struct {
 }
 
 func NewServices(deps Deps) *Services {
-	emailsService := NewEmailsService(deps.EmailProvider, deps.EmailListId, deps.FrontendURL)
+	emailsService := NewEmailsService(deps.EmailProvider, deps.EmailSender, deps.EmailListId, deps.FrontendURL)
 	coursesService := NewCoursesService(deps.Repos.Courses)
 	modulesService := NewModulesService(deps.Repos.Modules, deps.Repos.LessonContent)
 	packagesService := NewPackagesService(deps.Repos.Packages, deps.Repos.Modules)
