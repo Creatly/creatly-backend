@@ -13,33 +13,29 @@ type SMTPSender struct {
 	port int
 }
 
-func NewSMTPSender(from string, pass string, host string, port int) *SMTPSender {
-	return &SMTPSender{from: from, pass: pass, host: host, port: port}
+func NewSMTPSender(from string, pass string, host string, port int) (*SMTPSender, error) {
+	if !email.IsEmailValid(from) {
+		return nil, errors.New("invalid from email")
+	}
+
+	return &SMTPSender{from: from, pass: pass, host: host, port: port}, nil
 }
 
 func (s *SMTPSender) Send(input email.SendEmailInput) error {
+	if err := input.Validate(); err != nil {
+		return err
+	}
+
 	msg := gomail.NewMessage()
 	msg.SetHeader("From", s.from)
 	msg.SetHeader("To", input.To)
-	msg.SetHeader("Subjects", input.Subject)
+	msg.SetHeader("Subject", input.Subject)
 	msg.SetBody("text/html", input.Body)
 
 	dialer := gomail.NewDialer(s.host, s.port, s.from, s.pass)
 	if err := dialer.DialAndSend(msg); err != nil {
 		return errors.Wrap(err, "failed to sent email via smtp")
 	}
-
-	// Send the email to Bob
-	//err := gomail.Send(d, msg)
-	//if err := d.DialAndSend(msg); err != nil {
-	//	panic(err)
-	//}
-	//
-	//addr := fmt.Sprintf("%s:%d", s.host, s.port)
-	//auth := smtp.PlainAuth("", s.from, s.pass, s.host)
-	//if err := smtp.SendMail(addr, auth, s.from, []string{input.To}, msg); err != nil {
-	//	return errors.Wrap(err, "failed to sent email via smtp")
-	//}
 
 	return nil
 }

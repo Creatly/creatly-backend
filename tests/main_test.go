@@ -3,6 +3,7 @@ package tests
 import (
 	"context"
 	"github.com/stretchr/testify/suite"
+	"github.com/zhashkevych/courses-backend/internal/config"
 	v1 "github.com/zhashkevych/courses-backend/internal/delivery/http/v1"
 	"github.com/zhashkevych/courses-backend/internal/repository"
 	"github.com/zhashkevych/courses-backend/internal/service"
@@ -90,14 +91,18 @@ func (s *APITestSuite) initDeps() {
 	paymentProvider := fondy.NewFondyClient("1396424", "test") // Fondy Testing Credentials
 
 	services := service.NewServices(service.Deps{
-		Repos:                  repos,
-		Cache:                  memCache,
-		Hasher:                 hasher,
-		TokenManager:           tokenManager,
-		PaymentProvider:        paymentProvider,
-		EmailProvider:          s.mocks.emailProvider,
-		EmailSender:            s.mocks.emailSender,
-		EmailListId:            listId,
+		Repos:           repos,
+		Cache:           memCache,
+		Hasher:          hasher,
+		TokenManager:    tokenManager,
+		PaymentProvider: paymentProvider,
+		EmailProvider:   s.mocks.emailProvider,
+		EmailSender:     s.mocks.emailSender,
+		EmailConfig: config.EmailConfig{
+			SendPulse: config.SendPulseConfig{
+				ListID: listId,
+			},
+		},
 		AccessTokenTTL:         time.Minute * 15,
 		RefreshTokenTTL:        time.Minute * 15,
 		CacheTTL:               int64(time.Minute.Seconds()),

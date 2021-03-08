@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"github.com/zhashkevych/courses-backend/internal/config"
 	"time"
 
 	"github.com/zhashkevych/courses-backend/pkg/otp"
@@ -232,7 +233,7 @@ type Deps struct {
 	TokenManager           auth.TokenManager
 	EmailProvider          email.Provider
 	EmailSender            email.Sender
-	EmailListId            string
+	EmailConfig            config.EmailConfig
 	PaymentProvider        payment.Provider
 	AccessTokenTTL         time.Duration
 	RefreshTokenTTL        time.Duration
@@ -245,7 +246,7 @@ type Deps struct {
 }
 
 func NewServices(deps Deps) *Services {
-	emailsService := NewEmailsService(deps.EmailProvider, deps.EmailSender, deps.EmailListId, deps.FrontendURL)
+	emailsService := NewEmailsService(deps.EmailProvider, deps.EmailSender, deps.EmailConfig, deps.FrontendURL)
 	coursesService := NewCoursesService(deps.Repos.Courses)
 	modulesService := NewModulesService(deps.Repos.Modules, deps.Repos.LessonContent)
 	packagesService := NewPackagesService(deps.Repos.Packages, deps.Repos.Modules)
