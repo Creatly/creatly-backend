@@ -21,7 +21,7 @@ func (s *SMTPSender) Send(input email.SendEmailInput) error {
 	msg := gomail.NewMessage()
 	msg.SetHeader("From", s.from)
 	msg.SetHeader("To", input.To)
-	msg.SetHeader("Subject", input.Subject)
+	msg.SetHeader("Subjects", input.Subject)
 	msg.SetBody("text/html", input.Body)
 
 	dialer := gomail.NewDialer(s.host, s.port, s.from, s.pass)

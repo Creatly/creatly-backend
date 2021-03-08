@@ -105,9 +105,19 @@ func TestInit(t *testing.T) {
 					Bucket: "test",
 				},
 				Email: EmailConfig{
-					ListID:       "listId",
-					ClientID:     "id",
-					ClientSecret: "secret",
+					SendPulse: SendPulseConfig{
+						ListID:       "listId",
+						ClientID:     "id",
+						ClientSecret: "secret",
+					},
+					Templates: EmailTemplates{
+						Verification: "./templates/verification_email.html",
+						PurchaseSuccessful: "./templates/purchase_successful.html",
+					},
+					Subjects: EmailSubjects{
+						Verification: "Спасибо за регистрацию, %s!",
+						PurchaseSuccessful: "Покупка прошла успешно!",
+					},
 				},
 				Payment: PaymentConfig{
 					Fondy: FondyConfig{
