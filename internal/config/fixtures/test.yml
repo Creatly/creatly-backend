@@ -31,3 +31,12 @@ smtp:
   host: "mail.privateemail.com"
   port: 587
   from: "maksim@zhashkevych.com"
+
+
+email:
+  templates:
+    verification_email: "./templates/verification_email.html"
+    purchase_successful: "./templates/purchase_successful.html"
+  subjects:
+    verification_email: "Спасибо за регистрацию, %s!"
+    purchase_successful: "Покупка прошла успешно!"

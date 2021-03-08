@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/zhashkevych/courses-backend/internal/domain"
+	"github.com/zhashkevych/courses-backend/pkg/logger"
 	"github.com/zhashkevych/courses-backend/pkg/payment"
 	"github.com/zhashkevych/courses-backend/pkg/payment/fondy"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -15,10 +16,18 @@ type PaymentsService struct {
 	ordersService   Orders
 	offersService   Offers
 	studentsService Students
+	emailService    Emails
 }
 
-func NewPaymentsService(paymentProvider payment.Provider, ordersService Orders, offersService Offers, studentsService Students) *PaymentsService {
-	return &PaymentsService{paymentProvider: paymentProvider, ordersService: ordersService, offersService: offersService, studentsService: studentsService}
+func NewPaymentsService(paymentProvider payment.Provider, ordersService Orders,
+	offersService Offers, studentsService Students, emailService Emails) *PaymentsService {
+	return &PaymentsService{
+		paymentProvider: paymentProvider,
+		ordersService:   ordersService,
+		offersService:   offersService,
+		studentsService: studentsService,
+		emailService:    emailService,
+	}
 }
 
 func (s *PaymentsService) ProcessTransaction(ctx context.Context, callback interface{}) error {
@@ -57,6 +66,14 @@ func (s *PaymentsService) processFondyCallback(ctx context.Context, callback fon
 	offer, err := s.offersService.GetById(ctx, order.Offer.ID)
 	if err != nil {
 		return err
+	}
+
+	if err := s.emailService.SendPurchaseSuccessfulEmail(SendPurchaseSuccessfulEmailInput{
+		Name:       order.Student.Name,
+		Email:      order.Student.Email,
+		CourseName: order.Offer.Name,
+	}); err != nil {
+		logger.Errorf("failed to send email after purchase: %s", err.Error())
 	}
 
 	return s.studentsService.GiveAccessToPackages(ctx, order.Student.ID, offer.PackageIDs)
