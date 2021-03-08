@@ -85,9 +85,16 @@ type SendVerificationEmailInput struct {
 	VerificationCode string
 }
 
+type SendPurchaseSuccessfulEmailInput struct {
+	Email      string
+	Name       string
+	CourseName string
+}
+
 type Emails interface {
 	AddToList(name, email string) error
 	SendVerificationEmail(SendVerificationEmailInput) error
+	SendPurchaseSuccessfulEmail(SendPurchaseSuccessfulEmailInput) error
 }
 
 type UpdateCourseInput struct {
@@ -266,7 +273,7 @@ func NewServices(deps Deps) *Services {
 		PromoCodes:     promoCodesService,
 		Offers:         offersService,
 		Modules:        modulesService,
-		Payments:       NewPaymentsService(deps.PaymentProvider, ordersService, offersService, studentsService),
+		Payments:       NewPaymentsService(deps.PaymentProvider, ordersService, offersService, studentsService, emailsService),
 		Orders:         ordersService,
 		Admins:         NewAdminsService(deps.Hasher, deps.TokenManager, deps.Repos.Admins, deps.Repos.Schools, deps.AccessTokenTTL, deps.RefreshTokenTTL),
 		Packages:       packagesService,

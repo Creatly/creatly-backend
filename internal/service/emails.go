@@ -18,9 +18,14 @@ type EmailService struct {
 	frontendUrl string
 }
 
-// Used for templates
+// Structures used for templates
 type verificationEmailInput struct {
 	VerificationLink string
+}
+
+type purchaseSuccessfulEmailInput struct {
+	Name       string
+	CourseName string
 }
 
 func NewEmailsService(provider emailProvider.Provider, sender emailProvider.Sender, config config.EmailConfig, frontendUrl string) *EmailService {
@@ -43,6 +48,16 @@ func (s *EmailService) SendVerificationEmail(input SendVerificationEmailInput) e
 	templateInput := verificationEmailInput{s.createVerificationLink(input.VerificationCode)}
 	sendInput := emailProvider.SendEmailInput{Subject: subject, To: input.Email}
 	if err := sendInput.GenerateBodyFromHTML(s.config.Templates.Verification, templateInput); err != nil {
+		return err
+	}
+
+	return s.sender.Send(sendInput)
+}
+
+func (s *EmailService) SendPurchaseSuccessfulEmail(input SendPurchaseSuccessfulEmailInput) error {
+	templateInput := purchaseSuccessfulEmailInput{Name: input.Name, CourseName: input.CourseName}
+	sendInput := emailProvider.SendEmailInput{Subject: s.config.Subjects.PurchaseSuccessful, To: input.Email}
+	if err := sendInput.GenerateBodyFromHTML(s.config.Templates.PurchaseSuccessful, templateInput); err != nil {
 		return err
 	}
 
