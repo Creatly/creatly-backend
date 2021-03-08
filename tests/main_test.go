@@ -102,6 +102,14 @@ func (s *APITestSuite) initDeps() {
 			SendPulse: config.SendPulseConfig{
 				ListID: listId,
 			},
+			Templates: config.EmailTemplates{
+				Verification:       "../templates/verification_email.html",
+				PurchaseSuccessful: "../templates/purchase_successful.html",
+			},
+			Subjects: config.EmailSubjects{
+				Verification: "Спасибо за регистрацию, %s!",
+				PurchaseSuccessful: "Покупка прошла успешно!",
+			},
 		},
 		AccessTokenTTL:         time.Minute * 15,
 		RefreshTokenTTL:        time.Minute * 15,
