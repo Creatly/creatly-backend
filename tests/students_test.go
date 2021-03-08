@@ -40,7 +40,9 @@ func (s *APITestSuite) TestStudentSignUp() {
 	s.mocks.emailSender.On("Send", email.SendEmailInput{
 		To:  studentEmail,
 		Subject: "Спасибо за регистрацию, Test Student!",
-		Body: fmt.Sprintf(`<h1>Спасибо за регистрацию!</h1><br>Чтобы подтвердить свой аккаунт, <a href="http://localhost:1337/verification?code=%s">переходи по ссылке</a>`, verificationCode),
+		Body: fmt.Sprintf(`<h1>Спасибо за регистрацию!</h1>
+<br>
+<p>Чтобы подтвердить свой аккаунт, <a href="http://localhost:1337/verification?code=%s">переходи по ссылке</a>.</p>`, verificationCode),
 	}).Return(nil)
 
 	req, _ := http.NewRequest("POST", "/api/v1/students/sign-up", bytes.NewBuffer([]byte(signUpData)))

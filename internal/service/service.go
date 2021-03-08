@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"github.com/zhashkevych/courses-backend/internal/config"
 	"time"
 
 	"github.com/zhashkevych/courses-backend/pkg/otp"
@@ -84,9 +85,16 @@ type SendVerificationEmailInput struct {
 	VerificationCode string
 }
 
+type SendPurchaseSuccessfulEmailInput struct {
+	Email      string
+	Name       string
+	CourseName string
+}
+
 type Emails interface {
 	AddToList(name, email string) error
 	SendVerificationEmail(SendVerificationEmailInput) error
+	SendPurchaseSuccessfulEmail(SendPurchaseSuccessfulEmailInput) error
 }
 
 type UpdateCourseInput struct {
@@ -232,7 +240,7 @@ type Deps struct {
 	TokenManager           auth.TokenManager
 	EmailProvider          email.Provider
 	EmailSender            email.Sender
-	EmailListId            string
+	EmailConfig            config.EmailConfig
 	PaymentProvider        payment.Provider
 	AccessTokenTTL         time.Duration
 	RefreshTokenTTL        time.Duration
@@ -245,7 +253,7 @@ type Deps struct {
 }
 
 func NewServices(deps Deps) *Services {
-	emailsService := NewEmailsService(deps.EmailProvider, deps.EmailSender, deps.EmailListId, deps.FrontendURL)
+	emailsService := NewEmailsService(deps.EmailProvider, deps.EmailSender, deps.EmailConfig, deps.FrontendURL)
 	coursesService := NewCoursesService(deps.Repos.Courses)
 	modulesService := NewModulesService(deps.Repos.Modules, deps.Repos.LessonContent)
 	packagesService := NewPackagesService(deps.Repos.Packages, deps.Repos.Modules)
@@ -265,7 +273,7 @@ func NewServices(deps Deps) *Services {
 		PromoCodes:     promoCodesService,
 		Offers:         offersService,
 		Modules:        modulesService,
-		Payments:       NewPaymentsService(deps.PaymentProvider, ordersService, offersService, studentsService),
+		Payments:       NewPaymentsService(deps.PaymentProvider, ordersService, offersService, studentsService, emailsService),
 		Orders:         ordersService,
 		Admins:         NewAdminsService(deps.Hasher, deps.TokenManager, deps.Repos.Admins, deps.Repos.Schools, deps.AccessTokenTTL, deps.RefreshTokenTTL),
 		Packages:       packagesService,

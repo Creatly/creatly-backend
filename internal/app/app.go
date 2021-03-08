@@ -57,14 +57,20 @@ func Run(configPath string) {
 
 	memCache := cache.NewMemoryCache()
 	hasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
-	emailProvider := sendpulse.NewClient(cfg.Email.ClientID, cfg.Email.ClientSecret, memCache)
-	emailSender := smtp.NewSMTPSender(cfg.SMTP.From, cfg.SMTP.Pass, cfg.SMTP.Host, cfg.SMTP.Port)
+	emailProvider := sendpulse.NewClient(cfg.Email.SendPulse.ClientID, cfg.Email.SendPulse.ClientSecret, memCache)
 	paymentProvider := fondy.NewFondyClient(cfg.Payment.Fondy.MerchantId, cfg.Payment.Fondy.MerchantPassword)
+	emailSender, err := smtp.NewSMTPSender(cfg.SMTP.From, cfg.SMTP.Pass, cfg.SMTP.Host, cfg.SMTP.Port)
+	if err != nil {
+		logger.Error(err)
+		return
+	}
+
 	tokenManager, err := auth.NewManager(cfg.Auth.JWT.SigningKey)
 	if err != nil {
 		logger.Error(err)
 		return
 	}
+
 	otpGenerator := otp.NewGOTPGenerator()
 
 	// Services, Repos & API Handlers
@@ -76,7 +82,7 @@ func Run(configPath string) {
 		TokenManager:           tokenManager,
 		EmailProvider:          emailProvider,
 		EmailSender:            emailSender,
-		EmailListId:            cfg.Email.ListID,
+		EmailConfig:            cfg.Email,
 		PaymentProvider:        paymentProvider,
 		AccessTokenTTL:         cfg.Auth.JWT.AccessTokenTTL,
 		RefreshTokenTTL:        cfg.Auth.JWT.RefreshTokenTTL,

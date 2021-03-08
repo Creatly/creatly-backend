@@ -59,9 +59,25 @@ type (
 	}
 
 	EmailConfig struct {
+		SendPulse SendPulseConfig
+		Templates EmailTemplates
+		Subjects  EmailSubjects
+	}
+
+	SendPulseConfig struct {
 		ListID       string
 		ClientID     string
 		ClientSecret string
+	}
+
+	EmailTemplates struct {
+		Verification       string `mapstructure:"verification_email"`
+		PurchaseSuccessful string `mapstructure:"purchase_successful"`
+	}
+
+	EmailSubjects struct {
+		Verification       string `mapstructure:"verification_email"`
+		PurchaseSuccessful string `mapstructure:"purchase_successful"`
 	}
 
 	PaymentConfig struct {
@@ -161,6 +177,14 @@ func unmarshal(cfg *Config) error {
 		return err
 	}
 
+	if err := viper.UnmarshalKey("email.templates", &cfg.Email.Templates); err != nil {
+		return err
+	}
+
+	if err := viper.UnmarshalKey("email.subjects", &cfg.Email.Subjects); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -172,9 +196,9 @@ func setFromEnv(cfg *Config) {
 	cfg.Auth.PasswordSalt = viper.GetString("salt")
 	cfg.Auth.JWT.SigningKey = viper.GetString("signing_key")
 
-	cfg.Email.ClientSecret = viper.GetString("secret")
-	cfg.Email.ClientID = viper.GetString("id")
-	cfg.Email.ListID = viper.GetString("listid")
+	cfg.Email.SendPulse.ClientSecret = viper.GetString("secret")
+	cfg.Email.SendPulse.ClientID = viper.GetString("id")
+	cfg.Email.SendPulse.ListID = viper.GetString("listid")
 
 	cfg.HTTP.Host = viper.GetString("host")
 
