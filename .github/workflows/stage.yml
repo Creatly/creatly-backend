@@ -84,11 +84,12 @@ jobs:
             export PAYMENT_CALLBACK_URL=${{secrets.PAYMENT_CALLBACK_URL}}
             export PAYMENT_REDIRECT_URL=${{secrets.PAYMENT_REDIRECT_URL}}
             export FRONTEND_URL=${{secrets.FRONTEND_URL}}
+            export SMTP_PASSWORD=${{secrets.SMTP_PASSWORD}}
 
             # Run a new container from a new image
             docker run -e MONGO_URI -e MONGO_USER -e MONGO_PASS -e PASSWORD_SALT -e JWT_SIGNING_KEY \
             -e SENDPULSE_LISTID -e SENDPULSE_ID -e SENDPULSE_SECRET -e HTTP_HOST -e FONDY_MERCHANT_ID -e FONDY_MERCHANT_PASS \
-            -e PAYMENT_CALLBACK_URL -e PAYMENT_REDIRECT_URL -e FRONTEND_URL -d \
+            -e PAYMENT_CALLBACK_URL -e PAYMENT_REDIRECT_URL -e FRONTEND_URL -e SMTP_PASSWORD -d \
             --restart always \
             --publish 8000:8000 \
             --link=mongo-courses:mongodb \
