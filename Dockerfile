@@ -14,6 +14,7 @@ WORKDIR /root/
 
 COPY --from=0 /github.com/zhashkevych/courses-backend/.bin/app .
 COPY --from=0 /github.com/zhashkevych/courses-backend/configs configs/
+COPY --from=0 /github.com/zhashkevych/courses-backend/templates templates/
 
 EXPOSE 8000
 
