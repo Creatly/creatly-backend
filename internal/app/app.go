@@ -119,7 +119,7 @@ func Run(configPath string) {
 	defer shutdown()
 
 	if err := srv.Stop(ctx); err != nil {
-		logrus.Errorf("failed to stop server: %w", err)
+		logrus.Errorf("failed to stop server: %v", err)
 	}
 
 	if err := mongoClient.Disconnect(context.Background()); err != nil {
