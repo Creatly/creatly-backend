@@ -25,8 +25,6 @@ import (
 	"github.com/zhashkevych/courses-backend/pkg/logger"
 )
 
-const timeout = 5 * time.Second
-
 // @title Course Platform API
 // @version 1.0
 // @description API Server for Course Platform
@@ -114,6 +112,8 @@ func Run(configPath string) {
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
 
 	<-quit
+
+	const timeout = 5 * time.Second
 
 	ctx, shutdown := context.WithTimeout(context.Background(), timeout)
 	defer shutdown()
