@@ -2,12 +2,14 @@ package app
 
 import (
 	"context"
-	"github.com/zhashkevych/courses-backend/pkg/email/smtp"
-	"github.com/zhashkevych/courses-backend/pkg/otp"
-	"github.com/zhashkevych/courses-backend/pkg/payment/fondy"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
+
+	"github.com/zhashkevych/courses-backend/pkg/email/smtp"
+	"github.com/zhashkevych/courses-backend/pkg/otp"
+	"github.com/zhashkevych/courses-backend/pkg/payment/fondy"
 
 	"github.com/sirupsen/logrus"
 	"github.com/zhashkevych/courses-backend/internal/config"
@@ -22,6 +24,8 @@ import (
 	"github.com/zhashkevych/courses-backend/pkg/hash"
 	"github.com/zhashkevych/courses-backend/pkg/logger"
 )
+
+const timeout = 5 * time.Second
 
 // @title Course Platform API
 // @version 1.0
@@ -110,6 +114,13 @@ func Run(configPath string) {
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
 
 	<-quit
+
+	ctx, shutdown := context.WithTimeout(context.Background(), timeout)
+	defer shutdown()
+
+	if err := srv.Stop(ctx); err != nil {
+		logrus.Errorf("failed to stop server: %w", err)
+	}
 
 	if err := mongoClient.Disconnect(context.Background()); err != nil {
 		logger.Error(err.Error())
