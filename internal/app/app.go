@@ -11,7 +11,6 @@ import (
 	"github.com/zhashkevych/courses-backend/pkg/otp"
 	"github.com/zhashkevych/courses-backend/pkg/payment/fondy"
 
-	"github.com/sirupsen/logrus"
 	"github.com/zhashkevych/courses-backend/internal/config"
 	"github.com/zhashkevych/courses-backend/internal/delivery/http"
 	"github.com/zhashkevych/courses-backend/internal/repository"
@@ -101,7 +100,7 @@ func Run(configPath string) {
 	srv := server.NewServer(cfg, handlers.Init(cfg.HTTP.Host, cfg.HTTP.Port, cfg.Limiter, cfg.Cors))
 	go func() {
 		if err := srv.Run(); err != nil {
-			logrus.Errorf("error occurred while running http server: %s\n", err.Error())
+			logger.Errorf("error occurred while running http server: %s\n", err.Error())
 		}
 	}()
 
@@ -119,7 +118,7 @@ func Run(configPath string) {
 	defer shutdown()
 
 	if err := srv.Stop(ctx); err != nil {
-		logrus.Errorf("failed to stop server: %v", err)
+		logger.Errorf("failed to stop server: %v", err)
 	}
 
 	if err := mongoClient.Disconnect(context.Background()); err != nil {
