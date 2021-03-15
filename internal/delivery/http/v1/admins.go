@@ -67,6 +67,15 @@ func (h *Handler) initAdminRoutes(api *gin.RouterGroup) {
 				school.PUT("/settings", h.adminUpdateSchoolSettings)
 			}
 
+			promocodes := authenticated.Group("/promocodes")
+			{
+				promocodes.POST("/", h.adminCreatePromocode)
+				promocodes.GET("/", h.adminGetPromocodes)
+				promocodes.GET("/:id", h.adminGetPromocodeById)
+				promocodes.PUT("/:id", h.adminUpdatePromocode)
+				promocodes.DELETE("/:id", h.adminDeletePromocode)
+			}
+
 			authenticated.GET("/orders", h.adminGetOrders)
 			authenticated.GET("/students", h.adminGetStudents)
 		}
@@ -1050,6 +1059,220 @@ func (h *Handler) adminDeleteOffer(c *gin.Context) {
 	}
 
 	err = h.services.Offers.Delete(c.Request.Context(), id)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.Status(http.StatusOK)
+}
+
+type createPromocodeInput struct {
+	Code               string               `json:"code" binding:"required"`
+	DiscountPercentage int                  `json:"discountPercentage" binding:"required"`
+	ExpiresAt          time.Time            `json:"expiresAt" binding:"required"`
+	OfferIDs           []primitive.ObjectID `json:"offerIds" binding:"required"`
+}
+
+// @Summary Admin Create Promocode
+// @Security AdminAuth
+// @Tags admins-promocodes
+// @Description admin create promocode
+// @ModuleID adminCreatePromocode
+// @Accept  json
+// @Produce  json
+// @Param input body createPromocodeInput true "package info"
+// @Success 201 {object} idResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/promocodes [post]
+func (h *Handler) adminCreatePromocode(c *gin.Context) {
+	var inp createPromocodeInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	id, err := h.services.PromoCodes.Create(c.Request.Context(), service.CreatePromoCodeInput{
+		SchoolID:           school.ID,
+		Code:               inp.Code,
+		DiscountPercentage: inp.DiscountPercentage,
+		ExpiresAt:          inp.ExpiresAt,
+		OfferIDs:           inp.OfferIDs,
+	})
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusCreated, idResponse{id})
+}
+
+// @Summary Admin Get All Promocodes
+// @Security AdminAuth
+// @Tags admins-promocodes
+// @Description admin get all promocodes
+// @ModuleID adminGetPromocodes
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} dataResponse{data=[]domain.PromoCode}
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/promocodes [get]
+func (h *Handler) adminGetPromocodes(c *gin.Context) {
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	promocodes, err := h.services.PromoCodes.GetBySchool(c.Request.Context(), school.ID)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, dataResponse{promocodes})
+}
+
+// @Summary Admin Get Promocode By Id
+// @Security AdminAuth
+// @Tags admins-promocodes
+// @Description admin get promocode by id
+// @ModuleID adminGetPromocodeById
+// @Accept  json
+// @Produce  json
+// @Param id path string true "promocode id"
+// @Success 200 {object} domain.PromoCode
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/promocodes/{id} [get]
+func (h *Handler) adminGetPromocodeById(c *gin.Context) {
+	idParam := c.Param("id")
+	if idParam == "" {
+		newResponse(c, http.StatusBadRequest, "empty id param")
+		return
+	}
+
+	id, err := primitive.ObjectIDFromHex(idParam)
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid id param")
+		return
+	}
+
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	promoCode, err := h.services.PromoCodes.GetById(c.Request.Context(), school.ID, id)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, promoCode)
+}
+
+type updatePromocodeInput struct {
+	Code               string    `json:"code"`
+	DiscountPercentage int       `json:"discountPercentage"`
+	ExpiresAt          time.Time `json:"expiresAt"`
+	OfferIDs           []string  `json:"offerIds"`
+}
+
+// @Summary Admin Update Promocode
+// @Security AdminAuth
+// @Tags admins-promocodes
+// @Description admin update promocode
+// @ModuleID adminUpdatePromocode
+// @Accept  json
+// @Produce  json
+// @Param id path string true "promocode id"
+// @Param input body updatePromocodeInput true "update info"
+// @Success 200 {string} string "ok"
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/promocodes/{id} [put]
+func (h *Handler) adminUpdatePromocode(c *gin.Context) {
+	idParam := c.Param("id")
+	if idParam == "" {
+		newResponse(c, http.StatusBadRequest, "empty id param")
+		return
+	}
+
+	id, err := primitive.ObjectIDFromHex(idParam)
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid id param")
+		return
+	}
+
+	var inp updatePromocodeInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	err = h.services.PromoCodes.Update(c.Request.Context(), service.UpdatePromoCodeInput{
+		ID:                 id,
+		SchoolID:           school.ID,
+		Code:               inp.Code,
+		DiscountPercentage: inp.DiscountPercentage,
+		ExpiresAt:          inp.ExpiresAt,
+		OfferIDs:           inp.OfferIDs,
+	})
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.Status(http.StatusOK)
+}
+
+// @Summary Admin Delete Promocode
+// @Security AdminAuth
+// @Tags admins-promocodes
+// @Description admin delete promocode
+// @ModuleID adminDeletePromocode
+// @Accept  json
+// @Produce  json
+// @Param id path string true "promocode id"
+// @Success 200 {string} string "ok"
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/promocodes/{id} [delete]
+func (h *Handler) adminDeletePromocode(c *gin.Context) {
+	idParam := c.Param("id")
+	if idParam == "" {
+		newResponse(c, http.StatusBadRequest, "empty id param")
+		return
+	}
+
+	id, err := primitive.ObjectIDFromHex(idParam)
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid id param")
+		return
+	}
+
+	err = h.services.PromoCodes.Delete(c.Request.Context(), id)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return

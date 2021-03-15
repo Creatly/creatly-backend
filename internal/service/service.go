@@ -111,9 +111,30 @@ type Courses interface {
 	Update(ctx context.Context, schoolId primitive.ObjectID, inp UpdateCourseInput) error
 }
 
+type CreatePromoCodeInput struct {
+	SchoolID           primitive.ObjectID
+	Code               string
+	DiscountPercentage int
+	ExpiresAt          time.Time
+	OfferIDs           []primitive.ObjectID
+}
+
+type UpdatePromoCodeInput struct {
+	ID                 primitive.ObjectID
+	SchoolID           primitive.ObjectID
+	Code               string
+	DiscountPercentage int
+	ExpiresAt          time.Time
+	OfferIDs           []string
+}
+
 type PromoCodes interface {
+	Create(ctx context.Context, inp CreatePromoCodeInput) (primitive.ObjectID, error)
+	Update(ctx context.Context, inp UpdatePromoCodeInput) error
+	Delete(ctx context.Context, id primitive.ObjectID) error
 	GetByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.PromoCode, error)
 	GetById(ctx context.Context, schoolId, id primitive.ObjectID) (domain.PromoCode, error)
+	GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.PromoCode, error)
 }
 
 type CreateOfferInput struct {

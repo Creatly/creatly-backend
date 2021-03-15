@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/assert/v2"
@@ -102,6 +103,430 @@ func TestHandler_adminUpdateSchoolSettings(t *testing.T) {
 			w := httptest.NewRecorder()
 			req := httptest.NewRequest("PUT", "/admins/school/settings",
 				bytes.NewBufferString(tt.body))
+
+			// Make Request
+			r.ServeHTTP(w, req)
+
+			// Assert
+			assert.Equal(t, w.Code, tt.statusCode)
+			assert.Equal(t, w.Body.String(), tt.responseBody)
+		})
+	}
+}
+
+func TestHandler_adminCreatePromocode(t *testing.T) {
+	type mockBehavior func(r *mock_service.MockPromoCodes, input service.CreatePromoCodeInput)
+
+	promocodeID := primitive.NewObjectID()
+	offerId, _:= primitive.ObjectIDFromHex("6034253f561e5c7cbae6e5f2")
+
+	school := domain.School{
+		ID: primitive.NewObjectID(),
+		Settings: domain.Settings{
+			Domain: "localhost",
+		},
+	}
+
+	tests := []struct {
+		name         string
+		body         string
+		school       domain.School
+		input        service.CreatePromoCodeInput
+		mockBehavior mockBehavior
+		statusCode   int
+		responseBody string
+	}{
+		{
+			name:   "ok",
+			body:   fmt.Sprintf(`{"code": "TESTPROMO", "discountPercentage": 15, "expiresAt": "2022-12-10T13:49:51.0Z", "offerIds": ["6034253f561e5c7cbae6e5f2"]}`),
+			school: school,
+			input: service.CreatePromoCodeInput{
+				SchoolID: school.ID,
+				Code:    "TESTPROMO",
+				DiscountPercentage: 15,
+				ExpiresAt: time.Date(2022, 12, 10, 13, 49, 51, 0, time.UTC),
+				OfferIDs: []primitive.ObjectID{offerId},
+			},
+			mockBehavior: func(r *mock_service.MockPromoCodes, input service.CreatePromoCodeInput) {
+				r.EXPECT().Create(context.Background(), input).Return(promocodeID, nil)
+			},
+			statusCode:   201,
+			responseBody: fmt.Sprintf(`{"id":"%s"}`, promocodeID.Hex()),
+		},
+		{
+			name:         "invalid input body param",
+			body:         fmt.Sprintf(`{wrong}`),
+			school:       school,
+			mockBehavior: func(r *mock_service.MockPromoCodes, input service.CreatePromoCodeInput) {},
+			statusCode:   400,
+			responseBody: `{"message":"invalid input body"}`,
+		},
+		{
+			name:   "service error",
+			body:   fmt.Sprintf(`{"code": "TESTPROMO", "discountPercentage": 15, "expiresAt": "2022-12-10T13:49:51.0Z", "offerIds": ["6034253f561e5c7cbae6e5f2"]}`),
+			school: school,
+			input: service.CreatePromoCodeInput{
+				SchoolID: school.ID,
+				Code:    "TESTPROMO",
+				DiscountPercentage: 15,
+				ExpiresAt: time.Date(2022, 12, 10, 13, 49, 51, 0, time.UTC),
+				OfferIDs: []primitive.ObjectID{offerId},
+			},
+			mockBehavior: func(r *mock_service.MockPromoCodes, input service.CreatePromoCodeInput) {
+				r.EXPECT().Create(context.Background(), input).Return(primitive.ObjectID{}, errors.New("failed to create promocode"))
+			},
+			statusCode:   500,
+			responseBody: `{"message":"failed to create promocode"}`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Init Dependencies
+			c := gomock.NewController(t)
+			defer c.Finish()
+
+			p := mock_service.NewMockPromoCodes(c)
+			tt.mockBehavior(p, tt.input)
+
+			services := &service.Services{PromoCodes: p}
+			handler := Handler{services: services}
+
+			// Init Endpoint
+			r := gin.New()
+			r.POST("/admins/promocodes/", func(c *gin.Context) {
+				c.Set(schoolCtx, tt.school)
+			}, handler.adminCreatePromocode)
+
+			// Create Request
+			w := httptest.NewRecorder()
+			req := httptest.NewRequest("POST", "/admins/promocodes/",
+				bytes.NewBufferString(tt.body))
+
+			// Make Request
+			r.ServeHTTP(w, req)
+
+			// Assert
+			assert.Equal(t, w.Code, tt.statusCode)
+			assert.Equal(t, w.Body.String(), tt.responseBody)
+		})
+	}
+}
+
+func TestHandler_adminGetPromocodes(t *testing.T) {
+	type mockBehavior func(r *mock_service.MockPromoCodes, schoolId primitive.ObjectID)
+
+	promocodeId := primitive.NewObjectID()
+	offerId := primitive.NewObjectID()
+
+	school := domain.School{
+		ID: primitive.NewObjectID(),
+		Settings: domain.Settings{
+			Domain: "localhost",
+		},
+	}
+
+	tests := []struct {
+		name         string
+		school       domain.School
+		mockBehavior mockBehavior
+		statusCode   int
+		responseBody string
+	}{
+		{
+			name:   "ok",
+			school: school,
+			mockBehavior: func(r *mock_service.MockPromoCodes, schoolId primitive.ObjectID) {
+				r.EXPECT().GetBySchool(context.Background(), schoolId).Return([]domain.PromoCode{
+					{
+						ID:                 promocodeId,
+						SchoolId:           schoolId,
+						Code:               "FIRSTPROMO",
+						DiscountPercentage: 15,
+						ExpiresAt:          time.Date(2022, 12, 10, 13, 49, 51, 0, time.UTC),
+						OfferIDs:           []primitive.ObjectID{offerId},
+					},
+				}, nil)
+			},
+			statusCode:   200,
+			responseBody: fmt.Sprintf(`{"data":[{"id":"%s","schoolId":"%s","code":"FIRSTPROMO","discountPercentage":15,"expiresAt":"2022-12-10T13:49:51Z","offerIds":["%s"]}]}`, promocodeId.Hex(), school.ID.Hex(), offerId.Hex()),
+		},
+		{
+			name:   "service error",
+			school: school,
+			mockBehavior: func(r *mock_service.MockPromoCodes, schoolId primitive.ObjectID) {
+				r.EXPECT().GetBySchool(context.Background(), schoolId).Return(nil, errors.New("failed to get promocodes"))
+			},
+			statusCode:   500,
+			responseBody: `{"message":"failed to get promocodes"}`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Init Dependencies
+			c := gomock.NewController(t)
+			defer c.Finish()
+
+			p := mock_service.NewMockPromoCodes(c)
+			tt.mockBehavior(p, tt.school.ID)
+
+			services := &service.Services{PromoCodes: p}
+			handler := Handler{services: services}
+
+			// Init Endpoint
+			r := gin.New()
+			r.GET("/admins/promocodes/", func(c *gin.Context) {
+				c.Set(schoolCtx, tt.school)
+			}, handler.adminGetPromocodes)
+
+			// Create Request
+			w := httptest.NewRecorder()
+			req := httptest.NewRequest("GET","/admins/promocodes/", nil)
+
+			// Make Request
+			r.ServeHTTP(w, req)
+
+			// Assert
+			assert.Equal(t, w.Code, tt.statusCode)
+			assert.Equal(t, w.Body.String(), tt.responseBody)
+		})
+	}
+}
+
+func TestHandler_adminGetPromocodeById(t *testing.T) {
+	type mockBehavior func(r *mock_service.MockPromoCodes, schoolId primitive.ObjectID, id primitive.ObjectID)
+
+	promocodeId := primitive.NewObjectID()
+	offerId := primitive.NewObjectID()
+
+	school := domain.School{
+		ID: primitive.NewObjectID(),
+		Settings: domain.Settings{
+			Domain: "localhost",
+		},
+	}
+
+	tests := []struct {
+		name         string
+		school       domain.School
+		mockBehavior mockBehavior
+		statusCode   int
+		responseBody string
+	}{
+		{
+			name:   "ok",
+			school: school,
+			mockBehavior: func(r *mock_service.MockPromoCodes, schoolId primitive.ObjectID, id primitive.ObjectID) {
+				r.EXPECT().GetById(context.Background(), schoolId, id).Return(domain.PromoCode{
+						ID:                 promocodeId,
+						SchoolId:           schoolId,
+						Code:               "FIRSTPROMO",
+						DiscountPercentage: 15,
+						ExpiresAt:          time.Date(2022, 12, 10, 13, 49, 51, 0, time.UTC),
+						OfferIDs:           []primitive.ObjectID{offerId},
+				}, nil)
+			},
+			statusCode:   200,
+			responseBody: fmt.Sprintf(`{"id":"%s","schoolId":"%s","code":"FIRSTPROMO","discountPercentage":15,"expiresAt":"2022-12-10T13:49:51Z","offerIds":["%s"]}`, promocodeId.Hex(), school.ID.Hex(), offerId.Hex()),
+		},
+		{
+			name:   "service error",
+			school: school,
+			mockBehavior: func(r *mock_service.MockPromoCodes, schoolId primitive.ObjectID, id primitive.ObjectID) {
+				r.EXPECT().GetById(context.Background(), schoolId, id).Return(domain.PromoCode{}, errors.New("failed to get promocode by id"))
+			},
+			statusCode:   500,
+			responseBody: `{"message":"failed to get promocode by id"}`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Init Dependencies
+			c := gomock.NewController(t)
+			defer c.Finish()
+
+			p := mock_service.NewMockPromoCodes(c)
+			tt.mockBehavior(p, tt.school.ID, promocodeId)
+
+			services := &service.Services{PromoCodes: p}
+			handler := Handler{services: services}
+
+			// Init Endpoint
+			r := gin.New()
+			r.GET("/admins/promocodes/:id", func(c *gin.Context) {
+				c.Set(schoolCtx, tt.school)
+			}, handler.adminGetPromocodeById)
+
+			// Create Request
+			w := httptest.NewRecorder()
+			req := httptest.NewRequest("GET",fmt.Sprintf("/admins/promocodes/%s", promocodeId.Hex()), nil)
+
+			// Make Request
+			r.ServeHTTP(w, req)
+
+			// Assert
+			assert.Equal(t, w.Code, tt.statusCode)
+			assert.Equal(t, w.Body.String(), tt.responseBody)
+		})
+	}
+}
+
+func TestHandler_adminUpdatePromocode(t *testing.T) {
+	type mockBehavior func(r *mock_service.MockPromoCodes, input service.UpdatePromoCodeInput)
+
+	school := domain.School{
+		ID: primitive.NewObjectID(),
+		Settings: domain.Settings{
+			Domain: "localhost",
+		},
+	}
+
+	tests := []struct {
+		name         string
+		body         string
+		school       domain.School
+		input        service.UpdatePromoCodeInput
+		mockBehavior mockBehavior
+		statusCode   int
+		responseBody string
+	}{
+		{
+			name:   "ok",
+			body:   fmt.Sprintf(`{"code": "TESTPROMO", "discountPercentage": 15}`),
+			school: school,
+			input: service.UpdatePromoCodeInput{
+				ID: primitive.NewObjectID(),
+				SchoolID: school.ID,
+				Code:    "TESTPROMO",
+				DiscountPercentage: 15,
+			},
+			mockBehavior: func(r *mock_service.MockPromoCodes, input service.UpdatePromoCodeInput) {
+				r.EXPECT().Update(context.Background(), input).Return(nil)
+			},
+			statusCode:   200,
+			responseBody: "",
+		},
+		{
+			name:         "invalid input body",
+			body:         fmt.Sprintf(`{wrong}`),
+			school:       school,
+			mockBehavior: func(r *mock_service.MockPromoCodes, input service.UpdatePromoCodeInput) {},
+			statusCode:   400,
+			responseBody: `{"message":"invalid input body"}`,
+		},
+		{
+			name:   "service error",
+			body:   fmt.Sprintf(`{"code": "TESTPROMO", "discountPercentage": 15}`),
+			school: school,
+			input: service.UpdatePromoCodeInput{
+				ID: primitive.NewObjectID(),
+				SchoolID: school.ID,
+				Code:    "TESTPROMO",
+				DiscountPercentage: 15,
+			},
+			mockBehavior: func(r *mock_service.MockPromoCodes, input service.UpdatePromoCodeInput) {
+				r.EXPECT().Update(context.Background(), input).Return(errors.New("failed to update promocode"))
+			},
+			statusCode:   500,
+			responseBody: `{"message":"failed to update promocode"}`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Init Dependencies
+			c := gomock.NewController(t)
+			defer c.Finish()
+
+			p := mock_service.NewMockPromoCodes(c)
+			tt.mockBehavior(p, tt.input)
+
+			services := &service.Services{PromoCodes: p}
+			handler := Handler{services: services}
+
+			// Init Endpoint
+			r := gin.New()
+			r.PUT("/admins/promocodes/:id", func(c *gin.Context) {
+				c.Set(schoolCtx, tt.school)
+			}, handler.adminUpdatePromocode)
+
+			// Create Request
+			w := httptest.NewRecorder()
+			req := httptest.NewRequest("PUT", fmt.Sprintf("/admins/promocodes/%s", tt.input.ID.Hex()),
+				bytes.NewBufferString(tt.body))
+
+			// Make Request
+			r.ServeHTTP(w, req)
+
+			// Assert
+			assert.Equal(t, w.Code, tt.statusCode)
+			assert.Equal(t, w.Body.String(), tt.responseBody)
+		})
+	}
+}
+
+func TestHandler_adminDeletePromocode(t *testing.T) {
+	type mockBehavior func(r *mock_service.MockPromoCodes, id primitive.ObjectID)
+
+	promocodeId := primitive.NewObjectID()
+
+	school := domain.School{
+		ID: primitive.NewObjectID(),
+		Settings: domain.Settings{
+			Domain: "localhost",
+		},
+	}
+
+	tests := []struct {
+		name         string
+		school       domain.School
+		mockBehavior mockBehavior
+		statusCode   int
+		responseBody string
+	}{
+		{
+			name:   "ok",
+			school: school,
+			mockBehavior: func(r *mock_service.MockPromoCodes, id primitive.ObjectID) {
+				r.EXPECT().Delete(context.Background(), id).Return(nil)
+			},
+			statusCode:   200,
+			responseBody: "",
+		},
+		{
+			name:   "service error",
+			school: school,
+			mockBehavior: func(r *mock_service.MockPromoCodes, id primitive.ObjectID) {
+				r.EXPECT().Delete(context.Background(), id).Return(errors.New("failed to delete promocode"))
+			},
+			statusCode:   500,
+			responseBody: `{"message":"failed to delete promocode"}`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Init Dependencies
+			c := gomock.NewController(t)
+			defer c.Finish()
+
+			p := mock_service.NewMockPromoCodes(c)
+			tt.mockBehavior(p, promocodeId)
+
+			services := &service.Services{PromoCodes: p}
+			handler := Handler{services: services}
+
+			// Init Endpoint
+			r := gin.New()
+			r.DELETE("/admins/promocodes/:id", func(c *gin.Context) {
+				c.Set(schoolCtx, tt.school)
+			}, handler.adminDeletePromocode)
+
+			// Create Request
+			w := httptest.NewRecorder()
+			req := httptest.NewRequest("DELETE",fmt.Sprintf("/admins/promocodes/%s", promocodeId.Hex()), nil)
 
 			// Make Request
 			r.ServeHTTP(w, req)
