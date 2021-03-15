@@ -2,14 +2,15 @@ package app
 
 import (
 	"context"
-	"github.com/zhashkevych/courses-backend/pkg/email/smtp"
-	"github.com/zhashkevych/courses-backend/pkg/otp"
-	"github.com/zhashkevych/courses-backend/pkg/payment/fondy"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
-	"github.com/sirupsen/logrus"
+	"github.com/zhashkevych/courses-backend/pkg/email/smtp"
+	"github.com/zhashkevych/courses-backend/pkg/otp"
+	"github.com/zhashkevych/courses-backend/pkg/payment/fondy"
+
 	"github.com/zhashkevych/courses-backend/internal/config"
 	"github.com/zhashkevych/courses-backend/internal/delivery/http"
 	"github.com/zhashkevych/courses-backend/internal/repository"
@@ -99,7 +100,7 @@ func Run(configPath string) {
 	srv := server.NewServer(cfg, handlers.Init(cfg.HTTP.Host, cfg.HTTP.Port, cfg.Limiter, cfg.Cors))
 	go func() {
 		if err := srv.Run(); err != nil {
-			logrus.Errorf("error occurred while running http server: %s\n", err.Error())
+			logger.Errorf("error occurred while running http server: %s\n", err.Error())
 		}
 	}()
 
@@ -110,6 +111,15 @@ func Run(configPath string) {
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
 
 	<-quit
+
+	const timeout = 5 * time.Second
+
+	ctx, shutdown := context.WithTimeout(context.Background(), timeout)
+	defer shutdown()
+
+	if err := srv.Stop(ctx); err != nil {
+		logger.Errorf("failed to stop server: %v", err)
+	}
 
 	if err := mongoClient.Disconnect(context.Background()); err != nil {
 		logger.Error(err.Error())
