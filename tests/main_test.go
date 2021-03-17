@@ -29,8 +29,8 @@ var (
 )
 
 func init() {
-	dbURI = os.Getenv("DB_URI")
-	dbName = os.Getenv("DB_NAME")
+	dbURI = os.Getenv("TEST_DB_URI")
+	dbName = os.Getenv("TEST_DB_NAME")
 }
 
 type APITestSuite struct {
@@ -107,7 +107,7 @@ func (s *APITestSuite) initDeps() {
 				PurchaseSuccessful: "../templates/purchase_successful.html",
 			},
 			Subjects: config.EmailSubjects{
-				Verification: "Спасибо за регистрацию, %s!",
+				Verification:       "Спасибо за регистрацию, %s!",
 				PurchaseSuccessful: "Покупка прошла успешно!",
 			},
 		},
