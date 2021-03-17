@@ -9,10 +9,13 @@ env:
   REGISTRY: "registry.digitalocean.com/sandbox-registry"
   IMAGE_NAME: "courses-backend"
   CONTAINER_NAME: "courses-api"
+  TEST_CONTAINER_NAME: "test_db"
+  TEST_DB_NAME: "test"
+  TEST_DB_URI: "mongodb://localhost:27019"
 
 jobs:
 
-  test:
+  tests:
     runs-on: ubuntu-latest
     steps:
       - name: Install Go
@@ -23,15 +26,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Test
+      - name: Unit Tests
         run: go test --short ./...
+
+      - name: Create test db container
+        run: docker run --rm -d -p 27019:27017 --name $(echo $CONTAINER_NAME) -e MONGODB_DATABASE=$(echo $DB_NAME) mongo:4.4-bionic
+
+      - name: Integration Tests
+        run: GIN_MODE=release go test -v ./tests/
+        env:
+          DB_URI: $(echo $TEST_DB_URI)
+
+      - name: Kill test db container
+        run: docker stop $(echo $CONTAINER_NAME)
 
   build_and_push:
     runs-on: ubuntu-latest
-    needs: test
+    needs: tests
 
     steps:
-      - name: Checkout master
+      - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Build container image
