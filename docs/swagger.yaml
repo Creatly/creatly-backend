@@ -166,6 +166,24 @@ definitions:
     required:
     - name
     type: object
+  v1.createPromocodeInput:
+    properties:
+      code:
+        type: string
+      discountPercentage:
+        type: integer
+      expiresAt:
+        type: string
+      offerIds:
+        items:
+          type: string
+        type: array
+    required:
+    - code
+    - discountPercentage
+    - expiresAt
+    - offerIds
+    type: object
   v1.dataResponse:
     properties:
       data:
@@ -301,6 +319,19 @@ definitions:
         type: array
       name:
         type: string
+    type: object
+  v1.updatePromocodeInput:
+    properties:
+      code:
+        type: string
+      discountPercentage:
+        type: integer
+      expiresAt:
+        type: string
+      offerIds:
+        items:
+          type: string
+        type: array
     type: object
   v1.updateSchoolSettingsInput:
     properties:
@@ -1283,6 +1314,206 @@ paths:
       summary: Admin Update Package
       tags:
       - admins-packages
+  /admins/promocodes:
+    get:
+      consumes:
+      - application/json
+      description: admin get all promocodes
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/v1.dataResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.PromoCode'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Get All Promocodes
+      tags:
+      - admins-promocodes
+    post:
+      consumes:
+      - application/json
+      description: admin create promocode
+      parameters:
+      - description: package info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.createPromocodeInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/v1.idResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Create Promocode
+      tags:
+      - admins-promocodes
+  /admins/promocodes/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: admin delete promocode
+      parameters:
+      - description: promocode id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Delete Promocode
+      tags:
+      - admins-promocodes
+    get:
+      consumes:
+      - application/json
+      description: admin get promocode by id
+      parameters:
+      - description: promocode id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.PromoCode'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Get Promocode By Id
+      tags:
+      - admins-promocodes
+    put:
+      consumes:
+      - application/json
+      description: admin update promocode
+      parameters:
+      - description: promocode id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: update info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.updatePromocodeInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Update Promocode
+      tags:
+      - admins-promocodes
   /admins/school/settings:
     put:
       consumes:

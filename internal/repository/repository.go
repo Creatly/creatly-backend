@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"time"
 
 	"github.com/zhashkevych/courses-backend/internal/domain"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -126,9 +127,22 @@ type Offers interface {
 	GetByPackages(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Offer, error)
 }
 
+type UpdatePromoCodeInput struct {
+	ID                 primitive.ObjectID
+	SchoolID           primitive.ObjectID
+	Code               string
+	DiscountPercentage int
+	ExpiresAt          time.Time
+	OfferIDs           []primitive.ObjectID
+}
+
 type PromoCodes interface {
+	Create(ctx context.Context, promocode domain.PromoCode) (primitive.ObjectID, error)
+	Update(ctx context.Context, inp UpdatePromoCodeInput) error
+	Delete(ctx context.Context, id primitive.ObjectID) error
 	GetByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.PromoCode, error)
 	GetById(ctx context.Context, schoolId, id primitive.ObjectID) (domain.PromoCode, error)
+	GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.PromoCode, error)
 }
 
 type Orders interface {

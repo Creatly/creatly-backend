@@ -29,8 +29,8 @@ var (
 )
 
 func init() {
-	dbURI = os.Getenv("DB_URI")
-	dbName = os.Getenv("DB_NAME")
+	dbURI = os.Getenv("TEST_DB_URI")
+	dbName = os.Getenv("TEST_DB_NAME")
 }
 
 type APITestSuite struct {
