@@ -1,0 +1,106 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  REGISTRY: "registry.digitalocean.com/sandbox-registry"
+  IMAGE_NAME: "courses-backend"
+  CONTAINER_NAME: "courses-api"
+  TEST_CONTAINER_NAME: "test_db"
+  TEST_DB_NAME: "test"
+  TEST_DB_URI: "mongodb://localhost:27019"
+
+jobs:
+
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.15
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Unit Tests
+        run: go test --short ./...
+
+      - name: Create test db container
+        run: docker run --rm -d -p 27019:27017 --name $(echo $TEST_CONTAINER_NAME) -e MONGODB_DATABASE=$(echo $TEST_DB_NAME) mongo:4.4-bionic
+
+      - name: Integration Tests
+        run: GIN_MODE=release go test -v ./tests/
+
+      - name: Kill test db container
+        run: docker stop $(echo $TEST_CONTAINER_NAME)
+
+  build_and_push:
+    runs-on: ubuntu-latest
+    needs: tests
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build container image
+        run: docker build -f Dockerfile -t $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7) .
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Log in to DigitalOcean Container Registry with short-lived credentials
+        run: doctl registry login --expiry-seconds 600
+
+      - name: Push image to DigitalOcean Container Registry
+        run: docker push $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
+
+  deploy:
+    environment: production
+    runs-on: ubuntu-latest
+    needs: build_and_push
+
+    steps:
+      - name: Deploy to Digital Ocean droplet via SSH action
+        uses: appleboy/ssh-action@v0.1.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSHKEY }}
+          envs: IMAGE_NAME,REGISTRY,GITHUB_SHA,CONTAINER_NAME
+          script: |
+            # Login into Digital Ocean Registry
+            docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} $(echo $REGISTRY)
+            # Stop running container
+            docker stop $(echo $CONTAINER_NAME)
+            # Remove old container
+            docker rm $(echo $CONTAINER_NAME)
+
+            # Set env variables
+            export MONGO_URI="${{ secrets.MONGO_URI }}"
+            export PASSWORD_SALT="${{ secrets.PASSWORD_SALT }}"
+            export JWT_SIGNING_KEY="${{ secrets.JWT_SIGNING_KEY }}"
+            export SENDPULSE_LISTID="${{ secrets.SENDPULSE_LISTID }}"
+            export SENDPULSE_ID="${{ secrets.SENDPULSE_ID }}"
+            export SENDPULSE_SECRET="${{ secrets.SENDPULSE_SECRET }}"
+            export HTTP_HOST="${{secrets.HTTP_HOST}}"
+            export FONDY_MERCHANT_ID=${{secrets.FONDY_MERCHANT_ID}}
+            export FONDY_MERCHANT_PASS=${{secrets.FONDY_MERCHANT_PASS}}
+            export PAYMENT_CALLBACK_URL=${{secrets.PAYMENT_CALLBACK_URL}}
+            export PAYMENT_REDIRECT_URL=${{secrets.PAYMENT_REDIRECT_URL}}
+            export FRONTEND_URL=${{secrets.FRONTEND_URL}}
+            export SMTP_PASSWORD=${{secrets.SMTP_PASSWORD}}
+
+            # Run a new container from a new image
+            docker run -e MONGO_URI -e MONGO_USER -e MONGO_PASS -e PASSWORD_SALT -e JWT_SIGNING_KEY \
+            -e SENDPULSE_LISTID -e SENDPULSE_ID -e SENDPULSE_SECRET -e HTTP_HOST -e FONDY_MERCHANT_ID -e FONDY_MERCHANT_PASS \
+            -e PAYMENT_CALLBACK_URL -e PAYMENT_REDIRECT_URL -e FRONTEND_URL -e SMTP_PASSWORD -d \
+            --restart always \
+            --publish 8000:8000 \
+            --name $(echo $CONTAINER_NAME) \
+            $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
