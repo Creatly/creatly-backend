@@ -51,7 +51,7 @@ func (h *Handler) Init(host, port string, limiterConfig config.LimiterConfig, co
 		limiter.Limit(limiterConfig.RPS, limiterConfig.Burst, limiterConfig.TTL),
 		cors.New(cors.Config{
 			AllowOrigins:     corsConfig.AllowOrigins,
-			AllowMethods:     []string{"*"},
+			AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
 			AllowHeaders:     []string{"*"},
 			ExposeHeaders:    []string{"Content-Length"},
 			AllowCredentials: true,
