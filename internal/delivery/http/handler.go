@@ -2,7 +2,6 @@ package http
 
 import (
 	"fmt"
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
@@ -40,14 +39,19 @@ func NewHandler(services *service.Services, tokenManager auth.TokenManager) *Han
 	}
 }
 
-func (h *Handler) Init(host, port string, limiterConfig config.LimiterConfig, corsConfig config.CorsConfig) *gin.Engine {
+func (h *Handler) Init(host, port string, limiterConfig config.LimiterConfig) *gin.Engine {
 	// Init gin handler
 	router := gin.Default()
+
+	corsMiddleware := func(c *gin.Context){
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+	}
+
 	router.Use(
 		gin.Recovery(),
 		gin.Logger(),
 		limiter.Limit(limiterConfig.RPS, limiterConfig.Burst, limiterConfig.TTL),
-		cors.Default(),
+		corsMiddleware,
 	)
 
 	docs.SwaggerInfo.Host = fmt.Sprintf("%s:%s", host, port)

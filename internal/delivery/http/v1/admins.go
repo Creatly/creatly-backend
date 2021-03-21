@@ -22,8 +22,8 @@ func (h *Handler) initAdminRoutes(api *gin.RouterGroup) {
 		{
 			courses := authenticated.Group("/courses")
 			{
-				courses.POST("/", h.adminCreateCourse)
-				courses.GET("/", h.adminGetAllCourses)
+				courses.POST("", h.adminCreateCourse)
+				courses.GET("", h.adminGetAllCourses)
 				courses.GET("/:id", h.adminGetCourseById)
 				courses.PUT("/:id", h.adminUpdateCourse)
 				courses.POST("/:id/modules", h.adminCreateModule)
@@ -55,8 +55,8 @@ func (h *Handler) initAdminRoutes(api *gin.RouterGroup) {
 
 			offers := authenticated.Group("/offers")
 			{
-				offers.POST("/", h.adminCreateOffer)
-				offers.GET("/", h.adminGetAllOffers)
+				offers.POST("", h.adminCreateOffer)
+				offers.GET("", h.adminGetAllOffers)
 				offers.GET("/:id", h.adminGetOfferById)
 				offers.PUT("/:id", h.adminUpdateOffer)
 				offers.DELETE("/:id", h.adminDeleteOffer)
@@ -69,8 +69,8 @@ func (h *Handler) initAdminRoutes(api *gin.RouterGroup) {
 
 			promocodes := authenticated.Group("/promocodes")
 			{
-				promocodes.POST("/", h.adminCreatePromocode)
-				promocodes.GET("/", h.adminGetPromocodes)
+				promocodes.POST("", h.adminCreatePromocode)
+				promocodes.GET("", h.adminGetPromocodes)
 				promocodes.GET("/:id", h.adminGetPromocodeById)
 				promocodes.PUT("/:id", h.adminUpdatePromocode)
 				promocodes.DELETE("/:id", h.adminDeletePromocode)
