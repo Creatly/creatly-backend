@@ -11,7 +11,7 @@ import (
 func (h *Handler) initCoursesRoutes(api *gin.RouterGroup) {
 	courses := api.Group("/courses", h.setSchoolFromRequest)
 	{
-		courses.GET("/", h.getAllCourses)
+		courses.GET("", h.getAllCourses)
 		courses.GET("/:id", h.getCourseById)
 		courses.GET("/:id/offers", h.getCourseOffers)
 	}
