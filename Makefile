@@ -21,7 +21,7 @@ test.integration:
 	docker run --rm -d -p 27019:27017 --name $$TEST_CONTAINER_NAME -e MONGODB_DATABASE=$$TEST_DB_NAME mongo:4.4-bionic
 
 	GIN_MODE=release go test -v ./tests/
-	docker stop $$CONTAINER_NAME
+	docker stop $$TEST_CONTAINER_NAME
 
 test.coverage:
 	go tool cover -func=cover.out

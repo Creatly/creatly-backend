@@ -24,9 +24,6 @@ limiter:
   burst: 2
   ttl: 10m
 
-cors:
-  allow_origins: ["http://localhost"]
-
 smtp:
   host: "mail.privateemail.com"
   port: 587
