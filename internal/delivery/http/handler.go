@@ -3,9 +3,6 @@ package http
 import (
 	"fmt"
 	"github.com/gin-contrib/cors"
-	"net/http"
-	"time"
-
 	"github.com/gin-gonic/gin"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
@@ -15,6 +12,7 @@ import (
 	"github.com/zhashkevych/courses-backend/internal/service"
 	"github.com/zhashkevych/courses-backend/pkg/auth"
 	"github.com/zhashkevych/courses-backend/pkg/limiter"
+	"net/http"
 
 	_ "github.com/zhashkevych/courses-backend/docs"
 )
@@ -49,14 +47,7 @@ func (h *Handler) Init(host, port string, limiterConfig config.LimiterConfig, co
 		gin.Recovery(),
 		gin.Logger(),
 		limiter.Limit(limiterConfig.RPS, limiterConfig.Burst, limiterConfig.TTL),
-		cors.New(cors.Config{
-			AllowOrigins:     corsConfig.AllowOrigins,
-			AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
-			AllowHeaders:     []string{"*"},
-			ExposeHeaders:    []string{"Content-Length"},
-			AllowCredentials: true,
-			MaxAge:           12 * time.Hour,
-		}),
+		cors.Default(),
 	)
 
 	docs.SwaggerInfo.Host = fmt.Sprintf("%s:%s", host, port)
