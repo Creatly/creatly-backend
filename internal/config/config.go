@@ -29,7 +29,6 @@ type (
 		Payment     PaymentConfig
 		Limiter     LimiterConfig
 		CacheTTL    time.Duration `mapstructure:"ttl"`
-		Cors        CorsConfig
 		FrontendURL string
 		SMTP        SMTPConfig
 	}
@@ -105,10 +104,6 @@ type (
 		TTL   time.Duration
 	}
 
-	CorsConfig struct {
-		AllowOrigins []string `mapstructure:"allow_origins"`
-	}
-
 	SMTPConfig struct {
 		Host string `mapstructure:"host"`
 		Port int    `mapstructure:"port"`
@@ -166,10 +161,6 @@ func unmarshal(cfg *Config) error {
 	}
 
 	if err := viper.UnmarshalKey("limiter", &cfg.Limiter); err != nil {
-		return err
-	}
-
-	if err := viper.UnmarshalKey("cors.allow_origins", &cfg.Cors.AllowOrigins); err != nil {
 		return err
 	}
 
