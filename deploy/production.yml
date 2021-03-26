@@ -12,7 +12,7 @@ services:
       - MONGO_USER
       - MONGO_PASS
       - PASSWORD_SALT
-      - JWT_SIGNING_KE
+      - JWT_SIGNING_KEY
       - SENDPULSE_LISTID
       - SENDPULSE_ID
       - SENDPULSE_SECRET
