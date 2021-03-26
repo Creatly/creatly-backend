@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
   api:
-    image: ${REGISTRY}:${API_IMAGE}:${TAG}
+    image: ${REGISTRY}/${API_IMAGE}:${TAG}
     container_name: courses-api
     restart: always
     ports:
@@ -25,7 +25,7 @@ services:
       - SMTP_PASSWORD
 
   nginx:
-    image: ${REGISTRY}:${NGINX_IMAGE}:${TAG}
+    image: ${REGISTRY}/${NGINX_IMAGE}:${TAG}
     container_name: courses-api-proxy
     restart: always
     volumes:
