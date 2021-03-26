@@ -2,7 +2,7 @@ FROM golang:1.15-alpine3.12 AS builder
 
 RUN go version
 
-COPY .. /github.com/zhashkevych/courses-backend/
+COPY . /github.com/zhashkevych/courses-backend/
 WORKDIR /github.com/zhashkevych/courses-backend/
 
 RUN go mod download
