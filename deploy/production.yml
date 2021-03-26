@@ -7,8 +7,6 @@ services:
     restart: always
     ports:
       - 8000:8000
-#    depends_on:
-#      - courses-db
     environment:
       - MONGO_URI
       - MONGO_USER
@@ -25,18 +23,6 @@ services:
       - PAYMENT_REDIRECT_URL
       - FRONTEND_URL
       - SMTP_PASSWORD
-
-#  courses-db:
-#    image: mongo:4.4-bionic
-#    container_name: courses-db
-#    environment:
-#      - MONGO_DATA_DIR=/data/db
-#      - MONGO_LOG_DIR=/dev/null
-#      - MONGODB_DATABASE=coursePlatform
-#      - MONGO_INITDB_ROOT_USERNAME=admin
-#      - MONGO_INITDB_ROOT_PASSWORD=qwerty
-#    ports:
-#      - 27019:27017
 
   nginx:
     image: ${REGISTRY}:${NGINX_IMAGE}:${TAG}

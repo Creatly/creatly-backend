@@ -86,8 +86,8 @@ jobs:
       - name: Deploy to Digital Ocean droplet via SSH action
         uses: appleboy/ssh-action@v0.1.3
         env:
-          MONGO_URI: "${{ secrets.MONGO_URI }}"
-          PASSWORD_SALT: "${{ secrets.PASSWORD_SALT }}"
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+          PASSWORD_SALT: ${{ secrets.PASSWORD_SALT }}
           JWT_SIGNING_KEY: ${{ secrets.JWT_SIGNING_KEY }}
           SENDPULSE_LISTID: ${{ secrets.SENDPULSE_LISTID }}
           SENDPULSE_ID: ${{ secrets.SENDPULSE_ID }}
@@ -104,17 +104,9 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSHKEY }}
-          envs: API_IMAGE,NGINX_IMAGE,TAG,REGISTRY
           script: |
             # Login into Digital Ocean Registry
             docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} $(echo $REGISTRY)
 
             # Run a new container from a new image
-            cd api && docker-compose -f docker-compose.yml -f production.yml up -d nginx
-#            docker run -e MONGO_URI -e MONGO_USER -e MONGO_PASS -e PASSWORD_SALT -e JWT_SIGNING_KEY \
-#            -e SENDPULSE_LISTID -e SENDPULSE_ID -e SENDPULSE_SECRET -e HTTP_HOST -e FONDY_MERCHANT_ID -e FONDY_MERCHANT_PASS \
-#            -e PAYMENT_CALLBACK_URL -e PAYMENT_REDIRECT_URL -e FRONTEND_URL -e SMTP_PASSWORD -d \
-#            --restart always \
-#            --publish 8000:8000 \
-#            --name $(echo $CONTAINER_NAME) \
-#            $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
+            cd api && docker-compose -f production.yml up -d nginx
