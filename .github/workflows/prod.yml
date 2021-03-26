@@ -109,9 +109,27 @@ jobs:
             # Login into Digital Ocean Registry
             docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} $(echo $REGISTRY)
 
-            echo $REGISTRY
-            echo $MONGO_URI
-            echo $SERVER_NAME
+            # Set env variables
+            export MONGO_URI="${{ secrets.MONGO_URI }}"
+            export MONGO_USER="${{ secrets.MONGO_USER }}"
+            export MONGO_PASS="${{ secrets.MONGO_PASS }}"
+            export PASSWORD_SALT="${{ secrets.PASSWORD_SALT }}"
+            export JWT_SIGNING_KEY="${{ secrets.JWT_SIGNING_KEY }}"
+            export SENDPULSE_LISTID="${{ secrets.SENDPULSE_LISTID }}"
+            export SENDPULSE_ID="${{ secrets.SENDPULSE_ID }}"
+            export SENDPULSE_SECRET="${{ secrets.SENDPULSE_SECRET }}"
+            export HTTP_HOST="${{secrets.HTTP_HOST}}"
+            export FONDY_MERCHANT_ID=${{secrets.FONDY_MERCHANT_ID}}
+            export FONDY_MERCHANT_PASS=${{secrets.FONDY_MERCHANT_PASS}}
+            export PAYMENT_CALLBACK_URL=${{secrets.PAYMENT_CALLBACK_URL}}
+            export PAYMENT_REDIRECT_URL=${{secrets.PAYMENT_REDIRECT_URL}}
+            export FRONTEND_URL=${{secrets.FRONTEND_URL}}
+            export SMTP_PASSWORD=${{secrets.SMTP_PASSWORD}}
+            export SERVER_NAME="api.prod.creatly.zhashkevych.com"
+            export REGISTRY=$(echo $REGISTRY)
+            export API_IMAGE=$(echo $API_IMAGE)
+            export NGINX_IMAGE=$(echo $NGINX_IMAGE)
+            export TAG=$(echo $TAG)
 
             # Run a new container from a new image
             cd api && docker-compose -f production.yml up -d nginx
