@@ -51,7 +51,7 @@ jobs:
         run: ls -la
 
       - name: Build API container image
-        run: docker build -f deploy/Dockerfile -t $(echo $REGISTRY)/$(echo $API_IMAGE):$(echo $TAG) .
+        run: cd deploy && docker build -t $(echo $REGISTRY)/$(echo $API_IMAGE):$(echo $TAG) .
       - name: Build NGINX container image
         run: docker build -f deploy/nginx/Dockerfile -t $(echo $REGISTRY)/$(echo $NGINX_IMAGE):$(echo $TAG) .
 
