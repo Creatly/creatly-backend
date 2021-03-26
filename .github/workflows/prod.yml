@@ -47,8 +47,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Docker Version
-        run: docker --version
+      - name: ls
+        run: ls -la
 
       - name: Build API container image
         run: docker build -f deploy/Dockerfile -t $(echo $REGISTRY)/$(echo $API_IMAGE):$(echo $TAG) .
