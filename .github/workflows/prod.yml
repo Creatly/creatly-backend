@@ -86,24 +86,25 @@ jobs:
       - name: Deploy to Digital Ocean droplet via SSH action
         uses: appleboy/ssh-action@v0.1.3
         env:
-          MONGO_URI: ${{ secrets.MONGO_URI }}
-          PASSWORD_SALT: ${{ secrets.PASSWORD_SALT }}
-          JWT_SIGNING_KEY: ${{ secrets.JWT_SIGNING_KEY }}
-          SENDPULSE_LISTID: ${{ secrets.SENDPULSE_LISTID }}
-          SENDPULSE_ID: ${{ secrets.SENDPULSE_ID }}
-          SENDPULSE_SECRET: ${{ secrets.SENDPULSE_SECRET }}
-          HTTP_HOST: ${{secrets.HTTP_HOST}}
-          FONDY_MERCHANT_ID: ${{secrets.FONDY_MERCHANT_ID}}
-          FONDY_MERCHANT_PASS: ${{secrets.FONDY_MERCHANT_PASS}}
-          PAYMENT_CALLBACK_URL: ${{secrets.PAYMENT_CALLBACK_URL}}
-          PAYMENT_REDIRECT_URL: ${{secrets.PAYMENT_REDIRECT_URL}}
-          FRONTEND_URL: ${{secrets.FRONTEND_URL}}
-          SMTP_PASSWORD: ${{secrets.SMTP_PASSWORD}}
+          MONGO_URI: "${{ secrets.MONGO_URI }}"
+          PASSWORD_SALT: "${{ secrets.PASSWORD_SALT }}"
+          JWT_SIGNING_KEY: "${{ secrets.JWT_SIGNING_KEY }}"
+          SENDPULSE_LISTID: "${{ secrets.SENDPULSE_LISTID }}"
+          SENDPULSE_ID: "${{ secrets.SENDPULSE_ID }}"
+          SENDPULSE_SECRET: "${{ secrets.SENDPULSE_SECRET }}"
+          HTTP_HOST: "${{secrets.HTTP_HOST}}"
+          FONDY_MERCHANT_ID: "${{secrets.FONDY_MERCHANT_ID}}"
+          FONDY_MERCHANT_PASS: "${{secrets.FONDY_MERCHANT_PASS}}"
+          PAYMENT_CALLBACK_URL: "${{secrets.PAYMENT_CALLBACK_URL}}"
+          PAYMENT_REDIRECT_URL: "${{secrets.PAYMENT_REDIRECT_URL}}"
+          FRONTEND_URL: "${{secrets.FRONTEND_URL}}"
+          SMTP_PASSWORD: "${{secrets.SMTP_PASSWORD}}"
           SERVER_NAME: "api.prod.creatly.zhashkevych.com"
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSHKEY }}
+          envs: API_IMAGE,NGINX_IMAGE,TAG,REGISTRY,MONGO_URI,PASSWORD_SALT,JWT_SIGNING_KEY,SENDPULSE_LISTID,SENDPULSE_SECRET,HTTP_HOST,FONDY_MERCHANT_ID,FONDY_MERCHANT_PASS,PAYMENT_CALLBACK_URL,PAYMENT_REDIRECT_URL,FRONTEND_URL,SMTP_PASSWORD,SERVER_NAME
           script: |
             # Login into Digital Ocean Registry
             docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} $(echo $REGISTRY)
