@@ -79,7 +79,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSHKEY }}
-          source: "deploy/,!deploy/nginx/,!deploy/Dockerfile"
+          source: "deploy/,!deploy/nginx,!deploy/Dockerfile"
           target: "api"
           strip_components: 1
 
@@ -108,6 +108,10 @@ jobs:
           script: |
             # Login into Digital Ocean Registry
             docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} $(echo $REGISTRY)
+
+            echo $REGISTRY
+            echo $MONGO_URI
+            echo $SERVER_NAME
 
             # Run a new container from a new image
             cd api && docker-compose -f production.yml up -d nginx
