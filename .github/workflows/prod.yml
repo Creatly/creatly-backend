@@ -47,6 +47,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Docker Version
+        run: docker --version
+
       - name: Build API container image
         run: docker build -f deploy/Dockerfile -t $(echo $REGISTRY)/$(echo $API_IMAGE):$(echo $TAG) .
       - name: Build NGINX container image
