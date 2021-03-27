@@ -27,8 +27,8 @@ http {
      listen              443 ssl;
      server_name         ${SERVER_NAME};
      ssl_certificate         /etc/nginx/certs/zhashkevych.com.pem;
-     ssl_certificate_key     /etc/nginx/certs/zhaskevych.com.key;
-     ssl_client_certificate  /etc/nginx/certs/cloudflare.cer;
+     ssl_certificate_key     /etc/nginx/certs/zhashkevych.com.key;
+     ssl_client_certificate  /etc/nginx/certs/cloudflare.crt;
      ssl_verify_client on;
 
       location / {
