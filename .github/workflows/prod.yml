@@ -39,37 +39,37 @@ jobs:
   #      - name: Kill test db container
   #        run: docker stop $(echo $TEST_CONTAINER_NAME)
 
-#    build_and_push:
-#      runs-on: ubuntu-latest
-#  #    needs: tests
-#
-#      steps:
-#        - name: Checkout code
-#          uses: actions/checkout@v2
-#
-##        - name: Build API container image
-##          run: docker build -f deploy/Dockerfile -t $(echo $REGISTRY)/$(echo $API_IMAGE):$(echo $TAG) .
-#        - name: Build NGINX container image
-#          run: docker build -f deploy/nginx/Dockerfile -t $(echo $REGISTRY)/$(echo $NGINX_IMAGE):$(echo $TAG) .
-#
-#        - name: Install doctl
-#          uses: digitalocean/action-doctl@v2
-#          with:
-#            token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-#
-#        - name: Log in to DigitalOcean Container Registry with short-lived credentials
-#          run: doctl registry login --expiry-seconds 600
-#
-##        - name: Push API image to DigitalOcean Container Registry
-##          run: docker push $(echo $REGISTRY)/$(echo $API_IMAGE):$(echo $TAG)
-#
-#        - name: Push NGINX image to DigitalOcean Container Registry
-#          run: docker push $(echo $REGISTRY)/$(echo $NGINX_IMAGE):$(echo $TAG)
+    build_and_push:
+      runs-on: ubuntu-latest
+  #    needs: tests
+
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v2
+
+#        - name: Build API container image
+#          run: docker build -f deploy/Dockerfile -t $(echo $REGISTRY)/$(echo $API_IMAGE):$(echo $TAG) .
+        - name: Build NGINX container image
+          run: docker build -f deploy/nginx/Dockerfile -t $(echo $REGISTRY)/$(echo $NGINX_IMAGE):$(echo $TAG) .
+
+        - name: Install doctl
+          uses: digitalocean/action-doctl@v2
+          with:
+            token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+        - name: Log in to DigitalOcean Container Registry with short-lived credentials
+          run: doctl registry login --expiry-seconds 600
+
+#        - name: Push API image to DigitalOcean Container Registry
+#          run: docker push $(echo $REGISTRY)/$(echo $API_IMAGE):$(echo $TAG)
+
+        - name: Push NGINX image to DigitalOcean Container Registry
+          run: docker push $(echo $REGISTRY)/$(echo $NGINX_IMAGE):$(echo $TAG)
 
     deploy:
       environment: production
       runs-on: ubuntu-latest
-#      needs: build_and_push
+      needs: build_and_push
 
       steps:
         - uses: actions/checkout@master

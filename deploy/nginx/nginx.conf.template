@@ -28,8 +28,6 @@ http {
      server_name         ${SERVER_NAME};
      ssl_certificate         /etc/nginx/certs/api.prod.cert.pem;
      ssl_certificate_key     /etc/nginx/certs/api.prod.key.pem;
-     ssl_client_certificate  /etc/nginx/certs/origin-pull-ca.crt;
-     ssl_verify_client on;
 
       location / {
           proxy_pass http://${API_HOST}:${API_PORT};
