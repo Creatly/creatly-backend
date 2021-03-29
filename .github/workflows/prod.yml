@@ -123,4 +123,4 @@ jobs:
               docker-compose stop
               docker-compose rm -f
               docker-compose -f production.yml pull
-              docker-compose -f production.yml up -d --force-recreate nginx
+              docker-compose -f production.yml up -d --force-recreate caddy

@@ -44,19 +44,29 @@ services:
     ports:
       - 27019:27017
 
-  nginx:
-    image: nginx-api-proxy
-    container_name: api-proxy
-    build:
-      context: ./nginx
-    volumes:
-      - ./certs/:/etc/nginx/certs/
+  caddy:
+    image: caddy:2.3.0-alpine
+    restart: always
+    command: caddy reverse-proxy --to courses-api:8000
     ports:
-      - 80:80
-      - 443:443
-    environment:
-      - API_HOST=courses-api
-      - API_PORT=8000
-      - SERVER_NAME=localhost
+      - "80:80"
+      - "443:443"
     depends_on:
       - api
+
+#  nginx:
+#    image: nginx-api-proxy
+#    container_name: api-proxy
+#    build:
+#      context: ./nginx
+#    volumes:
+#      - ./certs/:/etc/nginx/certs/
+#    ports:
+#      - 80:80
+#      - 443:443
+#    environment:
+#      - API_HOST=courses-api
+#      - API_PORT=8000
+#      - SERVER_NAME=localhost
+#    depends_on:
+#      - api
