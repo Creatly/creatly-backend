@@ -43,10 +43,6 @@ func (h *Handler) Init(host, port string, limiterConfig config.LimiterConfig) *g
 	// Init gin handler
 	router := gin.Default()
 
-	corsMiddleware := func(c *gin.Context){
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-	}
-
 	router.Use(
 		gin.Recovery(),
 		gin.Logger(),
