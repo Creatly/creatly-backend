@@ -18,11 +18,7 @@ const (
 )
 
 func (h *Handler) setSchoolFromRequest(c *gin.Context) {
-	host := strings.Split(c.Request.Host, ":")[0]
-
-	logger.Infof("Request host: %s", c.Request.Host)
-	logger.Infof("Request info: %+v", c.Request)
-
+	host := parseRequestHost(c)
 	school, err := h.services.Schools.GetByDomain(c.Request.Context(), host)
 	if err != nil {
 		logger.Error(err)
@@ -31,6 +27,14 @@ func (h *Handler) setSchoolFromRequest(c *gin.Context) {
 	}
 
 	c.Set(schoolCtx, school)
+}
+
+func parseRequestHost(c *gin.Context) string {
+	refererHeader := c.Request.Header.Get("Referer")
+	refererParts := strings.Split(refererHeader, "/")
+	hostParts := strings.Split(refererParts[2], ":")
+
+	return hostParts[0]
 }
 
 func getSchoolFromContext(c *gin.Context) (domain.School, error) {
