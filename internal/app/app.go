@@ -2,6 +2,8 @@ package app
 
 import (
 	"context"
+	"errors"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -12,7 +14,7 @@ import (
 	"github.com/zhashkevych/courses-backend/pkg/payment/fondy"
 
 	"github.com/zhashkevych/courses-backend/internal/config"
-	"github.com/zhashkevych/courses-backend/internal/delivery/http"
+	delivery "github.com/zhashkevych/courses-backend/internal/delivery/http"
 	"github.com/zhashkevych/courses-backend/internal/repository"
 	"github.com/zhashkevych/courses-backend/internal/server"
 	"github.com/zhashkevych/courses-backend/internal/service"
@@ -94,12 +96,12 @@ func Run(configPath string) {
 		VerificationCodeLength: cfg.Auth.VerificationCodeLength,
 		FrontendURL:            cfg.FrontendURL,
 	})
-	handlers := http.NewHandler(services, tokenManager)
+	handlers := delivery.NewHandler(services, tokenManager)
 
 	// HTTP Server
 	srv := server.NewServer(cfg, handlers.Init(cfg.HTTP.Host, cfg.HTTP.Port, cfg.Limiter))
 	go func() {
-		if err := srv.Run(); err != nil {
+		if err := srv.Run(); !errors.Is(err, http.ErrServerClosed) {
 			logger.Errorf("error occurred while running http server: %s\n", err.Error())
 		}
 	}()
