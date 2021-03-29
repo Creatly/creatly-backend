@@ -2,71 +2,40 @@ version: '3.4'
 
 services:
   api:
-    image: courses-backend-app
+    image: ${REGISTRY}/${API_IMAGE}:${TAG}
     container_name: courses-api
-    build:
-      context: ..
-      dockerfile: Dockerfile
+    restart: always
     ports:
       - 8000:8000
-    volumes:
-      - ../.bin/:/root/
-      - ../configs/:/root/configs/
-      - ../templates/:/root/templates/
-    depends_on:
-      - courses-db
     environment:
-      - MONGO_URI=mongodb://courses-db:27017
-      - MONGO_USER=admin
-      - MONGO_PASS=qwerty
-      - PASSWORD_SALT=jhh*351nsqwe@3124,qwjh**74120jakjkq1213^
-      - JWT_SIGNING_KEY=kjqw174janfb19qwgjghqw5kkqjwrkqw998rqwjh
-      - SENDPULSE_LISTID=1154579
-      - SENDPULSE_ID=fe5a60819d63d9841f2142729ab3d53f
-      - SENDPULSE_SECRET=efda8b00ccccf3a5b61578a1ae4f0ace
-      - HTTP_HOST=localhost
-      - FONDY_MERCHANT_ID=1396424
-      - FONDY_MERCHANT_PASS=test
-      - PAYMENT_CALLBACK_URL=https://85c9ced731e6.ngrok.io/api/v1/callback/fondy
-      - PAYMENT_REDIRECT_URL=https://zhashkevych.com/
-      - FRONTEND_URL=http://localhost:1337
-      - SMTP_PASSWORD=m1ndFULLdes1res
+      - MONGO_URI
+      - MONGO_USER
+      - MONGO_PASS
+      - PASSWORD_SALT
+      - JWT_SIGNING_KEY
+      - SENDPULSE_LISTID
+      - SENDPULSE_ID
+      - SENDPULSE_SECRET
+      - HTTP_HOST
+      - FONDY_MERCHANT_ID
+      - FONDY_MERCHANT_PASS
+      - PAYMENT_CALLBACK_URL
+      - PAYMENT_REDIRECT_URL
+      - FRONTEND_URL
+      - SMTP_PASSWORD
 
-  courses-db:
-    image: mongo:4.4-bionic
-    container_name: courses-db
-    environment:
-      - MONGO_DATA_DIR=/data/db
-      - MONGO_LOG_DIR=/dev/null
-      - MONGODB_DATABASE=coursePlatform
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=qwerty
-    ports:
-      - 27019:27017
-
-  caddy:
-    image: caddy:2.3.0-alpine
+  nginx:
+    image: ${REGISTRY}/${NGINX_IMAGE}:${TAG}
+    container_name: courses-api-proxy
     restart: always
-    command: caddy reverse-proxy --to courses-api:8000
+    volumes:
+      - ./certs/:/etc/nginx/certs/
     ports:
-      - "80:80"
-      - "443:443"
+      - 80:80
+      - 443:443
+    environment:
+      - API_HOST=courses-api
+      - API_PORT=8000
+      - SERVER_NAME=${SERVER_NAME}
     depends_on:
       - api
-
-#  nginx:
-#    image: nginx-api-proxy
-#    container_name: api-proxy
-#    build:
-#      context: ./nginx
-#    volumes:
-#      - ./certs/:/etc/nginx/certs/
-#    ports:
-#      - 80:80
-#      - 443:443
-#    environment:
-#      - API_HOST=courses-api
-#      - API_PORT=8000
-#      - SERVER_NAME=localhost
-#    depends_on:
-#      - api
