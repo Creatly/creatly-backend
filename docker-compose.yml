@@ -6,7 +6,7 @@ services:
     container_name: courses-backend-app
     build:
       context: .
-      dockerfile: Dockerfile.local
+      dockerfile: Dockerfile
     ports:
       - 8000:8000
     depends_on:
