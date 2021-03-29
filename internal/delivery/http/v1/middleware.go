@@ -18,9 +18,12 @@ const (
 )
 
 func (h *Handler) setSchoolFromRequest(c *gin.Context) {
-	domainName := strings.Split(c.Request.Host, ":")[0]
+	host := strings.Split(c.Request.Host, ":")[0]
 
-	school, err := h.services.Schools.GetByDomain(c.Request.Context(), domainName)
+	logger.Infof("Request host: %s", c.Request.Host)
+	logger.Infof("Request info: %+v", c.Request)
+
+	school, err := h.services.Schools.GetByDomain(c.Request.Context(), host)
 	if err != nil {
 		logger.Error(err)
 		c.AbortWithStatus(http.StatusForbidden)
