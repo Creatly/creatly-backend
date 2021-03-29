@@ -32,8 +32,13 @@ func (h *Handler) setSchoolFromRequest(c *gin.Context) {
 func parseRequestHost(c *gin.Context) string {
 	refererHeader := c.Request.Header.Get("Referer")
 	refererParts := strings.Split(refererHeader, "/")
-	hostParts := strings.Split(refererParts[2], ":")
 
+	// this logic is used to avoid crashes during integration testing
+	if len(refererParts) < 3 {
+		return c.Request.Host
+	}
+
+	hostParts := strings.Split(refererParts[2], ":")
 	return hostParts[0]
 }
 
