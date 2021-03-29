@@ -107,7 +107,7 @@ func (s *APITestSuite) initDeps() {
 				PurchaseSuccessful: "../templates/purchase_successful.html",
 			},
 			Subjects: config.EmailSubjects{
-				Verification:       "Спасибо за регистрацию, %s!",
+				Verification: "Спасибо за регистрацию, %s!",
 				PurchaseSuccessful: "Покупка прошла успешно!",
 			},
 		},

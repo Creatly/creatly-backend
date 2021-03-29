@@ -42,6 +42,7 @@ func NewHandler(services *service.Services, tokenManager auth.TokenManager) *Han
 func (h *Handler) Init(host, port string, limiterConfig config.LimiterConfig) *gin.Engine {
 	// Init gin handler
 	router := gin.Default()
+
 	router.Use(
 		gin.Recovery(),
 		gin.Logger(),

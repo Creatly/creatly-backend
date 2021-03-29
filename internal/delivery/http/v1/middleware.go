@@ -18,9 +18,8 @@ const (
 )
 
 func (h *Handler) setSchoolFromRequest(c *gin.Context) {
-	domainName := strings.Split(c.Request.Host, ":")[0]
-
-	school, err := h.services.Schools.GetByDomain(c.Request.Context(), domainName)
+	host := parseRequestHost(c)
+	school, err := h.services.Schools.GetByDomain(c.Request.Context(), host)
 	if err != nil {
 		logger.Error(err)
 		c.AbortWithStatus(http.StatusForbidden)
@@ -28,6 +27,19 @@ func (h *Handler) setSchoolFromRequest(c *gin.Context) {
 	}
 
 	c.Set(schoolCtx, school)
+}
+
+func parseRequestHost(c *gin.Context) string {
+	refererHeader := c.Request.Header.Get("Referer")
+	refererParts := strings.Split(refererHeader, "/")
+
+	// this logic is used to avoid crashes during integration testing
+	if len(refererParts) < 3 {
+		return c.Request.Host
+	}
+
+	hostParts := strings.Split(refererParts[2], ":")
+	return hostParts[0]
 }
 
 func getSchoolFromContext(c *gin.Context) (domain.School, error) {
