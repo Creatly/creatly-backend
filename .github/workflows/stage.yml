@@ -77,6 +77,8 @@ jobs:
           script: |
             # Login into Digital Ocean Registry
             docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} $(echo $REGISTRY)
+            # Pull new version
+            docker pull $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $TAG)
             # Stop running container
             docker stop $(echo $CONTAINER_NAME)
             # Remove old container
