@@ -9,6 +9,7 @@ env:
   REGISTRY: "registry.digitalocean.com/sandbox-registry"
   IMAGE_NAME: "courses-backend"
   CONTAINER_NAME: "courses-api"
+  TAG: "staging"
   TEST_CONTAINER_NAME: "test_db"
   TEST_DB_NAME: "test"
   TEST_DB_URI: "mongodb://localhost:27019"
@@ -47,7 +48,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build container image
-        run: docker build -f Dockerfile -t $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7) .
+        run: docker build -f deploy/Dockerfile -t $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $TAG) .
 
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
@@ -58,7 +59,7 @@ jobs:
         run: doctl registry login --expiry-seconds 600
 
       - name: Push image to DigitalOcean Container Registry
-        run: docker push $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
+        run: docker push $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $TAG)
 
   deploy:
     environment: stage
@@ -72,10 +73,12 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSHKEY }}
-          envs: IMAGE_NAME,REGISTRY,GITHUB_SHA,CONTAINER_NAME
+          envs: IMAGE_NAME,REGISTRY,CONTAINER_NAME,TAG
           script: |
             # Login into Digital Ocean Registry
             docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} $(echo $REGISTRY)
+            # Pull new version
+            docker pull $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $TAG)
             # Stop running container
             docker stop $(echo $CONTAINER_NAME)
             # Remove old container
@@ -106,4 +109,4 @@ jobs:
             --publish 8000:8000 \
             --link=mongo-courses:mongodb \
             --name $(echo $CONTAINER_NAME) \
-            $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
+            $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $TAG)
