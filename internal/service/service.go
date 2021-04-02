@@ -2,17 +2,16 @@ package service
 
 import (
 	"context"
-	"github.com/zhashkevych/courses-backend/internal/config"
 	"time"
 
-	"github.com/zhashkevych/courses-backend/pkg/otp"
-
+	"github.com/zhashkevych/courses-backend/internal/config"
 	"github.com/zhashkevych/courses-backend/internal/domain"
 	"github.com/zhashkevych/courses-backend/internal/repository"
 	"github.com/zhashkevych/courses-backend/pkg/auth"
 	"github.com/zhashkevych/courses-backend/pkg/cache"
 	"github.com/zhashkevych/courses-backend/pkg/email"
 	"github.com/zhashkevych/courses-backend/pkg/hash"
+	"github.com/zhashkevych/courses-backend/pkg/otp"
 	"github.com/zhashkevych/courses-backend/pkg/payment"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -24,7 +23,7 @@ import (
 type UpdateSchoolSettingsInput struct {
 	SchoolID    primitive.ObjectID
 	Color       string
-	Domain      string
+	Domains     []string
 	Email       string
 	ContactData string
 	Pages       *domain.Pages

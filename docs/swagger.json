@@ -3062,8 +3062,11 @@
                 "contactData": {
                     "type": "string"
                 },
-                "domain": {
-                    "type": "string"
+                "domains": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "email": {
                     "type": "string"
@@ -3427,8 +3430,11 @@
                 "contactData": {
                     "type": "string"
                 },
-                "domain": {
-                    "type": "string"
+                "domains": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "email": {
                     "type": "string"
