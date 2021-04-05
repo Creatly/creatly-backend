@@ -101,8 +101,10 @@ definitions:
         type: string
       contactData:
         type: string
-      domain:
-        type: string
+      domains:
+        items:
+          type: string
+        type: array
       email:
         type: string
       pages:
@@ -339,8 +341,10 @@ definitions:
         type: string
       contactData:
         type: string
-      domain:
-        type: string
+      domains:
+        items:
+          type: string
+        type: array
       email:
         type: string
       pages:

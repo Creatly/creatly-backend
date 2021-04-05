@@ -1288,11 +1288,11 @@ type pages struct {
 }
 
 type updateSchoolSettingsInput struct {
-	Color       string `json:"color"`
-	Domain      string `json:"domain"`
-	Email       string `json:"email"`
-	ContactData string `json:"contactData"`
-	Pages       *pages `json:"pages"`
+	Color       string   `json:"color"`
+	Domains     []string `json:"domains"`
+	Email       string   `json:"email"`
+	ContactData string   `json:"contactData"`
+	Pages       *pages   `json:"pages"`
 }
 
 // @Summary Admin Update School settings
@@ -1324,7 +1324,7 @@ func (h *Handler) adminUpdateSchoolSettings(c *gin.Context) {
 	updateInput := service.UpdateSchoolSettingsInput{
 		SchoolID:    school.ID,
 		Color:       inp.Color,
-		Domain:      inp.Domain,
+		Domains:     inp.Domains,
 		Email:       inp.Email,
 		ContactData: inp.ContactData,
 	}

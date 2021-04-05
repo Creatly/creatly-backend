@@ -3077,8 +3077,11 @@ var doc = `{
                 "contactData": {
                     "type": "string"
                 },
-                "domain": {
-                    "type": "string"
+                "domains": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "email": {
                     "type": "string"
@@ -3442,8 +3445,11 @@ var doc = `{
                 "contactData": {
                     "type": "string"
                 },
-                "domain": {
-                    "type": "string"
+                "domains": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "email": {
                     "type": "string"

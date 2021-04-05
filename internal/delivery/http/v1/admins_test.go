@@ -24,7 +24,7 @@ func TestHandler_adminUpdateSchoolSettings(t *testing.T) {
 	school := domain.School{
 		ID: primitive.NewObjectID(),
 		Settings: domain.Settings{
-			Domain: "localhost",
+			Domains: []string{"localhost"},
 		},
 	}
 
@@ -118,12 +118,12 @@ func TestHandler_adminCreatePromocode(t *testing.T) {
 	type mockBehavior func(r *mock_service.MockPromoCodes, input service.CreatePromoCodeInput)
 
 	promocodeID := primitive.NewObjectID()
-	offerId, _:= primitive.ObjectIDFromHex("6034253f561e5c7cbae6e5f2")
+	offerId, _ := primitive.ObjectIDFromHex("6034253f561e5c7cbae6e5f2")
 
 	school := domain.School{
 		ID: primitive.NewObjectID(),
 		Settings: domain.Settings{
-			Domain: "localhost",
+			Domains: []string{"localhost"},
 		},
 	}
 
@@ -141,11 +141,11 @@ func TestHandler_adminCreatePromocode(t *testing.T) {
 			body:   fmt.Sprintf(`{"code": "TESTPROMO", "discountPercentage": 15, "expiresAt": "2022-12-10T13:49:51.0Z", "offerIds": ["6034253f561e5c7cbae6e5f2"]}`),
 			school: school,
 			input: service.CreatePromoCodeInput{
-				SchoolID: school.ID,
-				Code:    "TESTPROMO",
+				SchoolID:           school.ID,
+				Code:               "TESTPROMO",
 				DiscountPercentage: 15,
-				ExpiresAt: time.Date(2022, 12, 10, 13, 49, 51, 0, time.UTC),
-				OfferIDs: []primitive.ObjectID{offerId},
+				ExpiresAt:          time.Date(2022, 12, 10, 13, 49, 51, 0, time.UTC),
+				OfferIDs:           []primitive.ObjectID{offerId},
 			},
 			mockBehavior: func(r *mock_service.MockPromoCodes, input service.CreatePromoCodeInput) {
 				r.EXPECT().Create(context.Background(), input).Return(promocodeID, nil)
@@ -166,11 +166,11 @@ func TestHandler_adminCreatePromocode(t *testing.T) {
 			body:   fmt.Sprintf(`{"code": "TESTPROMO", "discountPercentage": 15, "expiresAt": "2022-12-10T13:49:51.0Z", "offerIds": ["6034253f561e5c7cbae6e5f2"]}`),
 			school: school,
 			input: service.CreatePromoCodeInput{
-				SchoolID: school.ID,
-				Code:    "TESTPROMO",
+				SchoolID:           school.ID,
+				Code:               "TESTPROMO",
 				DiscountPercentage: 15,
-				ExpiresAt: time.Date(2022, 12, 10, 13, 49, 51, 0, time.UTC),
-				OfferIDs: []primitive.ObjectID{offerId},
+				ExpiresAt:          time.Date(2022, 12, 10, 13, 49, 51, 0, time.UTC),
+				OfferIDs:           []primitive.ObjectID{offerId},
 			},
 			mockBehavior: func(r *mock_service.MockPromoCodes, input service.CreatePromoCodeInput) {
 				r.EXPECT().Create(context.Background(), input).Return(primitive.ObjectID{}, errors.New("failed to create promocode"))
@@ -222,7 +222,7 @@ func TestHandler_adminGetPromocodes(t *testing.T) {
 	school := domain.School{
 		ID: primitive.NewObjectID(),
 		Settings: domain.Settings{
-			Domain: "localhost",
+			Domains: []string{"localhost"},
 		},
 	}
 
@@ -282,7 +282,7 @@ func TestHandler_adminGetPromocodes(t *testing.T) {
 
 			// Create Request
 			w := httptest.NewRecorder()
-			req := httptest.NewRequest("GET","/admins/promocodes/", nil)
+			req := httptest.NewRequest("GET", "/admins/promocodes/", nil)
 
 			// Make Request
 			r.ServeHTTP(w, req)
@@ -303,7 +303,7 @@ func TestHandler_adminGetPromocodeById(t *testing.T) {
 	school := domain.School{
 		ID: primitive.NewObjectID(),
 		Settings: domain.Settings{
-			Domain: "localhost",
+			Domains: []string{"localhost"},
 		},
 	}
 
@@ -319,12 +319,12 @@ func TestHandler_adminGetPromocodeById(t *testing.T) {
 			school: school,
 			mockBehavior: func(r *mock_service.MockPromoCodes, schoolId primitive.ObjectID, id primitive.ObjectID) {
 				r.EXPECT().GetById(context.Background(), schoolId, id).Return(domain.PromoCode{
-						ID:                 promocodeId,
-						SchoolId:           schoolId,
-						Code:               "FIRSTPROMO",
-						DiscountPercentage: 15,
-						ExpiresAt:          time.Date(2022, 12, 10, 13, 49, 51, 0, time.UTC),
-						OfferIDs:           []primitive.ObjectID{offerId},
+					ID:                 promocodeId,
+					SchoolId:           schoolId,
+					Code:               "FIRSTPROMO",
+					DiscountPercentage: 15,
+					ExpiresAt:          time.Date(2022, 12, 10, 13, 49, 51, 0, time.UTC),
+					OfferIDs:           []primitive.ObjectID{offerId},
 				}, nil)
 			},
 			statusCode:   200,
@@ -361,7 +361,7 @@ func TestHandler_adminGetPromocodeById(t *testing.T) {
 
 			// Create Request
 			w := httptest.NewRecorder()
-			req := httptest.NewRequest("GET",fmt.Sprintf("/admins/promocodes/%s", promocodeId.Hex()), nil)
+			req := httptest.NewRequest("GET", fmt.Sprintf("/admins/promocodes/%s", promocodeId.Hex()), nil)
 
 			// Make Request
 			r.ServeHTTP(w, req)
@@ -379,7 +379,7 @@ func TestHandler_adminUpdatePromocode(t *testing.T) {
 	school := domain.School{
 		ID: primitive.NewObjectID(),
 		Settings: domain.Settings{
-			Domain: "localhost",
+			Domains: []string{"localhost"},
 		},
 	}
 
@@ -397,9 +397,9 @@ func TestHandler_adminUpdatePromocode(t *testing.T) {
 			body:   fmt.Sprintf(`{"code": "TESTPROMO", "discountPercentage": 15}`),
 			school: school,
 			input: service.UpdatePromoCodeInput{
-				ID: primitive.NewObjectID(),
-				SchoolID: school.ID,
-				Code:    "TESTPROMO",
+				ID:                 primitive.NewObjectID(),
+				SchoolID:           school.ID,
+				Code:               "TESTPROMO",
 				DiscountPercentage: 15,
 			},
 			mockBehavior: func(r *mock_service.MockPromoCodes, input service.UpdatePromoCodeInput) {
@@ -421,9 +421,9 @@ func TestHandler_adminUpdatePromocode(t *testing.T) {
 			body:   fmt.Sprintf(`{"code": "TESTPROMO", "discountPercentage": 15}`),
 			school: school,
 			input: service.UpdatePromoCodeInput{
-				ID: primitive.NewObjectID(),
-				SchoolID: school.ID,
-				Code:    "TESTPROMO",
+				ID:                 primitive.NewObjectID(),
+				SchoolID:           school.ID,
+				Code:               "TESTPROMO",
 				DiscountPercentage: 15,
 			},
 			mockBehavior: func(r *mock_service.MockPromoCodes, input service.UpdatePromoCodeInput) {
@@ -475,7 +475,7 @@ func TestHandler_adminDeletePromocode(t *testing.T) {
 	school := domain.School{
 		ID: primitive.NewObjectID(),
 		Settings: domain.Settings{
-			Domain: "localhost",
+			Domains: []string{"localhost"},
 		},
 	}
 
@@ -526,7 +526,7 @@ func TestHandler_adminDeletePromocode(t *testing.T) {
 
 			// Create Request
 			w := httptest.NewRecorder()
-			req := httptest.NewRequest("DELETE",fmt.Sprintf("/admins/promocodes/%s", promocodeId.Hex()), nil)
+			req := httptest.NewRequest("DELETE", fmt.Sprintf("/admins/promocodes/%s", promocodeId.Hex()), nil)
 
 			// Make Request
 			r.ServeHTTP(w, req)
