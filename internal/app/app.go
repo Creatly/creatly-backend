@@ -99,7 +99,7 @@ func Run(configPath string) {
 	handlers := delivery.NewHandler(services, tokenManager)
 
 	// HTTP Server
-	srv := server.NewServer(cfg, handlers.Init(cfg.HTTP.Host, cfg.HTTP.Port, cfg.Limiter))
+	srv := server.NewServer(cfg, handlers.Init(cfg))
 	go func() {
 		if err := srv.Run(); !errors.Is(err, http.ErrServerClosed) {
 			logger.Errorf("error occurred while running http server: %s\n", err.Error())

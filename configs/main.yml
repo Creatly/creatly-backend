@@ -24,6 +24,7 @@ limiter:
   burst: 20
   ttl: 10m
 
+# todo: smtp settings should be configurable for each school individually
 smtp:
   host: "mail.privateemail.com"
   port: 587
