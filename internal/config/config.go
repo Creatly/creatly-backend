@@ -214,10 +214,6 @@ func parseConfigFile(filepath string) error {
 	viper.AddConfigPath(path[0]) // folder
 	viper.SetConfigName(path[1]) // config file name
 
-	if err := viper.ReadInConfig(); err != nil {
-		return err
-	}
-
 	return viper.ReadInConfig()
 }
 
