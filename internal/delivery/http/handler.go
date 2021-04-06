@@ -16,8 +16,6 @@ import (
 	_ "github.com/zhashkevych/courses-backend/docs"
 )
 
-const envLocal = "local"
-
 type Handler struct {
 	schoolsService    service.Schools
 	studentsService   service.Students
