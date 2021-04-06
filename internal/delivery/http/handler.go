@@ -39,18 +39,21 @@ func NewHandler(services *service.Services, tokenManager auth.TokenManager) *Han
 	}
 }
 
-func (h *Handler) Init(host, port string, limiterConfig config.LimiterConfig) *gin.Engine {
+func (h *Handler) Init(cfg *config.Config) *gin.Engine {
 	// Init gin handler
 	router := gin.Default()
 
 	router.Use(
 		gin.Recovery(),
 		gin.Logger(),
-		limiter.Limit(limiterConfig.RPS, limiterConfig.Burst, limiterConfig.TTL),
+		limiter.Limit(cfg.Limiter.RPS, cfg.Limiter.Burst, cfg.Limiter.TTL),
 		corsMiddleware,
 	)
 
-	docs.SwaggerInfo.Host = fmt.Sprintf("%s:%s", host, port)
+	docs.SwaggerInfo.Host = fmt.Sprintf("%s:%s", cfg.HTTP.Host, cfg.HTTP.Port)
+	if cfg.Environment != config.EnvLocal {
+		docs.SwaggerInfo.Host = fmt.Sprintf("%s", cfg.HTTP.Host)
+	}
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 

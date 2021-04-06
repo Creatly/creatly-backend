@@ -24,6 +24,7 @@ func TestInit(t *testing.T) {
 		paymentResponseURL string
 		frontendUrl        string
 		smtpPassword       string
+		appEnv             string
 	}
 
 	type args struct {
@@ -47,6 +48,7 @@ func TestInit(t *testing.T) {
 		os.Setenv("PAYMENT_RESPONSE_URL", env.paymentResponseURL)
 		os.Setenv("FRONTEND_URL", env.frontendUrl)
 		os.Setenv("SMTP_PASSWORD", env.smtpPassword)
+		os.Setenv("APP_ENV", env.appEnv)
 	}
 
 	tests := []struct {
@@ -75,9 +77,11 @@ func TestInit(t *testing.T) {
 					paymentCallbackURL: "https://zhashkevych.com/callback",
 					frontendUrl:        "http://localhost:1337",
 					smtpPassword:       "qwerty123",
+					appEnv:             "local",
 				}},
 			want: &Config{
-				CacheTTL: time.Second * 3600,
+				Environment: "local",
+				CacheTTL:    time.Second * 3600,
 				HTTP: HTTPConfig{
 					Host:               "localhost",
 					MaxHeaderMegabytes: 1,
@@ -111,11 +115,11 @@ func TestInit(t *testing.T) {
 						ClientSecret: "secret",
 					},
 					Templates: EmailTemplates{
-						Verification: "./templates/verification_email.html",
+						Verification:       "./templates/verification_email.html",
 						PurchaseSuccessful: "./templates/purchase_successful.html",
 					},
 					Subjects: EmailSubjects{
-						Verification: "Спасибо за регистрацию, %s!",
+						Verification:       "Спасибо за регистрацию, %s!",
 						PurchaseSuccessful: "Покупка прошла успешно!",
 					},
 				},
