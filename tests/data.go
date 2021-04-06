@@ -20,6 +20,9 @@ var (
 				Name: "Course #2", // Unpublished course, shouldn't be available to student
 			},
 		},
+		Settings: domain.Settings{
+			Domains: []string{""},
+		},
 	}
 
 	packages = []interface{}{
