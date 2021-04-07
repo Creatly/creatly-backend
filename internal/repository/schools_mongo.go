@@ -48,8 +48,8 @@ func (r *SchoolsRepo) UpdateSettings(ctx context.Context, inp UpdateSchoolSettin
 		updateQuery["settings.email"] = inp.Email
 	}
 
-	if inp.ContactData != "" {
-		updateQuery["settings.contactData"] = inp.ContactData
+	if inp.ContactInfo != nil {
+		updateQuery["settings.contactInfo"] = inp.ContactInfo
 	}
 
 	if inp.Pages != nil {

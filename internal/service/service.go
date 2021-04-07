@@ -25,7 +25,7 @@ type UpdateSchoolSettingsInput struct {
 	Color       string
 	Domains     []string
 	Email       string
-	ContactData string
+	ContactInfo *domain.ContactInfo
 	Pages       *domain.Pages
 }
 
