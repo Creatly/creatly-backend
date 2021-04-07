@@ -1287,12 +1287,19 @@ type pages struct {
 	RefundPolicy     string `json:"refundPolicy"`
 }
 
+type contactInfo struct {
+	BusinessName       string `json:"businessName"`
+	RegistrationNumber string `json:"registrationNumber"`
+	Address            string `json:"address"`
+	Email              string `json:"email"`
+}
+
 type updateSchoolSettingsInput struct {
-	Color       string   `json:"color"`
-	Domains     []string `json:"domains"`
-	Email       string   `json:"email"`
-	ContactData string   `json:"contactData"`
-	Pages       *pages   `json:"pages"`
+	Color       string       `json:"color"`
+	Domains     []string     `json:"domains"`
+	Email       string       `json:"email"`
+	ContactInfo *contactInfo `json:"contactInfo"`
+	Pages       *pages       `json:"pages"`
 }
 
 // @Summary Admin Update School settings
@@ -1322,11 +1329,10 @@ func (h *Handler) adminUpdateSchoolSettings(c *gin.Context) {
 	}
 
 	updateInput := service.UpdateSchoolSettingsInput{
-		SchoolID:    school.ID,
-		Color:       inp.Color,
-		Domains:     inp.Domains,
-		Email:       inp.Email,
-		ContactData: inp.ContactData,
+		SchoolID: school.ID,
+		Color:    inp.Color,
+		Domains:  inp.Domains,
+		Email:    inp.Email,
 	}
 
 	if inp.Pages != nil {
@@ -1334,6 +1340,15 @@ func (h *Handler) adminUpdateSchoolSettings(c *gin.Context) {
 			Confidential:     inp.Pages.Confidential,
 			ServiceAgreement: inp.Pages.ServiceAgreement,
 			RefundPolicy:     inp.Pages.RefundPolicy,
+		}
+	}
+
+	if inp.ContactInfo != nil {
+		updateInput.ContactInfo = &domain.ContactInfo{
+			Email:              inp.ContactInfo.Email,
+			RegistrationNumber: inp.ContactInfo.RegistrationNumber,
+			Address:            inp.ContactInfo.Address,
+			BusinessName:       inp.ContactInfo.BusinessName,
 		}
 	}
 

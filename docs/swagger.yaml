@@ -1,5 +1,16 @@
 basePath: /api/v1/
 definitions:
+  domain.ContactInfo:
+    properties:
+      address:
+        type: string
+      businessName:
+        type: string
+      email:
+        type: string
+      registrationNumber:
+        type: string
+    type: object
   domain.Course:
     properties:
       code:
@@ -99,16 +110,25 @@ definitions:
     properties:
       color:
         type: string
-      contactData:
-        type: string
+      contactInfo:
+        $ref: '#/definitions/domain.ContactInfo'
       domains:
         items:
           type: string
         type: array
-      email:
-        type: string
       pages:
         $ref: '#/definitions/domain.Pages'
+    type: object
+  v1.contactInfo:
+    properties:
+      address:
+        type: string
+      businessName:
+        type: string
+      email:
+        type: string
+      registrationNumber:
+        type: string
     type: object
   v1.createCourseInput:
     properties:
@@ -339,8 +359,8 @@ definitions:
     properties:
       color:
         type: string
-      contactData:
-        type: string
+      contactInfo:
+        $ref: '#/definitions/v1.contactInfo'
       domains:
         items:
           type: string

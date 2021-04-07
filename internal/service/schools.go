@@ -38,7 +38,7 @@ func (s *SchoolsService) UpdateSettings(ctx context.Context, inp UpdateSchoolSet
 		Color:       inp.Color,
 		Domains:     inp.Domains,
 		Email:       inp.Email,
-		ContactData: inp.ContactData,
+		ContactInfo: inp.ContactInfo,
 		Pages:       inp.Pages,
 	})
 }
