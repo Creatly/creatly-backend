@@ -36,9 +36,9 @@ func (s *SchoolsService) UpdateSettings(ctx context.Context, inp UpdateSchoolSet
 	return s.repo.UpdateSettings(ctx, repository.UpdateSchoolSettingsInput{
 		SchoolID:    inp.SchoolID,
 		Color:       inp.Color,
-		Domain:      inp.Domain,
+		Domains:     inp.Domains,
 		Email:       inp.Email,
-		ContactData: inp.ContactData,
+		ContactInfo: inp.ContactInfo,
 		Pages:       inp.Pages,
 	})
 }

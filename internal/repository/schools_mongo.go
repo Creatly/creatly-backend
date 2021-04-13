@@ -21,7 +21,7 @@ func NewSchoolsRepo(db *mongo.Database) *SchoolsRepo {
 
 func (r *SchoolsRepo) GetByDomain(ctx context.Context, domainName string) (domain.School, error) {
 	var school domain.School
-	err := r.db.FindOne(ctx, bson.M{"settings.domain": domainName}).Decode(&school)
+	err := r.db.FindOne(ctx, bson.M{"settings.domains": domainName}).Decode(&school)
 
 	return school, err
 }
@@ -40,16 +40,16 @@ func (r *SchoolsRepo) UpdateSettings(ctx context.Context, inp UpdateSchoolSettin
 		updateQuery["settings.color"] = inp.Color
 	}
 
-	if inp.Domain != "" {
-		updateQuery["settings.domain"] = inp.Domain
+	if inp.Domains != nil {
+		updateQuery["settings.domains"] = inp.Domains
 	}
 
 	if inp.Email != "" {
 		updateQuery["settings.email"] = inp.Email
 	}
 
-	if inp.ContactData != "" {
-		updateQuery["settings.contactData"] = inp.ContactData
+	if inp.ContactInfo != nil {
+		updateQuery["settings.contactInfo"] = inp.ContactInfo
 	}
 
 	if inp.Pages != nil {

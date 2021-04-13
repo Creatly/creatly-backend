@@ -1,0 +1,58 @@
+version: '3.4'
+
+services:
+  api:
+    image: ${REGISTRY}/${API_IMAGE}:${TAG}
+    container_name: courses-api
+    restart: always
+    depends_on:
+      - mongodb
+    ports:
+      - 8000:8000
+    environment:
+      - MONGO_URI
+      - MONGO_USER
+      - MONGO_PASS
+      - PASSWORD_SALT
+      - JWT_SIGNING_KEY
+      - SENDPULSE_LISTID
+      - SENDPULSE_ID
+      - SENDPULSE_SECRET
+      - HTTP_HOST
+      - FONDY_MERCHANT_ID
+      - FONDY_MERCHANT_PASS
+      - PAYMENT_CALLBACK_URL
+      - PAYMENT_REDIRECT_URL
+      - FRONTEND_URL
+      - SMTP_PASSWORD
+
+  mongodb:
+    image: mongo:4.4-bionic
+    container_name: mongodb
+    restart: always
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+      - MONGODB_DATABASE=coursePlatform
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASS}
+    volumes:
+      - ./.data/db:/data/db
+    ports:
+      - 27017:27017
+
+  nginx:
+    image: ${REGISTRY}/${NGINX_IMAGE}:${TAG}
+    container_name: courses-api-proxy
+    restart: always
+    volumes:
+      - ./certs/:/etc/nginx/certs/
+    ports:
+      - 80:80
+      - 443:443
+    environment:
+      - API_HOST=courses-api
+      - API_PORT=8000
+      - SERVER_NAME=${SERVER_NAME}
+    depends_on:
+      - api

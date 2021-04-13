@@ -2922,6 +2922,23 @@ var doc = `{
         }
     },
     "definitions": {
+        "domain.ContactInfo": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "businessName": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "registrationNumber": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.Course": {
             "type": "object",
             "properties": {
@@ -3074,17 +3091,34 @@ var doc = `{
                 "color": {
                     "type": "string"
                 },
-                "contactData": {
+                "contactInfo": {
+                    "$ref": "#/definitions/domain.ContactInfo"
+                },
+                "domains": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "pages": {
+                    "$ref": "#/definitions/domain.Pages"
+                }
+            }
+        },
+        "v1.contactInfo": {
+            "type": "object",
+            "properties": {
+                "address": {
                     "type": "string"
                 },
-                "domain": {
+                "businessName": {
                     "type": "string"
                 },
                 "email": {
                     "type": "string"
                 },
-                "pages": {
-                    "$ref": "#/definitions/domain.Pages"
+                "registrationNumber": {
+                    "type": "string"
                 }
             }
         },
@@ -3439,11 +3473,14 @@ var doc = `{
                 "color": {
                     "type": "string"
                 },
-                "contactData": {
-                    "type": "string"
+                "contactInfo": {
+                    "$ref": "#/definitions/v1.contactInfo"
                 },
-                "domain": {
-                    "type": "string"
+                "domains": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "email": {
                     "type": "string"

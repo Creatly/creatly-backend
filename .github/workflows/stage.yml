@@ -7,8 +7,9 @@ on:
 
 env:
   REGISTRY: "registry.digitalocean.com/sandbox-registry"
-  IMAGE_NAME: "courses-backend"
-  CONTAINER_NAME: "courses-api"
+  API_IMAGE: "courses-backend"
+  NGINX_IMAGE: "courses-backend-proxy"
+  TAG: "staging"
   TEST_CONTAINER_NAME: "test_db"
   TEST_DB_NAME: "test"
   TEST_DB_URI: "mongodb://localhost:27019"
@@ -46,8 +47,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Build container image
-        run: docker build -f Dockerfile -t $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7) .
+      - name: Build API container image
+        run: docker build -f deploy/Dockerfile -t $(echo $REGISTRY)/$(echo $API_IMAGE):$(echo $TAG) .
+      - name: Build NGINX container image
+        run: docker build -f deploy/nginx/Dockerfile -t $(echo $REGISTRY)/$(echo $NGINX_IMAGE):$(echo $TAG) .
 
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
@@ -57,8 +60,11 @@ jobs:
       - name: Log in to DigitalOcean Container Registry with short-lived credentials
         run: doctl registry login --expiry-seconds 600
 
-      - name: Push image to DigitalOcean Container Registry
-        run: docker push $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
+      - name: Push API image to DigitalOcean Container Registry
+        run: docker push $(echo $REGISTRY)/$(echo $API_IMAGE):$(echo $TAG)
+
+      - name: Push NGINX image to DigitalOcean Container Registry
+        run: docker push $(echo $REGISTRY)/$(echo $NGINX_IMAGE):$(echo $TAG)
 
   deploy:
     environment: stage
@@ -66,21 +72,27 @@ jobs:
     needs: build_and_push
 
     steps:
-      - name: Deploy to Digital Ocean droplet via SSH action
-        uses: appleboy/ssh-action@v0.1.3
+      - uses: actions/checkout@master
+      - name: copy file via ssh password
+        uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSHKEY }}
-          envs: IMAGE_NAME,REGISTRY,GITHUB_SHA,CONTAINER_NAME
-          script: |
-            # Login into Digital Ocean Registry
-            docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} $(echo $REGISTRY)
-            # Stop running container
-            docker stop $(echo $CONTAINER_NAME)
-            # Remove old container
-            docker rm $(echo $CONTAINER_NAME)
+          source: "deploy/,!deploy/nginx,!deploy/Dockerfile"
+          target: "api"
+          strip_components: 1
 
+      - name: Deploy to Digital Ocean droplet via SSH action
+        uses: appleboy/ssh-action@v0.1.3
+        env:
+          SERVER_NAME: "api-stage-creatly.zhashkevych.com"
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSHKEY }}
+          envs: API_IMAGE,NGINX_IMAGE,TAG,REGISTRY,SERVER_NAME
+          script: |
             # Set env variables
             export MONGO_URI="${{ secrets.MONGO_URI }}"
             export MONGO_USER="${{ secrets.MONGO_USER }}"
@@ -97,13 +109,18 @@ jobs:
             export PAYMENT_REDIRECT_URL=${{secrets.PAYMENT_REDIRECT_URL}}
             export FRONTEND_URL=${{secrets.FRONTEND_URL}}
             export SMTP_PASSWORD=${{secrets.SMTP_PASSWORD}}
+            export SERVER_NAME=$(echo $SERVER_NAME)
+            export REGISTRY=$(echo $REGISTRY)
+            export API_IMAGE=$(echo $API_IMAGE)
+            export NGINX_IMAGE=$(echo $NGINX_IMAGE)
+            export TAG=$(echo $TAG)
+
+            # Login into Digital Ocean Registry
+            docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} $(echo $REGISTRY)
 
             # Run a new container from a new image
-            docker run -e MONGO_URI -e MONGO_USER -e MONGO_PASS -e PASSWORD_SALT -e JWT_SIGNING_KEY \
-            -e SENDPULSE_LISTID -e SENDPULSE_ID -e SENDPULSE_SECRET -e HTTP_HOST -e FONDY_MERCHANT_ID -e FONDY_MERCHANT_PASS \
-            -e PAYMENT_CALLBACK_URL -e PAYMENT_REDIRECT_URL -e FRONTEND_URL -e SMTP_PASSWORD -d \
-            --restart always \
-            --publish 8000:8000 \
-            --link=mongo-courses:mongodb \
-            --name $(echo $CONTAINER_NAME) \
-            $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
+            cd api
+            docker-compose -f staging.yml stop
+            docker-compose -f staging.yml rm -f
+            docker-compose -f staging.yml pull
+            docker-compose -f staging.yml up -d --force-recreate nginx

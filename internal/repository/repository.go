@@ -12,9 +12,9 @@ import (
 type UpdateSchoolSettingsInput struct {
 	SchoolID    primitive.ObjectID
 	Color       string
-	Domain      string
+	Domains     []string
 	Email       string
-	ContactData string
+	ContactInfo *domain.ContactInfo
 	Pages       *domain.Pages
 }
 

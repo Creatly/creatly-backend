@@ -17,10 +17,13 @@ const (
 	defaultLimiterBurst           = 2
 	defaultLimiterTTL             = 10 * time.Minute
 	defaultVerificationCodeLength = 8
+
+	EnvLocal = "local"
 )
 
 type (
 	Config struct {
+		Environment string
 		Mongo       MongoConfig
 		HTTP        HTTPConfig
 		Auth        AuthConfig
@@ -117,11 +120,11 @@ type (
 func Init(path string) (*Config, error) {
 	populateDefaults()
 
-	if err := parseConfigFile(path); err != nil {
+	if err := parseEnv(); err != nil {
 		return nil, err
 	}
 
-	if err := parseEnv(); err != nil {
+	if err := parseConfigFile(path); err != nil {
 		return nil, err
 	}
 
@@ -201,6 +204,8 @@ func setFromEnv(cfg *Config) {
 	cfg.FrontendURL = viper.GetString("url")
 
 	cfg.SMTP.Pass = viper.GetString("password")
+
+	cfg.Environment = viper.GetString("env")
 }
 
 func parseConfigFile(filepath string) error {
@@ -255,6 +260,10 @@ func parseEnv() error {
 	}
 
 	if err := parseSMTPPassFromEnv(); err != nil {
+		return err
+	}
+
+	if err := parseAppEnvFromEnv(); err != nil {
 		return err
 	}
 
@@ -337,4 +346,9 @@ func parseFrontendHostFromEnv() error {
 func parseSMTPPassFromEnv() error {
 	viper.SetEnvPrefix("smtp")
 	return viper.BindEnv("password")
+}
+
+func parseAppEnvFromEnv() error {
+	viper.SetEnvPrefix("app")
+	return viper.BindEnv("env")
 }

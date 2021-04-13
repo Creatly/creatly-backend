@@ -13,11 +13,17 @@ type School struct {
 }
 
 type Settings struct {
-	Color       string `json:"color" bson:"color"`
-	Domain      string `json:"domain" bson:"domain"`
-	Email       string `json:"email" bson:"email"`
-	ContactData string `json:"contactData" bson:"contactData"`
-	Pages       Pages  `json:"pages" bson:"pages"`
+	Color       string      `json:"color" bson:"color"`
+	Domains     []string    `json:"domains" bson:"domains"`
+	ContactInfo ContactInfo `json:"contactInfo" bson:"contactInfo"`
+	Pages       Pages       `json:"pages" bson:"pages"`
+}
+
+type ContactInfo struct {
+	BusinessName       string `json:"businessName" bson:"businessName"`
+	RegistrationNumber string `json:"registrationNumber" bson:"RegistrationNumber"`
+	Address            string `json:"address" bson:"address"`
+	Email              string `json:"email" bson:"email"`
 }
 
 type Pages struct {
