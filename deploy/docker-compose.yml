@@ -7,6 +7,10 @@ services:
     restart: always
     ports:
       - 8000:8000
+    logging:
+      driver: syslog
+      options:
+        tag: "api-production"
     environment:
       - MONGO_URI
       - MONGO_USER
