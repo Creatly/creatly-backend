@@ -24,22 +24,24 @@ func (s *APITestSuite) TestFondyCallbackApproved() {
 	studentEmail := "payment@test.com"
 	studentName := "Test Payment"
 	offerName := "Test Offer"
-	s.db.Collection("students").InsertOne(context.Background(), domain.Student{
+	_, err := s.db.Collection("students").InsertOne(context.Background(), domain.Student{
 		ID:           studentId,
 		Email:        studentEmail,
 		Name:         studentName,
 		SchoolID:     school.ID,
 		Verification: domain.Verification{Verified: true},
 	})
+	s.NoError(err)
 
 	id, _ := primitive.ObjectIDFromHex("6008153f3dab4fb0573d1f96")
-	s.db.Collection("orders").InsertOne(context.Background(), domain.Order{
+	_, err = s.db.Collection("orders").InsertOne(context.Background(), domain.Order{
 		ID:       id,
 		SchoolId: school.ID,
 		Offer:    domain.OrderOfferInfo{ID: offers[0].(domain.Offer).ID, Name: offerName},
 		Student:  domain.OrderStudentInfo{ID: studentId, Email: studentEmail, Name: studentName},
 		Status:   "created",
 	})
+	s.NoError(err)
 
 	s.mocks.emailSender.On("Send", email.SendEmailInput{
 		To:      studentEmail,
@@ -90,20 +92,22 @@ func (s *APITestSuite) TestFondyCallbackDeclined() {
 
 	// populate DB data
 	studentId := primitive.NewObjectID()
-	s.db.Collection("students").InsertOne(context.Background(), domain.Student{
+	_, err := s.db.Collection("students").InsertOne(context.Background(), domain.Student{
 		ID:           studentId,
 		SchoolID:     school.ID,
 		Verification: domain.Verification{Verified: true},
 	})
+	s.NoError(err)
 
 	id, _ := primitive.ObjectIDFromHex("6008153f3dab4fb0573d1f96")
-	s.db.Collection("orders").InsertOne(context.Background(), domain.Order{
+	_, err = s.db.Collection("orders").InsertOne(context.Background(), domain.Order{
 		ID:       id,
 		SchoolId: school.ID,
 		Offer:    domain.OrderOfferInfo{ID: offers[0].(domain.Offer).ID},
 		Student:  domain.OrderStudentInfo{ID: studentId},
 		Status:   "created",
 	})
+	s.NoError(err)
 
 	file, err := ioutil.ReadFile("./fixtures/callback_declined.json")
 	s.NoError(err)

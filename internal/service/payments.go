@@ -31,9 +31,9 @@ func NewPaymentsService(paymentProvider payment.Provider, ordersService Orders,
 }
 
 func (s *PaymentsService) ProcessTransaction(ctx context.Context, callback interface{}) error {
-	switch callback.(type) {
+	switch callbackData := callback.(type) {
 	case fondy.Callback:
-		return s.processFondyCallback(ctx, callback.(fondy.Callback))
+		return s.processFondyCallback(ctx, callbackData)
 	default:
 		return ErrUnknownCallbackType
 	}
@@ -81,14 +81,14 @@ func (s *PaymentsService) processFondyCallback(ctx context.Context, callback fon
 
 func createTransaction(callbackData fondy.Callback) (domain.Transaction, error) {
 	var status string
-	if !callbackData.Success() {
-		status = domain.OrderStatusFailed
-	}
-
 	if callbackData.PaymentApproved() {
 		status = domain.OrderStatusPaid
 	} else {
 		status = domain.OrderStatusOther
+	}
+
+	if !callbackData.Success() {
+		status = domain.OrderStatusFailed
 	}
 
 	additionalInfo, err := json.Marshal(callbackData)

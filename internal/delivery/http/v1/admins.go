@@ -161,7 +161,7 @@ func (h *Handler) adminRefresh(c *gin.Context) {
 }
 
 type createCourseInput struct {
-	Name string `json:"name,required"`
+	Name string `json:"name" binding:"required"`
 }
 
 // @Summary Admin Create New Courses

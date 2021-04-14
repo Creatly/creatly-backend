@@ -39,7 +39,7 @@ func TestHandler_adminUpdateSchoolSettings(t *testing.T) {
 	}{
 		{
 			name:   "ok",
-			body:   fmt.Sprintf(`{"color": "black", "pages": {"confidential": "some confidential info"}}`),
+			body:   `{"color": "black", "pages": {"confidential": "some confidential info"}}`,
 			school: school,
 			input: service.UpdateSchoolSettingsInput{
 				SchoolID: school.ID,
@@ -56,7 +56,7 @@ func TestHandler_adminUpdateSchoolSettings(t *testing.T) {
 		},
 		{
 			name:         "invalid input",
-			body:         fmt.Sprintf(`{wrong}`),
+			body:         `{wrong}`,
 			school:       school,
 			mockBehavior: func(r *mock_service.MockSchools, input service.UpdateSchoolSettingsInput) {},
 			statusCode:   400,
@@ -64,7 +64,7 @@ func TestHandler_adminUpdateSchoolSettings(t *testing.T) {
 		},
 		{
 			name:   "service error",
-			body:   fmt.Sprintf(`{"color": "black", "pages": {"confidential": "some confidential info"}}`),
+			body:   `{"color": "black", "pages": {"confidential": "some confidential info"}}`,
 			school: school,
 			input: service.UpdateSchoolSettingsInput{
 				SchoolID: school.ID,
@@ -138,7 +138,7 @@ func TestHandler_adminCreatePromocode(t *testing.T) {
 	}{
 		{
 			name:   "ok",
-			body:   fmt.Sprintf(`{"code": "TESTPROMO", "discountPercentage": 15, "expiresAt": "2022-12-10T13:49:51.0Z", "offerIds": ["6034253f561e5c7cbae6e5f2"]}`),
+			body:   `{"code": "TESTPROMO", "discountPercentage": 15, "expiresAt": "2022-12-10T13:49:51.0Z", "offerIds": ["6034253f561e5c7cbae6e5f2"]}`,
 			school: school,
 			input: service.CreatePromoCodeInput{
 				SchoolID:           school.ID,
@@ -155,7 +155,7 @@ func TestHandler_adminCreatePromocode(t *testing.T) {
 		},
 		{
 			name:         "invalid input body param",
-			body:         fmt.Sprintf(`{wrong}`),
+			body:         `{wrong}`,
 			school:       school,
 			mockBehavior: func(r *mock_service.MockPromoCodes, input service.CreatePromoCodeInput) {},
 			statusCode:   400,
@@ -163,7 +163,7 @@ func TestHandler_adminCreatePromocode(t *testing.T) {
 		},
 		{
 			name:   "service error",
-			body:   fmt.Sprintf(`{"code": "TESTPROMO", "discountPercentage": 15, "expiresAt": "2022-12-10T13:49:51.0Z", "offerIds": ["6034253f561e5c7cbae6e5f2"]}`),
+			body:   `{"code": "TESTPROMO", "discountPercentage": 15, "expiresAt": "2022-12-10T13:49:51.0Z", "offerIds": ["6034253f561e5c7cbae6e5f2"]}`,
 			school: school,
 			input: service.CreatePromoCodeInput{
 				SchoolID:           school.ID,
@@ -394,7 +394,7 @@ func TestHandler_adminUpdatePromocode(t *testing.T) {
 	}{
 		{
 			name:   "ok",
-			body:   fmt.Sprintf(`{"code": "TESTPROMO", "discountPercentage": 15}`),
+			body:   `{"code": "TESTPROMO", "discountPercentage": 15}`,
 			school: school,
 			input: service.UpdatePromoCodeInput{
 				ID:                 primitive.NewObjectID(),
@@ -410,7 +410,7 @@ func TestHandler_adminUpdatePromocode(t *testing.T) {
 		},
 		{
 			name:         "invalid input body",
-			body:         fmt.Sprintf(`{wrong}`),
+			body:         `{wrong}`,
 			school:       school,
 			mockBehavior: func(r *mock_service.MockPromoCodes, input service.UpdatePromoCodeInput) {},
 			statusCode:   400,
@@ -418,7 +418,7 @@ func TestHandler_adminUpdatePromocode(t *testing.T) {
 		},
 		{
 			name:   "service error",
-			body:   fmt.Sprintf(`{"code": "TESTPROMO", "discountPercentage": 15}`),
+			body:   `{"code": "TESTPROMO", "discountPercentage": 15}`,
 			school: school,
 			input: service.UpdatePromoCodeInput{
 				ID:                 primitive.NewObjectID(),
