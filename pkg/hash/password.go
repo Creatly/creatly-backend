@@ -7,7 +7,7 @@ import (
 
 // PasswordHasher provides hashing logic to securely store passwords
 type PasswordHasher interface {
-	Hash(password string) string
+	Hash(password string) (string, error)
 }
 
 // SHA1Hasher uses SHA1 to hash passwords with provided salt
@@ -20,9 +20,12 @@ func NewSHA1Hasher(salt string) *SHA1Hasher {
 }
 
 // Hash creates SHA1 hash of given password
-func (h *SHA1Hasher) Hash(password string) string {
+func (h *SHA1Hasher) Hash(password string) (string, error) {
 	hash := sha1.New()
-	hash.Write([]byte(password))
+	_, err := hash.Write([]byte(password))
+	if err != nil {
+		return "", err
+	}
 
-	return fmt.Sprintf("%x", hash.Sum([]byte(h.salt)))
+	return fmt.Sprintf("%x", hash.Sum([]byte(h.salt))), nil
 }
