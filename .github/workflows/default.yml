@@ -1,0 +1,42 @@
+name: Linter & Tests
+
+on: [push, pull_request]
+
+env:
+  TEST_CONTAINER_NAME: "test_db"
+  TEST_DB_NAME: "test"
+  TEST_DB_URI: "mongodb://localhost:27019"
+
+jobs:
+
+  linter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          version: v1.29
+
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.15
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Unit Tests
+        run: go test --short ./...
+
+      - name: Create test db container
+        run: docker run --rm -d -p 27019:27017 --name $(echo $TEST_CONTAINER_NAME) -e MONGODB_DATABASE=$(echo $TEST_DB_NAME) mongo:4.4-bionic
+
+      - name: Integration Tests
+        run: GIN_MODE=release go test -v ./tests/
+
+      - name: Kill test db container
+        run: docker stop $(echo $TEST_CONTAINER_NAME)
