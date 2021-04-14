@@ -45,3 +45,8 @@ func (r *LessonContentRepo) Update(ctx context.Context, lessonId primitive.Objec
 	_, err := r.db.UpdateOne(ctx, bson.M{"lessonId": lessonId}, bson.M{"$set": bson.M{"content": content}}, opts)
 	return err
 }
+
+func (r *LessonContentRepo) DeleteContent(ctx context.Context, lessonIds []primitive.ObjectID) error {
+	_, err := r.db.DeleteMany(ctx, bson.M{"lessonId": bson.M{"$in": lessonIds}})
+	return err
+}

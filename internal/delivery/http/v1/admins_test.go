@@ -537,3 +537,75 @@ func TestHandler_adminDeletePromocode(t *testing.T) {
 		})
 	}
 }
+
+func TestHandler_adminDeleteCourse(t *testing.T) {
+	type mockBehavior func(r *mock_service.MockCourses, schoolId, id primitive.ObjectID)
+
+	school := domain.School{
+		ID: primitive.NewObjectID(),
+		Settings: domain.Settings{
+			Domains: []string{"localhost"},
+		},
+	}
+
+	tests := []struct {
+		name         string
+		courseId     primitive.ObjectID
+		school       domain.School
+		mockBehavior mockBehavior
+		statusCode   int
+		responseBody string
+	}{
+		{
+			name:   "ok",
+			school: school,
+			courseId: primitive.NewObjectID(),
+			mockBehavior: func(r *mock_service.MockCourses, schoolId, id primitive.ObjectID) {
+				r.EXPECT().Delete(context.Background(), schoolId, id).Return(nil)
+			},
+			statusCode:   200,
+			responseBody: "",
+		},
+		{
+			name:   "service error",
+			school: school,
+			courseId: primitive.NewObjectID(),
+			mockBehavior: func(r *mock_service.MockCourses, schoolId, id primitive.ObjectID) {
+				r.EXPECT().Delete(context.Background(), schoolId, id).Return(errors.New("failed to delete course"))
+			},
+			statusCode:   500,
+			responseBody: `{"message":"failed to delete course"}`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Init Dependencies
+			c := gomock.NewController(t)
+			defer c.Finish()
+
+			p := mock_service.NewMockCourses(c)
+			tt.mockBehavior(p, tt.school.ID, tt.courseId)
+
+			services := &service.Services{Courses: p}
+			handler := Handler{services: services}
+
+			// Init Endpoint
+			r := gin.New()
+			r.DELETE("/admins/courses/:id", func(c *gin.Context) {
+				c.Set(schoolCtx, tt.school)
+			}, handler.adminDeleteCourse)
+
+			// Create Request
+			w := httptest.NewRecorder()
+			req := httptest.NewRequest("DELETE", fmt.Sprintf("/admins/courses/%s", tt.courseId.Hex()), nil)
+
+			// Make Request
+			r.ServeHTTP(w, req)
+
+			// Assert
+			assert.Equal(t, w.Code, tt.statusCode)
+			assert.Equal(t, w.Body.String(), tt.responseBody)
+		})
+	}
+}

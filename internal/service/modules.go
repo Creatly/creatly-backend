@@ -96,6 +96,40 @@ func (s *ModulesService) Update(ctx context.Context, inp UpdateModuleInput) erro
 	return s.repo.Update(ctx, updateInput)
 }
 
-func (s *ModulesService) Delete(ctx context.Context, id primitive.ObjectID) error {
-	return s.repo.Delete(ctx, id)
+func (s *ModulesService) Delete(ctx context.Context, moduleId primitive.ObjectID) error {
+	module, err := s.GetById(ctx, moduleId)
+	if err != nil {
+		return err
+	}
+
+	if err := s.repo.Delete(ctx, moduleId); err != nil {
+		return err
+	}
+
+	lessonIds := make([]primitive.ObjectID, len(module.Lessons))
+	for _, lesson := range module.Lessons {
+		lessonIds = append(lessonIds, lesson.ID)
+	}
+
+	return s.contentRepo.DeleteContent(ctx, lessonIds)
+}
+
+func (s *ModulesService) DeleteByCourse(ctx context.Context, courseId primitive.ObjectID) error {
+	modules, err := s.repo.GetByCourse(ctx, courseId)
+	if err != nil {
+		return err
+	}
+
+	if err := s.repo.DeleteByCourse(ctx, courseId); err != nil {
+		return err
+	}
+
+	lessonIds := make([]primitive.ObjectID, 0)
+	for _, module := range modules {
+		for _, lesson := range module.Lessons {
+			lessonIds = append(lessonIds, lesson.ID)
+		}
+	}
+
+	return s.contentRepo.DeleteContent(ctx, lessonIds)
 }
