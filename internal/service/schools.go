@@ -28,8 +28,8 @@ func (s *SchoolsService) GetByDomain(ctx context.Context, domainName string) (do
 		return domain.School{}, err
 	}
 
-	s.cache.Set(domainName, school, s.ttl)
-	return school, nil
+	err = s.cache.Set(domainName, school, s.ttl)
+	return school, err
 }
 
 func (s *SchoolsService) UpdateSettings(ctx context.Context, inp UpdateSchoolSettingsInput) error {

@@ -17,17 +17,6 @@ import (
 )
 
 type Handler struct {
-	schoolsService    service.Schools
-	studentsService   service.Students
-	coursesService    service.Courses
-	promoCodesService service.PromoCodes
-	offersService     service.Offers
-	modulesService    service.Modules
-	ordersService     service.Orders
-	paymentsService   service.Payments
-	adminsService     service.Admins
-	packagesService   service.Packages
-	lessonsService    service.Lessons
 	services          *service.Services
 	tokenManager      auth.TokenManager
 }
@@ -52,7 +41,7 @@ func (h *Handler) Init(cfg *config.Config) *gin.Engine {
 
 	docs.SwaggerInfo.Host = fmt.Sprintf("%s:%s", cfg.HTTP.Host, cfg.HTTP.Port)
 	if cfg.Environment != config.EnvLocal {
-		docs.SwaggerInfo.Host = fmt.Sprintf("%s", cfg.HTTP.Host)
+		docs.SwaggerInfo.Host = cfg.HTTP.Host
 	}
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

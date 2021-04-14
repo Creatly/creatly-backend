@@ -108,6 +108,7 @@ type UpdateCourseInput struct {
 type Courses interface {
 	Create(ctx context.Context, schoolId primitive.ObjectID, name string) (primitive.ObjectID, error)
 	Update(ctx context.Context, schoolId primitive.ObjectID, inp UpdateCourseInput) error
+	Delete(ctx context.Context, schoolId, courseId primitive.ObjectID) error
 }
 
 type CreatePromoCodeInput struct {
@@ -179,6 +180,7 @@ type Modules interface {
 	Create(ctx context.Context, inp CreateModuleInput) (primitive.ObjectID, error)
 	Update(ctx context.Context, inp UpdateModuleInput) error
 	Delete(ctx context.Context, id primitive.ObjectID) error
+	DeleteByCourse(ctx context.Context, courseId primitive.ObjectID) error
 	GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
 	GetById(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
 	GetByPackages(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Module, error)
@@ -205,6 +207,7 @@ type Lessons interface {
 	GetById(ctx context.Context, lessonId primitive.ObjectID) (domain.Lesson, error)
 	Update(ctx context.Context, inp UpdateLessonInput) error
 	Delete(ctx context.Context, id primitive.ObjectID) error
+	DeleteContent(ctx context.Context, lessonIds []primitive.ObjectID) error
 }
 
 type CreatePackageInput struct {
@@ -274,8 +277,8 @@ type Deps struct {
 
 func NewServices(deps Deps) *Services {
 	emailsService := NewEmailsService(deps.EmailProvider, deps.EmailSender, deps.EmailConfig, deps.FrontendURL)
-	coursesService := NewCoursesService(deps.Repos.Courses)
 	modulesService := NewModulesService(deps.Repos.Modules, deps.Repos.LessonContent)
+	coursesService := NewCoursesService(deps.Repos.Courses, modulesService)
 	packagesService := NewPackagesService(deps.Repos.Packages, deps.Repos.Modules)
 	offersService := NewOffersService(deps.Repos.Offers, modulesService, packagesService)
 	promoCodesService := NewPromoCodeService(deps.Repos.PromoCodes)

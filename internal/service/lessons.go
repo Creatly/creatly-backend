@@ -94,3 +94,6 @@ func (s *LessonsService) Delete(ctx context.Context, id primitive.ObjectID) erro
 	return s.repo.DeleteLesson(ctx, id)
 }
 
+func (s *LessonsService) DeleteContent(ctx context.Context, lessonIds []primitive.ObjectID) error {
+	return s.contentRepo.DeleteContent(ctx, lessonIds)
+}

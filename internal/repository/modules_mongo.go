@@ -116,3 +116,8 @@ func (r *ModulesRepo) AttachPackage(ctx context.Context, modules []primitive.Obj
 	_, err := r.db.UpdateMany(ctx, bson.M{"_id": bson.M{"$in": modules}}, bson.M{"$set": bson.M{"packageId": packageId}})
 	return err
 }
+
+func (r *ModulesRepo) DeleteByCourse(ctx context.Context, courseId primitive.ObjectID) error {
+	_, err := r.db.DeleteMany(ctx, bson.M{"courseId": courseId})
+	return err
+}

@@ -2,7 +2,6 @@ package repository
 
 const (
 	adminsCollection         = "admins"
-	usersCollection          = "users"
 	studentsCollection       = "students"
 	studentLessonsCollection = "studentLessons"
 	schoolsCollection        = "schools"

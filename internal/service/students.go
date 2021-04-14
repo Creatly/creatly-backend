@@ -50,11 +50,17 @@ func NewStudentsService(repo repository.Students, modulesService Modules, offers
 }
 
 func (s *StudentsService) SignUp(ctx context.Context, input StudentSignUpInput) error {
+	passwordHash, err := s.hasher.Hash(input.Password)
+	if err != nil {
+		return err
+	}
+
 	// it's possible to use OTP apps (Google Authenticator, Authy) compatibility mode here, in the future
 	verificationCode := s.otpGenerator.RandomSecret(s.verificationCodeLength)
+
 	student := domain.Student{
 		Name:         input.Name,
-		Password:     s.hasher.Hash(input.Password),
+		Password:     passwordHash,
 		Email:        input.Email,
 		RegisteredAt: time.Now(),
 		LastVisitAt:  time.Now(),
@@ -83,7 +89,11 @@ func (s *StudentsService) SignUp(ctx context.Context, input StudentSignUpInput) 
 }
 
 func (s *StudentsService) SignIn(ctx context.Context, input SignInInput) (Tokens, error) {
-	student, err := s.repo.GetByCredentials(ctx, input.SchoolID, input.Email, s.hasher.Hash(input.Password))
+	passwordHash, err := s.hasher.Hash(input.Password)
+	if err != nil {
+		return Tokens{}, err
+	}
+	student, err := s.repo.GetByCredentials(ctx, input.SchoolID, input.Email, passwordHash)
 	if err != nil {
 		if err == repository.ErrUserNotFound {
 			return Tokens{}, ErrUserNotFound

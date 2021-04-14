@@ -434,6 +434,20 @@ func (mr *MockEmailsMockRecorder) SendVerificationEmail(arg0 interface{}) *gomoc
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendVerificationEmail", reflect.TypeOf((*MockEmails)(nil).SendVerificationEmail), arg0)
 }
 
+// SendPurchaseSuccessfulEmail mocks base method
+func (m *MockEmails) SendPurchaseSuccessfulEmail(arg0 service.SendPurchaseSuccessfulEmailInput) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SendPurchaseSuccessfulEmail", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SendPurchaseSuccessfulEmail indicates an expected call of SendPurchaseSuccessfulEmail
+func (mr *MockEmailsMockRecorder) SendPurchaseSuccessfulEmail(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendPurchaseSuccessfulEmail", reflect.TypeOf((*MockEmails)(nil).SendPurchaseSuccessfulEmail), arg0)
+}
+
 // MockCourses is a mock of Courses interface
 type MockCourses struct {
 	ctrl     *gomock.Controller
@@ -484,6 +498,20 @@ func (m *MockCourses) Update(ctx context.Context, schoolId primitive.ObjectID, i
 func (mr *MockCoursesMockRecorder) Update(ctx, schoolId, inp interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockCourses)(nil).Update), ctx, schoolId, inp)
+}
+
+// Delete mocks base method
+func (m *MockCourses) Delete(ctx context.Context, schoolId, courseId primitive.ObjectID) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Delete", ctx, schoolId, courseId)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Delete indicates an expected call of Delete
+func (mr *MockCoursesMockRecorder) Delete(ctx, schoolId, courseId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockCourses)(nil).Delete), ctx, schoolId, courseId)
 }
 
 // MockPromoCodes is a mock of PromoCodes interface
@@ -804,6 +832,20 @@ func (mr *MockModulesMockRecorder) Delete(ctx, id interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockModules)(nil).Delete), ctx, id)
 }
 
+// DeleteByCourse mocks base method
+func (m *MockModules) DeleteByCourse(ctx context.Context, courseId primitive.ObjectID) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteByCourse", ctx, courseId)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteByCourse indicates an expected call of DeleteByCourse
+func (mr *MockModulesMockRecorder) DeleteByCourse(ctx, courseId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteByCourse", reflect.TypeOf((*MockModules)(nil).DeleteByCourse), ctx, courseId)
+}
+
 // GetByCourse mocks base method
 func (m *MockModules) GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error) {
 	m.ctrl.T.Helper()
@@ -958,6 +1000,20 @@ func (m *MockLessons) Delete(ctx context.Context, id primitive.ObjectID) error {
 func (mr *MockLessonsMockRecorder) Delete(ctx, id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockLessons)(nil).Delete), ctx, id)
+}
+
+// DeleteContent mocks base method
+func (m *MockLessons) DeleteContent(ctx context.Context, lessonIds []primitive.ObjectID) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteContent", ctx, lessonIds)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteContent indicates an expected call of DeleteContent
+func (mr *MockLessonsMockRecorder) DeleteContent(ctx, lessonIds interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteContent", reflect.TypeOf((*MockLessons)(nil).DeleteContent), ctx, lessonIds)
 }
 
 // MockPackages is a mock of Packages interface
