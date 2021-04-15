@@ -6,6 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type ModulesRepo struct {
@@ -23,7 +24,11 @@ func (r *ModulesRepo) Create(ctx context.Context, module domain.Module) (primiti
 
 func (r *ModulesRepo) GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error) {
 	var modules []domain.Module
-	cur, err := r.db.Find(ctx, bson.M{"courseId": courseId})
+
+	opts := options.Find()
+	opts.SetSort(bson.D{{"position", 1}}) //nolint:govet
+
+	cur, err := r.db.Find(ctx, bson.M{"courseId": courseId}, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -34,13 +39,18 @@ func (r *ModulesRepo) GetByCourse(ctx context.Context, courseId primitive.Object
 
 func (r *ModulesRepo) GetById(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error) {
 	var module domain.Module
+
 	err := r.db.FindOne(ctx, bson.M{"_id": moduleId}).Decode(&module)
 	return module, err
 }
 
 func (r *ModulesRepo) GetByPackages(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Module, error) {
 	var modules []domain.Module
-	cur, err := r.db.Find(ctx, bson.M{"packageId": bson.M{"$in": packageIds}})
+
+	opts := options.Find()
+	opts.SetSort(bson.D{{"position", 1}}) //nolint:govet
+
+	cur, err := r.db.Find(ctx, bson.M{"packageId": bson.M{"$in": packageIds}}, opts)
 	if err != nil {
 		return nil, err
 	}

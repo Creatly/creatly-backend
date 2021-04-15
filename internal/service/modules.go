@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"sort"
 
 	"github.com/zhashkevych/courses-backend/internal/domain"
 	"github.com/zhashkevych/courses-backend/internal/repository"
@@ -23,11 +24,21 @@ func (s *ModulesService) GetByCourse(ctx context.Context, courseId primitive.Obj
 		return nil, err
 	}
 
+	for i := range modules {
+		sortLessons(modules[i].Lessons)
+	}
+
 	return modules, nil
 }
 
 func (s *ModulesService) GetById(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error) {
-	return s.repo.GetById(ctx, moduleId)
+	module, err := s.repo.GetById(ctx, moduleId)
+	if err != nil {
+		return module, err
+	}
+
+	sortLessons(module.Lessons)
+	return module, nil
 }
 
 func (s *ModulesService) GetWithContent(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error) {
@@ -54,11 +65,21 @@ func (s *ModulesService) GetWithContent(ctx context.Context, moduleId primitive.
 		}
 	}
 
+	sortLessons(module.Lessons)
 	return module, nil
 }
 
 func (s *ModulesService) GetByPackages(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Module, error) {
-	return s.repo.GetByPackages(ctx, packageIds)
+	modules, err := s.repo.GetByPackages(ctx, packageIds)
+	if err != nil {
+		return nil, err
+	}
+
+	for i := range modules {
+		sortLessons(modules[i].Lessons)
+	}
+
+	return modules, nil
 }
 
 func (s *ModulesService) GetByLesson(ctx context.Context, lessonId primitive.ObjectID) (domain.Module, error) {
@@ -132,4 +153,10 @@ func (s *ModulesService) DeleteByCourse(ctx context.Context, courseId primitive.
 	}
 
 	return s.contentRepo.DeleteContent(ctx, lessonIds)
+}
+
+func sortLessons(lessons []domain.Lesson) {
+	sort.Slice(lessons[:], func(i, j int) bool {
+		return lessons[i].Position < lessons[j].Position
+	})
 }
