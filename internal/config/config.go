@@ -55,9 +55,12 @@ type (
 		SigningKey      string
 	}
 
+	// TODO bind values
 	FileStorageConfig struct {
-		URL    string `mapstructure:"url"`
-		Bucket string `mapstructure:"bucket"`
+		Endpoint  string
+		Bucket    string
+		AccessKey string
+		SecretKey string
 	}
 
 	EmailConfig struct {

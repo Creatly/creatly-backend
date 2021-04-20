@@ -134,6 +134,8 @@ definitions:
     properties:
       name:
         type: string
+    required:
+    - name
     type: object
   v1.createLessonInput:
     properties:

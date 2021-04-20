@@ -2,6 +2,7 @@
 .data
 .bin
 .DS_Store
+.localstack
 
 .env
 cover.out

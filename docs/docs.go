@@ -3183,6 +3183,9 @@ var doc = `{
         },
         "v1.createCourseInput": {
             "type": "object",
+            "required": [
+                "name"
+            ],
             "properties": {
                 "name": {
                     "type": "string"
