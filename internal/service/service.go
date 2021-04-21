@@ -84,6 +84,7 @@ type UploadInput struct {
 	File        io.Reader
 	Size        int64
 	ContentType string
+	SchoolID    primitive.ObjectID
 }
 
 type Files interface {
@@ -287,6 +288,7 @@ type Deps struct {
 	OtpGenerator           otp.Generator
 	VerificationCodeLength int
 	FrontendURL            string
+	Environment            string
 }
 
 func NewServices(deps Deps) *Services {
@@ -315,6 +317,6 @@ func NewServices(deps Deps) *Services {
 		Admins:         NewAdminsService(deps.Hasher, deps.TokenManager, deps.Repos.Admins, deps.Repos.Schools, deps.AccessTokenTTL, deps.RefreshTokenTTL),
 		Packages:       packagesService,
 		Lessons:        lessonsService,
-		Files:          NewFilesService(deps.StorageProvider),
+		Files:          NewFilesService(deps.StorageProvider, deps.Environment),
 	}
 }

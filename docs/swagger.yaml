@@ -1689,6 +1689,45 @@ paths:
       summary: Admin Get Students
       tags:
       - admins-orders
+  /admins/upload/image:
+    post:
+      consumes:
+      - multipart/form-data
+      description: admin upload image
+      parameters:
+      - description: file
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.dataResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Upload Image
+      tags:
+      - admins-upload
   /courses:
     get:
       consumes:

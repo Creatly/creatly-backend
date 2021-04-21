@@ -3,7 +3,8 @@ package app
 import (
 	"context"
 	"errors"
-	"github.com/minio/minio-go"
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/zhashkevych/courses-backend/pkg/storage"
 	"net/http"
 	"os"
@@ -104,6 +105,7 @@ func Run(configPath string) {
 		VerificationCodeLength: cfg.Auth.VerificationCodeLength,
 		FrontendURL:            cfg.FrontendURL,
 		StorageProvider:        storageProvider,
+		Environment:            cfg.Environment,
 	})
 	handlers := delivery.NewHandler(services, tokenManager)
 
@@ -138,16 +140,14 @@ func Run(configPath string) {
 }
 
 func newStorageProvider(cfg *config.Config) (storage.Provider, error) {
-	client, err := minio.New(cfg.FileStorage.Endpoint, cfg.FileStorage.AccessKey, cfg.FileStorage.SecretKey, false)
+	client, err := minio.New(cfg.FileStorage.Endpoint, &minio.Options{
+		Creds:  credentials.NewStaticV4(cfg.FileStorage.AccessKey, cfg.FileStorage.SecretKey, ""),
+		Secure: true,
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	storageType := storage.StorageSpaces
-	if cfg.Environment == config.EnvLocal {
-		storageType = storage.StorageS3
-	}
-
-	provider := storage.NewFileStorage(client, cfg.FileStorage.Bucket, cfg.FileStorage.Endpoint, storageType)
+	provider := storage.NewFileStorage(client, cfg.FileStorage.Bucket, cfg.FileStorage.Endpoint)
 	return provider, nil
 }

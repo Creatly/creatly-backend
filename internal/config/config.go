@@ -55,7 +55,6 @@ type (
 		SigningKey      string
 	}
 
-	// TODO bind values
 	FileStorageConfig struct {
 		Endpoint  string
 		Bucket    string
@@ -209,6 +208,11 @@ func setFromEnv(cfg *Config) {
 	cfg.SMTP.Pass = viper.GetString("password")
 
 	cfg.Environment = viper.GetString("env")
+
+	cfg.FileStorage.Endpoint = viper.GetString("endpoint")
+	cfg.FileStorage.AccessKey = viper.GetString("access_key")
+	cfg.FileStorage.SecretKey = viper.GetString("secret_key")
+	cfg.FileStorage.Bucket = viper.GetString("bucket")
 }
 
 func parseConfigFile(filepath string) error {
@@ -267,6 +271,10 @@ func parseEnv() error {
 	}
 
 	if err := parseAppEnvFromEnv(); err != nil {
+		return err
+	}
+
+	if err := parseStorageEnvVariables(); err != nil {
 		return err
 	}
 
@@ -354,4 +362,21 @@ func parseSMTPPassFromEnv() error {
 func parseAppEnvFromEnv() error {
 	viper.SetEnvPrefix("app")
 	return viper.BindEnv("env")
+}
+
+func parseStorageEnvVariables() error {
+	viper.SetEnvPrefix("storage")
+	if err := viper.BindEnv("bucket"); err != nil {
+		return err
+	}
+
+	if err := viper.BindEnv("endpoint"); err != nil {
+		return err
+	}
+
+	if err := viper.BindEnv("access_key"); err != nil {
+		return err
+	}
+
+	return viper.BindEnv("secret_key")
 }

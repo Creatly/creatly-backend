@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"bytes"
 	"github.com/gin-gonic/gin"
 	"github.com/zhashkevych/courses-backend/internal/service"
 	"net/http"
@@ -33,7 +34,7 @@ type uploadResponse struct {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/students [get]
+// @Router /admins/upload/image [post]
 func (h *Handler) adminUploadImage(c *gin.Context) {
 	// Limit Upload File Size
 	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, maxImageUploadSize)
@@ -61,10 +62,17 @@ func (h *Handler) adminUploadImage(c *gin.Context) {
 		return
 	}
 
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	url, err := h.services.Files.Upload(c.Request.Context(), service.UploadInput{
-		File:        file,
+		File:        bytes.NewBuffer(buffer),
 		ContentType: contentType,
 		Size:        fileHeader.Size,
+		SchoolID:    school.ID,
 	})
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())

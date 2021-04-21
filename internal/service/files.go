@@ -2,36 +2,28 @@ package service
 
 import (
 	"context"
+	"fmt"
+	"github.com/google/uuid"
 	"github.com/zhashkevych/courses-backend/pkg/storage"
-	"math/rand"
-)
-
-const (
-	letterBytes    = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	fileNameLength = 16
 )
 
 type FilesService struct {
 	storage storage.Provider
+	env     string
 }
 
-func NewFilesService(storage storage.Provider) *FilesService {
-	return &FilesService{storage: storage}
+func NewFilesService(storage storage.Provider, env string) *FilesService {
+	return &FilesService{storage: storage, env: env}
 }
 
 func (s *FilesService) Upload(ctx context.Context, inp UploadInput) (string, error) {
+	filename := uuid.New().String()
+	filepath := fmt.Sprintf("%s/%s/%s", s.env, inp.SchoolID.Hex(), filename)
+
 	return s.storage.Upload(ctx, storage.UploadInput{
 		File:        inp.File,
 		Size:        inp.Size,
 		ContentType: inp.ContentType,
-		Name:        generateFileName(),
+		Name:        filepath,
 	})
-}
-
-func generateFileName() string {
-	b := make([]byte, fileNameLength)
-	for i := range b {
-		b[i] = letterBytes[rand.Intn(len(letterBytes))]
-	}
-	return string(b)
 }

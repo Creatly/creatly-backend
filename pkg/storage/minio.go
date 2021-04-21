@@ -3,16 +3,8 @@ package storage
 import (
 	"context"
 	"fmt"
-	"github.com/minio/minio-go"
-	"strings"
+	"github.com/minio/minio-go/v7"
 	"time"
-)
-
-type StorageType int
-
-const (
-	StorageSpaces StorageType = iota
-	StorageS3
 )
 
 const (
@@ -23,19 +15,16 @@ type FileStorage struct {
 	client      *minio.Client
 	bucket      string
 	endpoint    string
-	storageType StorageType
 }
 
-func NewFileStorage(client *minio.Client, bucket, endpoint string, storageType StorageType) *FileStorage {
+func NewFileStorage(client *minio.Client, bucket, endpoint string) *FileStorage {
 	return &FileStorage{
 		client:      client,
 		bucket:      bucket,
 		endpoint:    endpoint,
-		storageType: storageType,
 	}
 }
 
-// todo: image compression
 func (fs *FileStorage) Upload(ctx context.Context, input UploadInput) (string, error) {
 	opts := minio.PutObjectOptions{
 		ContentType:  input.ContentType,
@@ -45,8 +34,7 @@ func (fs *FileStorage) Upload(ctx context.Context, input UploadInput) (string, e
 	ctx, clFn := context.WithTimeout(ctx, timeout)
 	defer clFn()
 
-	_, err := fs.client.PutObjectWithContext(ctx,
-		fs.bucket, input.Name, input.File, input.Size, opts)
+	_, err := fs.client.PutObject(ctx, fs.bucket, input.Name, input.File, input.Size, opts)
 	if err != nil {
 		return "", err
 	}
@@ -54,19 +42,6 @@ func (fs *FileStorage) Upload(ctx context.Context, input UploadInput) (string, e
 	return fs.generateFileURL(input.Name), nil
 }
 
-func (fs *FileStorage) generateFileURL(fileName string) string {
-	if fs.storageType == StorageSpaces {
-		return generateSpacesLink(fs.bucket, fs.endpoint, fileName)
-	}
-
-	return generateS3Link(fs.bucket, fs.endpoint, fileName)
-}
-
-func generateSpacesLink(bucket, endpoint, filename string) string {
-	return fmt.Sprintf("https://%s.%s/%s", bucket, endpoint, filename)
-}
-
-func generateS3Link(bucket, endpoint, filename string) string {
-	endpoint = strings.Replace(endpoint, "localstack", "localhost", -1)
-	return fmt.Sprintf("http://%s/%s/%s", endpoint, bucket, filename)
+func (fs *FileStorage) generateFileURL(filename string) string {
+	return fmt.Sprintf("https://%s.%s/%s", fs.bucket, fs.endpoint, filename)
 }
