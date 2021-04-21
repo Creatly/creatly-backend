@@ -372,6 +372,11 @@ definitions:
       pages:
         $ref: '#/definitions/v1.pages'
     type: object
+  v1.uploadResponse:
+    properties:
+      url:
+        type: string
+    type: object
 host: localhost:8000
 info:
   contact: {}
@@ -1706,7 +1711,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1.dataResponse'
+            $ref: '#/definitions/v1.uploadResponse'
         "400":
           description: Bad Request
           schema:
@@ -1726,6 +1731,45 @@ paths:
       security:
       - AdminAuth: []
       summary: Admin Upload Image
+      tags:
+      - admins-upload
+  /admins/upload/video:
+    post:
+      consumes:
+      - multipart/form-data
+      description: admin upload video
+      parameters:
+      - description: file
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.uploadResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Upload Video
       tags:
       - admins-upload
   /courses:

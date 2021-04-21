@@ -1483,7 +1483,3 @@ func (h *Handler) adminGetStudents(c *gin.Context) {
 
 	c.JSON(http.StatusOK, dataResponse{toStudentsResponse(students)})
 }
-
-func (h *Handler) adminUploadVideo(c *gin.Context) {
-
-}

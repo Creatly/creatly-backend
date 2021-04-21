@@ -81,10 +81,12 @@ type Admins interface {
 }
 
 type UploadInput struct {
-	File        io.Reader
-	Size        int64
-	ContentType string
-	SchoolID    primitive.ObjectID
+	File          io.Reader
+	FileExtension string
+	Size          int64
+	ContentType   string
+	SchoolID      primitive.ObjectID
+	Type          FileType
 }
 
 type Files interface {

@@ -4,11 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/minio/minio-go/v7"
-	"time"
-)
-
-const (
-	timeout = time.Second * 5
 )
 
 type FileStorage struct {
@@ -30,9 +25,6 @@ func (fs *FileStorage) Upload(ctx context.Context, input UploadInput) (string, e
 		ContentType:  input.ContentType,
 		UserMetadata: map[string]string{"x-amz-acl": "public-read"},
 	}
-
-	ctx, clFn := context.WithTimeout(ctx, timeout)
-	defer clFn()
 
 	_, err := fs.client.PutObject(ctx, fs.bucket, input.Name, input.File, input.Size, opts)
 	if err != nil {
