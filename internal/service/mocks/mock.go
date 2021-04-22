@@ -383,6 +383,44 @@ func (mr *MockAdminsMockRecorder) GetCourseById(ctx, schoolId, courseId interfac
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCourseById", reflect.TypeOf((*MockAdmins)(nil).GetCourseById), ctx, schoolId, courseId)
 }
 
+// MockFiles is a mock of Files interface
+type MockFiles struct {
+	ctrl     *gomock.Controller
+	recorder *MockFilesMockRecorder
+}
+
+// MockFilesMockRecorder is the mock recorder for MockFiles
+type MockFilesMockRecorder struct {
+	mock *MockFiles
+}
+
+// NewMockFiles creates a new mock instance
+func NewMockFiles(ctrl *gomock.Controller) *MockFiles {
+	mock := &MockFiles{ctrl: ctrl}
+	mock.recorder = &MockFilesMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockFiles) EXPECT() *MockFilesMockRecorder {
+	return m.recorder
+}
+
+// Upload mocks base method
+func (m *MockFiles) Upload(ctx context.Context, inp service.UploadInput) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Upload", ctx, inp)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Upload indicates an expected call of Upload
+func (mr *MockFilesMockRecorder) Upload(ctx, inp interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Upload", reflect.TypeOf((*MockFiles)(nil).Upload), ctx, inp)
+}
+
 // MockEmails is a mock of Emails interface
 type MockEmails struct {
 	ctrl     *gomock.Controller

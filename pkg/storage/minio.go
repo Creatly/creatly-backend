@@ -34,6 +34,7 @@ func (fs *FileStorage) Upload(ctx context.Context, input UploadInput) (string, e
 	return fs.generateFileURL(input.Name), nil
 }
 
+// DigitalOcean Spaces URL format
 func (fs *FileStorage) generateFileURL(filename string) string {
 	return fmt.Sprintf("https://%s.%s/%s", fs.bucket, fs.endpoint, filename)
 }
