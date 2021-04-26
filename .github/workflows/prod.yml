@@ -115,6 +115,11 @@ jobs:
               export NGINX_IMAGE=$(echo $NGINX_IMAGE)
               export TAG=$(echo $TAG)
 
+              export STORAGE_ENDPOINT=${{secrets.STORAGE_ENDPOINT}}
+              export STORAGE_BUCKET=${{secrets.STORAGE_BUCKET}}
+              export STORAGE_ACCESS_KEY=${{secrets.STORAGE_ACCESS_KEY}}
+              export STORAGE_SECRET_KEY="${{secrets.STORAGE_SECRET_KEY}}"
+
               # Login into Digital Ocean Registry
               docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} $(echo $REGISTRY)
 
