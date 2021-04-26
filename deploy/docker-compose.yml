@@ -23,6 +23,10 @@ services:
       - PAYMENT_REDIRECT_URL
       - FRONTEND_URL
       - SMTP_PASSWORD
+      - STORAGE_ENDPOINT
+      - STORAGE_BUCKET
+      - STORAGE_ACCESS_KEY
+      - STORAGE_SECRET_KEY
 
   nginx:
     image: ${REGISTRY}/${NGINX_IMAGE}:${TAG}
