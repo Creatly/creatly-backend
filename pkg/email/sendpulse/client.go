@@ -122,8 +122,8 @@ func (c *Client) getToken() (string, error) {
 		return "", err
 	}
 
-	c.cache.Set("t", token, cacheTTL)
-	return token.(string), nil
+	err = c.cache.Set("t", token, cacheTTL)
+	return token.(string), err
 }
 
 func (c *Client) authenticate() (string, error) {

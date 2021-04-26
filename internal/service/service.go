@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"github.com/zhashkevych/courses-backend/pkg/storage"
+	"io"
 	"time"
 
 	"github.com/zhashkevych/courses-backend/internal/config"
@@ -78,6 +80,19 @@ type Admins interface {
 	GetCourseById(ctx context.Context, schoolId, courseId primitive.ObjectID) (domain.Course, error)
 }
 
+type UploadInput struct {
+	File          io.Reader
+	FileExtension string
+	Size          int64
+	ContentType   string
+	SchoolID      primitive.ObjectID
+	Type          FileType
+}
+
+type Files interface {
+	Upload(ctx context.Context, inp UploadInput) (string, error)
+}
+
 type SendVerificationEmailInput struct {
 	Email            string
 	Name             string
@@ -108,6 +123,7 @@ type UpdateCourseInput struct {
 type Courses interface {
 	Create(ctx context.Context, schoolId primitive.ObjectID, name string) (primitive.ObjectID, error)
 	Update(ctx context.Context, schoolId primitive.ObjectID, inp UpdateCourseInput) error
+	Delete(ctx context.Context, schoolId, courseId primitive.ObjectID) error
 }
 
 type CreatePromoCodeInput struct {
@@ -179,6 +195,7 @@ type Modules interface {
 	Create(ctx context.Context, inp CreateModuleInput) (primitive.ObjectID, error)
 	Update(ctx context.Context, inp UpdateModuleInput) error
 	Delete(ctx context.Context, id primitive.ObjectID) error
+	DeleteByCourse(ctx context.Context, courseId primitive.ObjectID) error
 	GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
 	GetById(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
 	GetByPackages(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Module, error)
@@ -205,6 +222,7 @@ type Lessons interface {
 	GetById(ctx context.Context, lessonId primitive.ObjectID) (domain.Lesson, error)
 	Update(ctx context.Context, inp UpdateLessonInput) error
 	Delete(ctx context.Context, id primitive.ObjectID) error
+	DeleteContent(ctx context.Context, lessonIds []primitive.ObjectID) error
 }
 
 type CreatePackageInput struct {
@@ -251,6 +269,7 @@ type Services struct {
 	Payments       Payments
 	Orders         Orders
 	Admins         Admins
+	Files          Files
 }
 
 type Deps struct {
@@ -262,6 +281,7 @@ type Deps struct {
 	EmailSender            email.Sender
 	EmailConfig            config.EmailConfig
 	PaymentProvider        payment.Provider
+	StorageProvider        storage.Provider
 	AccessTokenTTL         time.Duration
 	RefreshTokenTTL        time.Duration
 	PaymentCallbackURL     string
@@ -270,12 +290,13 @@ type Deps struct {
 	OtpGenerator           otp.Generator
 	VerificationCodeLength int
 	FrontendURL            string
+	Environment            string
 }
 
 func NewServices(deps Deps) *Services {
 	emailsService := NewEmailsService(deps.EmailProvider, deps.EmailSender, deps.EmailConfig, deps.FrontendURL)
-	coursesService := NewCoursesService(deps.Repos.Courses)
 	modulesService := NewModulesService(deps.Repos.Modules, deps.Repos.LessonContent)
+	coursesService := NewCoursesService(deps.Repos.Courses, modulesService)
 	packagesService := NewPackagesService(deps.Repos.Packages, deps.Repos.Modules)
 	offersService := NewOffersService(deps.Repos.Offers, modulesService, packagesService)
 	promoCodesService := NewPromoCodeService(deps.Repos.PromoCodes)
@@ -298,5 +319,6 @@ func NewServices(deps Deps) *Services {
 		Admins:         NewAdminsService(deps.Hasher, deps.TokenManager, deps.Repos.Admins, deps.Repos.Schools, deps.AccessTokenTTL, deps.RefreshTokenTTL),
 		Packages:       packagesService,
 		Lessons:        lessonsService,
+		Files:          NewFilesService(deps.StorageProvider, deps.Environment),
 	}
 }

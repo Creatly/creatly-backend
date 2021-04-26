@@ -150,7 +150,7 @@ func generateSignature(params map[string]interface{}, password string) string {
 	signatureString := strings.Join(newValues, "|")
 
 	hash := sha1.New()
-	hash.Write([]byte(signatureString))
+	hash.Write([]byte(signatureString)) //nolint:errcheck
 
 	return fmt.Sprintf("%x", hash.Sum(nil))
 }

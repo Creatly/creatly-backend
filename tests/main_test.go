@@ -76,7 +76,7 @@ func (s *APITestSuite) SetupSuite() {
 }
 
 func (s *APITestSuite) TearDownSuite() {
-	s.db.Client().Disconnect(context.Background())
+	s.db.Client().Disconnect(context.Background()) //nolint:errcheck
 }
 
 func (s *APITestSuite) initDeps() {

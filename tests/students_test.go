@@ -38,7 +38,7 @@ func (s *APITestSuite) TestStudentSignUp() {
 		},
 	}).Return(nil)
 	s.mocks.emailSender.On("Send", email.SendEmailInput{
-		To:  studentEmail,
+		To:      studentEmail,
 		Subject: "Спасибо за регистрацию, Test Student!",
 		Body: fmt.Sprintf(`<h1>Спасибо за регистрацию!</h1>
 <br>
@@ -57,8 +57,11 @@ func (s *APITestSuite) TestStudentSignUp() {
 	err := s.db.Collection("students").FindOne(context.Background(), bson.M{"email": studentEmail}).Decode(&student)
 	s.NoError(err)
 
+	passwordHash, err := s.hasher.Hash(password)
+	s.NoError(err)
+
 	r.Equal(name, student.Name)
-	r.Equal(s.hasher.Hash(password), student.Password)
+	r.Equal(passwordHash, student.Password)
 	r.Equal(false, student.Verification.Verified)
 	r.Equal(verificationCode, student.Verification.Code)
 }
@@ -70,10 +73,14 @@ func (s *APITestSuite) TestStudentSignInNotVerified() {
 
 	// populate DB data
 	studentEmail, password := "test2@test.com", "qwerty123"
-	s.db.Collection("students").InsertOne(context.Background(), domain.Student{
+	passwordHash, err := s.hasher.Hash(password)
+	s.NoError(err)
+
+	_, err = s.db.Collection("students").InsertOne(context.Background(), domain.Student{
 		Email:    studentEmail,
-		Password: s.hasher.Hash(password),
+		Password: passwordHash,
 	})
+	s.NoError(err)
 
 	signUpData := fmt.Sprintf(`{"email":"%s","password":"%s"}`, studentEmail, password)
 	req, _ := http.NewRequest("POST", "/api/v1/students/sign-in", bytes.NewBuffer([]byte(signUpData)))
@@ -92,11 +99,15 @@ func (s *APITestSuite) TestStudentVerify() {
 
 	// populate DB data
 	studentEmail, password := "test3@test.com", "qwerty123"
-	s.db.Collection("students").InsertOne(context.Background(), domain.Student{
+	passwordHash, err := s.hasher.Hash(password)
+	s.NoError(err)
+
+	_, err = s.db.Collection("students").InsertOne(context.Background(), domain.Student{
 		Email:        studentEmail,
-		Password:     s.hasher.Hash(password),
+		Password:     passwordHash,
 		Verification: domain.Verification{Code: "CODE4321"},
 	})
+	s.NoError(err)
 
 	req, _ := http.NewRequest("POST", fmt.Sprintf("/api/v1/students/verify/%s", "CODE4321"), nil)
 	req.Header.Set("Content-type", "application/json")
@@ -107,7 +118,7 @@ func (s *APITestSuite) TestStudentVerify() {
 	r.Equal(http.StatusOK, resp.Result().StatusCode)
 
 	var student domain.Student
-	err := s.db.Collection("students").FindOne(context.Background(), bson.M{"email": studentEmail}).Decode(&student)
+	err = s.db.Collection("students").FindOne(context.Background(), bson.M{"email": studentEmail}).Decode(&student)
 	s.NoError(err)
 
 	r.Equal(true, student.Verification.Verified)
@@ -121,12 +132,16 @@ func (s *APITestSuite) TestStudentSignInVerified() {
 
 	// populate DB data
 	studentEmail, password := "test4@test.com", "qwerty123"
-	s.db.Collection("students").InsertOne(context.Background(), domain.Student{
+	passwordHash, err := s.hasher.Hash(password)
+	s.NoError(err)
+
+	_, err = s.db.Collection("students").InsertOne(context.Background(), domain.Student{
 		Email:        studentEmail,
-		Password:     s.hasher.Hash(password),
+		Password:     passwordHash,
 		SchoolID:     school.ID,
 		Verification: domain.Verification{Verified: true},
 	})
+	s.NoError(err)
 
 	signUpData := fmt.Sprintf(`{"email":"%s","password":"%s"}`, studentEmail, password)
 
@@ -147,13 +162,17 @@ func (s *APITestSuite) TestStudentGetPaidLessonsWithoutPurchase() {
 	// populate DB data
 	id := primitive.NewObjectID()
 	studentEmail, password := "test4@test.com", "qwerty123"
-	s.db.Collection("students").InsertOne(context.Background(), domain.Student{
+	passwordHash, err := s.hasher.Hash(password)
+	s.NoError(err)
+
+	_, err = s.db.Collection("students").InsertOne(context.Background(), domain.Student{
 		ID:           id,
 		Email:        studentEmail,
-		Password:     s.hasher.Hash(password),
+		Password:     passwordHash,
 		SchoolID:     school.ID,
 		Verification: domain.Verification{Verified: true},
 	})
+	s.NoError(err)
 
 	jwt, err := s.getJwt(id)
 	s.NoError(err)
@@ -176,13 +195,17 @@ func (s *APITestSuite) TestStudentGetModuleOffers() {
 	// populate DB data
 	id := primitive.NewObjectID()
 	studentEmail, password := "test4@test.com", "qwerty123"
-	s.db.Collection("students").InsertOne(context.Background(), domain.Student{
+	passwordHash, err := s.hasher.Hash(password)
+	s.NoError(err)
+
+	_, err = s.db.Collection("students").InsertOne(context.Background(), domain.Student{
 		ID:           id,
 		Email:        studentEmail,
-		Password:     s.hasher.Hash(password),
+		Password:     passwordHash,
 		SchoolID:     school.ID,
 		Verification: domain.Verification{Verified: true},
 	})
+	s.NoError(err)
 
 	jwt, err := s.getJwt(id)
 	s.NoError(err)
@@ -220,13 +243,17 @@ func (s *APITestSuite) TestStudentCreateOrderWithoutPromocode() {
 	// populate DB data
 	id := primitive.NewObjectID()
 	studentEmail, password := "test4@test.com", "qwerty123"
-	s.db.Collection("students").InsertOne(context.Background(), domain.Student{
+	passwordHash, err := s.hasher.Hash(password)
+	s.NoError(err)
+
+	_, err = s.db.Collection("students").InsertOne(context.Background(), domain.Student{
 		ID:           id,
 		Email:        studentEmail,
-		Password:     s.hasher.Hash(password),
+		Password:     passwordHash,
 		SchoolID:     school.ID,
 		Verification: domain.Verification{Verified: true},
 	})
+	s.NoError(err)
 
 	jwt, err := s.getJwt(id)
 	s.NoError(err)
@@ -260,13 +287,17 @@ func (s *APITestSuite) TestStudentCreateOrderWrongOffer() {
 	// populate DB data
 	id := primitive.NewObjectID()
 	studentEmail, password := "test4@test.com", "qwerty123"
-	s.db.Collection("students").InsertOne(context.Background(), domain.Student{
+	passwordHash, err := s.hasher.Hash(password)
+	s.NoError(err)
+
+	_, err = s.db.Collection("students").InsertOne(context.Background(), domain.Student{
 		ID:           id,
 		Email:        studentEmail,
-		Password:     s.hasher.Hash(password),
+		Password:     passwordHash,
 		SchoolID:     school.ID,
 		Verification: domain.Verification{Verified: true},
 	})
+	s.NoError(err)
 
 	jwt, err := s.getJwt(id)
 	s.NoError(err)
@@ -291,13 +322,17 @@ func (s *APITestSuite) TestStudentCreateOrderWithPromocode() {
 	// populate DB data
 	id := primitive.NewObjectID()
 	studentEmail, password := "test4@test.com", "qwerty123"
-	s.db.Collection("students").InsertOne(context.Background(), domain.Student{
+	passwordHash, err := s.hasher.Hash(password)
+	s.NoError(err)
+
+	_, err = s.db.Collection("students").InsertOne(context.Background(), domain.Student{
 		ID:           id,
 		Email:        studentEmail,
-		Password:     s.hasher.Hash(password),
+		Password:     passwordHash,
 		SchoolID:     school.ID,
 		Verification: domain.Verification{Verified: true},
 	})
+	s.NoError(err)
 
 	jwt, err := s.getJwt(id)
 	s.NoError(err)
@@ -336,13 +371,17 @@ func (s *APITestSuite) TestStudentCreateOrderWrongPromo() {
 	// populate DB data
 	id := primitive.NewObjectID()
 	studentEmail, password := "test4@test.com", "qwerty123"
-	s.db.Collection("students").InsertOne(context.Background(), domain.Student{
+	passwordHash, err := s.hasher.Hash(password)
+	s.NoError(err)
+
+	_, err = s.db.Collection("students").InsertOne(context.Background(), domain.Student{
 		ID:           id,
 		Email:        studentEmail,
-		Password:     s.hasher.Hash(password),
+		Password:     passwordHash,
 		SchoolID:     school.ID,
 		Verification: domain.Verification{Verified: true},
 	})
+	s.NoError(err)
 
 	jwt, err := s.getJwt(id)
 	s.NoError(err)

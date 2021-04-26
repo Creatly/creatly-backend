@@ -134,6 +134,8 @@ definitions:
     properties:
       name:
         type: string
+    required:
+    - name
     type: object
   v1.createLessonInput:
     properties:
@@ -370,6 +372,11 @@ definitions:
       pages:
         $ref: '#/definitions/v1.pages'
     type: object
+  v1.uploadResponse:
+    properties:
+      url:
+        type: string
+    type: object
 host: localhost:8000
 info:
   contact: {}
@@ -488,6 +495,44 @@ paths:
       tags:
       - admins-courses
   /admins/courses/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: admin delete course
+      parameters:
+      - description: course id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Delete Course
+      tags:
+      - admins-courses
     get:
       consumes:
       - application/json
@@ -1649,6 +1694,84 @@ paths:
       summary: Admin Get Students
       tags:
       - admins-orders
+  /admins/upload/image:
+    post:
+      consumes:
+      - multipart/form-data
+      description: admin upload image
+      parameters:
+      - description: file
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.uploadResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Upload Image
+      tags:
+      - admins-upload
+  /admins/upload/video:
+    post:
+      consumes:
+      - multipart/form-data
+      description: admin upload video
+      parameters:
+      - description: file
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.uploadResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Upload Video
+      tags:
+      - admins-upload
   /courses:
     get:
       consumes:

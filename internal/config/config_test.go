@@ -25,6 +25,10 @@ func TestInit(t *testing.T) {
 		frontendUrl        string
 		smtpPassword       string
 		appEnv             string
+		storageEndpoint    string
+		storageBucket      string
+		storageAccessKey   string
+		storageSecretKey   string
 	}
 
 	type args struct {
@@ -49,6 +53,10 @@ func TestInit(t *testing.T) {
 		os.Setenv("FRONTEND_URL", env.frontendUrl)
 		os.Setenv("SMTP_PASSWORD", env.smtpPassword)
 		os.Setenv("APP_ENV", env.appEnv)
+		os.Setenv("STORAGE_ENDPOINT", env.storageEndpoint)
+		os.Setenv("STORAGE_BUCKET", env.storageBucket)
+		os.Setenv("STORAGE_ACCESS_KEY", env.storageAccessKey)
+		os.Setenv("STORAGE_SECRET_KEY", env.storageSecretKey)
 	}
 
 	tests := []struct {
@@ -78,6 +86,10 @@ func TestInit(t *testing.T) {
 					frontendUrl:        "http://localhost:1337",
 					smtpPassword:       "qwerty123",
 					appEnv:             "local",
+					storageEndpoint:    "test.filestorage.com",
+					storageBucket:      "test",
+					storageAccessKey:   "qwerty123",
+					storageSecretKey:   "qwerty123",
 				}},
 			want: &Config{
 				Environment: "local",
@@ -105,8 +117,10 @@ func TestInit(t *testing.T) {
 					Password: "qwerty",
 				},
 				FileStorage: FileStorageConfig{
-					URL:    "test.filestorage.com",
-					Bucket: "test",
+					Endpoint:  "test.filestorage.com",
+					Bucket:    "test",
+					AccessKey: "qwerty123",
+					SecretKey: "qwerty123",
 				},
 				Email: EmailConfig{
 					SendPulse: SendPulseConfig{

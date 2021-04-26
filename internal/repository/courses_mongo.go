@@ -53,3 +53,16 @@ func (r *CoursesRepo) Update(ctx context.Context, schoolId primitive.ObjectID, i
 
 	return err
 }
+
+func (r *CoursesRepo) Delete(ctx context.Context, schoolId, courseId primitive.ObjectID) error {
+	res, err := r.db.UpdateOne(ctx, bson.M{"_id": schoolId}, bson.M{"$pull": bson.M{"courses": bson.M{"_id": courseId}}})
+	if err != nil {
+		return err
+	}
+
+	if res.ModifiedCount == 0 {
+		return ErrCourseNotFound
+	}
+
+	return nil
+}

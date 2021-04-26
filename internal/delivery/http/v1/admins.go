@@ -26,6 +26,7 @@ func (h *Handler) initAdminRoutes(api *gin.RouterGroup) {
 				courses.GET("", h.adminGetAllCourses)
 				courses.GET("/:id", h.adminGetCourseById)
 				courses.PUT("/:id", h.adminUpdateCourse)
+				courses.DELETE("/:id", h.adminDeleteCourse)
 				courses.POST("/:id/modules", h.adminCreateModule)
 				courses.POST("/:id/packages", h.adminCreatePackage)
 				courses.GET("/:id/packages", h.adminGetAllPackages)
@@ -78,6 +79,12 @@ func (h *Handler) initAdminRoutes(api *gin.RouterGroup) {
 
 			authenticated.GET("/orders", h.adminGetOrders)
 			authenticated.GET("/students", h.adminGetStudents)
+
+			upload := authenticated.Group("/upload")
+			{
+				upload.POST("/image", h.adminUploadImage)
+				upload.POST("/video", h.adminUploadVideo)
+			}
 		}
 	}
 }
@@ -160,7 +167,7 @@ func (h *Handler) adminRefresh(c *gin.Context) {
 }
 
 type createCourseInput struct {
-	Name string `json:"name,required"`
+	Name string `json:"name" binding:"required"`
 }
 
 // @Summary Admin Create New Courses
@@ -330,6 +337,47 @@ func (h *Handler) adminUpdateCourse(c *gin.Context) {
 		Color:       inp.Color,
 		Published:   inp.Published,
 	}); err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.Status(http.StatusOK)
+}
+
+// TODO cover with tests
+// @Summary Admin Delete Course
+// @Security AdminAuth
+// @Tags admins-courses
+// @Description admin delete course
+// @ModuleID adminDeleteCourse
+// @Accept  json
+// @Produce  json
+// @Param id path string true "course id"
+// @Success 200 {string} string "ok"
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/courses/{id} [delete]
+func (h *Handler) adminDeleteCourse(c *gin.Context) {
+	idParam := c.Param("id")
+	if idParam == "" {
+		newResponse(c, http.StatusBadRequest, "empty id param")
+		return
+	}
+
+	id, err := primitive.ObjectIDFromHex(idParam)
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid id param")
+		return
+	}
+
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if err := h.services.Courses.Delete(c.Request.Context(), school.ID, id); err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}

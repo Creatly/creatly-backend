@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"sort"
 
 	"github.com/zhashkevych/courses-backend/internal/domain"
 	"github.com/zhashkevych/courses-backend/internal/repository"
@@ -23,11 +24,21 @@ func (s *ModulesService) GetByCourse(ctx context.Context, courseId primitive.Obj
 		return nil, err
 	}
 
+	for i := range modules {
+		sortLessons(modules[i].Lessons)
+	}
+
 	return modules, nil
 }
 
 func (s *ModulesService) GetById(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error) {
-	return s.repo.GetById(ctx, moduleId)
+	module, err := s.repo.GetById(ctx, moduleId)
+	if err != nil {
+		return module, err
+	}
+
+	sortLessons(module.Lessons)
+	return module, nil
 }
 
 func (s *ModulesService) GetWithContent(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error) {
@@ -54,11 +65,21 @@ func (s *ModulesService) GetWithContent(ctx context.Context, moduleId primitive.
 		}
 	}
 
+	sortLessons(module.Lessons)
 	return module, nil
 }
 
 func (s *ModulesService) GetByPackages(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Module, error) {
-	return s.repo.GetByPackages(ctx, packageIds)
+	modules, err := s.repo.GetByPackages(ctx, packageIds)
+	if err != nil {
+		return nil, err
+	}
+
+	for i := range modules {
+		sortLessons(modules[i].Lessons)
+	}
+
+	return modules, nil
 }
 
 func (s *ModulesService) GetByLesson(ctx context.Context, lessonId primitive.ObjectID) (domain.Module, error) {
@@ -96,6 +117,46 @@ func (s *ModulesService) Update(ctx context.Context, inp UpdateModuleInput) erro
 	return s.repo.Update(ctx, updateInput)
 }
 
-func (s *ModulesService) Delete(ctx context.Context, id primitive.ObjectID) error {
-	return s.repo.Delete(ctx, id)
+func (s *ModulesService) Delete(ctx context.Context, moduleId primitive.ObjectID) error {
+	module, err := s.GetById(ctx, moduleId)
+	if err != nil {
+		return err
+	}
+
+	if err := s.repo.Delete(ctx, moduleId); err != nil {
+		return err
+	}
+
+	lessonIds := make([]primitive.ObjectID, len(module.Lessons))
+	for _, lesson := range module.Lessons {
+		lessonIds = append(lessonIds, lesson.ID)
+	}
+
+	return s.contentRepo.DeleteContent(ctx, lessonIds)
+}
+
+func (s *ModulesService) DeleteByCourse(ctx context.Context, courseId primitive.ObjectID) error {
+	modules, err := s.repo.GetByCourse(ctx, courseId)
+	if err != nil {
+		return err
+	}
+
+	if err := s.repo.DeleteByCourse(ctx, courseId); err != nil {
+		return err
+	}
+
+	lessonIds := make([]primitive.ObjectID, 0)
+	for _, module := range modules {
+		for _, lesson := range module.Lessons {
+			lessonIds = append(lessonIds, lesson.ID)
+		}
+	}
+
+	return s.contentRepo.DeleteContent(ctx, lessonIds)
+}
+
+func sortLessons(lessons []domain.Lesson) {
+	sort.Slice(lessons[:], func(i, j int) bool {
+		return lessons[i].Position < lessons[j].Position
+	})
 }

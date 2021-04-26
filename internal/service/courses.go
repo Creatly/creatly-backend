@@ -9,11 +9,12 @@ import (
 )
 
 type CoursesService struct {
-	repo repository.Courses
+	repo           repository.Courses
+	modulesService Modules
 }
 
-func NewCoursesService(repo repository.Courses) *CoursesService {
-	return &CoursesService{repo: repo}
+func NewCoursesService(repo repository.Courses, modulesService Modules) *CoursesService {
+	return &CoursesService{repo: repo, modulesService: modulesService}
 }
 
 func (s *CoursesService) Create(ctx context.Context, schoolId primitive.ObjectID, name string) (primitive.ObjectID, error) {
@@ -40,4 +41,12 @@ func (s *CoursesService) Update(ctx context.Context, schoolId primitive.ObjectID
 	}
 
 	return s.repo.Update(ctx, schoolId, updateInput)
+}
+
+func (s *CoursesService) Delete(ctx context.Context, schoolId, courseId primitive.ObjectID) error {
+	if err := s.repo.Delete(ctx, schoolId, courseId); err != nil {
+		return err
+	}
+
+	return s.modulesService.DeleteByCourse(ctx, courseId)
 }
