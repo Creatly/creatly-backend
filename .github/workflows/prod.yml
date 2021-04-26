@@ -13,6 +13,7 @@ env:
   TEST_CONTAINER_NAME: "test_db"
   TEST_DB_NAME: "test"
   TEST_DB_URI: "mongodb://localhost:27019"
+  APP_ENV: "prod"
 
 jobs:
 
@@ -91,7 +92,7 @@ jobs:
             host: ${{ secrets.HOST }}
             username: ${{ secrets.USERNAME }}
             key: ${{ secrets.SSHKEY }}
-            envs: API_IMAGE,NGINX_IMAGE,TAG,REGISTRY,SERVER_NAME
+            envs: API_IMAGE,NGINX_IMAGE,TAG,REGISTRY,SERVER_NAME,APP_ENV
             script: |
               # Set env variables
               export MONGO_URI="${{ secrets.MONGO_URI }}"
@@ -113,7 +114,9 @@ jobs:
               export REGISTRY=$(echo $REGISTRY)
               export API_IMAGE=$(echo $API_IMAGE)
               export NGINX_IMAGE=$(echo $NGINX_IMAGE)
+
               export TAG=$(echo $TAG)
+              export APP_ENV=$(echo $APP_ENV)
 
               export STORAGE_ENDPOINT=${{secrets.STORAGE_ENDPOINT}}
               export STORAGE_BUCKET=${{secrets.STORAGE_BUCKET}}
