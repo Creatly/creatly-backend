@@ -79,6 +79,12 @@ func (h *Handler) initAdminRoutes(api *gin.RouterGroup) {
 
 			authenticated.GET("/orders", h.adminGetOrders)
 			authenticated.GET("/students", h.adminGetStudents)
+
+			upload := authenticated.Group("/upload")
+			{
+				upload.POST("/image", h.adminUploadImage)
+				upload.POST("/video", h.adminUploadVideo)
+			}
 		}
 	}
 }

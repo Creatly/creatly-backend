@@ -3,6 +3,9 @@ package app
 import (
 	"context"
 	"errors"
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
+	"github.com/zhashkevych/courses-backend/pkg/storage"
 	"net/http"
 	"os"
 	"os/signal"
@@ -76,6 +79,12 @@ func Run(configPath string) {
 
 	otpGenerator := otp.NewGOTPGenerator()
 
+	storageProvider, err := newStorageProvider(cfg)
+	if err != nil {
+		logger.Error(err)
+		return
+	}
+
 	// Services, Repos & API Handlers
 	repos := repository.NewRepositories(db)
 	services := service.NewServices(service.Deps{
@@ -95,6 +104,8 @@ func Run(configPath string) {
 		OtpGenerator:           otpGenerator,
 		VerificationCodeLength: cfg.Auth.VerificationCodeLength,
 		FrontendURL:            cfg.FrontendURL,
+		StorageProvider:        storageProvider,
+		Environment:            cfg.Environment,
 	})
 	handlers := delivery.NewHandler(services, tokenManager)
 
@@ -126,4 +137,17 @@ func Run(configPath string) {
 	if err := mongoClient.Disconnect(context.Background()); err != nil {
 		logger.Error(err.Error())
 	}
+}
+
+func newStorageProvider(cfg *config.Config) (storage.Provider, error) {
+	client, err := minio.New(cfg.FileStorage.Endpoint, &minio.Options{
+		Creds:  credentials.NewStaticV4(cfg.FileStorage.AccessKey, cfg.FileStorage.SecretKey, ""),
+		Secure: true,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	provider := storage.NewFileStorage(client, cfg.FileStorage.Bucket, cfg.FileStorage.Endpoint)
+	return provider, nil
 }

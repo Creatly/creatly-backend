@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"github.com/zhashkevych/courses-backend/pkg/storage"
+	"io"
 	"time"
 
 	"github.com/zhashkevych/courses-backend/internal/config"
@@ -76,6 +78,19 @@ type Admins interface {
 	RefreshTokens(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (Tokens, error)
 	GetCourses(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Course, error)
 	GetCourseById(ctx context.Context, schoolId, courseId primitive.ObjectID) (domain.Course, error)
+}
+
+type UploadInput struct {
+	File          io.Reader
+	FileExtension string
+	Size          int64
+	ContentType   string
+	SchoolID      primitive.ObjectID
+	Type          FileType
+}
+
+type Files interface {
+	Upload(ctx context.Context, inp UploadInput) (string, error)
 }
 
 type SendVerificationEmailInput struct {
@@ -254,6 +269,7 @@ type Services struct {
 	Payments       Payments
 	Orders         Orders
 	Admins         Admins
+	Files          Files
 }
 
 type Deps struct {
@@ -265,6 +281,7 @@ type Deps struct {
 	EmailSender            email.Sender
 	EmailConfig            config.EmailConfig
 	PaymentProvider        payment.Provider
+	StorageProvider        storage.Provider
 	AccessTokenTTL         time.Duration
 	RefreshTokenTTL        time.Duration
 	PaymentCallbackURL     string
@@ -273,6 +290,7 @@ type Deps struct {
 	OtpGenerator           otp.Generator
 	VerificationCodeLength int
 	FrontendURL            string
+	Environment            string
 }
 
 func NewServices(deps Deps) *Services {
@@ -301,5 +319,6 @@ func NewServices(deps Deps) *Services {
 		Admins:         NewAdminsService(deps.Hasher, deps.TokenManager, deps.Repos.Admins, deps.Repos.Schools, deps.AccessTokenTTL, deps.RefreshTokenTTL),
 		Packages:       packagesService,
 		Lessons:        lessonsService,
+		Files:          NewFilesService(deps.StorageProvider, deps.Environment),
 	}
 }
