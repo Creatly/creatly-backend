@@ -553,7 +553,7 @@ func (h *Handler) adminGetLessons(c *gin.Context) {
 }
 
 type createLessonInput struct {
-	Name     string `json:"name" binding:"required,min=5"`
+	Name     string `json:"name" binding:"required,min=3"`
 	Position uint   `json:"position"`
 }
 
