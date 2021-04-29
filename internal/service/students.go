@@ -71,6 +71,10 @@ func (s *StudentsService) SignUp(ctx context.Context, input StudentSignUpInput) 
 	}
 
 	if err := s.repo.Create(ctx, student); err != nil {
+		if err == repository.ErrUserAlreadyExists {
+			return ErrUserAlreadyExists
+		}
+
 		return err
 	}
 

@@ -11,4 +11,5 @@ var (
 	ErrTransactionInvalid      = errors.New("transaction is invalid")
 	ErrUnknownCallbackType     = errors.New("unknown callback type")
 	ErrVerificationCodeInvalid = errors.New("verification code is invalid")
+	ErrUserAlreadyExists       = errors.New("user with such email already exists")
 )
