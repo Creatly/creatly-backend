@@ -29,6 +29,7 @@ services:
       - STORAGE_BUCKET
       - STORAGE_ACCESS_KEY
       - STORAGE_SECRET_KEY
+      - APP_ENV
       
   mongodb:
     image: mongo:4.4-bionic
