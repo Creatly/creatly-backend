@@ -67,6 +67,11 @@ func (h *Handler) studentSignUp(c *gin.Context) {
 		Password: inp.Password,
 		SchoolID: school.ID,
 	}); err != nil {
+		if err == service.ErrUserAlreadyExists {
+			newResponse(c, http.StatusBadRequest, err.Error())
+			return
+		}
+
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}

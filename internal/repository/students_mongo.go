@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"github.com/zhashkevych/courses-backend/pkg/database/mongodb"
 	"time"
 
 	"github.com/zhashkevych/courses-backend/internal/domain"
@@ -22,6 +23,10 @@ func NewStudentsRepo(db *mongo.Database) *StudentsRepo {
 
 func (r *StudentsRepo) Create(ctx context.Context, student domain.Student) error {
 	_, err := r.db.InsertOne(ctx, student)
+	if mongodb.IsDuplicate(err) {
+		return ErrUserAlreadyExists
+	}
+
 	return err
 }
 
