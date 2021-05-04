@@ -1,16 +1,17 @@
 package v1
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/zhashkevych/courses-backend/internal/service"
 	"github.com/zhashkevych/courses-backend/pkg/payment/fondy"
-	"net/http"
 )
 
 func (h *Handler) initCallbackRoutes(api *gin.RouterGroup) {
-	callback := api.Group("/callback")
+	callback := api.Group("callback")
 	{
-		callback.POST("/fondy", h.handleFondyCallback)
+		callback.POST("fondy", h.handleFondyCallback)
 	}
 }
 

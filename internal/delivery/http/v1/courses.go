@@ -2,17 +2,18 @@ package v1
 
 import (
 	"errors"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/zhashkevych/courses-backend/internal/domain"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"net/http"
 )
 
 func (h *Handler) initCoursesRoutes(api *gin.RouterGroup) {
-	courses := api.Group("/courses", h.setSchoolFromRequest)
+	courses := api.Group("courses", h.setSchoolFromRequest)
 	{
-		courses.GET("", h.getAllCourses)
-		courses.GET("/:id", h.getCourseById)
+		courses.GET(_rootPath, h.getAllCourses)
+		courses.GET(_byIDPath, h.getCourseById)
 		courses.GET("/:id/offers", h.getCourseOffers)
 	}
 }

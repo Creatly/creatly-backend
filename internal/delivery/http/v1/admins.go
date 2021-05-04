@@ -13,77 +13,77 @@ import (
 // TODO: review response error messages
 
 func (h *Handler) initAdminRoutes(api *gin.RouterGroup) {
-	students := api.Group("/admins", h.setSchoolFromRequest)
+	students := api.Group("admins", h.setSchoolFromRequest)
 	{
-		students.POST("/sign-in", h.adminSignIn)
-		students.POST("/auth/refresh", h.adminRefresh)
+		students.POST("sign-in", h.adminSignIn)
+		students.POST("auth/refresh", h.adminRefresh)
 
-		authenticated := students.Group("/", h.adminIdentity)
+		authenticated := students.Group(_rootPath, h.adminIdentity)
 		{
-			courses := authenticated.Group("/courses")
+			courses := authenticated.Group("courses")
 			{
-				courses.POST("", h.adminCreateCourse)
-				courses.GET("", h.adminGetAllCourses)
-				courses.GET("/:id", h.adminGetCourseById)
-				courses.PUT("/:id", h.adminUpdateCourse)
-				courses.DELETE("/:id", h.adminDeleteCourse)
-				courses.POST("/:id/modules", h.adminCreateModule)
-				courses.POST("/:id/packages", h.adminCreatePackage)
-				courses.GET("/:id/packages", h.adminGetAllPackages)
+				courses.POST(_rootPath, h.adminCreateCourse)
+				courses.GET(_rootPath, h.adminGetAllCourses)
+				courses.GET(_byIDPath, h.adminGetCourseById)
+				courses.PUT(_byIDPath, h.adminUpdateCourse)
+				courses.DELETE(_byIDPath, h.adminDeleteCourse)
+				courses.POST(":id/modules", h.adminCreateModule)
+				courses.POST(":id/packages", h.adminCreatePackage)
+				courses.GET(":id/packages", h.adminGetAllPackages)
 			}
 
-			modules := authenticated.Group("/modules")
+			modules := authenticated.Group("modules")
 			{
-				modules.PUT("/:id", h.adminUpdateModule)
-				modules.DELETE("/:id", h.adminDeleteModule)
-				modules.GET("/:id/lessons", h.adminGetLessons)
-				modules.POST("/:id/lessons", h.adminCreateLesson)
+				modules.PUT(_byIDPath, h.adminUpdateModule)
+				modules.DELETE(_byIDPath, h.adminDeleteModule)
+				modules.GET(":id/lessons", h.adminGetLessons)
+				modules.POST(":id/lessons", h.adminCreateLesson)
 			}
 
-			lessons := authenticated.Group("/lessons")
+			lessons := authenticated.Group("lessons")
 			{
-				lessons.GET("/:id", h.adminGetLessonById)
-				lessons.PUT("/:id", h.adminUpdateLesson)
-				lessons.DELETE("/:id", h.adminDeleteLesson)
+				lessons.GET(_byIDPath, h.adminGetLessonById)
+				lessons.PUT(_byIDPath, h.adminUpdateLesson)
+				lessons.DELETE(_byIDPath, h.adminDeleteLesson)
 			}
 
-			packages := authenticated.Group("/packages")
+			packages := authenticated.Group("packages")
 			{
-				packages.GET("/:id", h.adminGetPackageById)
-				packages.PUT("/:id", h.adminUpdatePackage)
-				packages.DELETE("/:id", h.adminDeletePackage)
+				packages.GET(_byIDPath, h.adminGetPackageById)
+				packages.PUT(_byIDPath, h.adminUpdatePackage)
+				packages.DELETE(_byIDPath, h.adminDeletePackage)
 			}
 
-			offers := authenticated.Group("/offers")
+			offers := authenticated.Group("offers")
 			{
-				offers.POST("", h.adminCreateOffer)
-				offers.GET("", h.adminGetAllOffers)
-				offers.GET("/:id", h.adminGetOfferById)
-				offers.PUT("/:id", h.adminUpdateOffer)
-				offers.DELETE("/:id", h.adminDeleteOffer)
+				offers.POST(_rootPath, h.adminCreateOffer)
+				offers.GET(_rootPath, h.adminGetAllOffers)
+				offers.GET(_byIDPath, h.adminGetOfferById)
+				offers.PUT(_byIDPath, h.adminUpdateOffer)
+				offers.DELETE(_byIDPath, h.adminDeleteOffer)
 			}
 
-			school := authenticated.Group("/school")
+			school := authenticated.Group("school")
 			{
-				school.PUT("/settings", h.adminUpdateSchoolSettings)
+				school.PUT("settings", h.adminUpdateSchoolSettings)
 			}
 
-			promocodes := authenticated.Group("/promocodes")
+			promocodes := authenticated.Group("promocodes")
 			{
-				promocodes.POST("", h.adminCreatePromocode)
-				promocodes.GET("", h.adminGetPromocodes)
-				promocodes.GET("/:id", h.adminGetPromocodeById)
-				promocodes.PUT("/:id", h.adminUpdatePromocode)
-				promocodes.DELETE("/:id", h.adminDeletePromocode)
+				promocodes.POST(_rootPath, h.adminCreatePromocode)
+				promocodes.GET(_rootPath, h.adminGetPromocodes)
+				promocodes.GET(_byIDPath, h.adminGetPromocodeById)
+				promocodes.PUT(_byIDPath, h.adminUpdatePromocode)
+				promocodes.DELETE(_byIDPath, h.adminDeletePromocode)
 			}
 
-			authenticated.GET("/orders", h.adminGetOrders)
-			authenticated.GET("/students", h.adminGetStudents)
+			authenticated.GET("orders", h.adminGetOrders)
+			authenticated.GET("students", h.adminGetStudents)
 
-			upload := authenticated.Group("/upload")
+			upload := authenticated.Group("upload")
 			{
-				upload.POST("/image", h.adminUploadImage)
-				upload.POST("/video", h.adminUploadVideo)
+				upload.POST("image", h.adminUploadImage)
+				upload.POST("video", h.adminUploadVideo)
 			}
 		}
 	}

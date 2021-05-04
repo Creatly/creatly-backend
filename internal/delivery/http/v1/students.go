@@ -10,22 +10,22 @@ import (
 )
 
 func (h *Handler) initStudentsRoutes(api *gin.RouterGroup) {
-	students := api.Group("/students", h.setSchoolFromRequest)
+	students := api.Group("students", h.setSchoolFromRequest)
 	{
-		students.POST("/sign-up", h.studentSignUp)
-		students.POST("/sign-in", h.studentSignIn)
-		students.POST("/auth/refresh", h.studentRefresh)
-		students.POST("/verify/:code", h.studentVerify)
+		students.POST("sign-up", h.studentSignUp)
+		students.POST("sign-in", h.studentSignIn)
+		students.POST("auth/refresh", h.studentRefresh)
+		students.POST("verify/:code", h.studentVerify)
 
-		authenticated := students.Group("/", h.studentIdentity)
+		authenticated := students.Group(_rootPath, h.studentIdentity)
 		{
-			authenticated.GET("/courses", h.studentGetCourses)
-			authenticated.GET("/modules/:id/lessons", h.studentGetModuleLessons)
-			authenticated.GET("/modules/:id/offers", h.studentGetModuleOffers)
-			authenticated.GET("/lessons/:id", h.studentGetLesson)
-			authenticated.POST("/lessons/:id/finished", h.studentSetLessonFinished)
-			authenticated.POST("/order", h.studentCreateOrder)
-			authenticated.GET("/account", h.studentGetAccount)
+			authenticated.GET("courses", h.studentGetCourses)
+			authenticated.GET("modules/:id/lessons", h.studentGetModuleLessons)
+			authenticated.GET("modules/:id/offers", h.studentGetModuleOffers)
+			authenticated.GET("lessons/:id", h.studentGetLesson)
+			authenticated.POST("lessons/:id/finished", h.studentSetLessonFinished)
+			authenticated.POST("order", h.studentCreateOrder)
+			authenticated.GET("account", h.studentGetAccount)
 		}
 	}
 }

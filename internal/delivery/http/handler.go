@@ -2,6 +2,8 @@ package http
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
@@ -11,14 +13,13 @@ import (
 	"github.com/zhashkevych/courses-backend/internal/service"
 	"github.com/zhashkevych/courses-backend/pkg/auth"
 	"github.com/zhashkevych/courses-backend/pkg/limiter"
-	"net/http"
 
 	_ "github.com/zhashkevych/courses-backend/docs"
 )
 
 type Handler struct {
-	services          *service.Services
-	tokenManager      auth.TokenManager
+	services     *service.Services
+	tokenManager auth.TokenManager
 }
 
 func NewHandler(services *service.Services, tokenManager auth.TokenManager) *Handler {
@@ -44,10 +45,10 @@ func (h *Handler) Init(cfg *config.Config) *gin.Engine {
 		docs.SwaggerInfo.Host = cfg.HTTP.Host
 	}
 
-	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	router.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Init router
-	router.GET("/ping", func(c *gin.Context) {
+	router.GET("ping", func(c *gin.Context) {
 		c.String(http.StatusOK, "pong")
 	})
 
@@ -58,7 +59,7 @@ func (h *Handler) Init(cfg *config.Config) *gin.Engine {
 
 func (h *Handler) initAPI(router *gin.Engine) {
 	handlerV1 := v1.NewHandler(h.services, h.tokenManager)
-	api := router.Group("/api")
+	api := router.Group("api")
 	{
 		handlerV1.Init(api)
 	}
