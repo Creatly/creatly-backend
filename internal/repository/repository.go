@@ -117,6 +117,7 @@ type UpdateOfferInput struct {
 	ID          primitive.ObjectID
 	Name        string
 	Description string
+	Benefits    []string
 	Price       *domain.Price
 	Packages    []primitive.ObjectID
 }

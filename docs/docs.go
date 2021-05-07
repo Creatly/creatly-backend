@@ -3175,6 +3175,12 @@ var doc = `{
         "domain.Offer": {
             "type": "object",
             "properties": {
+                "benefits": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "description": {
                     "type": "string"
                 },
@@ -3349,6 +3355,12 @@ var doc = `{
                 "price"
             ],
             "properties": {
+                "benefits": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "description": {
                     "type": "string"
                 },
@@ -3597,6 +3609,12 @@ var doc = `{
         "v1.updateOfferInput": {
             "type": "object",
             "properties": {
+                "benefits": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "description": {
                     "type": "string"
                 },

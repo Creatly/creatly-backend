@@ -69,6 +69,7 @@ func (s *OffersService) Create(ctx context.Context, inp CreateOfferInput) (primi
 		SchoolID:    inp.SchoolID,
 		Name:        inp.Name,
 		Description: inp.Description,
+		Benefits:    inp.Benefits,
 		Price:       inp.Price,
 	})
 }
@@ -88,6 +89,7 @@ func (s *OffersService) Update(ctx context.Context, inp UpdateOfferInput) error 
 		Name:        inp.Name,
 		Description: inp.Description,
 		Price:       inp.Price,
+		Benefits:    inp.Benefits,
 	}
 
 	if inp.Packages != nil {
