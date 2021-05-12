@@ -913,9 +913,10 @@ func (h *Handler) adminDeletePackage(c *gin.Context) {
 }
 
 type createOfferInput struct {
-	Name        string `json:"name" binding:"required,min=3"`
-	Description string `json:"description"`
-	Price       price  `json:"price" binding:"required"`
+	Name        string   `json:"name" binding:"required,min=3"`
+	Description string   `json:"description"`
+	Benefits    []string `json:"benefits,required"`
+	Price       price    `json:"price" binding:"required"`
 }
 
 // @Summary Admin Create Offer
@@ -948,6 +949,7 @@ func (h *Handler) adminCreateOffer(c *gin.Context) {
 		SchoolID:    school.ID,
 		Name:        inp.Name,
 		Description: inp.Description,
+		Benefits:    inp.Benefits,
 		Price: domain.Price{
 			Value:    inp.Price.Value,
 			Currency: inp.Price.Currency,
@@ -1027,6 +1029,7 @@ func (h *Handler) adminGetOfferById(c *gin.Context) {
 type updateOfferInput struct {
 	Name        string   `json:"name"`
 	Description string   `json:"description"`
+	Benefits    []string `json:"benefits,required"`
 	Price       *price   `json:"price"`
 	Packages    []string `json:"packages"`
 }
@@ -1063,6 +1066,7 @@ func (h *Handler) adminUpdateOffer(c *gin.Context) {
 		Name:        inp.Name,
 		Description: inp.Description,
 		Packages:    inp.Packages,
+		Benefits:    inp.Benefits,
 	}
 
 	if inp.Price != nil {

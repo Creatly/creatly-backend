@@ -155,6 +155,7 @@ type PromoCodes interface {
 type CreateOfferInput struct {
 	Name        string
 	Description string
+	Benefits    []string
 	SchoolID    primitive.ObjectID
 	Price       domain.Price
 }
@@ -163,6 +164,7 @@ type UpdateOfferInput struct {
 	ID          string
 	Name        string
 	Description string
+	Benefits    []string
 	Price       *domain.Price
 	Packages    []string
 }

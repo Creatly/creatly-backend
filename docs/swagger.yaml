@@ -47,6 +47,10 @@ definitions:
     type: object
   domain.Offer:
     properties:
+      benefits:
+        items:
+          type: string
+        type: array
       description:
         type: string
       id:
@@ -157,6 +161,10 @@ definitions:
     type: object
   v1.createOfferInput:
     properties:
+      benefits:
+        items:
+          type: string
+        type: array
       description:
         type: string
       name:
@@ -322,6 +330,10 @@ definitions:
     type: object
   v1.updateOfferInput:
     properties:
+      benefits:
+        items:
+          type: string
+        type: array
       description:
         type: string
       name:

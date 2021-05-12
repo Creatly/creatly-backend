@@ -73,6 +73,10 @@ func (r *OffersRepo) Update(ctx context.Context, inp UpdateOfferInput) error {
 		updateQuery["description"] = inp.Description
 	}
 
+	if inp.Benefits != nil {
+		updateQuery["benefits"] = inp.Benefits
+	}
+
 	if inp.Price != nil {
 		updateQuery["price"] = inp.Price
 	}
