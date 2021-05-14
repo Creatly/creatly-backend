@@ -40,7 +40,7 @@ func (r *ModulesRepo) GetByCourse(ctx context.Context, courseId primitive.Object
 func (r *ModulesRepo) GetById(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error) {
 	var module domain.Module
 
-	err := r.db.FindOne(ctx, bson.M{"_id": moduleId}).Decode(&module)
+	err := r.db.FindOne(ctx, bson.M{"_id": moduleId, "published": true}).Decode(&module)
 	return module, err
 }
 

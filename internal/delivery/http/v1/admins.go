@@ -915,7 +915,7 @@ func (h *Handler) adminDeletePackage(c *gin.Context) {
 type createOfferInput struct {
 	Name        string   `json:"name" binding:"required,min=3"`
 	Description string   `json:"description"`
-	Benefits    []string `json:"benefits,required"`
+	Benefits    []string `json:"benefits" binding:"required"`
 	Price       price    `json:"price" binding:"required"`
 }
 
@@ -1029,7 +1029,7 @@ func (h *Handler) adminGetOfferById(c *gin.Context) {
 type updateOfferInput struct {
 	Name        string   `json:"name"`
 	Description string   `json:"description"`
-	Benefits    []string `json:"benefits,required"`
+	Benefits    []string `json:"benefits" binding:"required"`
 	Price       *price   `json:"price"`
 	Packages    []string `json:"packages"`
 }

@@ -1,7 +1,6 @@
 package config
 
 import (
-	"strings"
 	"time"
 
 	"github.com/spf13/viper"
@@ -119,14 +118,14 @@ type (
 
 // Init populates Config struct with values from config file
 //located at filepath and environment variables
-func Init(path string) (*Config, error) {
+func Init(configsDir string) (*Config, error) {
 	populateDefaults()
 
 	if err := parseEnv(); err != nil {
 		return nil, err
 	}
 
-	if err := parseConfigFile(path); err != nil {
+	if err := parseConfigFile(configsDir, viper.GetString("env")); err != nil {
 		return nil, err
 	}
 
@@ -215,13 +214,19 @@ func setFromEnv(cfg *Config) {
 	cfg.FileStorage.Bucket = viper.GetString("bucket")
 }
 
-func parseConfigFile(filepath string) error {
-	path := strings.Split(filepath, "/")
+func parseConfigFile(folder, env string) error {
+	viper.AddConfigPath(folder)
+	viper.SetConfigName("main")
+	if err := viper.ReadInConfig(); err != nil {
+		return err
+	}
 
-	viper.AddConfigPath(path[0]) // folder
-	viper.SetConfigName(path[1]) // config file name
-
-	return viper.ReadInConfig()
+	if env == EnvLocal {
+		return nil
+	}
+	
+	viper.SetConfigName(env)
+	return viper.MergeInConfig()
 }
 
 func populateDefaults() {
