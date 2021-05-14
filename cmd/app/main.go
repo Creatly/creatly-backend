@@ -2,8 +2,8 @@ package main
 
 import "github.com/zhashkevych/courses-backend/internal/app"
 
-const configPath = "configs/main"
+const configsDir = "configs"
 
 func main() {
-	app.Run(configPath)
+	app.Run(configsDir)
 }

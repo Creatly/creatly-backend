@@ -15,8 +15,8 @@ fileStorage:
   bucket: courses
 
 auth:
-  accessTokenTTL: 120m
-  refreshTokenTTL: 43200m #30 days
+  accessTokenTTL: 2h
+  refreshTokenTTL: 720h #30 days
   verificationCodeLength: 8
 
 limiter:
