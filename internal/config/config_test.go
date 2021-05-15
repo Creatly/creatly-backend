@@ -68,7 +68,7 @@ func TestInit(t *testing.T) {
 		{
 			name: "test config",
 			args: args{
-				path: "fixtures/test",
+				path: "fixtures",
 				env: env{
 					mongoURI:           "mongodb://localhost:27017",
 					mongoUser:          "admin",
