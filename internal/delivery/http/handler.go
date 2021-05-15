@@ -5,15 +5,15 @@ import (
 	"github.com/gin-gonic/gin"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
-	"github.com/zhashkevych/courses-backend/docs"
-	"github.com/zhashkevych/courses-backend/internal/config"
-	v1 "github.com/zhashkevych/courses-backend/internal/delivery/http/v1"
-	"github.com/zhashkevych/courses-backend/internal/service"
-	"github.com/zhashkevych/courses-backend/pkg/auth"
-	"github.com/zhashkevych/courses-backend/pkg/limiter"
+	"github.com/zhashkevych/creatly-backend/docs"
+	"github.com/zhashkevych/creatly-backend/internal/config"
+	v1 "github.com/zhashkevych/creatly-backend/internal/delivery/http/v1"
+	"github.com/zhashkevych/creatly-backend/internal/service"
+	"github.com/zhashkevych/creatly-backend/pkg/auth"
+	"github.com/zhashkevych/creatly-backend/pkg/limiter"
 	"net/http"
 
-	_ "github.com/zhashkevych/courses-backend/docs"
+	_ "github.com/zhashkevych/creatly-backend/docs"
 )
 
 type Handler struct {

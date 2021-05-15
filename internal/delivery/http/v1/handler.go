@@ -2,8 +2,8 @@ package v1
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/zhashkevych/courses-backend/internal/service"
-	"github.com/zhashkevych/courses-backend/pkg/auth"
+	"github.com/zhashkevych/creatly-backend/internal/service"
+	"github.com/zhashkevych/creatly-backend/pkg/auth"
 )
 
 type Handler struct {

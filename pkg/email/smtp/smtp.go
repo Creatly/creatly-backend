@@ -3,7 +3,7 @@ package smtp
 import (
 	"github.com/go-gomail/gomail"
 	"github.com/pkg/errors"
-	"github.com/zhashkevych/courses-backend/pkg/email"
+	"github.com/zhashkevych/creatly-backend/pkg/email"
 )
 
 type SMTPSender struct {

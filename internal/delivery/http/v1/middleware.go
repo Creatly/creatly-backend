@@ -3,8 +3,8 @@ package v1
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
-	"github.com/zhashkevych/courses-backend/internal/domain"
-	"github.com/zhashkevych/courses-backend/pkg/logger"
+	"github.com/zhashkevych/creatly-backend/internal/domain"
+	"github.com/zhashkevych/creatly-backend/pkg/logger"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
 	"strings"

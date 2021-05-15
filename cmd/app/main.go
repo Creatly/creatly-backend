@@ -1,6 +1,6 @@
 package main
 
-import "github.com/zhashkevych/courses-backend/internal/app"
+import "github.com/zhashkevych/creatly-backend/internal/app"
 
 const configsDir = "configs"
 

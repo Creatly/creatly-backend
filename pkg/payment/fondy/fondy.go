@@ -7,7 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/fatih/structs"
-	"github.com/zhashkevych/courses-backend/pkg/payment"
+	"github.com/zhashkevych/creatly-backend/pkg/payment"
 	"io/ioutil"
 	"net/http"
 	"sort"

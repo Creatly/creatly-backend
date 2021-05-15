@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 
-	"github.com/zhashkevych/courses-backend/internal/domain"
-	"github.com/zhashkevych/courses-backend/internal/repository"
+	"github.com/zhashkevych/creatly-backend/internal/domain"
+	"github.com/zhashkevych/creatly-backend/internal/repository"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 

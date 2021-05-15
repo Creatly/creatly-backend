@@ -1,7 +1,7 @@
 package tests
 
 import (
-	"github.com/zhashkevych/courses-backend/internal/domain"
+	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
 )

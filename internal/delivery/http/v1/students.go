@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/zhashkevych/courses-backend/internal/domain"
-	"github.com/zhashkevych/courses-backend/internal/service"
+	"github.com/zhashkevych/creatly-backend/internal/domain"
+	"github.com/zhashkevych/creatly-backend/internal/service"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 

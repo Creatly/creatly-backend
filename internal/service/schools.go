@@ -3,9 +3,9 @@ package service
 import (
 	"context"
 
-	"github.com/zhashkevych/courses-backend/internal/domain"
-	"github.com/zhashkevych/courses-backend/internal/repository"
-	"github.com/zhashkevych/courses-backend/pkg/cache"
+	"github.com/zhashkevych/creatly-backend/internal/domain"
+	"github.com/zhashkevych/creatly-backend/internal/repository"
+	"github.com/zhashkevych/creatly-backend/pkg/cache"
 )
 
 type SchoolsService struct {

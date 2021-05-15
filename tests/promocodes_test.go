@@ -3,7 +3,7 @@ package tests
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/zhashkevych/courses-backend/internal/domain"
+	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"net/http"
 	"net/http/httptest"
 )

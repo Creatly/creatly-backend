@@ -2,8 +2,8 @@ package service
 
 import (
 	"fmt"
-	"github.com/zhashkevych/courses-backend/internal/config"
-	emailProvider "github.com/zhashkevych/courses-backend/pkg/email"
+	"github.com/zhashkevych/creatly-backend/internal/config"
+	emailProvider "github.com/zhashkevych/creatly-backend/pkg/email"
 )
 
 const (

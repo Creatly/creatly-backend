@@ -2,8 +2,8 @@ version: '3.4'
 
 services:
   app:
-    image: courses-backend-app
-    container_name: courses-backend-app
+    image: creatly-backend-app
+    container_name: creatly-backend-app
     build:
       context: .
       dockerfile: Dockerfile

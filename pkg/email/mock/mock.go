@@ -2,7 +2,7 @@ package mock_email
 
 import (
 	"github.com/stretchr/testify/mock"
-	"github.com/zhashkevych/courses-backend/pkg/email"
+	"github.com/zhashkevych/creatly-backend/pkg/email"
 )
 
 type EmailProvider struct {

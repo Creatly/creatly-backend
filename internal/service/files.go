@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/google/uuid"
-	"github.com/zhashkevych/courses-backend/pkg/storage"
+	"github.com/zhashkevych/creatly-backend/pkg/storage"
 	"time"
 )
 

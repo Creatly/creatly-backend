@@ -11,9 +11,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/assert/v2"
 	"github.com/golang/mock/gomock"
-	"github.com/zhashkevych/courses-backend/internal/domain"
-	"github.com/zhashkevych/courses-backend/internal/service"
-	mock_service "github.com/zhashkevych/courses-backend/internal/service/mocks"
+	"github.com/zhashkevych/creatly-backend/internal/domain"
+	"github.com/zhashkevych/creatly-backend/internal/service"
+	mock_service "github.com/zhashkevych/creatly-backend/internal/service/mocks"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
