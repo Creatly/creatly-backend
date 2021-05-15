@@ -3,7 +3,7 @@ package v1
 import (
 	"bytes"
 	"github.com/gin-gonic/gin"
-	"github.com/zhashkevych/courses-backend/internal/service"
+	"github.com/zhashkevych/creatly-backend/internal/service"
 	"net/http"
 	"strings"
 )

@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/zhashkevych/courses-backend/pkg/logger"
+	"github.com/zhashkevych/creatly-backend/pkg/logger"
 	"golang.org/x/time/rate"
 )
 

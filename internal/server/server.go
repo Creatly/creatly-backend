@@ -2,7 +2,7 @@ package server
 
 import (
 	"context"
-	"github.com/zhashkevych/courses-backend/internal/config"
+	"github.com/zhashkevych/creatly-backend/internal/config"
 	"net/http"
 )
 

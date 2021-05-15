@@ -7,8 +7,8 @@ package mock_service
 import (
 	context "context"
 	gomock "github.com/golang/mock/gomock"
-	domain "github.com/zhashkevych/courses-backend/internal/domain"
-	service "github.com/zhashkevych/courses-backend/internal/service"
+	domain "github.com/zhashkevych/creatly-backend/internal/domain"
+	service "github.com/zhashkevych/creatly-backend/internal/service"
 	primitive "go.mongodb.org/mongo-driver/bson/primitive"
 	reflect "reflect"
 )

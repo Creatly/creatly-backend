@@ -3,7 +3,7 @@ package email
 import (
 	"bytes"
 	"errors"
-	"github.com/zhashkevych/courses-backend/pkg/logger"
+	"github.com/zhashkevych/creatly-backend/pkg/logger"
 	"html/template"
 )
 

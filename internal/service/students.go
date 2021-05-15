@@ -4,13 +4,13 @@ import (
 	"context"
 	"time"
 
-	"github.com/zhashkevych/courses-backend/pkg/otp"
+	"github.com/zhashkevych/creatly-backend/pkg/otp"
 
-	"github.com/zhashkevych/courses-backend/internal/domain"
-	"github.com/zhashkevych/courses-backend/internal/repository"
-	"github.com/zhashkevych/courses-backend/pkg/auth"
-	"github.com/zhashkevych/courses-backend/pkg/hash"
-	"github.com/zhashkevych/courses-backend/pkg/logger"
+	"github.com/zhashkevych/creatly-backend/internal/domain"
+	"github.com/zhashkevych/creatly-backend/internal/repository"
+	"github.com/zhashkevych/creatly-backend/pkg/auth"
+	"github.com/zhashkevych/creatly-backend/pkg/hash"
+	"github.com/zhashkevych/creatly-backend/pkg/logger"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 

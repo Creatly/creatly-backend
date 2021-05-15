@@ -2,10 +2,10 @@ package service
 
 import (
 	"context"
-	"github.com/zhashkevych/courses-backend/internal/domain"
-	"github.com/zhashkevych/courses-backend/internal/repository"
-	"github.com/zhashkevych/courses-backend/pkg/logger"
-	"github.com/zhashkevych/courses-backend/pkg/payment"
+	"github.com/zhashkevych/creatly-backend/internal/domain"
+	"github.com/zhashkevych/creatly-backend/internal/repository"
+	"github.com/zhashkevych/creatly-backend/pkg/logger"
+	"github.com/zhashkevych/creatly-backend/pkg/payment"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
 )

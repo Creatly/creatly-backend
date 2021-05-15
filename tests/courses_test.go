@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/zhashkevych/courses-backend/internal/domain"
+	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"

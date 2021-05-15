@@ -2,7 +2,7 @@ package v1
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/zhashkevych/courses-backend/pkg/logger"
+	"github.com/zhashkevych/creatly-backend/pkg/logger"
 )
 
 type dataResponse struct {

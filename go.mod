@@ -1,4 +1,4 @@
-module github.com/zhashkevych/courses-backend
+module github.com/zhashkevych/creatly-backend
 
 go 1.15
 
