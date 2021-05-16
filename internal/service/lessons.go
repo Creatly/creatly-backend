@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+
 	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"github.com/zhashkevych/creatly-backend/internal/repository"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -18,8 +19,14 @@ func NewLessonsService(repo repository.Modules, contentRepo repository.LessonCon
 }
 
 func (s *LessonsService) Create(ctx context.Context, inp AddLessonInput) (primitive.ObjectID, error) {
+	schoolId, err := primitive.ObjectIDFromHex(inp.SchoolID)
+	if err != nil {
+		return primitive.ObjectID{}, err
+	}
+
 	lesson := domain.Lesson{
 		ID:       primitive.NewObjectID(),
+		SchoolID: schoolId,
 		Name:     inp.Name,
 		Position: inp.Position,
 	}
@@ -29,7 +36,7 @@ func (s *LessonsService) Create(ctx context.Context, inp AddLessonInput) (primit
 		return primitive.ObjectID{}, err
 	}
 
-	err = s.repo.AddLesson(ctx, id, lesson)
+	err = s.repo.AddLesson(ctx, schoolId, id, lesson)
 	if err != nil {
 		return primitive.ObjectID{}, err
 	}
@@ -70,6 +77,11 @@ func (s *LessonsService) Update(ctx context.Context, inp UpdateLessonInput) erro
 		return err
 	}
 
+	schoolId, err := primitive.ObjectIDFromHex(inp.SchoolID)
+	if err != nil {
+		return err
+	}
+
 	if inp.Name != "" || inp.Position != nil || inp.Published != nil {
 		if err := s.repo.UpdateLesson(ctx, repository.UpdateLessonInput{
 			ID:        id,
@@ -82,7 +94,7 @@ func (s *LessonsService) Update(ctx context.Context, inp UpdateLessonInput) erro
 	}
 
 	if inp.Content != "" {
-		if err := s.contentRepo.Update(ctx, id, inp.Content); err != nil {
+		if err := s.contentRepo.Update(ctx, schoolId, id, inp.Content); err != nil {
 			return err
 		}
 	}
@@ -90,10 +102,10 @@ func (s *LessonsService) Update(ctx context.Context, inp UpdateLessonInput) erro
 	return nil
 }
 
-func (s *LessonsService) Delete(ctx context.Context, id primitive.ObjectID) error {
-	return s.repo.DeleteLesson(ctx, id)
+func (s *LessonsService) Delete(ctx context.Context, schoolId, id primitive.ObjectID) error {
+	return s.repo.DeleteLesson(ctx, schoolId, id)
 }
 
-func (s *LessonsService) DeleteContent(ctx context.Context, lessonIds []primitive.ObjectID) error {
-	return s.contentRepo.DeleteContent(ctx, lessonIds)
+func (s *LessonsService) DeleteContent(ctx context.Context, schoolId primitive.ObjectID, lessonIds []primitive.ObjectID) error {
+	return s.contentRepo.DeleteContent(ctx, schoolId, lessonIds)
 }

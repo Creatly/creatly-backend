@@ -254,13 +254,14 @@ func TestHandler_studentGetModuleLessons(t *testing.T) {
 					Position:  0,
 					Published: true,
 					Content:   "content",
+					SchoolID:  schoolId,
 				},
 			},
 			mockBehavior: func(r *mock_service.MockStudents, schoolId, studentId, moduleId primitive.ObjectID, lessons []domain.Lesson) {
 				r.EXPECT().GetModuleLessons(context.Background(), schoolId, studentId, moduleId).Return(lessons, nil)
 			},
 			statusCode:   200,
-			responseBody: `{"data":[{"id":"000000000000000000000000","name":"test lesson","position":0,"published":true,"content":"content"}]}`,
+			responseBody: fmt.Sprintf(`{"data":[{"id":"000000000000000000000000","name":"test lesson","position":0,"published":true,"content":"content","schoolId":"%s"}]}`, schoolId.Hex()),
 		},
 		{
 			name:      "invalid module id",
@@ -360,12 +361,13 @@ func TestHandler_studentGetLesson(t *testing.T) {
 				Position:  0,
 				Published: true,
 				Content:   "content",
+				SchoolID:  schoolId,
 			},
 			mockBehavior: func(r *mock_service.MockStudents, studentId, lessonId primitive.ObjectID, lesson domain.Lesson) {
 				r.EXPECT().GetLesson(context.Background(), studentId, lessonId).Return(lesson, nil)
 			},
 			statusCode:   200,
-			responseBody: `{"data":{"id":"000000000000000000000000","name":"test lesson","position":0,"published":true,"content":"content"}}`,
+			responseBody: fmt.Sprintf(`{"data":{"id":"000000000000000000000000","name":"test lesson","position":0,"published":true,"content":"content","schoolId":"%s"}}`, schoolId.Hex()),
 		},
 		{
 			name:      "invalid lesson id",

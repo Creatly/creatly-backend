@@ -17,7 +17,7 @@ func NewClient(uri, username, password string) (*mongo.Client, error) {
 		opts.SetAuth(options.Credential{
 			Username: username, Password: password})
 	}
-	
+
 	client, err := mongo.NewClient(opts)
 	if err != nil {
 		return nil, err

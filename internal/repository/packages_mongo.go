@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+
 	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -54,12 +55,12 @@ func (r *PackagesRepo) Update(ctx context.Context, inp UpdatePackageInput) error
 	}
 
 	_, err := r.db.UpdateOne(ctx,
-		bson.M{"_id": inp.ID}, bson.M{"$set": updateQuery})
+		bson.M{"_id": inp.ID, "schoolId": inp.SchoolID}, bson.M{"$set": updateQuery})
 
 	return err
 }
 
-func (r *PackagesRepo) Delete(ctx context.Context, id primitive.ObjectID) error {
-	_, err := r.db.DeleteOne(ctx, bson.M{"_id": id})
+func (r *PackagesRepo) Delete(ctx context.Context, schoolId, id primitive.ObjectID) error {
+	_, err := r.db.DeleteOne(ctx, bson.M{"_id": id, "schoolId": schoolId})
 	return err
 }

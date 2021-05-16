@@ -2,10 +2,11 @@ package service
 
 import (
 	"context"
+	"time"
+
 	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"github.com/zhashkevych/creatly-backend/internal/repository"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"time"
 )
 
 type CoursesService struct {
@@ -25,7 +26,7 @@ func (s *CoursesService) Create(ctx context.Context, schoolId primitive.ObjectID
 	})
 }
 
-func (s *CoursesService) Update(ctx context.Context, schoolId primitive.ObjectID, inp UpdateCourseInput) error {
+func (s *CoursesService) Update(ctx context.Context, inp UpdateCourseInput) error {
 	updateInput := repository.UpdateCourseInput{
 		Name:        inp.Name,
 		Code:        inp.Code,
@@ -39,8 +40,12 @@ func (s *CoursesService) Update(ctx context.Context, schoolId primitive.ObjectID
 	if err != nil {
 		return err
 	}
+	updateInput.SchoolID, err = primitive.ObjectIDFromHex(inp.SchoolID)
+	if err != nil {
+		return err
+	}
 
-	return s.repo.Update(ctx, schoolId, updateInput)
+	return s.repo.Update(ctx, updateInput)
 }
 
 func (s *CoursesService) Delete(ctx context.Context, schoolId, courseId primitive.ObjectID) error {
@@ -48,5 +53,5 @@ func (s *CoursesService) Delete(ctx context.Context, schoolId, courseId primitiv
 		return err
 	}
 
-	return s.modulesService.DeleteByCourse(ctx, courseId)
+	return s.modulesService.DeleteByCourse(ctx, schoolId, courseId)
 }

@@ -3154,6 +3154,9 @@
                 },
                 "published": {
                     "type": "boolean"
+                },
+                "schoolId": {
+                    "type": "string"
                 }
             }
         },
@@ -3202,6 +3205,9 @@
                     "type": "string"
                 },
                 "name": {
+                    "type": "string"
+                },
+                "schoolId": {
                     "type": "string"
                 }
             }
@@ -3336,6 +3342,7 @@
         "v1.createOfferInput": {
             "type": "object",
             "required": [
+                "benefits",
                 "name",
                 "price"
             ],
@@ -3593,6 +3600,9 @@
         },
         "v1.updateOfferInput": {
             "type": "object",
+            "required": [
+                "benefits"
+            ],
             "properties": {
                 "benefits": {
                     "type": "array",

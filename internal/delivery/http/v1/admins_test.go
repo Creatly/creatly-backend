@@ -468,7 +468,7 @@ func TestHandler_adminUpdatePromocode(t *testing.T) {
 }
 
 func TestHandler_adminDeletePromocode(t *testing.T) {
-	type mockBehavior func(r *mock_service.MockPromoCodes, id primitive.ObjectID)
+	type mockBehavior func(r *mock_service.MockPromoCodes, schoolId, id primitive.ObjectID)
 
 	promocodeId := primitive.NewObjectID()
 
@@ -489,8 +489,8 @@ func TestHandler_adminDeletePromocode(t *testing.T) {
 		{
 			name:   "ok",
 			school: school,
-			mockBehavior: func(r *mock_service.MockPromoCodes, id primitive.ObjectID) {
-				r.EXPECT().Delete(context.Background(), id).Return(nil)
+			mockBehavior: func(r *mock_service.MockPromoCodes, schoolId, id primitive.ObjectID) {
+				r.EXPECT().Delete(context.Background(), schoolId, id).Return(nil)
 			},
 			statusCode:   200,
 			responseBody: "",
@@ -498,8 +498,8 @@ func TestHandler_adminDeletePromocode(t *testing.T) {
 		{
 			name:   "service error",
 			school: school,
-			mockBehavior: func(r *mock_service.MockPromoCodes, id primitive.ObjectID) {
-				r.EXPECT().Delete(context.Background(), id).Return(errors.New("failed to delete promocode"))
+			mockBehavior: func(r *mock_service.MockPromoCodes, schoolId, id primitive.ObjectID) {
+				r.EXPECT().Delete(context.Background(), schoolId, id).Return(errors.New("failed to delete promocode"))
 			},
 			statusCode:   500,
 			responseBody: `{"message":"failed to delete promocode"}`,
@@ -513,7 +513,7 @@ func TestHandler_adminDeletePromocode(t *testing.T) {
 			defer c.Finish()
 
 			p := mock_service.NewMockPromoCodes(c)
-			tt.mockBehavior(p, promocodeId)
+			tt.mockBehavior(p, tt.school.ID, promocodeId)
 
 			services := &service.Services{PromoCodes: p}
 			handler := Handler{services: services}
@@ -557,8 +557,8 @@ func TestHandler_adminDeleteCourse(t *testing.T) {
 		responseBody string
 	}{
 		{
-			name:   "ok",
-			school: school,
+			name:     "ok",
+			school:   school,
 			courseId: primitive.NewObjectID(),
 			mockBehavior: func(r *mock_service.MockCourses, schoolId, id primitive.ObjectID) {
 				r.EXPECT().Delete(context.Background(), schoolId, id).Return(nil)
@@ -567,8 +567,8 @@ func TestHandler_adminDeleteCourse(t *testing.T) {
 			responseBody: "",
 		},
 		{
-			name:   "service error",
-			school: school,
+			name:     "service error",
+			school:   school,
 			courseId: primitive.NewObjectID(),
 			mockBehavior: func(r *mock_service.MockCourses, schoolId, id primitive.ObjectID) {
 				r.EXPECT().Delete(context.Background(), schoolId, id).Return(errors.New("failed to delete course"))

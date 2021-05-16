@@ -50,6 +50,7 @@ type Admins interface {
 
 type UpdateCourseInput struct {
 	ID          primitive.ObjectID
+	SchoolID    primitive.ObjectID
 	Name        string
 	Code        string
 	Description string
@@ -59,12 +60,13 @@ type UpdateCourseInput struct {
 
 type Courses interface {
 	Create(ctx context.Context, schoolId primitive.ObjectID, course domain.Course) (primitive.ObjectID, error)
-	Update(ctx context.Context, schoolId primitive.ObjectID, inp UpdateCourseInput) error
+	Update(ctx context.Context, inp UpdateCourseInput) error
 	Delete(ctx context.Context, schoolId, courseId primitive.ObjectID) error
 }
 
 type UpdateModuleInput struct {
 	ID        primitive.ObjectID
+	SchoolID  primitive.ObjectID
 	Name      string
 	Position  *uint
 	Published *bool
@@ -72,6 +74,7 @@ type UpdateModuleInput struct {
 
 type UpdateLessonInput struct {
 	ID        primitive.ObjectID
+	SchoolID  primitive.ObjectID
 	Name      string
 	Position  *uint
 	Published *bool
@@ -83,24 +86,25 @@ type Modules interface {
 	GetById(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
 	GetByPackages(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Module, error)
 	Update(ctx context.Context, inp UpdateModuleInput) error
-	Delete(ctx context.Context, id primitive.ObjectID) error
-	DeleteByCourse(ctx context.Context, courseId primitive.ObjectID) error
-	AddLesson(ctx context.Context, id primitive.ObjectID, lesson domain.Lesson) error
+	Delete(ctx context.Context, schoolId, id primitive.ObjectID) error
+	DeleteByCourse(ctx context.Context, schoolId, courseId primitive.ObjectID) error
+	AddLesson(ctx context.Context, schoolId, id primitive.ObjectID, lesson domain.Lesson) error
 	GetByLesson(ctx context.Context, lessonId primitive.ObjectID) (domain.Module, error)
 	UpdateLesson(ctx context.Context, inp UpdateLessonInput) error
-	DeleteLesson(ctx context.Context, id primitive.ObjectID) error
-	AttachPackage(ctx context.Context, modules []primitive.ObjectID, packageId primitive.ObjectID) error
+	DeleteLesson(ctx context.Context, schoolId, id primitive.ObjectID) error
+	AttachPackage(ctx context.Context, schoolId, packageId primitive.ObjectID, modules []primitive.ObjectID) error
 }
 
 type LessonContent interface {
 	GetByLessons(ctx context.Context, lessonIds []primitive.ObjectID) ([]domain.LessonContent, error)
 	GetByLesson(ctx context.Context, lessonId primitive.ObjectID) (domain.LessonContent, error)
-	Update(ctx context.Context, lessonId primitive.ObjectID, content string) error
-	DeleteContent(ctx context.Context, lessonIds []primitive.ObjectID) error
+	Update(ctx context.Context, schoolId, lessonId primitive.ObjectID, content string) error
+	DeleteContent(ctx context.Context, schoolId primitive.ObjectID, lessonIds []primitive.ObjectID) error
 }
 
 type UpdatePackageInput struct {
 	ID          primitive.ObjectID
+	SchoolID    primitive.ObjectID
 	Name        string
 	Description string
 }
@@ -108,13 +112,14 @@ type UpdatePackageInput struct {
 type Packages interface {
 	Create(ctx context.Context, pkg domain.Package) (primitive.ObjectID, error)
 	Update(ctx context.Context, inp UpdatePackageInput) error
-	Delete(ctx context.Context, id primitive.ObjectID) error
+	Delete(ctx context.Context, schoolId, id primitive.ObjectID) error
 	GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Package, error)
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.Package, error)
 }
 
 type UpdateOfferInput struct {
 	ID          primitive.ObjectID
+	SchoolID    primitive.ObjectID
 	Name        string
 	Description string
 	Benefits    []string
@@ -125,7 +130,7 @@ type UpdateOfferInput struct {
 type Offers interface {
 	Create(ctx context.Context, offer domain.Offer) (primitive.ObjectID, error)
 	Update(ctx context.Context, inp UpdateOfferInput) error
-	Delete(ctx context.Context, id primitive.ObjectID) error
+	Delete(ctx context.Context, schoolId, id primitive.ObjectID) error
 	GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Offer, error)
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.Offer, error)
 	GetByPackages(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Offer, error)
@@ -143,7 +148,7 @@ type UpdatePromoCodeInput struct {
 type PromoCodes interface {
 	Create(ctx context.Context, promocode domain.PromoCode) (primitive.ObjectID, error)
 	Update(ctx context.Context, inp UpdatePromoCodeInput) error
-	Delete(ctx context.Context, id primitive.ObjectID) error
+	Delete(ctx context.Context, schoolId, id primitive.ObjectID) error
 	GetByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.PromoCode, error)
 	GetById(ctx context.Context, schoolId, id primitive.ObjectID) (domain.PromoCode, error)
 	GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.PromoCode, error)

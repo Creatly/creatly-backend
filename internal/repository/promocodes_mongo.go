@@ -51,8 +51,8 @@ func (r *PromocodesRepo) Update(ctx context.Context, inp UpdatePromoCodeInput) e
 	return err
 }
 
-func (r *PromocodesRepo) Delete(ctx context.Context, id primitive.ObjectID) error {
-	_, err := r.db.DeleteOne(ctx, bson.M{"_id": id})
+func (r *PromocodesRepo) Delete(ctx context.Context, schoolId, id primitive.ObjectID) error {
+	_, err := r.db.DeleteOne(ctx, bson.M{"_id": id, "schoolId": schoolId})
 	return err
 }
 
