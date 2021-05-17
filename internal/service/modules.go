@@ -48,15 +48,15 @@ func (s *ModulesService) GetWithContent(ctx context.Context, moduleId primitive.
 	}
 
 	lessonIds := make([]primitive.ObjectID, len(module.Lessons))
-	publishedLessons := make([]domain.Lesson, 0)
+	//publishedLessons := make([]domain.Le/**/sson, 0)
 	for _, lesson := range module.Lessons {
-		if lesson.Published {
-			publishedLessons = append(publishedLessons, lesson)
-			lessonIds = append(lessonIds, lesson.ID)
-		}
+		//if lesson.Published {
+		//	publishedLessons = append(publishedLessons, lesson)
+		lessonIds = append(lessonIds, lesson.ID)
+		//}
 	}
 
-	module.Lessons = publishedLessons // remove unpublished lessons from final result
+	//module.Lessons = publishedLessons // remove unpublished lessons from final result
 
 	content, err := s.contentRepo.GetByLessons(ctx, lessonIds)
 	if err != nil {
