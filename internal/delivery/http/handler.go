@@ -2,6 +2,8 @@ package http
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
@@ -11,14 +13,13 @@ import (
 	"github.com/zhashkevych/creatly-backend/internal/service"
 	"github.com/zhashkevych/creatly-backend/pkg/auth"
 	"github.com/zhashkevych/creatly-backend/pkg/limiter"
-	"net/http"
 
 	_ "github.com/zhashkevych/creatly-backend/docs"
 )
 
 type Handler struct {
-	services          *service.Services
-	tokenManager      auth.TokenManager
+	services     *service.Services
+	tokenManager auth.TokenManager
 }
 
 func NewHandler(services *service.Services, tokenManager auth.TokenManager) *Handler {
