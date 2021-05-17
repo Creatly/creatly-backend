@@ -9,6 +9,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+//go:generate mockgen -source=repository.go -destination=mocks/mock.go
+
 type UpdateSchoolSettingsInput struct {
 	SchoolID    primitive.ObjectID
 	Color       string
@@ -19,7 +21,7 @@ type UpdateSchoolSettingsInput struct {
 }
 
 type Schools interface {
-	GetByDomain(ctx context.Context, domain string) (domain.School, error)
+	GetByDomain(context.Context, string) (domain.School, error)
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.School, error)
 	UpdateSettings(ctx context.Context, inp UpdateSchoolSettingsInput) error
 }
