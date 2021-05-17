@@ -87,7 +87,7 @@ jobs:
       - name: Deploy to Digital Ocean droplet via SSH action
         uses: appleboy/ssh-action@v0.1.3
         env:
-          SERVER_NAME: "api-stage-creatly.zhashkevych.com"
+          SERVER_NAME: "api-stage.creatly.me"
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}

@@ -2,11 +2,12 @@ package repository
 
 import (
 	"context"
+	"time"
+
 	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"time"
 )
 
 type AdminsRepo struct {
@@ -38,5 +39,9 @@ func (r *AdminsRepo) SetSession(ctx context.Context, id primitive.ObjectID, sess
 }
 
 func (r *AdminsRepo) GetById(ctx context.Context, id primitive.ObjectID) (domain.Admin, error) {
-	return domain.Admin{}, nil
+	var admin domain.Admin
+
+	err := r.db.FindOne(ctx, bson.M{"_id": id}).Decode(&admin)
+
+	return admin, err
 }
