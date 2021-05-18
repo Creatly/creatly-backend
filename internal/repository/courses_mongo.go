@@ -2,11 +2,12 @@ package repository
 
 import (
 	"context"
+	"time"
+
 	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"time"
 )
 
 type CoursesRepo struct {
@@ -23,7 +24,7 @@ func (r *CoursesRepo) Create(ctx context.Context, schoolId primitive.ObjectID, c
 	return course.ID, err
 }
 
-func (r *CoursesRepo) Update(ctx context.Context, schoolId primitive.ObjectID, inp UpdateCourseInput) error {
+func (r *CoursesRepo) Update(ctx context.Context, inp UpdateCourseInput) error {
 	updateQuery := bson.M{}
 
 	updateQuery["courses.$.updatedAt"] = time.Now()
@@ -49,7 +50,7 @@ func (r *CoursesRepo) Update(ctx context.Context, schoolId primitive.ObjectID, i
 	}
 
 	_, err := r.db.UpdateOne(ctx,
-		bson.M{"_id": schoolId, "courses._id": inp.ID}, bson.M{"$set": updateQuery})
+		bson.M{"_id": inp.SchoolID, "courses._id": inp.ID}, bson.M{"$set": updateQuery})
 
 	return err
 }

@@ -1,8 +1,9 @@
 package domain
 
 import (
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type Course struct {
@@ -24,6 +25,7 @@ type Module struct {
 	Published bool               `json:"published"`
 	CourseID  primitive.ObjectID `json:"courseId" bson:"courseId"`
 	PackageID primitive.ObjectID `json:"packageId,omitempty" bson:"packageId,omitempty"`
+	SchoolID  primitive.ObjectID `json:"schoolId" bson:"schoolId"`
 	Lessons   []Lesson           `json:"lessons,omitempty" bson:"lessons,omitempty"`
 }
 
@@ -33,10 +35,12 @@ type Lesson struct {
 	Position  uint               `json:"position" bson:"position"`
 	Published bool               `json:"published" bson:"published,omitempty"`
 	Content   string             `json:"content,omitempty" bson:"content,omitempty"`
+	SchoolID  primitive.ObjectID `json:"schoolId" bson:"schoolId"`
 }
 
 type LessonContent struct {
 	LessonID primitive.ObjectID `json:"lessonId" bson:"lessonId"`
+	SchoolID primitive.ObjectID `json:"schoolId" bson:"schoolId"`
 	Content  string             `json:"content" bson:"content"`
 }
 
@@ -45,4 +49,5 @@ type Package struct {
 	Name        string             `json:"name" bson:"name"`
 	Description string             `json:"description,omitempty" bson:"description,omitempty"`
 	CourseID    primitive.ObjectID `json:"courseId" bson:"courseId"`
+	SchoolID    primitive.ObjectID `json:"schoolId" bson:"schoolId"`
 }

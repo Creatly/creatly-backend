@@ -7,16 +7,16 @@ import (
 )
 
 type FileStorage struct {
-	client      *minio.Client
-	bucket      string
-	endpoint    string
+	client   *minio.Client
+	bucket   string
+	endpoint string
 }
 
 func NewFileStorage(client *minio.Client, bucket, endpoint string) *FileStorage {
 	return &FileStorage{
-		client:      client,
-		bucket:      bucket,
-		endpoint:    endpoint,
+		client:   client,
+		bucket:   bucket,
+		endpoint: endpoint,
 	}
 }
 

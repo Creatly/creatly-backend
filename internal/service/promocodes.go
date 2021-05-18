@@ -47,8 +47,8 @@ func (s *PromoCodeService) Update(ctx context.Context, inp UpdatePromoCodeInput)
 	return s.repo.Update(ctx, updateInput)
 }
 
-func (s *PromoCodeService) Delete(ctx context.Context, id primitive.ObjectID) error {
-	return s.repo.Delete(ctx, id)
+func (s *PromoCodeService) Delete(ctx context.Context, schoolId, id primitive.ObjectID) error {
+	return s.repo.Delete(ctx, schoolId, id)
 }
 
 func (s *PromoCodeService) GetByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.PromoCode, error) {

@@ -44,6 +44,8 @@ definitions:
         type: integer
       published:
         type: boolean
+      schoolId:
+        type: string
     type: object
   domain.Offer:
     properties:
@@ -75,6 +77,8 @@ definitions:
       id:
         type: string
       name:
+        type: string
+      schoolId:
         type: string
     type: object
   domain.Pages:
@@ -172,6 +176,7 @@ definitions:
       price:
         $ref: '#/definitions/v1.price'
     required:
+    - benefits
     - name
     - price
     type: object
@@ -344,6 +349,8 @@ definitions:
         type: array
       price:
         $ref: '#/definitions/v1.price'
+    required:
+    - benefits
     type: object
   v1.updatePackageInput:
     properties:
