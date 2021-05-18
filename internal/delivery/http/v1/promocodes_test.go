@@ -52,11 +52,12 @@ func TestHandler_getPromocode(t *testing.T) {
 			responseBody: setResponseBody(promocode),
 		},
 		{
-			name:         "empty code",
-			code:         "",
-			schoolId:     schoolId,
-			promocode:    promocode,
-			mockBehavior: func(r *mock_service.MockPromoCodes, schoolId primitive.ObjectID, code string, promocode domain.PromoCode) {},
+			name:      "empty code",
+			code:      "",
+			schoolId:  schoolId,
+			promocode: promocode,
+			mockBehavior: func(r *mock_service.MockPromoCodes, schoolId primitive.ObjectID, code string, promocode domain.PromoCode) {
+			},
 			statusCode:   404,
 			responseBody: `404 page not found`,
 		},

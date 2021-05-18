@@ -123,13 +123,13 @@ func (s *ModulesService) Update(ctx context.Context, inp UpdateModuleInput) erro
 	return s.repo.Update(ctx, updateInput)
 }
 
-func (s *ModulesService) Delete(ctx context.Context, moduleId primitive.ObjectID) error {
+func (s *ModulesService) Delete(ctx context.Context, schoolId, moduleId primitive.ObjectID) error {
 	module, err := s.GetById(ctx, moduleId)
 	if err != nil {
 		return err
 	}
 
-	if err := s.repo.Delete(ctx, moduleId); err != nil {
+	if err := s.repo.Delete(ctx, schoolId, moduleId); err != nil {
 		return err
 	}
 
@@ -138,16 +138,16 @@ func (s *ModulesService) Delete(ctx context.Context, moduleId primitive.ObjectID
 		lessonIds = append(lessonIds, lesson.ID)
 	}
 
-	return s.contentRepo.DeleteContent(ctx, lessonIds)
+	return s.contentRepo.DeleteContent(ctx, schoolId, lessonIds)
 }
 
-func (s *ModulesService) DeleteByCourse(ctx context.Context, courseId primitive.ObjectID) error {
+func (s *ModulesService) DeleteByCourse(ctx context.Context, schoolId, courseId primitive.ObjectID) error {
 	modules, err := s.repo.GetByCourse(ctx, courseId)
 	if err != nil {
 		return err
 	}
 
-	if err := s.repo.DeleteByCourse(ctx, courseId); err != nil {
+	if err := s.repo.DeleteByCourse(ctx, schoolId, courseId); err != nil {
 		return err
 	}
 
@@ -158,7 +158,7 @@ func (s *ModulesService) DeleteByCourse(ctx context.Context, courseId primitive.
 		}
 	}
 
-	return s.contentRepo.DeleteContent(ctx, lessonIds)
+	return s.contentRepo.DeleteContent(ctx, schoolId, lessonIds)
 }
 
 func sortLessons(lessons []domain.Lesson) {

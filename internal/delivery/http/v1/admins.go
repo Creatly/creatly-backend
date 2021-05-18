@@ -329,8 +329,9 @@ func (h *Handler) adminUpdateCourse(c *gin.Context) {
 		return
 	}
 
-	if err := h.services.Courses.Update(c.Request.Context(), school.ID, service.UpdateCourseInput{
+	if err := h.services.Courses.Update(c.Request.Context(), service.UpdateCourseInput{
 		CourseID:    idParam,
+		SchoolID:    school.ID.Hex(),
 		Name:        inp.Name,
 		Description: inp.Description,
 		Code:        inp.Code,
@@ -503,7 +504,13 @@ func (h *Handler) adminDeleteModule(c *gin.Context) {
 		return
 	}
 
-	err = h.services.Modules.Delete(c.Request.Context(), id)
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	err = h.services.Modules.Delete(c.Request.Context(), school.ID, id)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -707,7 +714,13 @@ func (h *Handler) adminDeleteLesson(c *gin.Context) {
 		return
 	}
 
-	err = h.services.Lessons.Delete(c.Request.Context(), id)
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	err = h.services.Lessons.Delete(c.Request.Context(), school.ID, id)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -903,7 +916,13 @@ func (h *Handler) adminDeletePackage(c *gin.Context) {
 		return
 	}
 
-	err = h.services.Packages.Delete(c.Request.Context(), id)
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	err = h.services.Packages.Delete(c.Request.Context(), school.ID, id)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, "invalid id param")
 		return
@@ -1110,7 +1129,13 @@ func (h *Handler) adminDeleteOffer(c *gin.Context) {
 		return
 	}
 
-	err = h.services.Offers.Delete(c.Request.Context(), id)
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	err = h.services.Offers.Delete(c.Request.Context(), school.ID, id)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -1324,7 +1349,13 @@ func (h *Handler) adminDeletePromocode(c *gin.Context) {
 		return
 	}
 
-	err = h.services.PromoCodes.Delete(c.Request.Context(), id)
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	err = h.services.PromoCodes.Delete(c.Request.Context(), school.ID, id)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return

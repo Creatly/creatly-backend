@@ -104,8 +104,8 @@ func TestHandler_adminUploadImage(t *testing.T) {
 			responseBody: `{"url":"https://storage/image.jpg"}`,
 		},
 		{
-			name:        "Image too large",
-			filePath:    "./fixtures/large.jpeg",
+			name:     "Image too large",
+			filePath: "./fixtures/large.jpeg",
 			mockBehavior: func(r *mock_service.MockFiles, filepath, extension, contentType string, fileSize int64) error {
 				return nil
 			},
@@ -113,8 +113,8 @@ func TestHandler_adminUploadImage(t *testing.T) {
 			responseBody: `{"message":"http: request body too large"}`,
 		},
 		{
-			name:        "PDF Upload",
-			filePath:    "./fixtures/ccc.pdf",
+			name:     "PDF Upload",
+			filePath: "./fixtures/ccc.pdf",
 			mockBehavior: func(r *mock_service.MockFiles, filepath, extension, contentType string, fileSize int64) error {
 				return nil
 			},

@@ -3169,6 +3169,9 @@ var doc = `{
                 },
                 "published": {
                     "type": "boolean"
+                },
+                "schoolId": {
+                    "type": "string"
                 }
             }
         },
@@ -3217,6 +3220,9 @@ var doc = `{
                     "type": "string"
                 },
                 "name": {
+                    "type": "string"
+                },
+                "schoolId": {
                     "type": "string"
                 }
             }
@@ -3351,6 +3357,7 @@ var doc = `{
         "v1.createOfferInput": {
             "type": "object",
             "required": [
+                "benefits",
                 "name",
                 "price"
             ],
@@ -3608,6 +3615,9 @@ var doc = `{
         },
         "v1.updateOfferInput": {
             "type": "object",
+            "required": [
+                "benefits"
+            ],
             "properties": {
                 "benefits": {
                     "type": "array",

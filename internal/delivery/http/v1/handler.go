@@ -7,14 +7,14 @@ import (
 )
 
 type Handler struct {
-	services          *service.Services
-	tokenManager      auth.TokenManager
+	services     *service.Services
+	tokenManager auth.TokenManager
 }
 
 func NewHandler(services *service.Services, tokenManager auth.TokenManager) *Handler {
 	return &Handler{
-		services:          services,
-		tokenManager:      tokenManager,
+		services:     services,
+		tokenManager: tokenManager,
 	}
 }
 

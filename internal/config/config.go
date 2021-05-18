@@ -224,7 +224,7 @@ func parseConfigFile(folder, env string) error {
 	if env == EnvLocal {
 		return nil
 	}
-	
+
 	viper.SetConfigName(env)
 	return viper.MergeInConfig()
 }
