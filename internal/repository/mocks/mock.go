@@ -38,18 +38,18 @@ func (m *MockSchools) EXPECT() *MockSchoolsMockRecorder {
 }
 
 // GetByDomain mocks base method.
-func (m *MockSchools) GetByDomain(arg0 context.Context, arg1 string) (domain.School, error) {
+func (m *MockSchools) GetByDomain(ctx context.Context, domainName string) (domain.School, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetByDomain", arg0, arg1)
+	ret := m.ctrl.Call(m, "GetByDomain", ctx, domainName)
 	ret0, _ := ret[0].(domain.School)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetByDomain indicates an expected call of GetByDomain.
-func (mr *MockSchoolsMockRecorder) GetByDomain(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockSchoolsMockRecorder) GetByDomain(ctx, domainName interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByDomain", reflect.TypeOf((*MockSchools)(nil).GetByDomain), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByDomain", reflect.TypeOf((*MockSchools)(nil).GetByDomain), ctx, domainName)
 }
 
 // GetById mocks base method.

@@ -117,3 +117,48 @@ func TestNewAdminsService_GetCourses(t *testing.T) {
 	require.NoError(t, err)
 	require.IsType(t, []domain.Course{}, res)
 }
+
+func TestNewAdminsService_GetCourseByIdErr(t *testing.T) {
+	adminService, _, schoolMock := mockAdminService(t)
+
+	ctx := context.Background()
+
+	schoolMock.EXPECT().GetById(ctx, gomock.Any()).Return(domain.School{}, errInternalServErr)
+
+	res, err := adminService.GetCourseById(ctx, primitive.ObjectID{}, primitive.ObjectID{})
+
+	require.True(t, errors.Is(err, errInternalServErr))
+	require.Equal(t, domain.Course{}, res)
+}
+
+func TestNewAdminsService_GetCourseByIdNotFoundErr(t *testing.T) {
+	adminService, _, schoolMock := mockAdminService(t)
+
+	ctx := context.Background()
+
+	schoolMock.EXPECT().GetById(ctx, gomock.Any())
+
+	_, err := adminService.GetCourseById(ctx, primitive.ObjectID{}, primitive.ObjectID{})
+
+	require.Error(t, err)
+}
+
+func TestNewAdminsService_GetCourseById(t *testing.T) {
+	adminService, _, schoolMock := mockAdminService(t)
+
+	ctx := context.Background()
+	s := domain.School{
+		ID: primitive.NewObjectID(),
+		Courses: []domain.Course{
+			{
+				ID: primitive.NewObjectID(),
+			},
+		},
+	}
+
+	schoolMock.EXPECT().GetById(ctx, gomock.Any()).Return(s, nil)
+
+	_, err := adminService.GetCourseById(ctx, s.ID, s.Courses[0].ID)
+
+	require.NoError(t, err)
+}

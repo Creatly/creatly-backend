@@ -21,7 +21,7 @@ type UpdateSchoolSettingsInput struct {
 }
 
 type Schools interface {
-	GetByDomain(context.Context, string) (domain.School, error)
+	GetByDomain(ctx context.Context, domainName string) (domain.School, error)
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.School, error)
 	UpdateSettings(ctx context.Context, inp UpdateSchoolSettingsInput) error
 }
