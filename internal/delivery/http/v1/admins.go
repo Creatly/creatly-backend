@@ -601,7 +601,7 @@ func (h *Handler) adminCreateLesson(c *gin.Context) {
 		ModuleID: id,
 		Name:     inp.Name,
 		Position: inp.Position,
-		SchoolID: school.ID.String(),
+		SchoolID: school.ID.Hex(),
 	})
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
@@ -692,7 +692,7 @@ func (h *Handler) adminUpdateLesson(c *gin.Context) {
 		Content:   inp.Content,
 		Position:  inp.Position,
 		Published: inp.Published,
-		SchoolID:  school.ID.String(),
+		SchoolID:  school.ID.Hex(),
 	}); err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
