@@ -41,7 +41,6 @@ func (h *Handler) getAllCourses(c *gin.Context) {
 	for _, course := range school.Courses {
 		if course.Published {
 			courses = append(courses, course)
-
 		}
 	}
 
