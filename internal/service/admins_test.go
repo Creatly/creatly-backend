@@ -22,28 +22,28 @@ func mockAdminService(t *testing.T) (*service.AdminsService, *mock_repository.Mo
 	mockCtl := gomock.NewController(t)
 	defer mockCtl.Finish()
 
-	adminMock := mock_repository.NewMockAdmins(mockCtl)
-	schoolsMock := mock_repository.NewMockSchools(mockCtl)
+	adminRepo := mock_repository.NewMockAdmins(mockCtl)
+	schoolsRepo := mock_repository.NewMockSchools(mockCtl)
 
 	adminService := service.NewAdminsService(
 		&hash.SHA1Hasher{},
 		&auth.Manager{},
-		adminMock,
-		schoolsMock,
+		adminRepo,
+		schoolsRepo,
 		1*time.Minute,
 		1*time.Minute,
 	)
 
-	return adminService, adminMock, schoolsMock
+	return adminService, adminRepo, schoolsRepo
 }
 
 func TestNewAdminsService_SignInErr(t *testing.T) {
-	adminService, adminMock, _ := mockAdminService(t)
+	adminService, adminRepo, _ := mockAdminService(t)
 
 	ctx := context.Background()
 
-	adminMock.EXPECT().GetByCredentials(ctx, gomock.Any(), gomock.Any(), gomock.Any()).Return(domain.Admin{}, errInternalServErr)
-	adminMock.EXPECT().SetSession(ctx, gomock.Any(), gomock.Any())
+	adminRepo.EXPECT().GetByCredentials(ctx, gomock.Any(), gomock.Any(), gomock.Any()).Return(domain.Admin{}, errInternalServErr)
+	adminRepo.EXPECT().SetSession(ctx, gomock.Any(), gomock.Any())
 
 	res, err := adminService.SignIn(ctx, service.SignInInput{})
 
@@ -52,12 +52,12 @@ func TestNewAdminsService_SignInErr(t *testing.T) {
 }
 
 func TestNewAdminsService_SignIn(t *testing.T) {
-	adminService, adminMock, _ := mockAdminService(t)
+	adminService, adminRepo, _ := mockAdminService(t)
 
 	ctx := context.Background()
 
-	adminMock.EXPECT().GetByCredentials(ctx, gomock.Any(), gomock.Any(), gomock.Any())
-	adminMock.EXPECT().SetSession(ctx, gomock.Any(), gomock.Any())
+	adminRepo.EXPECT().GetByCredentials(ctx, gomock.Any(), gomock.Any(), gomock.Any())
+	adminRepo.EXPECT().SetSession(ctx, gomock.Any(), gomock.Any())
 
 	res, err := adminService.SignIn(ctx, service.SignInInput{})
 
@@ -66,11 +66,11 @@ func TestNewAdminsService_SignIn(t *testing.T) {
 }
 
 func TestNewAdminsService_RefreshTokensErr(t *testing.T) {
-	adminService, adminMock, _ := mockAdminService(t)
+	adminService, adminRepo, _ := mockAdminService(t)
 
 	ctx := context.Background()
 
-	adminMock.EXPECT().GetByRefreshToken(ctx, gomock.Any(), gomock.Any()).Return(domain.Admin{}, errInternalServErr)
+	adminRepo.EXPECT().GetByRefreshToken(ctx, gomock.Any(), gomock.Any()).Return(domain.Admin{}, errInternalServErr)
 
 	res, err := adminService.RefreshTokens(ctx, primitive.ObjectID{}, "")
 
@@ -79,12 +79,12 @@ func TestNewAdminsService_RefreshTokensErr(t *testing.T) {
 }
 
 func TestNewAdminsService_RefreshTokens(t *testing.T) {
-	adminService, adminMock, _ := mockAdminService(t)
+	adminService, adminRepo, _ := mockAdminService(t)
 
 	ctx := context.Background()
 
-	adminMock.EXPECT().GetByRefreshToken(ctx, gomock.Any(), gomock.Any())
-	adminMock.EXPECT().SetSession(ctx, gomock.Any(), gomock.Any())
+	adminRepo.EXPECT().GetByRefreshToken(ctx, gomock.Any(), gomock.Any())
+	adminRepo.EXPECT().SetSession(ctx, gomock.Any(), gomock.Any())
 
 	res, err := adminService.RefreshTokens(ctx, primitive.ObjectID{}, "")
 
@@ -93,11 +93,11 @@ func TestNewAdminsService_RefreshTokens(t *testing.T) {
 }
 
 func TestNewAdminsService_GetCoursesErr(t *testing.T) {
-	adminService, _, schoolsMock := mockAdminService(t)
+	adminService, _, schoolsRepo := mockAdminService(t)
 
 	ctx := context.Background()
 
-	schoolsMock.EXPECT().GetById(ctx, gomock.Any()).Return(domain.School{}, errInternalServErr)
+	schoolsRepo.EXPECT().GetById(ctx, gomock.Any()).Return(domain.School{}, errInternalServErr)
 
 	res, err := adminService.GetCourses(ctx, primitive.ObjectID{})
 
@@ -106,11 +106,11 @@ func TestNewAdminsService_GetCoursesErr(t *testing.T) {
 }
 
 func TestNewAdminsService_GetCourses(t *testing.T) {
-	adminService, _, schoolsMock := mockAdminService(t)
+	adminService, _, schoolsRepo := mockAdminService(t)
 
 	ctx := context.Background()
 
-	schoolsMock.EXPECT().GetById(ctx, gomock.Any())
+	schoolsRepo.EXPECT().GetById(ctx, gomock.Any())
 
 	res, err := adminService.GetCourses(ctx, primitive.ObjectID{})
 
@@ -119,11 +119,11 @@ func TestNewAdminsService_GetCourses(t *testing.T) {
 }
 
 func TestNewAdminsService_GetCourseByIdErr(t *testing.T) {
-	adminService, _, schoolMock := mockAdminService(t)
+	adminService, _, schoolsRepo := mockAdminService(t)
 
 	ctx := context.Background()
 
-	schoolMock.EXPECT().GetById(ctx, gomock.Any()).Return(domain.School{}, errInternalServErr)
+	schoolsRepo.EXPECT().GetById(ctx, gomock.Any()).Return(domain.School{}, errInternalServErr)
 
 	res, err := adminService.GetCourseById(ctx, primitive.ObjectID{}, primitive.ObjectID{})
 
@@ -132,11 +132,11 @@ func TestNewAdminsService_GetCourseByIdErr(t *testing.T) {
 }
 
 func TestNewAdminsService_GetCourseByIdNotFoundErr(t *testing.T) {
-	adminService, _, schoolMock := mockAdminService(t)
+	adminService, _, schoolsRepo := mockAdminService(t)
 
 	ctx := context.Background()
 
-	schoolMock.EXPECT().GetById(ctx, gomock.Any())
+	schoolsRepo.EXPECT().GetById(ctx, gomock.Any())
 
 	_, err := adminService.GetCourseById(ctx, primitive.ObjectID{}, primitive.ObjectID{})
 
@@ -144,7 +144,7 @@ func TestNewAdminsService_GetCourseByIdNotFoundErr(t *testing.T) {
 }
 
 func TestNewAdminsService_GetCourseById(t *testing.T) {
-	adminService, _, schoolMock := mockAdminService(t)
+	adminService, _, schoolsRepo := mockAdminService(t)
 
 	ctx := context.Background()
 	s := domain.School{
@@ -156,7 +156,7 @@ func TestNewAdminsService_GetCourseById(t *testing.T) {
 		},
 	}
 
-	schoolMock.EXPECT().GetById(ctx, gomock.Any()).Return(s, nil)
+	schoolsRepo.EXPECT().GetById(ctx, gomock.Any()).Return(s, nil)
 
 	_, err := adminService.GetCourseById(ctx, s.ID, s.Courses[0].ID)
 

@@ -15,23 +15,23 @@ func mockCoursesService(t *testing.T) (*service.CoursesService, *mock_repository
 	mockCtl := gomock.NewController(t)
 	defer mockCtl.Finish()
 
-	coursesMock := mock_repository.NewMockCourses(mockCtl)
-	modulesMock := mock_repository.NewMockModules(mockCtl)
-	lessonsContentMock := mock_repository.NewMockLessonContent(mockCtl)
+	coursesRepo := mock_repository.NewMockCourses(mockCtl)
+	modulesRepo := mock_repository.NewMockModules(mockCtl)
+	lessonsContentRepo := mock_repository.NewMockLessonContent(mockCtl)
 
-	modulesService := service.NewModulesService(modulesMock, lessonsContentMock)
+	modulesService := service.NewModulesService(modulesRepo, lessonsContentRepo)
 
-	coursesService := service.NewCoursesService(coursesMock, modulesService)
+	coursesService := service.NewCoursesService(coursesRepo, modulesService)
 
-	return coursesService, coursesMock, modulesService, lessonsContentMock
+	return coursesService, coursesRepo, modulesService, lessonsContentRepo
 }
 
 func TestNewCoursesService_CreateErr(t *testing.T) {
-	coursesService, coursesMock, _, _ := mockCoursesService(t)
+	coursesService, coursesRepo, _, _ := mockCoursesService(t)
 
 	ctx := context.Background()
 
-	coursesMock.EXPECT().Create(ctx, gomock.Any(), gomock.Any()).Return(primitive.ObjectID{}, errInternalServErr)
+	coursesRepo.EXPECT().Create(ctx, gomock.Any(), gomock.Any()).Return(primitive.ObjectID{}, errInternalServErr)
 
 	_, err := coursesService.Create(context.Background(), primitive.ObjectID{}, "")
 
@@ -39,11 +39,11 @@ func TestNewCoursesService_CreateErr(t *testing.T) {
 }
 
 func TestNewCoursesService_Create(t *testing.T) {
-	coursesService, coursesMock, _, _ := mockCoursesService(t)
+	coursesService, coursesRepo, _, _ := mockCoursesService(t)
 
 	ctx := context.Background()
 
-	coursesMock.EXPECT().Create(ctx, gomock.Any(), gomock.Any()).Return(primitive.ObjectID{}, nil)
+	coursesRepo.EXPECT().Create(ctx, gomock.Any(), gomock.Any()).Return(primitive.ObjectID{}, nil)
 
 	_, err := coursesService.Create(context.Background(), primitive.ObjectID{}, "")
 
