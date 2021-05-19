@@ -5,6 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http/httptest"
+	"testing"
+
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
@@ -12,8 +15,6 @@ import (
 	"github.com/zhashkevych/creatly-backend/internal/service"
 	mock_service "github.com/zhashkevych/creatly-backend/internal/service/mocks"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"net/http/httptest"
-	"testing"
 )
 
 func TestHandler_getPromocode(t *testing.T) {

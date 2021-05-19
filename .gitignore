@@ -5,3 +5,6 @@
 
 .env
 cover.out
+
+# Visual Studio Settings
+.vscode
