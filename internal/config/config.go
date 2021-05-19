@@ -18,6 +18,7 @@ const (
 	defaultVerificationCodeLength = 8
 
 	EnvLocal = "local"
+	Prod     = "prod"
 )
 
 type (

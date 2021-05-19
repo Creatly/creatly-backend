@@ -2,6 +2,8 @@ package http
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
@@ -11,7 +13,6 @@ import (
 	"github.com/zhashkevych/creatly-backend/internal/service"
 	"github.com/zhashkevych/creatly-backend/pkg/auth"
 	"github.com/zhashkevych/creatly-backend/pkg/limiter"
-	"net/http"
 
 	_ "github.com/zhashkevych/creatly-backend/docs"
 )
@@ -44,7 +45,9 @@ func (h *Handler) Init(cfg *config.Config) *gin.Engine {
 		docs.SwaggerInfo.Host = cfg.HTTP.Host
 	}
 
-	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	if cfg.Environment != config.Prod {
+		router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	}
 
 	// Init router
 	router.GET("/ping", func(c *gin.Context) {
