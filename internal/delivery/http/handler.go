@@ -30,8 +30,6 @@ func NewHandler(services *service.Services, tokenManager auth.TokenManager) *Han
 }
 
 func (h *Handler) Init(cfg *config.Config) *gin.Engine {
-	const prod = "prod"
-
 	// Init gin handler
 	router := gin.Default()
 
@@ -47,7 +45,7 @@ func (h *Handler) Init(cfg *config.Config) *gin.Engine {
 		docs.SwaggerInfo.Host = cfg.HTTP.Host
 	}
 
-	if cfg.Environment != prod {
+	if cfg.Environment != config.Prod {
 		router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	}
 
