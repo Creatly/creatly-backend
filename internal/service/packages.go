@@ -85,6 +85,7 @@ func (s *PackagesService) Delete(ctx context.Context, schoolId, id primitive.Obj
 
 func stringArrayToObjectId(stringIds []string) ([]primitive.ObjectID, error) {
 	var err error
+
 	ids := make([]primitive.ObjectID, len(stringIds))
 
 	for i, id := range stringIds {

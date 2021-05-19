@@ -223,6 +223,7 @@ func (s *APITestSuite) TestStudentGetModuleOffers() {
 	var respOffers struct {
 		Data []offerResponse `json:"data"`
 	}
+
 	respData, err := ioutil.ReadAll(resp.Body)
 	s.NoError(err)
 

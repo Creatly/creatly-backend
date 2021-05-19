@@ -35,6 +35,7 @@ func (r *ModulesRepo) GetByCourse(ctx context.Context, courseId primitive.Object
 	}
 
 	err = cur.All(ctx, &modules)
+
 	return modules, err
 }
 
@@ -42,6 +43,7 @@ func (r *ModulesRepo) GetById(ctx context.Context, moduleId primitive.ObjectID) 
 	var module domain.Module
 
 	err := r.db.FindOne(ctx, bson.M{"_id": moduleId, "published": true}).Decode(&module)
+
 	return module, err
 }
 
@@ -57,6 +59,7 @@ func (r *ModulesRepo) GetByPackages(ctx context.Context, packageIds []primitive.
 	}
 
 	err = cur.All(ctx, &modules)
+
 	return modules, err
 }
 
@@ -94,6 +97,7 @@ func (r *ModulesRepo) AddLesson(ctx context.Context, schoolId, id primitive.Obje
 func (r *ModulesRepo) GetByLesson(ctx context.Context, lessonId primitive.ObjectID) (domain.Module, error) {
 	var module domain.Module
 	err := r.db.FindOne(ctx, bson.M{"lessons._id": lessonId}).Decode(&module)
+
 	return module, err
 }
 

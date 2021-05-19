@@ -47,7 +47,7 @@ type studentSignUpInput struct {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /students/sign-up [post]
+// @Router /students/sign-up [post].
 func (h *Handler) studentSignUp(c *gin.Context) {
 	var inp studentSignUpInput
 	if err := c.BindJSON(&inp); err != nil {
@@ -73,6 +73,7 @@ func (h *Handler) studentSignUp(c *gin.Context) {
 		}
 
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -100,7 +101,7 @@ type tokenResponse struct {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /students/sign-in [post]
+// @Router /students/sign-in [post].
 func (h *Handler) studentSignIn(c *gin.Context) {
 	var inp signInInput
 	if err := c.BindJSON(&inp); err != nil {
@@ -126,6 +127,7 @@ func (h *Handler) studentSignIn(c *gin.Context) {
 		}
 
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -149,7 +151,7 @@ type refreshInput struct {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /students/auth/refresh [post]
+// @Router /students/auth/refresh [post].
 func (h *Handler) studentRefresh(c *gin.Context) {
 	var inp refreshInput
 	if err := c.BindJSON(&inp); err != nil {
@@ -186,7 +188,7 @@ func (h *Handler) studentRefresh(c *gin.Context) {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /students/verify/{code} [post]
+// @Router /students/verify/{code} [post].
 func (h *Handler) studentVerify(c *gin.Context) {
 	code := c.Param("code")
 	if code == "" {
@@ -201,6 +203,7 @@ func (h *Handler) studentVerify(c *gin.Context) {
 		}
 
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -219,7 +222,7 @@ func (h *Handler) studentVerify(c *gin.Context) {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /students/modules/{id}/lessons [get]
+// @Router /students/modules/{id}/lessons [get].
 func (h *Handler) studentGetModuleLessons(c *gin.Context) {
 	moduleIdParam := c.Param("id")
 	if moduleIdParam == "" {
@@ -253,6 +256,7 @@ func (h *Handler) studentGetModuleLessons(c *gin.Context) {
 		}
 
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -271,7 +275,7 @@ func (h *Handler) studentGetModuleLessons(c *gin.Context) {
 // @Failure 400,403 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /students/lessons/{id} [get]
+// @Router /students/lessons/{id} [get].
 func (h *Handler) studentGetLesson(c *gin.Context) {
 	lessonIdParam := c.Param("id")
 	if lessonIdParam == "" {
@@ -297,7 +301,9 @@ func (h *Handler) studentGetLesson(c *gin.Context) {
 			newResponse(c, http.StatusForbidden, err.Error())
 			return
 		}
+
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -316,7 +322,7 @@ func (h *Handler) studentGetLesson(c *gin.Context) {
 // @Failure 400,403 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /students/lessons/{id}/finished [post]
+// @Router /students/lessons/{id}/finished [post].
 func (h *Handler) studentSetLessonFinished(c *gin.Context) {
 	lessonIdParam := c.Param("id")
 	if lessonIdParam == "" {
@@ -339,9 +345,12 @@ func (h *Handler) studentSetLessonFinished(c *gin.Context) {
 	if err := h.services.Students.SetLessonFinished(c.Request.Context(), studentId, lessonId); err != nil {
 		if err == service.ErrModuleIsNotAvailable {
 			newResponse(c, http.StatusForbidden, err.Error())
+
 			return
 		}
+
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -394,7 +403,7 @@ func toStudentOffer(offer domain.Offer) studentOffer {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /students/modules/{id}/offers [get]
+// @Router /students/modules/{id}/offers [get].
 func (h *Handler) studentGetModuleOffers(c *gin.Context) {
 	moduleIdParam := c.Param("id")
 	if moduleIdParam == "" {
@@ -444,7 +453,7 @@ type createOrderResponse struct {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /students/order [post]
+// @Router /students/order [post].
 func (h *Handler) studentCreateOrder(c *gin.Context) {
 	var inp createOrderInput
 	if err := c.BindJSON(&inp); err != nil {
@@ -462,6 +471,7 @@ func (h *Handler) studentCreateOrder(c *gin.Context) {
 
 	if inp.PromoId != "" {
 		var err error
+
 		promoId, err = primitive.ObjectIDFromHex(inp.PromoId)
 		if err != nil {
 			newResponse(c, http.StatusBadRequest, "invalid promo id")
@@ -501,7 +511,7 @@ func (h *Handler) studentCreateOrder(c *gin.Context) {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /students/courses/ [get]
+// @Router /students/courses/ [get].
 func (h *Handler) studentGetCourses(c *gin.Context) {
 	school, err := getSchoolFromContext(c)
 	if err != nil {
@@ -540,7 +550,7 @@ type studentAccountResponse struct {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /students/account [get]
+// @Router /students/account [get].
 func (h *Handler) studentGetAccount(c *gin.Context) {
 	studentId, err := getStudentId(c)
 	if err != nil {

@@ -27,6 +27,7 @@ func (r *OffersRepo) GetBySchool(ctx context.Context, schoolId primitive.ObjectI
 
 	var offers []domain.Offer
 	err = cur.All(ctx, &offers)
+
 	return offers, err
 }
 
@@ -51,6 +52,7 @@ func (r *OffersRepo) GetByPackages(ctx context.Context, packageIds []primitive.O
 
 	var offers []domain.Offer
 	err = cur.All(ctx, &offers)
+
 	return offers, err
 }
 

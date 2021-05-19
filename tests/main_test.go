@@ -83,10 +83,12 @@ func (s *APITestSuite) initDeps() {
 	repos := repository.NewRepositories(s.db)
 	memCache := cache.NewMemoryCache()
 	hasher := hash.NewSHA1Hasher("salt")
+
 	tokenManager, err := auth.NewManager("signing_key")
 	if err != nil {
 		s.FailNow("Failed to initialize token manager", err)
 	}
+
 	paymentProvider := fondy.NewFondyClient("1396424", "test") // Fondy Testing Credentials
 
 	services := service.NewServices(service.Deps{

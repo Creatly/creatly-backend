@@ -1,3 +1,4 @@
+//nolint: funlen
 package app
 
 import (
@@ -45,7 +46,7 @@ import (
 // @in header
 // @name Authorization
 
-// Run initializes whole application
+// Run initializes whole application.
 func Run(configPath string) {
 	cfg, err := config.Init(configPath)
 	if err != nil {
@@ -66,6 +67,7 @@ func Run(configPath string) {
 	hasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
 	emailProvider := sendpulse.NewClient(cfg.Email.SendPulse.ClientID, cfg.Email.SendPulse.ClientSecret, memCache)
 	paymentProvider := fondy.NewFondyClient(cfg.Payment.Fondy.MerchantId, cfg.Payment.Fondy.MerchantPassword)
+
 	emailSender, err := smtp.NewSMTPSender(cfg.SMTP.From, cfg.SMTP.Pass, cfg.SMTP.Host, cfg.SMTP.Port)
 	if err != nil {
 		logger.Error(err)
@@ -112,6 +114,7 @@ func Run(configPath string) {
 
 	// HTTP Server
 	srv := server.NewServer(cfg, handlers.Init(cfg))
+
 	go func() {
 		if err := srv.Run(); !errors.Is(err, http.ErrServerClosed) {
 			logger.Errorf("error occurred while running http server: %s\n", err.Error())
@@ -150,5 +153,6 @@ func newStorageProvider(cfg *config.Config) (storage.Provider, error) {
 	}
 
 	provider := storage.NewFileStorage(client, cfg.FileStorage.Bucket, cfg.FileStorage.Endpoint)
+
 	return provider, nil
 }

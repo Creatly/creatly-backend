@@ -15,7 +15,7 @@ import (
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /settings [get]
+// @Router /settings [get].
 func (h *Handler) getSchoolSettings(c *gin.Context) {
 	school, err := getSchoolFromContext(c)
 	if err != nil {

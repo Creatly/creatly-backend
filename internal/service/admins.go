@@ -70,6 +70,7 @@ func (s *AdminsService) GetCourseById(ctx context.Context, schoolId, courseId pr
 	}
 
 	var searchedCourse domain.Course
+
 	for _, course := range school.Courses {
 		if course.ID == courseId {
 			searchedCourse = course
@@ -105,5 +106,6 @@ func (s *AdminsService) createSession(ctx context.Context, adminId primitive.Obj
 	}
 
 	err = s.repo.SetSession(ctx, adminId, session)
+
 	return res, err
 }

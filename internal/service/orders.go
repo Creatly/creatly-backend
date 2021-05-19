@@ -34,7 +34,7 @@ func NewOrdersService(repo repository.Orders, offersService Offers, promoCodesSe
 	}
 }
 
-func (s *OrdersService) Create(ctx context.Context, studentId, offerId, promocodeId primitive.ObjectID) (string, error) {
+func (s *OrdersService) Create(ctx context.Context, studentId, offerId, promocodeId primitive.ObjectID) (string, error) { //nolint:funlen
 	offer, err := s.offersService.GetById(ctx, offerId)
 	if err != nil {
 		if err == repository.ErrOfferNotFound {
@@ -54,12 +54,14 @@ func (s *OrdersService) Create(ctx context.Context, studentId, offerId, promocod
 		if err == repository.ErrUserNotFound {
 			return "", ErrUserNotFound
 		}
+
 		return "", err
 	}
 
 	orderAmount := s.calculateOrderPrice(offer.Price.Value, promocode)
 
 	id := primitive.NewObjectID()
+
 	paymentLink, err := s.paymentProvider.GeneratePaymentLink(payment.GeneratePaymentLinkInput{
 		OrderId:     id.Hex(),
 		Amount:      orderAmount,

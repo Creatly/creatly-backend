@@ -28,7 +28,7 @@ func (h *Handler) initCoursesRoutes(api *gin.RouterGroup) {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /courses [get]
+// @Router /courses [get].
 func (h *Handler) getAllCourses(c *gin.Context) {
 	school, err := getSchoolFromContext(c)
 	if err != nil {
@@ -38,6 +38,7 @@ func (h *Handler) getAllCourses(c *gin.Context) {
 
 	// Return only published courses
 	courses := make([]domain.Course, 0)
+
 	for _, course := range school.Courses {
 		if course.Published {
 			courses = append(courses, course)
@@ -83,6 +84,7 @@ func newGetCourseByIdResponse(course domain.Course, courseModules []domain.Modul
 
 func toLessons(lessons []domain.Lesson) []lesson {
 	out := make([]lesson, 0)
+
 	for _, l := range lessons {
 		if l.Published {
 			out = append(out, lesson{
@@ -92,6 +94,7 @@ func toLessons(lessons []domain.Lesson) []lesson {
 			})
 		}
 	}
+
 	return out
 }
 
@@ -106,7 +109,7 @@ func toLessons(lessons []domain.Lesson) []lesson {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /courses/{id} [get]
+// @Router /courses/{id} [get].
 func (h *Handler) getCourseById(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
@@ -137,6 +140,7 @@ func (h *Handler) getCourseById(c *gin.Context) {
 
 func studentGetSchoolCourse(school domain.School, courseId string) (domain.Course, error) {
 	var searchedCourse domain.Course
+
 	for _, course := range school.Courses {
 		if course.Published && course.ID.Hex() == courseId {
 			searchedCourse = course
@@ -161,7 +165,7 @@ func studentGetSchoolCourse(school domain.School, courseId string) (domain.Cours
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /courses/{id}/offers [get]
+// @Router /courses/{id}/offers [get].
 func (h *Handler) getCourseOffers(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {

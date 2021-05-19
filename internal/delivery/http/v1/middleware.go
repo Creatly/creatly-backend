@@ -20,10 +20,12 @@ const (
 
 func (h *Handler) setSchoolFromRequest(c *gin.Context) {
 	host := parseRequestHost(c)
+
 	school, err := h.services.Schools.GetByDomain(c.Request.Context(), host)
 	if err != nil {
 		logger.Error(err)
 		c.AbortWithStatus(http.StatusForbidden)
+
 		return
 	}
 
@@ -40,6 +42,7 @@ func parseRequestHost(c *gin.Context) string {
 	}
 
 	hostParts := strings.Split(refererParts[2], ":")
+
 	return hostParts[0]
 }
 

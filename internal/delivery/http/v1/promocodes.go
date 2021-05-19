@@ -18,7 +18,7 @@ import (
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /promocodes/{code} [get]
+// @Router /promocodes/{code} [get].
 func (h *Handler) getPromo(c *gin.Context) {
 	code := c.Param("code")
 	if code == "" {
@@ -38,7 +38,9 @@ func (h *Handler) getPromo(c *gin.Context) {
 			newResponse(c, http.StatusBadRequest, err.Error())
 			return
 		}
+
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 

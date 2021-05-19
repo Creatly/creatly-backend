@@ -34,6 +34,7 @@ func (h *Handler) handleFondyCallback(c *gin.Context) {
 		}
 
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 

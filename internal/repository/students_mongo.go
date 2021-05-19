@@ -62,8 +62,8 @@ func (r *StudentsRepo) GetByRefreshToken(ctx context.Context, schoolId primitive
 
 func (r *StudentsRepo) GetById(ctx context.Context, id primitive.ObjectID) (domain.Student, error) {
 	var student domain.Student
-	err := r.db.FindOne(ctx, bson.M{"_id": id, "verification.verified": true}).Decode(&student)
-	if err != nil {
+
+	if err := r.db.FindOne(ctx, bson.M{"_id": id, "verification.verified": true}).Decode(&student); err != nil {
 		if err == mongo.ErrNoDocuments {
 			return domain.Student{}, ErrUserNotFound
 		}
@@ -82,6 +82,7 @@ func (r *StudentsRepo) GetBySchool(ctx context.Context, schoolId primitive.Objec
 
 	var students []domain.Student
 	err = cur.All(ctx, &students)
+
 	return students, err
 }
 
@@ -100,6 +101,7 @@ func (r *StudentsRepo) GiveAccessToCoursesAndModules(ctx context.Context, studen
 		"availableModules": bson.M{"$each": moduleIds},
 		"availableCourses": bson.M{"$each": courseIds},
 	}})
+
 	return err
 }
 

@@ -29,6 +29,7 @@ func (s *SchoolsService) GetByDomain(ctx context.Context, domainName string) (do
 	}
 
 	err = s.cache.Set(domainName, school, s.ttl)
+
 	return school, err
 }
 

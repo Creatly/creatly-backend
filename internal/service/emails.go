@@ -48,6 +48,7 @@ func (s *EmailService) SendVerificationEmail(input SendVerificationEmailInput) e
 
 	templateInput := verificationEmailInput{s.createVerificationLink(input.VerificationCode)}
 	sendInput := emailProvider.SendEmailInput{Subject: subject, To: input.Email}
+
 	if err := sendInput.GenerateBodyFromHTML(s.config.Templates.Verification, templateInput); err != nil {
 		return err
 	}
@@ -58,6 +59,7 @@ func (s *EmailService) SendVerificationEmail(input SendVerificationEmailInput) e
 func (s *EmailService) SendPurchaseSuccessfulEmail(input SendPurchaseSuccessfulEmailInput) error {
 	templateInput := purchaseSuccessfulEmailInput{Name: input.Name, CourseName: input.CourseName}
 	sendInput := emailProvider.SendEmailInput{Subject: s.config.Subjects.PurchaseSuccessful, To: input.Email}
+
 	if err := sendInput.GenerateBodyFromHTML(s.config.Templates.PurchaseSuccessful, templateInput); err != nil {
 		return err
 	}

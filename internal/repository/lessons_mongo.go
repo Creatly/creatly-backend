@@ -20,6 +20,7 @@ func NewLessonContentRepo(db *mongo.Database) *LessonContentRepo {
 
 func (r *LessonContentRepo) GetByLessons(ctx context.Context, lessonIds []primitive.ObjectID) ([]domain.LessonContent, error) {
 	var content []domain.LessonContent
+
 	cur, err := r.db.Find(ctx, bson.M{"lessonId": bson.M{"$in": lessonIds}})
 	if err != nil {
 		return nil, err
@@ -36,6 +37,7 @@ func (r *LessonContentRepo) GetByLessons(ctx context.Context, lessonIds []primit
 func (r *LessonContentRepo) GetByLesson(ctx context.Context, lessonId primitive.ObjectID) (domain.LessonContent, error) {
 	var content domain.LessonContent
 	err := r.db.FindOne(ctx, bson.M{"lessonId": lessonId}).Decode(&content)
+
 	return content, err
 }
 
@@ -44,6 +46,7 @@ func (r *LessonContentRepo) Update(ctx context.Context, schoolId, lessonId primi
 	opts.SetUpsert(true)
 
 	_, err := r.db.UpdateOne(ctx, bson.M{"lessonId": lessonId, "schoolId": schoolId}, bson.M{"$set": bson.M{"content": content}}, opts)
+
 	return err
 }
 

@@ -21,6 +21,7 @@ import (
 
 func TestHandler_adminUploadImage(t *testing.T) {
 	type mockBehavior func(r *mock_service.MockFiles, filepath, extension, contentType string, fileSize int64) error
+
 	school := domain.School{
 		ID: primitive.NewObjectID(),
 	}

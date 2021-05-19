@@ -51,6 +51,7 @@ func (s *APITestSuite) TestGetAllCourses() {
 	var respCourses struct {
 		Data []courseResponse `json:"data"`
 	}
+
 	respData, err := ioutil.ReadAll(resp.Body)
 	s.NoError(err)
 
@@ -103,6 +104,7 @@ func (s *APITestSuite) TestGetCourseOffers() {
 	var respOffers struct {
 		Data []offerResponse `json:"data"`
 	}
+
 	respData, err := ioutil.ReadAll(resp.Body)
 	s.NoError(err)
 

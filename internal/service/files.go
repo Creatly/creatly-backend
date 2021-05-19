@@ -49,5 +49,6 @@ func (s *FilesService) Upload(ctx context.Context, inp UploadInput) (string, err
 func (s *FilesService) generateFilename(inp UploadInput) string {
 	filename := fmt.Sprintf("%s.%s", uuid.New().String(), inp.FileExtension)
 	folder := folders[inp.Type]
+
 	return fmt.Sprintf("%s/%s/%s/%s", s.env, inp.SchoolID.Hex(), folder, filename)
 }

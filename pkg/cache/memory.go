@@ -21,6 +21,7 @@ type MemoryCache struct {
 func NewMemoryCache() *MemoryCache {
 	c := &MemoryCache{cache: make(map[interface{}]*item)}
 	go c.setTtlTimer()
+
 	return c
 }
 

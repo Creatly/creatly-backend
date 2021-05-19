@@ -38,6 +38,7 @@ func (s *ModulesService) GetById(ctx context.Context, moduleId primitive.ObjectI
 	}
 
 	sortLessons(module.Lessons)
+
 	return module, nil
 }
 
@@ -49,6 +50,7 @@ func (s *ModulesService) GetWithContent(ctx context.Context, moduleId primitive.
 
 	lessonIds := make([]primitive.ObjectID, len(module.Lessons))
 	publishedLessons := make([]domain.Lesson, 0)
+
 	for _, lesson := range module.Lessons {
 		if lesson.Published {
 			publishedLessons = append(publishedLessons, lesson)
@@ -72,6 +74,7 @@ func (s *ModulesService) GetWithContent(ctx context.Context, moduleId primitive.
 	}
 
 	sortLessons(module.Lessons)
+
 	return module, nil
 }
 
@@ -152,6 +155,7 @@ func (s *ModulesService) DeleteByCourse(ctx context.Context, schoolId, courseId 
 	}
 
 	lessonIds := make([]primitive.ObjectID, 0)
+
 	for _, module := range modules {
 		for _, lesson := range module.Lessons {
 			lessonIds = append(lessonIds, lesson.ID)

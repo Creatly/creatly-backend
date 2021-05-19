@@ -192,6 +192,7 @@ func (c *FondyClient) GeneratePaymentLink(input payment.GeneratePaymentLinkInput
 	defer resp.Body.Close()
 
 	apiResp := apiResponse{}
+
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return "", err

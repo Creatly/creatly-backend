@@ -46,13 +46,15 @@ linters:
     - tparallel
     - wastedassign
     - promlinter
-    # - bodyclose
-    # - dupl
+    - bodyclose
+    - dupl
+    - godot
+    - funlen
+    - wsl
     # - gochecknoglobals
     # - gochecknoinits
     # - goconst
     # - gocritic
-    # - godot
     # - godox
     # - goerr113
     # - gosec
@@ -60,8 +62,6 @@ linters:
     # - prealloc
     # - stylecheck
     # - testpackage
-    # - wsl
-    # - funlen
     # - cyclop
     # - errorlint
     # - nlreturn
@@ -70,10 +70,13 @@ linters:
 
 issues:
   exclude-rules:
-    # - path: (_test\.go|tests)
-    #   linters:
-    #     - gosec
-    #     - noctx
+    - path: (_test\.go|tests)
+      linters:
+        - bodyclose
+        - dupl
+        - funlen
+        #- gosec
+        #- noctx
     - linters:
         - lll
       source: "^//go:generate "

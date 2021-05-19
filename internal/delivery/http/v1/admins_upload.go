@@ -42,9 +42,10 @@ type uploadResponse struct {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/upload/image [post]
+// @Router /admins/upload/image [post].
 func (h *Handler) adminUploadImage(c *gin.Context) {
 	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, maxImageUploadSize)
+
 	file, fileHeader, err := c.Request.FormFile("file")
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
@@ -54,8 +55,8 @@ func (h *Handler) adminUploadImage(c *gin.Context) {
 	defer file.Close()
 
 	buffer := make([]byte, fileHeader.Size)
-	_, err = file.Read(buffer)
-	if err != nil {
+
+	if _, err := file.Read(buffer); err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -102,9 +103,10 @@ func (h *Handler) adminUploadImage(c *gin.Context) {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/upload/video [post]
+// @Router /admins/upload/video [post].
 func (h *Handler) adminUploadVideo(c *gin.Context) {
 	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, maxVideoUploadSize)
+
 	file, fileHeader, err := c.Request.FormFile("file")
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
@@ -114,8 +116,8 @@ func (h *Handler) adminUploadVideo(c *gin.Context) {
 	defer file.Close()
 
 	buffer := make([]byte, fileHeader.Size)
-	_, err = file.Read(buffer)
-	if err != nil {
+
+	if _, err = file.Read(buffer); err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}

@@ -49,10 +49,12 @@ func (l *rateLimiter) getVisitor(ip string) *rate.Limiter {
 		l.Lock()
 		l.visitors[ip] = &visitor{limiter, time.Now()}
 		l.Unlock()
+
 		return limiter
 	}
 
 	v.lastSeen = time.Now()
+
 	return v.limiter
 }
 
@@ -83,11 +85,13 @@ func Limit(rps int, burst int, ttl time.Duration) gin.HandlerFunc {
 		if err != nil {
 			logger.Error(err)
 			c.AbortWithStatus(http.StatusInternalServerError)
+
 			return
 		}
 
 		if !l.getVisitor(ip).Allow() {
 			c.AbortWithStatus(http.StatusTooManyRequests)
+
 			return
 		}
 
