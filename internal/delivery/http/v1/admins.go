@@ -591,10 +591,17 @@ func (h *Handler) adminCreateLesson(c *gin.Context) {
 		return
 	}
 
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	lessonId, err := h.services.Lessons.Create(c.Request.Context(), service.AddLessonInput{
 		ModuleID: id,
 		Name:     inp.Name,
 		Position: inp.Position,
+		SchoolID: school.ID.String(),
 	})
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
@@ -673,14 +680,20 @@ func (h *Handler) adminUpdateLesson(c *gin.Context) {
 		return
 	}
 
-	err := h.services.Lessons.Update(c.Request.Context(), service.UpdateLessonInput{
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if err := h.services.Lessons.Update(c.Request.Context(), service.UpdateLessonInput{
 		LessonID:  id,
 		Name:      inp.Name,
 		Content:   inp.Content,
 		Position:  inp.Position,
 		Published: inp.Published,
-	})
-	if err != nil {
+		SchoolID:  school.ID.String(),
+	}); err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
