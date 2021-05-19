@@ -118,7 +118,7 @@ type (
 )
 
 // Init populates Config struct with values from config file
-//located at filepath and environment variables
+// located at filepath and environment variables.
 func Init(configsDir string) (*Config, error) {
 	populateDefaults()
 

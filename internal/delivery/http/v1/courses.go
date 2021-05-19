@@ -2,10 +2,11 @@ package v1
 
 import (
 	"errors"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"net/http"
 )
 
 func (h *Handler) initCoursesRoutes(api *gin.RouterGroup) {

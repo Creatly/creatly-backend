@@ -5,15 +5,16 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"github.com/zhashkevych/creatly-backend/pkg/email"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"io/ioutil"
-	"net/http"
-	"net/http/httptest"
-	"time"
 )
 
 const (

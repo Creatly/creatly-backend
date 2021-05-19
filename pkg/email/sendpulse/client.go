@@ -5,12 +5,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/zhashkevych/creatly-backend/pkg/cache"
-	"github.com/zhashkevych/creatly-backend/pkg/email"
-	"github.com/zhashkevych/creatly-backend/pkg/logger"
 	"io/ioutil"
 	"net/http"
 	"time"
+
+	"github.com/zhashkevych/creatly-backend/pkg/cache"
+	"github.com/zhashkevych/creatly-backend/pkg/email"
+	"github.com/zhashkevych/creatly-backend/pkg/logger"
 )
 
 // Documentation https://sendpulse.com/integrations/api

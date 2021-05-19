@@ -3,14 +3,15 @@ package app
 import (
 	"context"
 	"errors"
-	"github.com/minio/minio-go/v7"
-	"github.com/minio/minio-go/v7/pkg/credentials"
-	"github.com/zhashkevych/creatly-backend/pkg/storage"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
+	"github.com/zhashkevych/creatly-backend/pkg/storage"
 
 	"github.com/zhashkevych/creatly-backend/pkg/email/smtp"
 	"github.com/zhashkevych/creatly-backend/pkg/otp"

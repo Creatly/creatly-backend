@@ -5,8 +5,6 @@ import (
 	"io"
 	"time"
 
-	"github.com/zhashkevych/creatly-backend/pkg/storage"
-
 	"github.com/zhashkevych/creatly-backend/internal/config"
 	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"github.com/zhashkevych/creatly-backend/internal/repository"
@@ -16,6 +14,7 @@ import (
 	"github.com/zhashkevych/creatly-backend/pkg/hash"
 	"github.com/zhashkevych/creatly-backend/pkg/otp"
 	"github.com/zhashkevych/creatly-backend/pkg/payment"
+	"github.com/zhashkevych/creatly-backend/pkg/storage"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 

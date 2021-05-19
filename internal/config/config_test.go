@@ -90,7 +90,8 @@ func TestInit(t *testing.T) {
 					storageBucket:      "test",
 					storageAccessKey:   "qwerty123",
 					storageSecretKey:   "qwerty123",
-				}},
+				},
+			},
 			want: &Config{
 				Environment: "local",
 				CacheTTL:    time.Second * 3600,

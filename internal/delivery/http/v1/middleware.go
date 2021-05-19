@@ -2,12 +2,13 @@ package v1
 
 import (
 	"errors"
+	"net/http"
+	"strings"
+
 	"github.com/gin-gonic/gin"
 	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"github.com/zhashkevych/creatly-backend/pkg/logger"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"net/http"
-	"strings"
 )
 
 const (
@@ -105,7 +106,7 @@ func getStudentId(c *gin.Context) (primitive.ObjectID, error) {
 
 	id, err := primitive.ObjectIDFromHex(idStr)
 	if err != nil {
-		return primitive.ObjectID{}, nil
+		return primitive.ObjectID{}, err
 	}
 
 	return id, nil

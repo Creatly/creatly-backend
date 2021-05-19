@@ -3,6 +3,13 @@ package v1
 import (
 	"bytes"
 	"context"
+	"io"
+	"mime/multipart"
+	"net/http/httptest"
+	"os"
+	"path/filepath"
+	"testing"
+
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
@@ -10,12 +17,6 @@ import (
 	"github.com/zhashkevych/creatly-backend/internal/service"
 	mock_service "github.com/zhashkevych/creatly-backend/internal/service/mocks"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"io"
-	"mime/multipart"
-	"net/http/httptest"
-	"os"
-	"path/filepath"
-	"testing"
 )
 
 func TestHandler_adminUploadImage(t *testing.T) {

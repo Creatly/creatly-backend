@@ -3,12 +3,13 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"time"
+
 	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"github.com/zhashkevych/creatly-backend/pkg/logger"
 	"github.com/zhashkevych/creatly-backend/pkg/payment"
 	"github.com/zhashkevych/creatly-backend/pkg/payment/fondy"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"time"
 )
 
 type PaymentsService struct {

@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+
 	"github.com/zhashkevych/creatly-backend/internal/config"
 	emailProvider "github.com/zhashkevych/creatly-backend/pkg/email"
 )
@@ -18,7 +19,7 @@ type EmailService struct {
 	frontendUrl string
 }
 
-// Structures used for templates
+// Structures used for templates.
 type verificationEmailInput struct {
 	VerificationLink string
 }

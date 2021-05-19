@@ -1,0 +1,79 @@
+run:
+  timeout: 1m
+
+linters:
+  disable-all: true
+  enable:
+    - asciicheck
+    - deadcode
+    - depguard
+    - dogsled
+    - errcheck
+    - exhaustive
+    - exportloopref
+    - gocognit
+    - gocyclo
+    - gofmt
+    - gofumpt
+    - goheader
+    - goimports
+    - gomodguard
+    - goprintffuncname
+    - gosimple
+    - govet
+    - ineffassign
+    - misspell
+    - nakedret
+    - nestif
+    - rowserrcheck
+    - sqlclosecheck
+    - staticcheck
+    - structcheck
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
+    - varcheck
+    - whitespace
+    - durationcheck
+    - forbidigo
+    - forcetypeassert
+    - ifshort
+    - importas
+    - nilerr
+    - predeclared
+    - thelper
+    - tparallel
+    - wastedassign
+    - promlinter
+    # - bodyclose
+    # - dupl
+    # - gochecknoglobals
+    # - gochecknoinits
+    # - goconst
+    # - gocritic
+    # - godot
+    # - godox
+    # - goerr113
+    # - gosec
+    # - noctx
+    # - prealloc
+    # - stylecheck
+    # - testpackage
+    # - wsl
+    # - funlen
+    # - cyclop
+    # - errorlint
+    # - nlreturn
+    # - revive
+    # - tagliatelle
+
+issues:
+  exclude-rules:
+    # - path: (_test\.go|tests)
+    #   linters:
+    #     - gosec
+    #     - noctx
+    - linters:
+        - lll
+      source: "^//go:generate "

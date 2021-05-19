@@ -2,8 +2,9 @@ package server
 
 import (
 	"context"
-	"github.com/zhashkevych/creatly-backend/internal/config"
 	"net/http"
+
+	"github.com/zhashkevych/creatly-backend/internal/config"
 )
 
 type Server struct {

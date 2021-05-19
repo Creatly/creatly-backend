@@ -2,10 +2,11 @@ package v1
 
 import (
 	"bytes"
-	"github.com/gin-gonic/gin"
-	"github.com/zhashkevych/creatly-backend/internal/service"
 	"net/http"
 	"strings"
+
+	"github.com/gin-gonic/gin"
+	"github.com/zhashkevych/creatly-backend/internal/service"
 )
 
 const (

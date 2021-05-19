@@ -3,9 +3,10 @@ package service
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/zhashkevych/creatly-backend/pkg/storage"
-	"time"
 )
 
 type FileType int

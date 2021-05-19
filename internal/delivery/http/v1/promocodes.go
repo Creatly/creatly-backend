@@ -1,9 +1,10 @@
 package v1
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/zhashkevych/creatly-backend/internal/service"
-	"net/http"
 )
 
 // @Summary Get PromoCode By Code

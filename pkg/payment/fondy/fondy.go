@@ -6,12 +6,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/fatih/structs"
-	"github.com/zhashkevych/creatly-backend/pkg/payment"
 	"io/ioutil"
 	"net/http"
 	"sort"
 	"strings"
+
+	"github.com/fatih/structs"
+	"github.com/zhashkevych/creatly-backend/pkg/payment"
 )
 
 // Documentation
@@ -155,7 +156,7 @@ func generateSignature(params map[string]interface{}, password string) string {
 	return fmt.Sprintf("%x", hash.Sum(nil))
 }
 
-// FondyClient is a fondy payment provider API client
+// FondyClient is a fondy payment provider API client.
 type FondyClient struct {
 	merchantId       string
 	merchantPassword string
@@ -165,7 +166,7 @@ func NewFondyClient(merchantId string, merchantPassword string) *FondyClient {
 	return &FondyClient{merchantId: merchantId, merchantPassword: merchantPassword}
 }
 
-// GeneratePaymentLink returns payment URL for provided order info
+// GeneratePaymentLink returns payment URL for provided order info.
 func (c *FondyClient) GeneratePaymentLink(input payment.GeneratePaymentLinkInput) (string, error) {
 	checkoutReq := &checkoutRequest{
 		OrderId:           input.OrderId,

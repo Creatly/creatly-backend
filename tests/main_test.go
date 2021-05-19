@@ -25,9 +25,7 @@ const (
 	listId = "123456"
 )
 
-var (
-	dbURI, dbName string
-)
+var dbURI, dbName string
 
 func init() {
 	dbURI = os.Getenv("TEST_DB_URI")
@@ -134,6 +132,7 @@ func (s *APITestSuite) initMocks() {
 		otpGenerator:  new(otp.MockGenerator),
 	}
 }
+
 func TestMain(m *testing.M) {
 	rc := m.Run()
 	os.Exit(rc)

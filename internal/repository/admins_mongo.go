@@ -27,8 +27,10 @@ func (r *AdminsRepo) GetByCredentials(ctx context.Context, schoolId primitive.Ob
 
 func (r *AdminsRepo) GetByRefreshToken(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (domain.Admin, error) {
 	var admin domain.Admin
-	err := r.db.FindOne(ctx, bson.M{"session.refreshToken": refreshToken, "schoolId": schoolId,
-		"session.expiresAt": bson.M{"$gt": time.Now()}}).Decode(&admin)
+	err := r.db.FindOne(ctx, bson.M{
+		"session.refreshToken": refreshToken, "schoolId": schoolId,
+		"session.expiresAt": bson.M{"$gt": time.Now()},
+	}).Decode(&admin)
 
 	return admin, err
 }
