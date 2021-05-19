@@ -100,7 +100,7 @@ func (h *Handler) initAdminRoutes(api *gin.RouterGroup) { //nolint:funlen
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/sign-in [post].
+// @Router /admins/sign-in [post]
 func (h *Handler) adminSignIn(c *gin.Context) {
 	var inp signInInput
 	if err := c.BindJSON(&inp); err != nil {
@@ -140,7 +140,7 @@ func (h *Handler) adminSignIn(c *gin.Context) {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/auth/refresh [post].
+// @Router /admins/auth/refresh [post]
 func (h *Handler) adminRefresh(c *gin.Context) {
 	var inp refreshInput
 	if err := c.BindJSON(&inp); err != nil {
@@ -182,7 +182,7 @@ type createCourseInput struct {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/courses [post].
+// @Router /admins/courses [post]
 func (h *Handler) adminCreateCourse(c *gin.Context) {
 	var inp createCourseInput
 	if err := c.BindJSON(&inp); err != nil {
@@ -216,7 +216,7 @@ func (h *Handler) adminCreateCourse(c *gin.Context) {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/courses [get].
+// @Router /admins/courses [get]
 func (h *Handler) adminGetAllCourses(c *gin.Context) {
 	school, err := getSchoolFromContext(c)
 	if err != nil {
@@ -250,7 +250,7 @@ type adminGetCourseByIdResponse struct {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/courses/{id} [get].
+// @Router /admins/courses/{id} [get]
 func (h *Handler) adminGetCourseById(c *gin.Context) {
 	idParam := c.Param("id")
 	if idParam == "" {
@@ -309,7 +309,7 @@ type updateCourseInput struct {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/courses/{id} [put].
+// @Router /admins/courses/{id} [put]
 func (h *Handler) adminUpdateCourse(c *gin.Context) {
 	idParam := c.Param("id")
 	if idParam == "" {
@@ -358,7 +358,7 @@ func (h *Handler) adminUpdateCourse(c *gin.Context) {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/courses/{id} [delete].
+// @Router /admins/courses/{id} [delete]
 func (h *Handler) adminDeleteCourse(c *gin.Context) {
 	idParam := c.Param("id")
 	if idParam == "" {
@@ -404,7 +404,7 @@ type createModuleInput struct {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/courses/{id}/modules [post].
+// @Router /admins/courses/{id}/modules [post]
 func (h *Handler) adminCreateModule(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
@@ -450,7 +450,7 @@ type updateModuleInput struct {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/modules/{id} [put].
+// @Router /admins/modules/{id} [put]
 func (h *Handler) adminUpdateModule(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
@@ -490,7 +490,7 @@ func (h *Handler) adminUpdateModule(c *gin.Context) {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/modules/{id} [delete].
+// @Router /admins/modules/{id} [delete]
 func (h *Handler) adminDeleteModule(c *gin.Context) {
 	idParam := c.Param("id")
 	if idParam == "" {
@@ -531,7 +531,7 @@ func (h *Handler) adminDeleteModule(c *gin.Context) {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/modules/{id}/lessons [get].
+// @Router /admins/modules/{id}/lessons [get]
 func (h *Handler) adminGetLessons(c *gin.Context) {
 	moduleIdParam := c.Param("id")
 	if moduleIdParam == "" {
@@ -578,7 +578,7 @@ type createLessonInput struct {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/modules/{id}/lessons [post].
+// @Router /admins/modules/{id}/lessons [post]
 func (h *Handler) adminCreateLesson(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
@@ -617,7 +617,7 @@ func (h *Handler) adminCreateLesson(c *gin.Context) {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/lessons/{id} [get].
+// @Router /admins/lessons/{id} [get]
 func (h *Handler) adminGetLessonById(c *gin.Context) {
 	idParam := c.Param("id")
 	if idParam == "" {
@@ -660,7 +660,7 @@ type updateLessonInput struct {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/lessons/{id} [put].
+// @Router /admins/lessons/{id} [put]
 func (h *Handler) adminUpdateLesson(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
@@ -701,7 +701,7 @@ func (h *Handler) adminUpdateLesson(c *gin.Context) {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/lessons/{id} [delete].
+// @Router /admins/lessons/{id} [delete]
 func (h *Handler) adminDeleteLesson(c *gin.Context) {
 	idParam := c.Param("id")
 	if idParam == "" {
@@ -748,7 +748,7 @@ type createPackageInput struct {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/courses/{id}/packages [post].
+// @Router /admins/courses/{id}/packages [post]
 func (h *Handler) adminCreatePackage(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
@@ -787,7 +787,7 @@ func (h *Handler) adminCreatePackage(c *gin.Context) {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/courses/{id}/packages [get].
+// @Router /admins/courses/{id}/packages [get]
 func (h *Handler) adminGetAllPackages(c *gin.Context) {
 	idParam := c.Param("id")
 	if idParam == "" {
@@ -822,7 +822,7 @@ func (h *Handler) adminGetAllPackages(c *gin.Context) {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/packages/{id} [get].
+// @Router /admins/packages/{id} [get]
 func (h *Handler) adminGetPackageById(c *gin.Context) {
 	idParam := c.Param("id")
 	if idParam == "" {
@@ -864,7 +864,7 @@ type updatePackageInput struct {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/packages/{id} [put].
+// @Router /admins/packages/{id} [put]
 func (h *Handler) adminUpdatePackage(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
@@ -903,7 +903,7 @@ func (h *Handler) adminUpdatePackage(c *gin.Context) {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/packages/{id} [delete].
+// @Router /admins/packages/{id} [delete]
 func (h *Handler) adminDeletePackage(c *gin.Context) {
 	idParam := c.Param("id")
 	if idParam == "" {
@@ -951,7 +951,7 @@ type createOfferInput struct {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/offers [post].
+// @Router /admins/offers [post]
 func (h *Handler) adminCreateOffer(c *gin.Context) {
 	var inp createOfferInput
 	if err := c.BindJSON(&inp); err != nil {
@@ -994,7 +994,7 @@ func (h *Handler) adminCreateOffer(c *gin.Context) {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/offers [get].
+// @Router /admins/offers [get]
 func (h *Handler) adminGetAllOffers(c *gin.Context) {
 	school, err := getSchoolFromContext(c)
 	if err != nil {
@@ -1023,7 +1023,7 @@ func (h *Handler) adminGetAllOffers(c *gin.Context) {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/offers/{id} [get].
+// @Router /admins/offers/{id} [get]
 func (h *Handler) adminGetOfferById(c *gin.Context) {
 	idParam := c.Param("id")
 	if idParam == "" {
@@ -1067,7 +1067,7 @@ type updateOfferInput struct {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/offers/{id} [put].
+// @Router /admins/offers/{id} [put]
 func (h *Handler) adminUpdateOffer(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
@@ -1116,7 +1116,7 @@ func (h *Handler) adminUpdateOffer(c *gin.Context) {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/offers/{id} [delete].
+// @Router /admins/offers/{id} [delete]
 func (h *Handler) adminDeleteOffer(c *gin.Context) {
 	idParam := c.Param("id")
 	if idParam == "" {
@@ -1164,7 +1164,7 @@ type createPromocodeInput struct {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/promocodes [post].
+// @Router /admins/promocodes [post]
 func (h *Handler) adminCreatePromocode(c *gin.Context) {
 	var inp createPromocodeInput
 	if err := c.BindJSON(&inp); err != nil {
@@ -1204,7 +1204,7 @@ func (h *Handler) adminCreatePromocode(c *gin.Context) {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/promocodes [get].
+// @Router /admins/promocodes [get]
 func (h *Handler) adminGetPromocodes(c *gin.Context) {
 	school, err := getSchoolFromContext(c)
 	if err != nil {
@@ -1233,7 +1233,7 @@ func (h *Handler) adminGetPromocodes(c *gin.Context) {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/promocodes/{id} [get].
+// @Router /admins/promocodes/{id} [get]
 func (h *Handler) adminGetPromocodeById(c *gin.Context) {
 	idParam := c.Param("id")
 	if idParam == "" {
@@ -1282,7 +1282,7 @@ type updatePromocodeInput struct {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/promocodes/{id} [put].
+// @Router /admins/promocodes/{id} [put]
 func (h *Handler) adminUpdatePromocode(c *gin.Context) {
 	idParam := c.Param("id")
 	if idParam == "" {
@@ -1336,7 +1336,7 @@ func (h *Handler) adminUpdatePromocode(c *gin.Context) {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/promocodes/{id} [delete].
+// @Router /admins/promocodes/{id} [delete]
 func (h *Handler) adminDeletePromocode(c *gin.Context) {
 	idParam := c.Param("id")
 	if idParam == "" {
@@ -1398,7 +1398,7 @@ type updateSchoolSettingsInput struct {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/school/settings [put].
+// @Router /admins/school/settings [put]
 func (h *Handler) adminUpdateSchoolSettings(c *gin.Context) {
 	school, err := getSchoolFromContext(c)
 	if err != nil {
@@ -1455,7 +1455,7 @@ func (h *Handler) adminUpdateSchoolSettings(c *gin.Context) {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/orders [get].
+// @Router /admins/orders [get]
 func (h *Handler) adminGetOrders(c *gin.Context) {
 	school, err := getSchoolFromContext(c)
 	if err != nil {
@@ -1504,7 +1504,7 @@ func toStudentsResponse(students []domain.Student) []studentResponse {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/students [get].
+// @Router /admins/students [get]
 func (h *Handler) adminGetStudents(c *gin.Context) {
 	school, err := getSchoolFromContext(c)
 	if err != nil {

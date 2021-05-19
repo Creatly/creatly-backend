@@ -42,7 +42,7 @@ type uploadResponse struct {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/upload/image [post].
+// @Router /admins/upload/image [post]
 func (h *Handler) adminUploadImage(c *gin.Context) {
 	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, maxImageUploadSize)
 
@@ -103,7 +103,7 @@ func (h *Handler) adminUploadImage(c *gin.Context) {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/upload/video [post].
+// @Router /admins/upload/video [post]
 func (h *Handler) adminUploadVideo(c *gin.Context) {
 	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, maxVideoUploadSize)
 

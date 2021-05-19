@@ -77,6 +77,9 @@ issues:
         - funlen
         #- gosec
         #- noctx
+    - path: (internal/delivery/http)
+      linters:
+        - godot
     - linters:
         - lll
       source: "^//go:generate "
