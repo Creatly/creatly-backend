@@ -4,13 +4,12 @@ import (
 	"context"
 	"time"
 
-	"github.com/zhashkevych/creatly-backend/pkg/otp"
-
 	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"github.com/zhashkevych/creatly-backend/internal/repository"
 	"github.com/zhashkevych/creatly-backend/pkg/auth"
 	"github.com/zhashkevych/creatly-backend/pkg/hash"
 	"github.com/zhashkevych/creatly-backend/pkg/logger"
+	"github.com/zhashkevych/creatly-backend/pkg/otp"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -97,11 +96,13 @@ func (s *StudentsService) SignIn(ctx context.Context, input SignInInput) (Tokens
 	if err != nil {
 		return Tokens{}, err
 	}
+
 	student, err := s.repo.GetByCredentials(ctx, input.SchoolID, input.Email, passwordHash)
 	if err != nil {
 		if err == repository.ErrUserNotFound {
 			return Tokens{}, ErrUserNotFound
 		}
+
 		return Tokens{}, err
 	}
 
@@ -203,12 +204,14 @@ func (s *StudentsService) GiveAccessToPackages(ctx context.Context, studentId pr
 
 	moduleIds := make([]primitive.ObjectID, len(modules))
 	courses := map[primitive.ObjectID]struct{}{}
+
 	for i := range modules {
 		moduleIds[i] = modules[i].ID
 		courses[modules[i].CourseID] = struct{}{}
 	}
 
 	courseIds := make([]primitive.ObjectID, 0)
+
 	for id := range courses {
 		courseIds = append(courseIds, id)
 	}
@@ -223,6 +226,7 @@ func (s *StudentsService) GetAvailableCourses(ctx context.Context, school domain
 	}
 
 	courses := make([]domain.Course, 0)
+
 	for _, id := range student.AvailableCourses {
 		for _, course := range school.Courses {
 			if id == course.ID {
@@ -264,6 +268,7 @@ func (s *StudentsService) createSession(ctx context.Context, studentId primitive
 	}
 
 	err = s.repo.SetSession(ctx, studentId, session)
+
 	return res, err
 }
 

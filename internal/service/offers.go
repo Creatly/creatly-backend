@@ -29,6 +29,7 @@ func (s *OffersService) GetByPackage(ctx context.Context, schoolId, packageId pr
 	}
 
 	result := make([]domain.Offer, 0)
+
 	for _, offer := range offers {
 		if inArray(offer.PackageIDs, packageId) {
 			result = append(result, offer)
@@ -119,5 +120,6 @@ func inArray(array []primitive.ObjectID, searchedItem primitive.ObjectID) bool {
 			return true
 		}
 	}
+
 	return false
 }

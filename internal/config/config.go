@@ -118,7 +118,7 @@ type (
 )
 
 // Init populates Config struct with values from config file
-//located at filepath and environment variables
+// located at filepath and environment variables.
 func Init(configsDir string) (*Config, error) {
 	populateDefaults()
 
@@ -218,6 +218,7 @@ func setFromEnv(cfg *Config) {
 func parseConfigFile(folder, env string) error {
 	viper.AddConfigPath(folder)
 	viper.SetConfigName("main")
+
 	if err := viper.ReadInConfig(); err != nil {
 		return err
 	}
@@ -227,6 +228,7 @@ func parseConfigFile(folder, env string) error {
 	}
 
 	viper.SetConfigName(env)
+
 	return viper.MergeInConfig()
 }
 
@@ -289,6 +291,7 @@ func parseEnv() error {
 
 func parseMongoEnvVariables() error {
 	viper.SetEnvPrefix("mongo")
+
 	if err := viper.BindEnv("uri"); err != nil {
 		return err
 	}
@@ -302,6 +305,7 @@ func parseMongoEnvVariables() error {
 
 func parseSendPulseEnvVariables() error {
 	viper.SetEnvPrefix("sendpulse")
+
 	if err := viper.BindEnv("listid"); err != nil {
 		return err
 	}
@@ -315,6 +319,7 @@ func parseSendPulseEnvVariables() error {
 
 func parseFondyEnvVariables() error {
 	viper.SetEnvPrefix("fondy")
+
 	if err := viper.BindEnv("merchant_id"); err != nil {
 		return err
 	}
@@ -372,6 +377,7 @@ func parseAppEnvFromEnv() error {
 
 func parseStorageEnvVariables() error {
 	viper.SetEnvPrefix("storage")
+
 	if err := viper.BindEnv("bucket"); err != nil {
 		return err
 	}

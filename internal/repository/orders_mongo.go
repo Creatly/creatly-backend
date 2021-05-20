@@ -26,6 +26,7 @@ func (r *OrdersRepo) Create(ctx context.Context, order domain.Order) error {
 
 func (r *OrdersRepo) AddTransaction(ctx context.Context, id primitive.ObjectID, transaction domain.Transaction) (domain.Order, error) {
 	var order domain.Order
+
 	res := r.db.FindOneAndUpdate(ctx, bson.M{"_id": id}, bson.M{
 		"$set": bson.M{
 			"status": transaction.Status,
@@ -39,6 +40,7 @@ func (r *OrdersRepo) AddTransaction(ctx context.Context, id primitive.ObjectID, 
 	}
 
 	err := res.Decode(&order)
+
 	return order, err
 }
 
@@ -50,5 +52,6 @@ func (r *OrdersRepo) GetBySchool(ctx context.Context, schoolId primitive.ObjectI
 
 	var orders []domain.Order
 	err = cur.All(ctx, &orders)
+
 	return orders, err
 }

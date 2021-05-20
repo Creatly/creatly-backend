@@ -73,6 +73,7 @@ func (h *Handler) studentSignUp(c *gin.Context) {
 		}
 
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -126,6 +127,7 @@ func (h *Handler) studentSignIn(c *gin.Context) {
 		}
 
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -201,6 +203,7 @@ func (h *Handler) studentVerify(c *gin.Context) {
 		}
 
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -253,6 +256,7 @@ func (h *Handler) studentGetModuleLessons(c *gin.Context) {
 		}
 
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -297,7 +301,9 @@ func (h *Handler) studentGetLesson(c *gin.Context) {
 			newResponse(c, http.StatusForbidden, err.Error())
 			return
 		}
+
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -339,9 +345,12 @@ func (h *Handler) studentSetLessonFinished(c *gin.Context) {
 	if err := h.services.Students.SetLessonFinished(c.Request.Context(), studentId, lessonId); err != nil {
 		if err == service.ErrModuleIsNotAvailable {
 			newResponse(c, http.StatusForbidden, err.Error())
+
 			return
 		}
+
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -462,6 +471,7 @@ func (h *Handler) studentCreateOrder(c *gin.Context) {
 
 	if inp.PromoId != "" {
 		var err error
+
 		promoId, err = primitive.ObjectIDFromHex(inp.PromoId)
 		if err != nil {
 			newResponse(c, http.StatusBadRequest, "invalid promo id")

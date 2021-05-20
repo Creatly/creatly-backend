@@ -2,12 +2,13 @@ package v1
 
 import (
 	"errors"
+	"net/http"
+	"strings"
+
 	"github.com/gin-gonic/gin"
 	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"github.com/zhashkevych/creatly-backend/pkg/logger"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"net/http"
-	"strings"
 )
 
 const (
@@ -19,10 +20,12 @@ const (
 
 func (h *Handler) setSchoolFromRequest(c *gin.Context) {
 	host := parseRequestHost(c)
+
 	school, err := h.services.Schools.GetByDomain(c.Request.Context(), host)
 	if err != nil {
 		logger.Error(err)
 		c.AbortWithStatus(http.StatusForbidden)
+
 		return
 	}
 
@@ -39,6 +42,7 @@ func parseRequestHost(c *gin.Context) string {
 	}
 
 	hostParts := strings.Split(refererParts[2], ":")
+
 	return hostParts[0]
 }
 
@@ -105,7 +109,7 @@ func getStudentId(c *gin.Context) (primitive.ObjectID, error) {
 
 	id, err := primitive.ObjectIDFromHex(idStr)
 	if err != nil {
-		return primitive.ObjectID{}, nil
+		return primitive.ObjectID{}, err
 	}
 
 	return id, nil

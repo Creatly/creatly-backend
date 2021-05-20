@@ -22,6 +22,7 @@ func (r *StudentLessonsRepo) AddFinished(ctx context.Context, studentId, lessonI
 	update := bson.M{"$addToSet": bson.M{"finished": lessonId}}
 
 	_, err := r.db.UpdateOne(ctx, filter, update, options.Update().SetUpsert(true))
+
 	return err
 }
 
@@ -30,5 +31,6 @@ func (r *StudentLessonsRepo) SetLastOpened(ctx context.Context, studentId, lesso
 	update := bson.M{"$set": bson.M{"lastOpened": lessonId}}
 
 	_, err := r.db.UpdateOne(ctx, filter, update, options.Update().SetUpsert(true))
+
 	return err
 }

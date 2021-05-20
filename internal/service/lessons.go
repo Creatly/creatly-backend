@@ -51,6 +51,7 @@ func (s *LessonsService) GetById(ctx context.Context, lessonId primitive.ObjectI
 	}
 
 	var lesson domain.Lesson
+
 	for _, l := range module.Lessons {
 		if l.ID == lessonId {
 			lesson = l

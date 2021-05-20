@@ -12,13 +12,13 @@ import (
 
 // TODO: review response error messages
 
-func (h *Handler) initAdminRoutes(api *gin.RouterGroup) {
-	students := api.Group("/admins", h.setSchoolFromRequest)
+func (h *Handler) initAdminRoutes(api *gin.RouterGroup) { //nolint:funlen
+	admins := api.Group("/admins", h.setSchoolFromRequest)
 	{
-		students.POST("/sign-in", h.adminSignIn)
-		students.POST("/auth/refresh", h.adminRefresh)
+		admins.POST("/sign-in", h.adminSignIn)
+		admins.POST("/auth/refresh", h.adminRefresh)
 
-		authenticated := students.Group("/", h.adminIdentity)
+		authenticated := admins.Group("/", h.adminIdentity)
 		{
 			courses := authenticated.Group("/courses")
 			{
@@ -553,6 +553,7 @@ func (h *Handler) adminGetLessons(c *gin.Context) {
 		}
 
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -1501,6 +1502,7 @@ func toStudentsResponse(students []domain.Student) []studentResponse {
 		out[i].RegisteredAt = student.RegisteredAt
 		out[i].LastVisitAt = student.LastVisitAt
 	}
+
 	return out
 }
 

@@ -21,6 +21,7 @@ func NewCoursesRepo(db *mongo.Database) *CoursesRepo {
 func (r *CoursesRepo) Create(ctx context.Context, schoolId primitive.ObjectID, course domain.Course) (primitive.ObjectID, error) {
 	course.ID = primitive.NewObjectID()
 	_, err := r.db.UpdateOne(ctx, bson.M{"_id": schoolId}, bson.M{"$push": bson.M{"courses": course}})
+
 	return course.ID, err
 }
 

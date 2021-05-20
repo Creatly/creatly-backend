@@ -3,8 +3,9 @@ package email
 import (
 	"bytes"
 	"errors"
-	"github.com/zhashkevych/creatly-backend/pkg/logger"
 	"html/template"
+
+	"github.com/zhashkevych/creatly-backend/pkg/logger"
 )
 
 type SendEmailInput struct {

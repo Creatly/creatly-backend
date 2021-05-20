@@ -1,9 +1,10 @@
 package tests
 
 import (
+	"time"
+
 	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"time"
 )
 
 var (

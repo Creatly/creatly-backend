@@ -2,10 +2,11 @@ package v1
 
 import (
 	"bytes"
-	"github.com/gin-gonic/gin"
-	"github.com/zhashkevych/creatly-backend/internal/service"
 	"net/http"
 	"strings"
+
+	"github.com/gin-gonic/gin"
+	"github.com/zhashkevych/creatly-backend/internal/service"
 )
 
 const (
@@ -44,6 +45,7 @@ type uploadResponse struct {
 // @Router /admins/upload/image [post]
 func (h *Handler) adminUploadImage(c *gin.Context) {
 	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, maxImageUploadSize)
+
 	file, fileHeader, err := c.Request.FormFile("file")
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
@@ -53,8 +55,8 @@ func (h *Handler) adminUploadImage(c *gin.Context) {
 	defer file.Close()
 
 	buffer := make([]byte, fileHeader.Size)
-	_, err = file.Read(buffer)
-	if err != nil {
+
+	if _, err := file.Read(buffer); err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -104,6 +106,7 @@ func (h *Handler) adminUploadImage(c *gin.Context) {
 // @Router /admins/upload/video [post]
 func (h *Handler) adminUploadVideo(c *gin.Context) {
 	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, maxVideoUploadSize)
+
 	file, fileHeader, err := c.Request.FormFile("file")
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
@@ -113,8 +116,8 @@ func (h *Handler) adminUploadVideo(c *gin.Context) {
 	defer file.Close()
 
 	buffer := make([]byte, fileHeader.Size)
-	_, err = file.Read(buffer)
-	if err != nil {
+
+	if _, err = file.Read(buffer); err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}

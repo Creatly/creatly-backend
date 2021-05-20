@@ -25,9 +25,7 @@ const (
 	listId = "123456"
 )
 
-var (
-	dbURI, dbName string
-)
+var dbURI, dbName string
 
 func init() {
 	dbURI = os.Getenv("TEST_DB_URI")
@@ -85,10 +83,12 @@ func (s *APITestSuite) initDeps() {
 	repos := repository.NewRepositories(s.db)
 	memCache := cache.NewMemoryCache()
 	hasher := hash.NewSHA1Hasher("salt")
+
 	tokenManager, err := auth.NewManager("signing_key")
 	if err != nil {
 		s.FailNow("Failed to initialize token manager", err)
 	}
+
 	paymentProvider := fondy.NewFondyClient("1396424", "test") // Fondy Testing Credentials
 
 	services := service.NewServices(service.Deps{
@@ -134,6 +134,7 @@ func (s *APITestSuite) initMocks() {
 		otpGenerator:  new(otp.MockGenerator),
 	}
 }
+
 func TestMain(m *testing.M) {
 	rc := m.Run()
 	os.Exit(rc)

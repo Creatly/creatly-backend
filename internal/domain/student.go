@@ -26,6 +26,7 @@ func (s Student) IsModuleAvailable(m Module) bool {
 			return true
 		}
 	}
+
 	return false
 }
 

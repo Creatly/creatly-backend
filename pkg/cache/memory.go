@@ -17,10 +17,11 @@ type MemoryCache struct {
 	sync.RWMutex
 }
 
-// NewMemoryCache uses map to store key:value data in-memory
+// NewMemoryCache uses map to store key:value data in-memory.
 func NewMemoryCache() *MemoryCache {
 	c := &MemoryCache{cache: make(map[interface{}]*item)}
 	go c.setTtlTimer()
+
 	return c
 }
 

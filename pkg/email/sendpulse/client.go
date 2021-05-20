@@ -5,12 +5,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/zhashkevych/creatly-backend/pkg/cache"
-	"github.com/zhashkevych/creatly-backend/pkg/email"
-	"github.com/zhashkevych/creatly-backend/pkg/logger"
 	"io/ioutil"
 	"net/http"
 	"time"
+
+	"github.com/zhashkevych/creatly-backend/pkg/cache"
+	"github.com/zhashkevych/creatly-backend/pkg/email"
+	"github.com/zhashkevych/creatly-backend/pkg/logger"
 )
 
 // Documentation https://sendpulse.com/integrations/api
@@ -47,7 +48,7 @@ type emailInfo struct {
 	Variables map[string]string `json:"variables"`
 }
 
-// Client is SendPulse API client implementation
+// Client is SendPulse API client implementation.
 type Client struct {
 	id     string
 	secret string
@@ -59,7 +60,7 @@ func NewClient(id, secret string, cache cache.Cache) *Client {
 	return &Client{id: id, secret: secret, cache: cache}
 }
 
-// AddEmailToList adds lead to provided email list with specific variables
+// AddEmailToList adds lead to provided email list with specific variables.
 func (c *Client) AddEmailToList(input email.AddEmailInput) error {
 	token, err := c.getToken()
 	if err != nil {
@@ -123,6 +124,7 @@ func (c *Client) getToken() (string, error) {
 	}
 
 	err = c.cache.Set("t", token, cacheTTL)
+
 	return token.(string), err
 }
 
@@ -132,6 +134,7 @@ func (c *Client) authenticate() (string, error) {
 		ClientID:     c.id,
 		ClientSecret: c.secret,
 	}
+
 	reqBody, err := json.Marshal(reqData)
 	if err != nil {
 		return "", err
@@ -148,6 +151,7 @@ func (c *Client) authenticate() (string, error) {
 	}
 
 	var respData authResponse
+
 	respBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return "", err

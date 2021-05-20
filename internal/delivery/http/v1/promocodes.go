@@ -1,9 +1,10 @@
 package v1
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/zhashkevych/creatly-backend/internal/service"
-	"net/http"
 )
 
 // @Summary Get PromoCode By Code
@@ -37,7 +38,9 @@ func (h *Handler) getPromo(c *gin.Context) {
 			newResponse(c, http.StatusBadRequest, err.Error())
 			return
 		}
+
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 

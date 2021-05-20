@@ -36,10 +36,12 @@ func (s *CoursesService) Update(ctx context.Context, inp UpdateCourseInput) erro
 	}
 
 	var err error
+
 	updateInput.ID, err = primitive.ObjectIDFromHex(inp.CourseID)
 	if err != nil {
 		return err
 	}
+
 	updateInput.SchoolID, err = primitive.ObjectIDFromHex(inp.SchoolID)
 	if err != nil {
 		return err

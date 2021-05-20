@@ -28,18 +28,21 @@ func (r *PackagesRepo) Create(ctx context.Context, pkg domain.Package) (primitiv
 
 func (r *PackagesRepo) GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Package, error) {
 	var packages []domain.Package
+
 	cur, err := r.db.Find(ctx, bson.M{"courseId": courseId})
 	if err != nil {
 		return packages, err
 	}
 
 	err = cur.All(ctx, &packages)
+
 	return packages, err
 }
 
 func (r *PackagesRepo) GetById(ctx context.Context, id primitive.ObjectID) (domain.Package, error) {
 	var pkg domain.Package
 	err := r.db.FindOne(ctx, bson.M{"_id": id}).Decode(&pkg)
+
 	return pkg, err
 }
 
