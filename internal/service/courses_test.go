@@ -19,6 +19,8 @@ type testCoursesServiceUpdate struct {
 }
 
 func mockCoursesService(t *testing.T) (*service.CoursesService, *mock_repository.MockCourses, *service.ModulesService, *mock_repository.MockLessonContent) {
+	t.Helper()
+
 	mockCtl := gomock.NewController(t)
 	defer mockCtl.Finish()
 
