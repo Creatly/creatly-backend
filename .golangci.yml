@@ -31,7 +31,6 @@ linters:
     - structcheck
     - typecheck
     - unconvert
-    - unparam
     - unused
     - varcheck
     - whitespace
@@ -67,6 +66,7 @@ linters:
     # - nlreturn
     # - revive
     # - tagliatelle
+    #- unparam
 
 issues:
   exclude-rules:
