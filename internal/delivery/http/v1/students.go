@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -67,7 +68,7 @@ func (h *Handler) studentSignUp(c *gin.Context) {
 		Password: inp.Password,
 		SchoolID: school.ID,
 	}); err != nil {
-		if err == service.ErrUserAlreadyExists {
+		if errors.Is(err, service.ErrUserAlreadyExists) {
 			newResponse(c, http.StatusBadRequest, err.Error())
 			return
 		}
@@ -121,7 +122,7 @@ func (h *Handler) studentSignIn(c *gin.Context) {
 		Password: inp.Password,
 	})
 	if err != nil {
-		if err == service.ErrUserNotFound {
+		if errors.Is(err, service.ErrUserNotFound) {
 			newResponse(c, http.StatusBadRequest, err.Error())
 			return
 		}
@@ -197,7 +198,7 @@ func (h *Handler) studentVerify(c *gin.Context) {
 	}
 
 	if err := h.services.Students.Verify(c.Request.Context(), code); err != nil {
-		if err == service.ErrVerificationCodeInvalid {
+		if errors.Is(err, service.ErrVerificationCodeInvalid) {
 			newResponse(c, http.StatusBadRequest, err.Error())
 			return
 		}
@@ -250,7 +251,7 @@ func (h *Handler) studentGetModuleLessons(c *gin.Context) {
 
 	lessons, err := h.services.Students.GetModuleLessons(c.Request.Context(), school.ID, studentId, moduleId)
 	if err != nil {
-		if err == service.ErrModuleIsNotAvailable {
+		if errors.Is(err, service.ErrModuleIsNotAvailable) {
 			newResponse(c, http.StatusForbidden, err.Error())
 			return
 		}
@@ -297,7 +298,7 @@ func (h *Handler) studentGetLesson(c *gin.Context) {
 
 	lesson, err := h.services.Students.GetLesson(c.Request.Context(), studentId, lessonId)
 	if err != nil {
-		if err == service.ErrModuleIsNotAvailable {
+		if errors.Is(err, service.ErrModuleIsNotAvailable) {
 			newResponse(c, http.StatusForbidden, err.Error())
 			return
 		}
@@ -343,7 +344,7 @@ func (h *Handler) studentSetLessonFinished(c *gin.Context) {
 	}
 
 	if err := h.services.Students.SetLessonFinished(c.Request.Context(), studentId, lessonId); err != nil {
-		if err == service.ErrModuleIsNotAvailable {
+		if errors.Is(err, service.ErrModuleIsNotAvailable) {
 			newResponse(c, http.StatusForbidden, err.Error())
 
 			return

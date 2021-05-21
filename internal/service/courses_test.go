@@ -12,13 +12,21 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type testCoursesServiceUpdate struct {
-	input       service.UpdateCourseInput
-	mock        func()
-	expectedErr error
-}
+type (
+	testCoursesServiceUpdate struct {
+		input       service.UpdateCourseInput
+		mock        func()
+		expectedErr error
+	}
+	testCoursesServiceDelete struct {
+		schoolID    primitive.ObjectID
+		courseID    primitive.ObjectID
+		mock        func()
+		expectedErr error
+	}
+)
 
-func mockCoursesService(t *testing.T) (*service.CoursesService, *mock_repository.MockCourses, *service.ModulesService, *mock_repository.MockLessonContent) {
+func mockCoursesService(t *testing.T) (*service.CoursesService, *mock_repository.MockCourses, *mock_repository.MockModules, *mock_repository.MockLessonContent) {
 	t.Helper()
 
 	mockCtl := gomock.NewController(t)
@@ -32,7 +40,7 @@ func mockCoursesService(t *testing.T) (*service.CoursesService, *mock_repository
 
 	coursesService := service.NewCoursesService(coursesRepo, modulesService)
 
-	return coursesService, coursesRepo, modulesService, lessonsContentRepo
+	return coursesService, coursesRepo, modulesRepo, lessonsContentRepo
 }
 
 func TestNewCoursesService_CreateErr(t *testing.T) {
@@ -102,6 +110,62 @@ func TestCoursesServiceUpdate(t *testing.T) {
 			tc.mock()
 
 			err := coursesService.Update(ctx, tc.input)
+
+			require.True(t, errors.Is(err, tc.expectedErr))
+		})
+	}
+}
+
+func TestCoursesServiceDelete(t *testing.T) {
+	t.Parallel()
+
+	coursesService, coursesRepo, modulesRepo, lessonsContentRepo := mockCoursesService(t)
+	ctx := context.Background()
+
+	tests := map[string]testCoursesServiceDelete{
+		"delete course err": {
+			schoolID: primitive.NewObjectID(),
+			courseID: primitive.NewObjectID(),
+			mock: func() {
+				coursesRepo.EXPECT().Delete(ctx, gomock.Any(), gomock.Any()).Return(errInternalServErr)
+			},
+			expectedErr: errInternalServErr,
+		},
+		"delete module by course err": {
+			schoolID: primitive.NewObjectID(),
+			courseID: primitive.NewObjectID(),
+			mock: func() {
+				coursesRepo.EXPECT().Delete(ctx, gomock.Any(), gomock.Any())
+				modulesRepo.EXPECT().GetByCourse(ctx, gomock.Any()).Return(nil, errInternalServErr)
+				modulesRepo.EXPECT().DeleteByCourse(ctx, gomock.Any(), gomock.Any())
+				lessonsContentRepo.EXPECT().DeleteContent(ctx, gomock.Any(), gomock.Any())
+				modulesRepo.EXPECT().Delete(ctx, gomock.Any(), gomock.Any())
+			},
+			expectedErr: errInternalServErr,
+		},
+		"delete module by course": {
+			schoolID: primitive.NewObjectID(),
+			courseID: primitive.NewObjectID(),
+			mock: func() {
+				coursesRepo.EXPECT().Delete(ctx, gomock.Any(), gomock.Any())
+				modulesRepo.EXPECT().GetByCourse(ctx, gomock.Any())
+				modulesRepo.EXPECT().DeleteByCourse(ctx, gomock.Any(), gomock.Any())
+				lessonsContentRepo.EXPECT().DeleteContent(ctx, gomock.Any(), gomock.Any())
+				modulesRepo.EXPECT().Delete(ctx, gomock.Any(), gomock.Any())
+			},
+			expectedErr: nil,
+		},
+	}
+
+	for name, tc := range tests {
+		tc := tc
+
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+
+			tc.mock()
+
+			err := coursesService.Delete(ctx, tc.schoolID, tc.courseID)
 
 			require.True(t, errors.Is(err, tc.expectedErr))
 		})

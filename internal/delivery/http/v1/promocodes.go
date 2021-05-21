@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -34,7 +35,7 @@ func (h *Handler) getPromo(c *gin.Context) {
 
 	promocode, err := h.services.PromoCodes.GetByCode(c.Request.Context(), school.ID, code)
 	if err != nil {
-		if err == service.ErrPromoNotFound {
+		if errors.Is(err, service.ErrPromoNotFound) {
 			newResponse(c, http.StatusBadRequest, err.Error())
 			return
 		}
