@@ -166,7 +166,7 @@ func (s *ModulesService) DeleteByCourse(ctx context.Context, schoolId, courseId 
 }
 
 func sortLessons(lessons []domain.Lesson) {
-	sort.Slice(lessons[:], func(i, j int) bool {
+	sort.Slice(lessons, func(i, j int) bool {
 		return lessons[i].Position < lessons[j].Position
 	})
 }

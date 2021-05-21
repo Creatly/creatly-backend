@@ -19,6 +19,8 @@ import (
 var errInternalServErr = errors.New("test: internal server error")
 
 func mockAdminService(t *testing.T) (*service.AdminsService, *mock_repository.MockAdmins, *mock_repository.MockSchools) {
+	t.Helper()
+
 	mockCtl := gomock.NewController(t)
 	defer mockCtl.Finish()
 
