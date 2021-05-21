@@ -31,7 +31,6 @@ linters:
     - structcheck
     - typecheck
     - unconvert
-    - unparam
     - unused
     - varcheck
     - whitespace
@@ -54,7 +53,7 @@ linters:
     # - gochecknoglobals
     # - gochecknoinits
     # - goconst
-    # - gocritic
+    - gocritic
     # - godox
     # - goerr113
     # - gosec
@@ -67,6 +66,7 @@ linters:
     # - nlreturn
     # - revive
     # - tagliatelle
+    - unparam
 
 issues:
   exclude-rules:
@@ -75,11 +75,9 @@ issues:
         - bodyclose
         - dupl
         - funlen
+        - goerr113
         #- gosec
         #- noctx
     - path: (internal/delivery/http)
       linters:
         - godot
-    - linters:
-        - lll
-      source: "^//go:generate "

@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -28,7 +29,7 @@ func (h *Handler) handleFondyCallback(c *gin.Context) {
 	}
 
 	if err := h.services.Payments.ProcessTransaction(c.Request.Context(), inp); err != nil {
-		if err == service.ErrTransactionInvalid {
+		if errors.Is(err, service.ErrTransactionInvalid) {
 			newResponse(c, http.StatusBadRequest, err.Error())
 			return
 		}

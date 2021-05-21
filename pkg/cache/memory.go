@@ -6,6 +6,8 @@ import (
 	"time"
 )
 
+var ErrItemNotFound = errors.New("cache: item not found")
+
 type item struct {
 	value     interface{}
 	createdAt int64
@@ -57,7 +59,7 @@ func (c *MemoryCache) Get(key interface{}) (interface{}, error) {
 	c.RUnlock()
 
 	if !ex {
-		return nil, errors.New("not found")
+		return nil, ErrItemNotFound
 	}
 
 	return item.value, nil
