@@ -101,10 +101,16 @@ func (s *ModulesService) Create(ctx context.Context, inp CreateModuleInput) (pri
 		return id, err
 	}
 
+	schoolId, err := primitive.ObjectIDFromHex(inp.SchoolID)
+	if err != nil {
+		return id, err
+	}
+
 	module := domain.Module{
 		Name:     inp.Name,
 		Position: inp.Position,
 		CourseID: id,
+		SchoolID: schoolId,
 	}
 
 	return s.repo.Create(ctx, module)
@@ -116,8 +122,14 @@ func (s *ModulesService) Update(ctx context.Context, inp UpdateModuleInput) erro
 		return err
 	}
 
+	schoolId, err := primitive.ObjectIDFromHex(inp.SchoolID)
+	if err != nil {
+		return err
+	}
+
 	updateInput := repository.UpdateModuleInput{
 		ID:        id,
+		SchoolID:  schoolId,
 		Name:      inp.Name,
 		Position:  inp.Position,
 		Published: inp.Published,

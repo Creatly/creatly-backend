@@ -46,7 +46,7 @@ linters:
     - wastedassign
     - promlinter
     - bodyclose
-    - dupl
+#    - dupl
     - godot
     - funlen
     - wsl

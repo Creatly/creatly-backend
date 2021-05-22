@@ -252,21 +252,15 @@ type adminGetCourseByIdResponse struct {
 // @Failure default {object} response
 // @Router /admins/courses/{id} [get]
 func (h *Handler) adminGetCourseById(c *gin.Context) {
-	idParam := c.Param("id")
-	if idParam == "" {
-		newResponse(c, http.StatusBadRequest, "empty id param")
+	id, err := parseIdFromPath(c)
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	id, err := primitive.ObjectIDFromHex(idParam)
-	if err != nil {
-		newResponse(c, http.StatusBadRequest, "invalid id param")
 		return
 	}
 
@@ -360,15 +354,9 @@ func (h *Handler) adminUpdateCourse(c *gin.Context) {
 // @Failure default {object} response
 // @Router /admins/courses/{id} [delete]
 func (h *Handler) adminDeleteCourse(c *gin.Context) {
-	idParam := c.Param("id")
-	if idParam == "" {
-		newResponse(c, http.StatusBadRequest, "empty id param")
-		return
-	}
-
-	id, err := primitive.ObjectIDFromHex(idParam)
+	id, err := parseIdFromPath(c)
 	if err != nil {
-		newResponse(c, http.StatusBadRequest, "invalid id param")
+		newResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -418,7 +406,14 @@ func (h *Handler) adminCreateModule(c *gin.Context) {
 		return
 	}
 
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	moduleId, err := h.services.Modules.Create(c.Request.Context(), service.CreateModuleInput{
+		SchoolID: school.ID.Hex(),
 		CourseID: id,
 		Name:     inp.Name,
 		Position: inp.Position,
@@ -464,13 +459,19 @@ func (h *Handler) adminUpdateModule(c *gin.Context) {
 		return
 	}
 
-	err := h.services.Modules.Update(c.Request.Context(), service.UpdateModuleInput{
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if err := h.services.Modules.Update(c.Request.Context(), service.UpdateModuleInput{
 		ID:        id,
+		SchoolID:  school.ID.Hex(),
 		Name:      inp.Name,
 		Position:  inp.Position,
 		Published: inp.Published,
-	})
-	if err != nil {
+	}); err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -716,15 +717,9 @@ func (h *Handler) adminUpdateLesson(c *gin.Context) {
 // @Failure default {object} response
 // @Router /admins/lessons/{id} [delete]
 func (h *Handler) adminDeleteLesson(c *gin.Context) {
-	idParam := c.Param("id")
-	if idParam == "" {
-		newResponse(c, http.StatusBadRequest, "empty id param")
-		return
-	}
-
-	id, err := primitive.ObjectIDFromHex(idParam)
+	id, err := parseIdFromPath(c)
 	if err != nil {
-		newResponse(c, http.StatusBadRequest, "invalid id param")
+		newResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -775,13 +770,20 @@ func (h *Handler) adminCreatePackage(c *gin.Context) {
 		return
 	}
 
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	moduleId, err := h.services.Packages.Create(c.Request.Context(), service.CreatePackageInput{
+		SchoolID:    school.ID.Hex(),
 		CourseID:    id,
 		Name:        inp.Name,
 		Description: inp.Description,
 	})
 	if err != nil {
-		newResponse(c, http.StatusInternalServerError, "invalid id param")
+		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -802,15 +804,9 @@ func (h *Handler) adminCreatePackage(c *gin.Context) {
 // @Failure default {object} response
 // @Router /admins/courses/{id}/packages [get]
 func (h *Handler) adminGetAllPackages(c *gin.Context) {
-	idParam := c.Param("id")
-	if idParam == "" {
-		newResponse(c, http.StatusBadRequest, "empty id param")
-		return
-	}
-
-	id, err := primitive.ObjectIDFromHex(idParam)
+	id, err := parseIdFromPath(c)
 	if err != nil {
-		newResponse(c, http.StatusBadRequest, "invalid id param")
+		newResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -837,15 +833,9 @@ func (h *Handler) adminGetAllPackages(c *gin.Context) {
 // @Failure default {object} response
 // @Router /admins/packages/{id} [get]
 func (h *Handler) adminGetPackageById(c *gin.Context) {
-	idParam := c.Param("id")
-	if idParam == "" {
-		newResponse(c, http.StatusBadRequest, "empty id param")
-		return
-	}
-
-	id, err := primitive.ObjectIDFromHex(idParam)
+	id, err := parseIdFromPath(c)
 	if err != nil {
-		newResponse(c, http.StatusBadRequest, "invalid id param")
+		newResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -891,8 +881,15 @@ func (h *Handler) adminUpdatePackage(c *gin.Context) {
 		return
 	}
 
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	if err := h.services.Packages.Update(c.Request.Context(), service.UpdatePackageInput{
 		ID:          id,
+		SchoolID:    school.ID.Hex(),
 		Name:        inp.Name,
 		Description: inp.Description,
 		Modules:     inp.Modules,
@@ -918,15 +915,9 @@ func (h *Handler) adminUpdatePackage(c *gin.Context) {
 // @Failure default {object} response
 // @Router /admins/packages/{id} [delete]
 func (h *Handler) adminDeletePackage(c *gin.Context) {
-	idParam := c.Param("id")
-	if idParam == "" {
-		newResponse(c, http.StatusBadRequest, "empty id param")
-		return
-	}
-
-	id, err := primitive.ObjectIDFromHex(idParam)
+	id, err := parseIdFromPath(c)
 	if err != nil {
-		newResponse(c, http.StatusBadRequest, "invalid id param")
+		newResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -1038,15 +1029,9 @@ func (h *Handler) adminGetAllOffers(c *gin.Context) {
 // @Failure default {object} response
 // @Router /admins/offers/{id} [get]
 func (h *Handler) adminGetOfferById(c *gin.Context) {
-	idParam := c.Param("id")
-	if idParam == "" {
-		newResponse(c, http.StatusBadRequest, "empty id param")
-		return
-	}
-
-	id, err := primitive.ObjectIDFromHex(idParam)
+	id, err := parseIdFromPath(c)
 	if err != nil {
-		newResponse(c, http.StatusBadRequest, "invalid id param")
+		newResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -1062,7 +1047,7 @@ func (h *Handler) adminGetOfferById(c *gin.Context) {
 type updateOfferInput struct {
 	Name        string   `json:"name"`
 	Description string   `json:"description"`
-	Benefits    []string `json:"benefits" binding:"required"`
+	Benefits    []string `json:"benefits"`
 	Price       *price   `json:"price"`
 	Packages    []string `json:"packages"`
 }
@@ -1094,8 +1079,15 @@ func (h *Handler) adminUpdateOffer(c *gin.Context) {
 		return
 	}
 
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	updateInput := service.UpdateOfferInput{
 		ID:          id,
+		SchoolID:    school.ID.Hex(),
 		Name:        inp.Name,
 		Description: inp.Description,
 		Packages:    inp.Packages,
@@ -1131,15 +1123,9 @@ func (h *Handler) adminUpdateOffer(c *gin.Context) {
 // @Failure default {object} response
 // @Router /admins/offers/{id} [delete]
 func (h *Handler) adminDeleteOffer(c *gin.Context) {
-	idParam := c.Param("id")
-	if idParam == "" {
-		newResponse(c, http.StatusBadRequest, "empty id param")
-		return
-	}
-
-	id, err := primitive.ObjectIDFromHex(idParam)
+	id, err := parseIdFromPath(c)
 	if err != nil {
-		newResponse(c, http.StatusBadRequest, "invalid id param")
+		newResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -1248,15 +1234,9 @@ func (h *Handler) adminGetPromocodes(c *gin.Context) {
 // @Failure default {object} response
 // @Router /admins/promocodes/{id} [get]
 func (h *Handler) adminGetPromocodeById(c *gin.Context) {
-	idParam := c.Param("id")
-	if idParam == "" {
-		newResponse(c, http.StatusBadRequest, "empty id param")
-		return
-	}
-
-	id, err := primitive.ObjectIDFromHex(idParam)
+	id, err := parseIdFromPath(c)
 	if err != nil {
-		newResponse(c, http.StatusBadRequest, "invalid id param")
+		newResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -1297,15 +1277,9 @@ type updatePromocodeInput struct {
 // @Failure default {object} response
 // @Router /admins/promocodes/{id} [put]
 func (h *Handler) adminUpdatePromocode(c *gin.Context) {
-	idParam := c.Param("id")
-	if idParam == "" {
-		newResponse(c, http.StatusBadRequest, "empty id param")
-		return
-	}
-
-	id, err := primitive.ObjectIDFromHex(idParam)
+	id, err := parseIdFromPath(c)
 	if err != nil {
-		newResponse(c, http.StatusBadRequest, "invalid id param")
+		newResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -1351,15 +1325,9 @@ func (h *Handler) adminUpdatePromocode(c *gin.Context) {
 // @Failure default {object} response
 // @Router /admins/promocodes/{id} [delete]
 func (h *Handler) adminDeletePromocode(c *gin.Context) {
-	idParam := c.Param("id")
-	if idParam == "" {
-		newResponse(c, http.StatusBadRequest, "empty id param")
-		return
-	}
-
-	id, err := primitive.ObjectIDFromHex(idParam)
+	id, err := parseIdFromPath(c)
 	if err != nil {
-		newResponse(c, http.StatusBadRequest, "invalid id param")
+		newResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
