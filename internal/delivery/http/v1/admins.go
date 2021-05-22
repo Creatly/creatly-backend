@@ -418,7 +418,14 @@ func (h *Handler) adminCreateModule(c *gin.Context) {
 		return
 	}
 
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	moduleId, err := h.services.Modules.Create(c.Request.Context(), service.CreateModuleInput{
+		SchoolID: school.ID.Hex(),
 		CourseID: id,
 		Name:     inp.Name,
 		Position: inp.Position,
@@ -464,13 +471,19 @@ func (h *Handler) adminUpdateModule(c *gin.Context) {
 		return
 	}
 
-	err := h.services.Modules.Update(c.Request.Context(), service.UpdateModuleInput{
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if err := h.services.Modules.Update(c.Request.Context(), service.UpdateModuleInput{
 		ID:        id,
+		SchoolID:  school.ID.Hex(),
 		Name:      inp.Name,
 		Position:  inp.Position,
 		Published: inp.Published,
-	})
-	if err != nil {
+	}); err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}

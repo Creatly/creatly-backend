@@ -183,6 +183,7 @@ type Offers interface {
 }
 
 type CreateModuleInput struct {
+	SchoolID string
 	CourseID string
 	Name     string
 	Position uint
@@ -190,6 +191,7 @@ type CreateModuleInput struct {
 
 type UpdateModuleInput struct {
 	ID        string
+	SchoolID  string
 	Name      string
 	Position  *uint
 	Published *bool
