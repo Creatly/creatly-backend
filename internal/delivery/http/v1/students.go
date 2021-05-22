@@ -23,7 +23,6 @@ func (h *Handler) initStudentsRoutes(api *gin.RouterGroup) {
 			authenticated.GET("/courses", h.studentGetCourses)
 			authenticated.GET("/modules/:id/lessons", h.studentGetModuleLessons)
 			authenticated.GET("/modules/:id/offers", h.studentGetModuleOffers)
-			authenticated.GET("/lessons/:id", h.studentGetLesson)
 			authenticated.POST("/lessons/:id/finished", h.studentSetLessonFinished)
 			authenticated.POST("/order", h.studentCreateOrder)
 			authenticated.GET("/account", h.studentGetAccount)
@@ -262,53 +261,6 @@ func (h *Handler) studentGetModuleLessons(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, dataResponse{lessons})
-}
-
-// @Summary Student Get Lesson By LessonID
-// @Security StudentsAuth
-// @Tags students-courses
-// @Description student get lesson by lesson id
-// @ModuleID studentGetLesson
-// @Accept  json
-// @Produce  json
-// @Param id path string true "lesson id"
-// @Success 200 {object} dataResponse{data=domain.Lesson}
-// @Failure 400,403 {object} response
-// @Failure 500 {object} response
-// @Failure default {object} response
-// @Router /students/lessons/{id} [get]
-func (h *Handler) studentGetLesson(c *gin.Context) {
-	lessonIdParam := c.Param("id")
-	if lessonIdParam == "" {
-		newResponse(c, http.StatusBadRequest, "empty id param")
-		return
-	}
-
-	lessonId, err := primitive.ObjectIDFromHex(lessonIdParam)
-	if err != nil {
-		newResponse(c, http.StatusBadRequest, "invalid id param")
-		return
-	}
-
-	studentId, err := getStudentId(c)
-	if err != nil {
-		newResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	lesson, err := h.services.Students.GetLesson(c.Request.Context(), studentId, lessonId)
-	if err != nil {
-		if errors.Is(err, service.ErrModuleIsNotAvailable) {
-			newResponse(c, http.StatusForbidden, err.Error())
-			return
-		}
-
-		newResponse(c, http.StatusInternalServerError, err.Error())
-
-		return
-	}
-
-	c.JSON(http.StatusOK, dataResponse{lesson})
 }
 
 // @Summary Student Set Lesson As Finished By LessonID
