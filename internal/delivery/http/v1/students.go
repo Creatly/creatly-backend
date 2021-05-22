@@ -277,15 +277,9 @@ func (h *Handler) studentGetModuleLessons(c *gin.Context) {
 // @Failure default {object} response
 // @Router /students/lessons/{id}/finished [post]
 func (h *Handler) studentSetLessonFinished(c *gin.Context) {
-	lessonIdParam := c.Param("id")
-	if lessonIdParam == "" {
-		newResponse(c, http.StatusBadRequest, "empty id param")
-		return
-	}
-
-	lessonId, err := primitive.ObjectIDFromHex(lessonIdParam)
+	lessonId, err := parseIdFromPath(c)
 	if err != nil {
-		newResponse(c, http.StatusBadRequest, "invalid id param")
+		newResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -358,15 +352,9 @@ func toStudentOffer(offer domain.Offer) studentOffer {
 // @Failure default {object} response
 // @Router /students/modules/{id}/offers [get]
 func (h *Handler) studentGetModuleOffers(c *gin.Context) {
-	moduleIdParam := c.Param("id")
-	if moduleIdParam == "" {
-		newResponse(c, http.StatusBadRequest, "empty id param")
-		return
-	}
-
-	moduleId, err := primitive.ObjectIDFromHex(moduleIdParam)
+	moduleId, err := parseIdFromPath(c)
 	if err != nil {
-		newResponse(c, http.StatusBadRequest, "invalid id param")
+		newResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
