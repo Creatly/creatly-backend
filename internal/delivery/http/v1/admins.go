@@ -775,13 +775,20 @@ func (h *Handler) adminCreatePackage(c *gin.Context) {
 		return
 	}
 
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	moduleId, err := h.services.Packages.Create(c.Request.Context(), service.CreatePackageInput{
+		SchoolID:    school.ID.Hex(),
 		CourseID:    id,
 		Name:        inp.Name,
 		Description: inp.Description,
 	})
 	if err != nil {
-		newResponse(c, http.StatusInternalServerError, "invalid id param")
+		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -891,8 +898,15 @@ func (h *Handler) adminUpdatePackage(c *gin.Context) {
 		return
 	}
 
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	if err := h.services.Packages.Update(c.Request.Context(), service.UpdatePackageInput{
 		ID:          id,
+		SchoolID:    school.ID.Hex(),
 		Name:        inp.Name,
 		Description: inp.Description,
 		Modules:     inp.Modules,
@@ -1062,7 +1076,7 @@ func (h *Handler) adminGetOfferById(c *gin.Context) {
 type updateOfferInput struct {
 	Name        string   `json:"name"`
 	Description string   `json:"description"`
-	Benefits    []string `json:"benefits" binding:"required"`
+	Benefits    []string `json:"benefits"`
 	Price       *price   `json:"price"`
 	Packages    []string `json:"packages"`
 }
@@ -1094,8 +1108,15 @@ func (h *Handler) adminUpdateOffer(c *gin.Context) {
 		return
 	}
 
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	updateInput := service.UpdateOfferInput{
 		ID:          id,
+		SchoolID:    school.ID.Hex(),
 		Name:        inp.Name,
 		Description: inp.Description,
 		Packages:    inp.Packages,
