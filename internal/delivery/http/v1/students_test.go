@@ -158,6 +158,7 @@ func TestHandler_studentGetModuleOffers(t *testing.T) {
 					Description: "description",
 					SchoolID:    schoolId,
 					PackageIDs:  packageIds,
+					Benefits: []string{"benefit 1", "benefit 2"},
 					Price: domain.Price{
 						Value:    6900,
 						Currency: "USD",
@@ -168,7 +169,7 @@ func TestHandler_studentGetModuleOffers(t *testing.T) {
 				r.EXPECT().GetByModule(context.Background(), schoolId, moduleId).Return(offers, nil)
 			},
 			statusCode:   200,
-			responseBody: `{"data":[{"id":"000000000000000000000000","name":"test offer","description":"description","price":{"value":6900,"currency":"USD"}}]}`,
+			responseBody: `{"data":[{"id":"000000000000000000000000","name":"test offer","description":"description","price":{"value":6900,"currency":"USD"},"benefits":["benefit 1","benefit 2"]}]}`,
 		},
 		{
 			name:         "invalid module id",
