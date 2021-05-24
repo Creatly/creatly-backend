@@ -36,8 +36,7 @@ func (s *LessonsService) Create(ctx context.Context, inp AddLessonInput) (primit
 		return primitive.ObjectID{}, err
 	}
 
-	err = s.repo.AddLesson(ctx, schoolId, id, lesson)
-	if err != nil {
+	if err := s.repo.AddLesson(ctx, schoolId, id, lesson); err != nil {
 		return primitive.ObjectID{}, err
 	}
 
