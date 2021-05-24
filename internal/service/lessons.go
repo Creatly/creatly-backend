@@ -89,6 +89,7 @@ func (s *LessonsService) Update(ctx context.Context, inp UpdateLessonInput) erro
 			Name:      inp.Name,
 			Position:  inp.Position,
 			Published: inp.Published,
+			SchoolID:  schoolId,
 		}); err != nil {
 			return err
 		}
