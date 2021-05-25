@@ -382,8 +382,8 @@ definitions:
 host: localhost:8000
 info:
   contact: {}
-  description: API Server for Course Platform
-  title: Course Platform API
+  description: REST API for Creatly App
+  title: Creatly API
   version: "1.0"
 paths:
   /admins/auth/refresh:

@@ -3641,8 +3641,8 @@ var SwaggerInfo = swaggerInfo{
 	Host:        "localhost:8000",
 	BasePath:    "/api/v1/",
 	Schemes:     []string{},
-	Title:       "Course Platform API",
-	Description: "API Server for Course Platform",
+	Title:       "Creatly API",
+	Description: "REST API for Creatly App",
 }
 
 type s struct{}

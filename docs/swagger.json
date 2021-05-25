@@ -1,8 +1,8 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "API Server for Course Platform",
-        "title": "Course Platform API",
+        "description": "REST API for Creatly App",
+        "title": "Creatly API",
         "contact": {},
         "version": "1.0"
     },

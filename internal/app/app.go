@@ -31,9 +31,9 @@ import (
 	"github.com/zhashkevych/creatly-backend/pkg/logger"
 )
 
-// @title Course Platform API
+// @title Creatly API
 // @version 1.0
-// @description API Server for Course Platform
+// @description REST API for Creatly App
 
 // @host localhost:8000
 // @BasePath /api/v1/
