@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+
 	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -26,6 +27,7 @@ func (r *OffersRepo) GetBySchool(ctx context.Context, schoolId primitive.ObjectI
 
 	var offers []domain.Offer
 	err = cur.All(ctx, &offers)
+
 	return offers, err
 }
 
@@ -50,6 +52,7 @@ func (r *OffersRepo) GetByPackages(ctx context.Context, packageIds []primitive.O
 
 	var offers []domain.Offer
 	err = cur.All(ctx, &offers)
+
 	return offers, err
 }
 
@@ -86,12 +89,12 @@ func (r *OffersRepo) Update(ctx context.Context, inp UpdateOfferInput) error {
 	}
 
 	_, err := r.db.UpdateOne(ctx,
-		bson.M{"_id": inp.ID}, bson.M{"$set": updateQuery})
+		bson.M{"_id": inp.ID, "schoolId": inp.SchoolID}, bson.M{"$set": updateQuery})
 
 	return err
 }
 
-func (r *OffersRepo) Delete(ctx context.Context, id primitive.ObjectID) error {
-	_, err := r.db.DeleteOne(ctx, bson.M{"_id": id})
+func (r *OffersRepo) Delete(ctx context.Context, schoolId, id primitive.ObjectID) error {
+	_, err := r.db.DeleteOne(ctx, bson.M{"_id": id, "schoolId": schoolId})
 	return err
 }

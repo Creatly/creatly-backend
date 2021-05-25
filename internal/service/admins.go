@@ -3,12 +3,13 @@ package service
 import (
 	"context"
 	"errors"
+	"time"
+
 	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"github.com/zhashkevych/creatly-backend/internal/repository"
 	"github.com/zhashkevych/creatly-backend/pkg/auth"
 	"github.com/zhashkevych/creatly-backend/pkg/hash"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"time"
 )
 
 type AdminsService struct {
@@ -35,7 +36,7 @@ func NewAdminsService(hasher hash.PasswordHasher, tokenManager auth.TokenManager
 }
 
 func (s *AdminsService) SignIn(ctx context.Context, input SignInInput) (Tokens, error) {
-	//student, err := s.repo.GetByCredentials(ctx, input.SchoolID, input.Email, s.hasher.Hash(input.Password))
+	// student, err := s.repo.GetByCredentials(ctx, input.SchoolID, input.Email, s.hasher.Hash(input.Password))
 	student, err := s.repo.GetByCredentials(ctx, input.SchoolID, input.Email, input.Password) // TODO implement password hashing
 	if err != nil {
 		return Tokens{}, err
@@ -69,6 +70,7 @@ func (s *AdminsService) GetCourseById(ctx context.Context, schoolId, courseId pr
 	}
 
 	var searchedCourse domain.Course
+
 	for _, course := range school.Courses {
 		if course.ID == courseId {
 			searchedCourse = course
@@ -104,5 +106,6 @@ func (s *AdminsService) createSession(ctx context.Context, adminId primitive.Obj
 	}
 
 	err = s.repo.SetSession(ctx, adminId, session)
+
 	return res, err
 }

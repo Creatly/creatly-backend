@@ -3,12 +3,13 @@ package auth
 import (
 	"errors"
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
 	"math/rand"
 	"time"
+
+	"github.com/dgrijalva/jwt-go"
 )
 
-// TokenManager provides logic for JWT & Refresh tokens generation and parsing
+// TokenManager provides logic for JWT & Refresh tokens generation and parsing.
 type TokenManager interface {
 	NewJWT(userId string, ttl time.Duration) (string, error)
 	Parse(accessToken string) (string, error)
@@ -61,8 +62,7 @@ func (m *Manager) NewRefreshToken() (string, error) {
 	s := rand.NewSource(time.Now().Unix())
 	r := rand.New(s)
 
-	_, err := r.Read(b)
-	if err != nil {
+	if _, err := r.Read(b); err != nil {
 		return "", err
 	}
 

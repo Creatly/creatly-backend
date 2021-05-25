@@ -3,20 +3,21 @@ package storage
 import (
 	"context"
 	"fmt"
+
 	"github.com/minio/minio-go/v7"
 )
 
 type FileStorage struct {
-	client      *minio.Client
-	bucket      string
-	endpoint    string
+	client   *minio.Client
+	bucket   string
+	endpoint string
 }
 
 func NewFileStorage(client *minio.Client, bucket, endpoint string) *FileStorage {
 	return &FileStorage{
-		client:      client,
-		bucket:      bucket,
-		endpoint:    endpoint,
+		client:   client,
+		bucket:   bucket,
+		endpoint: endpoint,
 	}
 }
 
@@ -34,7 +35,7 @@ func (fs *FileStorage) Upload(ctx context.Context, input UploadInput) (string, e
 	return fs.generateFileURL(input.Name), nil
 }
 
-// DigitalOcean Spaces URL format
+// DigitalOcean Spaces URL format.
 func (fs *FileStorage) generateFileURL(filename string) string {
 	return fmt.Sprintf("https://%s.%s/%s", fs.bucket, fs.endpoint, filename)
 }

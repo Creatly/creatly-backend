@@ -4,14 +4,15 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
+
 	"github.com/gin-gonic/gin"
 	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"github.com/zhashkevych/creatly-backend/pkg/email"
 	"github.com/zhashkevych/creatly-backend/pkg/payment/fondy"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"io/ioutil"
-	"net/http"
-	"net/http/httptest"
 )
 
 func (s *APITestSuite) TestFondyCallbackApproved() {
@@ -69,7 +70,7 @@ func (s *APITestSuite) TestFondyCallbackApproved() {
 
 	r.Equal(http.StatusOK, resp.Result().StatusCode)
 
-	//Get Paid Lessons After Callback
+	// Get Paid Lessons After Callback
 	r = s.Require()
 
 	jwt, err := s.getJwt(studentId)
@@ -121,7 +122,7 @@ func (s *APITestSuite) TestFondyCallbackDeclined() {
 
 	r.Equal(http.StatusOK, resp.Result().StatusCode)
 
-	//Get Paid Lessons After Callback
+	// Get Paid Lessons After Callback
 	r = s.Require()
 
 	jwt, err := s.getJwt(studentId)

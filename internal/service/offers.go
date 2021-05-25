@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+
 	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"github.com/zhashkevych/creatly-backend/internal/repository"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -28,6 +29,7 @@ func (s *OffersService) GetByPackage(ctx context.Context, schoolId, packageId pr
 	}
 
 	result := make([]domain.Offer, 0)
+
 	for _, offer := range offers {
 		if inArray(offer.PackageIDs, packageId) {
 			result = append(result, offer)
@@ -84,8 +86,14 @@ func (s *OffersService) Update(ctx context.Context, inp UpdateOfferInput) error 
 		return err
 	}
 
+	schoolId, err := primitive.ObjectIDFromHex(inp.SchoolID)
+	if err != nil {
+		return err
+	}
+
 	updateInput := repository.UpdateOfferInput{
 		ID:          id,
+		SchoolID:    schoolId,
 		Name:        inp.Name,
 		Description: inp.Description,
 		Price:       inp.Price,
@@ -102,8 +110,8 @@ func (s *OffersService) Update(ctx context.Context, inp UpdateOfferInput) error 
 	return s.repo.Update(ctx, updateInput)
 }
 
-func (s *OffersService) Delete(ctx context.Context, id primitive.ObjectID) error {
-	return s.repo.Delete(ctx, id)
+func (s *OffersService) Delete(ctx context.Context, schoolId, id primitive.ObjectID) error {
+	return s.repo.Delete(ctx, schoolId, id)
 }
 
 func inArray(array []primitive.ObjectID, searchedItem primitive.ObjectID) bool {
@@ -112,5 +120,6 @@ func inArray(array []primitive.ObjectID, searchedItem primitive.ObjectID) bool {
 			return true
 		}
 	}
+
 	return false
 }

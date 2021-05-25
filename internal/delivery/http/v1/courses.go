@@ -2,10 +2,11 @@ package v1
 
 import (
 	"errors"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"net/http"
 )
 
 func (h *Handler) initCoursesRoutes(api *gin.RouterGroup) {
@@ -37,10 +38,10 @@ func (h *Handler) getAllCourses(c *gin.Context) {
 
 	// Return only published courses
 	courses := make([]domain.Course, 0)
+
 	for _, course := range school.Courses {
 		if course.Published {
 			courses = append(courses, course)
-
 		}
 	}
 
@@ -83,6 +84,7 @@ func newGetCourseByIdResponse(course domain.Course, courseModules []domain.Modul
 
 func toLessons(lessons []domain.Lesson) []lesson {
 	out := make([]lesson, 0)
+
 	for _, l := range lessons {
 		if l.Published {
 			out = append(out, lesson{
@@ -92,6 +94,7 @@ func toLessons(lessons []domain.Lesson) []lesson {
 			})
 		}
 	}
+
 	return out
 }
 
@@ -137,6 +140,7 @@ func (h *Handler) getCourseById(c *gin.Context) {
 
 func studentGetSchoolCourse(school domain.School, courseId string) (domain.Course, error) {
 	var searchedCourse domain.Course
+
 	for _, course := range school.Courses {
 		if course.Published && course.ID.Hex() == courseId {
 			searchedCourse = course

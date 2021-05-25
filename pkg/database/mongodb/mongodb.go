@@ -3,21 +3,23 @@ package mongodb
 import (
 	"context"
 	"errors"
+	"time"
+
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"time"
 )
 
 const timeout = 10 * time.Second
 
-// NewClient established connection to a mongoDb instance using provided URI and auth credentials
+// NewClient established connection to a mongoDb instance using provided URI and auth credentials.
 func NewClient(uri, username, password string) (*mongo.Client, error) {
 	opts := options.Client().ApplyURI(uri)
 	if username != "" && password != "" {
 		opts.SetAuth(options.Credential{
-			Username: username, Password: password})
+			Username: username, Password: password,
+		})
 	}
-	
+
 	client, err := mongo.NewClient(opts)
 	if err != nil {
 		return nil, err

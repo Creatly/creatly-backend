@@ -3,11 +3,12 @@ package tests
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+
+	"github.com/gin-gonic/gin"
+	"github.com/zhashkevych/creatly-backend/internal/domain"
 )
 
 type courseResponse struct {
@@ -50,6 +51,7 @@ func (s *APITestSuite) TestGetAllCourses() {
 	var respCourses struct {
 		Data []courseResponse `json:"data"`
 	}
+
 	respData, err := ioutil.ReadAll(resp.Body)
 	s.NoError(err)
 
@@ -102,6 +104,7 @@ func (s *APITestSuite) TestGetCourseOffers() {
 	var respOffers struct {
 		Data []offerResponse `json:"data"`
 	}
+
 	respData, err := ioutil.ReadAll(resp.Body)
 	s.NoError(err)
 

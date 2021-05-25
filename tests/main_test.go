@@ -2,6 +2,10 @@ package tests
 
 import (
 	"context"
+	"os"
+	"testing"
+	"time"
+
 	"github.com/stretchr/testify/suite"
 	"github.com/zhashkevych/creatly-backend/internal/config"
 	v1 "github.com/zhashkevych/creatly-backend/internal/delivery/http/v1"
@@ -15,18 +19,13 @@ import (
 	"github.com/zhashkevych/creatly-backend/pkg/otp"
 	"github.com/zhashkevych/creatly-backend/pkg/payment/fondy"
 	"go.mongodb.org/mongo-driver/mongo"
-	"os"
-	"testing"
-	"time"
 )
 
 const (
 	listId = "123456"
 )
 
-var (
-	dbURI, dbName string
-)
+var dbURI, dbName string
 
 func init() {
 	dbURI = os.Getenv("TEST_DB_URI")
@@ -84,10 +83,12 @@ func (s *APITestSuite) initDeps() {
 	repos := repository.NewRepositories(s.db)
 	memCache := cache.NewMemoryCache()
 	hasher := hash.NewSHA1Hasher("salt")
+
 	tokenManager, err := auth.NewManager("signing_key")
 	if err != nil {
 		s.FailNow("Failed to initialize token manager", err)
 	}
+
 	paymentProvider := fondy.NewFondyClient("1396424", "test") // Fondy Testing Credentials
 
 	services := service.NewServices(service.Deps{
@@ -107,7 +108,7 @@ func (s *APITestSuite) initDeps() {
 				PurchaseSuccessful: "../templates/purchase_successful.html",
 			},
 			Subjects: config.EmailSubjects{
-				Verification: "Спасибо за регистрацию, %s!",
+				Verification:       "Спасибо за регистрацию, %s!",
 				PurchaseSuccessful: "Покупка прошла успешно!",
 			},
 		},
@@ -133,6 +134,7 @@ func (s *APITestSuite) initMocks() {
 		otpGenerator:  new(otp.MockGenerator),
 	}
 }
+
 func TestMain(m *testing.M) {
 	rc := m.Run()
 	os.Exit(rc)

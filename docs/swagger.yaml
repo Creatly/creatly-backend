@@ -32,19 +32,6 @@ definitions:
       updatedAt:
         type: string
     type: object
-  domain.Lesson:
-    properties:
-      content:
-        type: string
-      id:
-        type: string
-      name:
-        type: string
-      position:
-        type: integer
-      published:
-        type: boolean
-    type: object
   domain.Offer:
     properties:
       benefits:
@@ -75,6 +62,8 @@ definitions:
       id:
         type: string
       name:
+        type: string
+      schoolId:
         type: string
     type: object
   domain.Pages:
@@ -172,6 +161,7 @@ definitions:
       price:
         $ref: '#/definitions/v1.price'
     required:
+    - benefits
     - name
     - price
     type: object
@@ -2057,50 +2047,6 @@ paths:
       security:
       - StudentsAuth: []
       summary: Student Get Opened Courses
-      tags:
-      - students-courses
-  /students/lessons/{id}:
-    get:
-      consumes:
-      - application/json
-      description: student get lesson by lesson id
-      parameters:
-      - description: lesson id
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/v1.dataResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/domain.Lesson'
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/v1.response'
-        "403":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/v1.response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/v1.response'
-        default:
-          description: ""
-          schema:
-            $ref: '#/definitions/v1.response'
-      security:
-      - StudentsAuth: []
-      summary: Student Get Lesson By LessonID
       tags:
       - students-courses
   /students/lessons/{id}/finished:

@@ -1,10 +1,12 @@
 package v1
 
 import (
+	"errors"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/zhashkevych/creatly-backend/internal/service"
 	"github.com/zhashkevych/creatly-backend/pkg/payment/fondy"
-	"net/http"
 )
 
 func (h *Handler) initCallbackRoutes(api *gin.RouterGroup) {
@@ -27,12 +29,13 @@ func (h *Handler) handleFondyCallback(c *gin.Context) {
 	}
 
 	if err := h.services.Payments.ProcessTransaction(c.Request.Context(), inp); err != nil {
-		if err == service.ErrTransactionInvalid {
+		if errors.Is(err, service.ErrTransactionInvalid) {
 			newResponse(c, http.StatusBadRequest, err.Error())
 			return
 		}
 
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 

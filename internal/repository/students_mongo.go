@@ -2,10 +2,10 @@ package repository
 
 import (
 	"context"
-	"github.com/zhashkevych/creatly-backend/pkg/database/mongodb"
 	"time"
 
 	"github.com/zhashkevych/creatly-backend/internal/domain"
+	"github.com/zhashkevych/creatly-backend/pkg/database/mongodb"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -46,8 +46,10 @@ func (r *StudentsRepo) GetByCredentials(ctx context.Context, schoolId primitive.
 
 func (r *StudentsRepo) GetByRefreshToken(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (domain.Student, error) {
 	var student domain.Student
-	if err := r.db.FindOne(ctx, bson.M{"session.refreshToken": refreshToken, "schoolId": schoolId,
-		"session.expiresAt": bson.M{"$gt": time.Now()}}).Decode(&student); err != nil {
+	if err := r.db.FindOne(ctx, bson.M{
+		"session.refreshToken": refreshToken, "schoolId": schoolId,
+		"session.expiresAt": bson.M{"$gt": time.Now()},
+	}).Decode(&student); err != nil {
 		if err == mongo.ErrNoDocuments {
 			return domain.Student{}, ErrUserNotFound
 		}
@@ -60,8 +62,8 @@ func (r *StudentsRepo) GetByRefreshToken(ctx context.Context, schoolId primitive
 
 func (r *StudentsRepo) GetById(ctx context.Context, id primitive.ObjectID) (domain.Student, error) {
 	var student domain.Student
-	err := r.db.FindOne(ctx, bson.M{"_id": id, "verification.verified": true}).Decode(&student)
-	if err != nil {
+
+	if err := r.db.FindOne(ctx, bson.M{"_id": id, "verification.verified": true}).Decode(&student); err != nil {
 		if err == mongo.ErrNoDocuments {
 			return domain.Student{}, ErrUserNotFound
 		}
@@ -80,6 +82,7 @@ func (r *StudentsRepo) GetBySchool(ctx context.Context, schoolId primitive.Objec
 
 	var students []domain.Student
 	err = cur.All(ctx, &students)
+
 	return students, err
 }
 
@@ -94,8 +97,11 @@ func (r *StudentsRepo) GiveAccessToCourseAndModule(ctx context.Context, studentI
 }
 
 func (r *StudentsRepo) GiveAccessToCoursesAndModules(ctx context.Context, studentId primitive.ObjectID, courseIds, moduleIds []primitive.ObjectID) error {
-	_, err := r.db.UpdateOne(ctx, bson.M{"_id": studentId}, bson.M{"$addToSet": bson.M{"availableModules": bson.M{"$each": moduleIds},
-		"availableCourses": bson.M{"$each": courseIds}}})
+	_, err := r.db.UpdateOne(ctx, bson.M{"_id": studentId}, bson.M{"$addToSet": bson.M{
+		"availableModules": bson.M{"$each": moduleIds},
+		"availableCourses": bson.M{"$each": courseIds},
+	}})
+
 	return err
 }
 

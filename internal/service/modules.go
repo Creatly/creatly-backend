@@ -38,6 +38,7 @@ func (s *ModulesService) GetById(ctx context.Context, moduleId primitive.ObjectI
 	}
 
 	sortLessons(module.Lessons)
+
 	return module, nil
 }
 
@@ -49,6 +50,7 @@ func (s *ModulesService) GetWithContent(ctx context.Context, moduleId primitive.
 
 	lessonIds := make([]primitive.ObjectID, len(module.Lessons))
 	publishedLessons := make([]domain.Lesson, 0)
+
 	for _, lesson := range module.Lessons {
 		if lesson.Published {
 			publishedLessons = append(publishedLessons, lesson)
@@ -72,6 +74,7 @@ func (s *ModulesService) GetWithContent(ctx context.Context, moduleId primitive.
 	}
 
 	sortLessons(module.Lessons)
+
 	return module, nil
 }
 
@@ -98,10 +101,16 @@ func (s *ModulesService) Create(ctx context.Context, inp CreateModuleInput) (pri
 		return id, err
 	}
 
+	schoolId, err := primitive.ObjectIDFromHex(inp.SchoolID)
+	if err != nil {
+		return id, err
+	}
+
 	module := domain.Module{
 		Name:     inp.Name,
 		Position: inp.Position,
 		CourseID: id,
+		SchoolID: schoolId,
 	}
 
 	return s.repo.Create(ctx, module)
@@ -113,8 +122,14 @@ func (s *ModulesService) Update(ctx context.Context, inp UpdateModuleInput) erro
 		return err
 	}
 
+	schoolId, err := primitive.ObjectIDFromHex(inp.SchoolID)
+	if err != nil {
+		return err
+	}
+
 	updateInput := repository.UpdateModuleInput{
 		ID:        id,
+		SchoolID:  schoolId,
 		Name:      inp.Name,
 		Position:  inp.Position,
 		Published: inp.Published,
@@ -123,13 +138,13 @@ func (s *ModulesService) Update(ctx context.Context, inp UpdateModuleInput) erro
 	return s.repo.Update(ctx, updateInput)
 }
 
-func (s *ModulesService) Delete(ctx context.Context, moduleId primitive.ObjectID) error {
+func (s *ModulesService) Delete(ctx context.Context, schoolId, moduleId primitive.ObjectID) error {
 	module, err := s.GetById(ctx, moduleId)
 	if err != nil {
 		return err
 	}
 
-	if err := s.repo.Delete(ctx, moduleId); err != nil {
+	if err := s.repo.Delete(ctx, schoolId, moduleId); err != nil {
 		return err
 	}
 
@@ -138,31 +153,32 @@ func (s *ModulesService) Delete(ctx context.Context, moduleId primitive.ObjectID
 		lessonIds = append(lessonIds, lesson.ID)
 	}
 
-	return s.contentRepo.DeleteContent(ctx, lessonIds)
+	return s.contentRepo.DeleteContent(ctx, schoolId, lessonIds)
 }
 
-func (s *ModulesService) DeleteByCourse(ctx context.Context, courseId primitive.ObjectID) error {
+func (s *ModulesService) DeleteByCourse(ctx context.Context, schoolId, courseId primitive.ObjectID) error {
 	modules, err := s.repo.GetByCourse(ctx, courseId)
 	if err != nil {
 		return err
 	}
 
-	if err := s.repo.DeleteByCourse(ctx, courseId); err != nil {
+	if err := s.repo.DeleteByCourse(ctx, schoolId, courseId); err != nil {
 		return err
 	}
 
 	lessonIds := make([]primitive.ObjectID, 0)
+
 	for _, module := range modules {
 		for _, lesson := range module.Lessons {
 			lessonIds = append(lessonIds, lesson.ID)
 		}
 	}
 
-	return s.contentRepo.DeleteContent(ctx, lessonIds)
+	return s.contentRepo.DeleteContent(ctx, schoolId, lessonIds)
 }
 
 func sortLessons(lessons []domain.Lesson) {
-	sort.Slice(lessons[:], func(i, j int) bool {
+	sort.Slice(lessons, func(i, j int) bool {
 		return lessons[i].Position < lessons[j].Position
 	})
 }

@@ -2,10 +2,11 @@ package tests
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"net/http"
 	"net/http/httptest"
+
+	"github.com/gin-gonic/gin"
+	"github.com/zhashkevych/creatly-backend/internal/domain"
 )
 
 func (s *APITestSuite) TestGetPromoCode() {

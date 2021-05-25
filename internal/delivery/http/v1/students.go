@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -22,7 +23,6 @@ func (h *Handler) initStudentsRoutes(api *gin.RouterGroup) {
 			authenticated.GET("/courses", h.studentGetCourses)
 			authenticated.GET("/modules/:id/lessons", h.studentGetModuleLessons)
 			authenticated.GET("/modules/:id/offers", h.studentGetModuleOffers)
-			authenticated.GET("/lessons/:id", h.studentGetLesson)
 			authenticated.POST("/lessons/:id/finished", h.studentSetLessonFinished)
 			authenticated.POST("/order", h.studentCreateOrder)
 			authenticated.GET("/account", h.studentGetAccount)
@@ -67,12 +67,13 @@ func (h *Handler) studentSignUp(c *gin.Context) {
 		Password: inp.Password,
 		SchoolID: school.ID,
 	}); err != nil {
-		if err == service.ErrUserAlreadyExists {
+		if errors.Is(err, service.ErrUserAlreadyExists) {
 			newResponse(c, http.StatusBadRequest, err.Error())
 			return
 		}
 
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -120,12 +121,13 @@ func (h *Handler) studentSignIn(c *gin.Context) {
 		Password: inp.Password,
 	})
 	if err != nil {
-		if err == service.ErrUserNotFound {
+		if errors.Is(err, service.ErrUserNotFound) {
 			newResponse(c, http.StatusBadRequest, err.Error())
 			return
 		}
 
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -195,12 +197,13 @@ func (h *Handler) studentVerify(c *gin.Context) {
 	}
 
 	if err := h.services.Students.Verify(c.Request.Context(), code); err != nil {
-		if err == service.ErrVerificationCodeInvalid {
+		if errors.Is(err, service.ErrVerificationCodeInvalid) {
 			newResponse(c, http.StatusBadRequest, err.Error())
 			return
 		}
 
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -247,61 +250,17 @@ func (h *Handler) studentGetModuleLessons(c *gin.Context) {
 
 	lessons, err := h.services.Students.GetModuleLessons(c.Request.Context(), school.ID, studentId, moduleId)
 	if err != nil {
-		if err == service.ErrModuleIsNotAvailable {
+		if errors.Is(err, service.ErrModuleIsNotAvailable) {
 			newResponse(c, http.StatusForbidden, err.Error())
 			return
 		}
 
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
 	c.JSON(http.StatusOK, dataResponse{lessons})
-}
-
-// @Summary Student Get Lesson By LessonID
-// @Security StudentsAuth
-// @Tags students-courses
-// @Description student get lesson by lesson id
-// @ModuleID studentGetLesson
-// @Accept  json
-// @Produce  json
-// @Param id path string true "lesson id"
-// @Success 200 {object} dataResponse{data=domain.Lesson}
-// @Failure 400,403 {object} response
-// @Failure 500 {object} response
-// @Failure default {object} response
-// @Router /students/lessons/{id} [get]
-func (h *Handler) studentGetLesson(c *gin.Context) {
-	lessonIdParam := c.Param("id")
-	if lessonIdParam == "" {
-		newResponse(c, http.StatusBadRequest, "empty id param")
-		return
-	}
-
-	lessonId, err := primitive.ObjectIDFromHex(lessonIdParam)
-	if err != nil {
-		newResponse(c, http.StatusBadRequest, "invalid id param")
-		return
-	}
-
-	studentId, err := getStudentId(c)
-	if err != nil {
-		newResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	lesson, err := h.services.Students.GetLesson(c.Request.Context(), studentId, lessonId)
-	if err != nil {
-		if err == service.ErrModuleIsNotAvailable {
-			newResponse(c, http.StatusForbidden, err.Error())
-			return
-		}
-		newResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	c.JSON(http.StatusOK, dataResponse{lesson})
 }
 
 // @Summary Student Set Lesson As Finished By LessonID
@@ -318,15 +277,9 @@ func (h *Handler) studentGetLesson(c *gin.Context) {
 // @Failure default {object} response
 // @Router /students/lessons/{id}/finished [post]
 func (h *Handler) studentSetLessonFinished(c *gin.Context) {
-	lessonIdParam := c.Param("id")
-	if lessonIdParam == "" {
-		newResponse(c, http.StatusBadRequest, "empty id param")
-		return
-	}
-
-	lessonId, err := primitive.ObjectIDFromHex(lessonIdParam)
+	lessonId, err := parseIdFromPath(c)
 	if err != nil {
-		newResponse(c, http.StatusBadRequest, "invalid id param")
+		newResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -337,11 +290,14 @@ func (h *Handler) studentSetLessonFinished(c *gin.Context) {
 	}
 
 	if err := h.services.Students.SetLessonFinished(c.Request.Context(), studentId, lessonId); err != nil {
-		if err == service.ErrModuleIsNotAvailable {
+		if errors.Is(err, service.ErrModuleIsNotAvailable) {
 			newResponse(c, http.StatusForbidden, err.Error())
+
 			return
 		}
+
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -349,10 +305,11 @@ func (h *Handler) studentSetLessonFinished(c *gin.Context) {
 }
 
 type studentOffer struct {
-	ID          primitive.ObjectID `json:"id" bson:"_id"`
-	Name        string             `json:"name" bson:"name"`
-	Description string             `json:"description" bson:"description"`
-	Price       price              `json:"price" bson:"price"`
+	ID          primitive.ObjectID `json:"id"`
+	Name        string             `json:"name"`
+	Description string             `json:"description"`
+	Price       price              `json:"price"`
+	Benefits    []string           `json:"benefits"`
 }
 
 type price struct {
@@ -375,6 +332,7 @@ func toStudentOffer(offer domain.Offer) studentOffer {
 		ID:          offer.ID,
 		Name:        offer.Name,
 		Description: offer.Description,
+		Benefits:    offer.Benefits,
 		Price: price{
 			Value:    offer.Price.Value,
 			Currency: offer.Price.Currency,
@@ -396,15 +354,9 @@ func toStudentOffer(offer domain.Offer) studentOffer {
 // @Failure default {object} response
 // @Router /students/modules/{id}/offers [get]
 func (h *Handler) studentGetModuleOffers(c *gin.Context) {
-	moduleIdParam := c.Param("id")
-	if moduleIdParam == "" {
-		newResponse(c, http.StatusBadRequest, "empty id param")
-		return
-	}
-
-	moduleId, err := primitive.ObjectIDFromHex(moduleIdParam)
+	moduleId, err := parseIdFromPath(c)
 	if err != nil {
-		newResponse(c, http.StatusBadRequest, "invalid id param")
+		newResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -462,6 +414,7 @@ func (h *Handler) studentCreateOrder(c *gin.Context) {
 
 	if inp.PromoId != "" {
 		var err error
+
 		promoId, err = primitive.ObjectIDFromHex(inp.PromoId)
 		if err != nil {
 			newResponse(c, http.StatusBadRequest, "invalid promo id")

@@ -1,20 +1,23 @@
 package v1
 
 import (
+	"errors"
+
 	"github.com/gin-gonic/gin"
 	"github.com/zhashkevych/creatly-backend/internal/service"
 	"github.com/zhashkevych/creatly-backend/pkg/auth"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type Handler struct {
-	services          *service.Services
-	tokenManager      auth.TokenManager
+	services     *service.Services
+	tokenManager auth.TokenManager
 }
 
 func NewHandler(services *service.Services, tokenManager auth.TokenManager) *Handler {
 	return &Handler{
-		services:          services,
-		tokenManager:      tokenManager,
+		services:     services,
+		tokenManager: tokenManager,
 	}
 }
 
@@ -29,4 +32,18 @@ func (h *Handler) Init(api *gin.RouterGroup) {
 		v1.GET("/settings", h.setSchoolFromRequest, h.getSchoolSettings)
 		v1.GET("/promocodes/:code", h.setSchoolFromRequest, h.getPromo)
 	}
+}
+
+func parseIdFromPath(c *gin.Context) (primitive.ObjectID, error) {
+	idParam := c.Param("id")
+	if idParam == "" {
+		return primitive.ObjectID{}, errors.New("empty id param")
+	}
+
+	id, err := primitive.ObjectIDFromHex(idParam)
+	if err != nil {
+		return primitive.ObjectID{}, errors.New("invalid id param")
+	}
+
+	return id, nil
 }
