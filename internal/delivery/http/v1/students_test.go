@@ -158,7 +158,10 @@ func TestHandler_studentGetModuleOffers(t *testing.T) {
 					Description: "description",
 					SchoolID:    schoolId,
 					PackageIDs:  packageIds,
-					Benefits: []string{"benefit 1", "benefit 2"},
+					Benefits: []string{
+						"benefit 1",
+						"benefit 2",
+					},
 					Price: domain.Price{
 						Value:    6900,
 						Currency: "USD",
