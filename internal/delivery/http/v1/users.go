@@ -14,9 +14,9 @@ func (h *Handler) initUsersRoutes(api *gin.RouterGroup) {
 		users.POST("/sign-in", h.userSignIn)
 		users.POST("/auth/refresh", h.userRefresh)
 
-		authenticated := users.Group("/")
+		authenticated := users.Group("/", h.userIdentity)
 		{
-			authenticated.POST("/verify/:code", h.studentVerify)
+			authenticated.POST("/verify/:code", h.userVerify)
 		}
 	}
 }
@@ -155,7 +155,13 @@ func (h *Handler) userVerify(c *gin.Context) {
 		return
 	}
 
-	if err := h.services.Users.Verify(c.Request.Context(), code); err != nil {
+	id, err := getUserId(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if err := h.services.Users.Verify(c.Request.Context(), id, code); err != nil {
 		if errors.Is(err, service.ErrVerificationCodeInvalid) {
 			newResponse(c, http.StatusBadRequest, err.Error())
 			return

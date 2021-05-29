@@ -58,9 +58,9 @@ func (r *UsersRepo) GetByRefreshToken(ctx context.Context, refreshToken string) 
 	return user, nil
 }
 
-func (r *UsersRepo) Verify(ctx context.Context, code string) error {
+func (r *UsersRepo) Verify(ctx context.Context, userId primitive.ObjectID, code string) error {
 	res, err := r.db.UpdateOne(ctx,
-		bson.M{"verification.code": code},
+		bson.M{"verification.code": code, "_id": userId},
 		bson.M{"$set": bson.M{"verification.verified": true, "verification.code": ""}})
 	if err != nil {
 		return err

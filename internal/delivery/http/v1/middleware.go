@@ -13,9 +13,11 @@ import (
 
 const (
 	authorizationHeader = "Authorization"
-	studentCtx          = "userId"
-	adminCtx            = "adminId"
-	schoolCtx           = "school"
+
+	studentCtx = "studentId"
+	adminCtx   = "adminId"
+	userCtx    = "userId"
+	schoolCtx  = "school"
 )
 
 func (h *Handler) setSchoolFromRequest(c *gin.Context) {
@@ -78,6 +80,15 @@ func (h *Handler) adminIdentity(c *gin.Context) {
 	c.Set(adminCtx, id)
 }
 
+func (h *Handler) userIdentity(c *gin.Context) {
+	id, err := h.parseAuthHeader(c)
+	if err != nil {
+		newResponse(c, http.StatusUnauthorized, err.Error())
+	}
+
+	c.Set(userCtx, id)
+}
+
 func (h *Handler) parseAuthHeader(c *gin.Context) (string, error) {
 	header := c.GetHeader(authorizationHeader)
 	if header == "" {
@@ -97,7 +108,15 @@ func (h *Handler) parseAuthHeader(c *gin.Context) (string, error) {
 }
 
 func getStudentId(c *gin.Context) (primitive.ObjectID, error) {
-	idFromCtx, ok := c.Get(studentCtx)
+	return getIdByContext(c, studentCtx)
+}
+
+func getUserId(c *gin.Context) (primitive.ObjectID, error) {
+	return getIdByContext(c, userCtx)
+}
+
+func getIdByContext(c *gin.Context, context string) (primitive.ObjectID, error) {
+	idFromCtx, ok := c.Get(context)
 	if !ok {
 		return primitive.ObjectID{}, errors.New("studentCtx not found")
 	}

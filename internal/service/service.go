@@ -43,7 +43,7 @@ type Users interface {
 	SignUp(ctx context.Context, input UserSignUpInput) error
 	SignIn(ctx context.Context, input UserSignInInput) (Tokens, error)
 	RefreshTokens(ctx context.Context, refreshToken string) (Tokens, error)
-	Verify(ctx context.Context, hash string) error
+	Verify(ctx context.Context, userId primitive.ObjectID, hash string) error
 }
 
 type UpdateSchoolSettingsInput struct {

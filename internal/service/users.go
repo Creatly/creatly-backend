@@ -107,8 +107,8 @@ func (s *UsersService) RefreshTokens(ctx context.Context, refreshToken string) (
 	return s.createSession(ctx, student.ID)
 }
 
-func (s *UsersService) Verify(ctx context.Context, hash string) error {
-	err := s.repo.Verify(ctx, hash)
+func (s *UsersService) Verify(ctx context.Context, userId primitive.ObjectID, hash string) error {
+	err := s.repo.Verify(ctx, userId, hash)
 	if err != nil {
 		if err == repository.ErrVerificationCodeInvalid {
 			return ErrVerificationCodeInvalid
