@@ -336,6 +336,7 @@ func NewServices(deps Deps) *Services {
 	studentsService := NewStudentsService(deps.Repos.Students, modulesService, offersService, lessonsService, deps.Hasher,
 		deps.TokenManager, emailsService, studentLessonsService, deps.AccessTokenTTL, deps.RefreshTokenTTL, deps.OtpGenerator, deps.VerificationCodeLength)
 	ordersService := NewOrdersService(deps.Repos.Orders, offersService, promoCodesService, studentsService, deps.PaymentProvider, deps.PaymentCallbackURL, deps.PaymentResponseURL)
+	usersService := NewUsersService(deps.Repos.Users, deps.Hasher, deps.TokenManager, emailsService, deps.AccessTokenTTL, deps.RefreshTokenTTL, deps.OtpGenerator, deps.VerificationCodeLength)
 
 	return &Services{
 		Schools:        NewSchoolsService(deps.Repos.Schools, deps.Cache, deps.CacheTTL),
@@ -351,5 +352,6 @@ func NewServices(deps Deps) *Services {
 		Packages:       packagesService,
 		Lessons:        lessonsService,
 		Files:          NewFilesService(deps.StorageProvider, deps.Environment),
+		Users:          usersService,
 	}
 }

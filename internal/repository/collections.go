@@ -11,4 +11,5 @@ const (
 	modulesCollection        = "modules"
 	contentCollection        = "content"
 	ordersCollection         = "orders"
+	usersCollection          = "users"
 )

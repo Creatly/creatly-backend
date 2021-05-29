@@ -182,6 +182,7 @@ type Repositories struct {
 	PromoCodes     PromoCodes
 	Orders         Orders
 	Admins         Admins
+	Users          Users
 }
 
 func NewRepositories(db *mongo.Database) *Repositories {
@@ -197,5 +198,6 @@ func NewRepositories(db *mongo.Database) *Repositories {
 		Orders:         NewOrdersRepo(db),
 		Admins:         NewAdminsRepo(db),
 		Packages:       NewPackagesRepo(db),
+		Users:          NewUsersRepo(db),
 	}
 }
