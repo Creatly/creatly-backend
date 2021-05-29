@@ -17,6 +17,7 @@ type Users interface {
 	GetByRefreshToken(ctx context.Context, refreshToken string) (domain.User, error)
 	Verify(ctx context.Context, userId primitive.ObjectID, code string) error
 	SetSession(ctx context.Context, userId primitive.ObjectID, session domain.Session) error
+	AttachSchool(ctx context.Context, userId, schoolId primitive.ObjectID) error
 }
 
 type UpdateSchoolSettingsInput struct {
@@ -29,6 +30,7 @@ type UpdateSchoolSettingsInput struct {
 }
 
 type Schools interface {
+	Create(ctx context.Context, name string) (primitive.ObjectID, error)
 	GetByDomain(ctx context.Context, domainName string) (domain.School, error)
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.School, error)
 	UpdateSettings(ctx context.Context, inp UpdateSchoolSettingsInput) error

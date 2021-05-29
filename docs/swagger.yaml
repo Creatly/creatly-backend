@@ -1,5 +1,18 @@
 basePath: /api/v1/
 definitions:
+  domain.Admin:
+    properties:
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      schoolId:
+        type: string
+    type: object
   domain.ContactInfo:
     properties:
       address:
@@ -98,6 +111,27 @@ definitions:
         type: array
       schoolId:
         type: string
+    type: object
+  domain.School:
+    properties:
+      admins:
+        items:
+          $ref: '#/definitions/domain.Admin'
+        type: array
+      courses:
+        items:
+          $ref: '#/definitions/domain.Course'
+        type: array
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      registeredAt:
+        type: string
+      settings:
+        $ref: '#/definitions/domain.Settings'
     type: object
   domain.Settings:
     properties:
@@ -205,6 +239,13 @@ definitions:
     - discountPercentage
     - expiresAt
     - offerIds
+    type: object
+  v1.createSchoolInput:
+    properties:
+      name:
+        type: string
+    required:
+    - name
     type: object
   v1.dataResponse:
     properties:
@@ -2373,6 +2414,46 @@ paths:
       summary: User Refresh Tokens
       tags:
       - users-auth
+  /users/schools:
+    post:
+      consumes:
+      - application/json
+      description: user create school
+      parameters:
+      - description: school info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.createSchoolInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.School'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - UsersAuth: []
+      summary: User Create New School
+      tags:
+      - users-schools
   /users/sign-in:
     post:
       consumes:

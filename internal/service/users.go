@@ -2,13 +2,17 @@ package service
 
 import (
 	"context"
+	"strings"
+	"time"
+
 	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"github.com/zhashkevych/creatly-backend/internal/repository"
 	"github.com/zhashkevych/creatly-backend/pkg/auth"
+	"github.com/zhashkevych/creatly-backend/pkg/dns"
 	"github.com/zhashkevych/creatly-backend/pkg/hash"
+	"github.com/zhashkevych/creatly-backend/pkg/logger"
 	"github.com/zhashkevych/creatly-backend/pkg/otp"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"time"
 )
 
 type UsersService struct {
@@ -16,8 +20,10 @@ type UsersService struct {
 	hasher       hash.PasswordHasher
 	tokenManager auth.TokenManager
 	otpGenerator otp.Generator
+	dnsService   dns.DomainManager
 
-	emailService Emails
+	emailService  Emails
+	schoolService Schools
 
 	accessTokenTTL         time.Duration
 	refreshTokenTTL        time.Duration
@@ -25,16 +31,18 @@ type UsersService struct {
 }
 
 func NewUsersService(repo repository.Users, hasher hash.PasswordHasher, tokenManager auth.TokenManager,
-	emailService Emails, accessTTL, refreshTTL time.Duration, otpGenerator otp.Generator, verificationCodeLength int) *UsersService {
+	emailService Emails, schoolsService Schools, dnsService dns.DomainManager, accessTTL, refreshTTL time.Duration, otpGenerator otp.Generator, verificationCodeLength int) *UsersService {
 	return &UsersService{
 		repo:                   repo,
 		hasher:                 hasher,
 		emailService:           emailService,
+		schoolService:          schoolsService,
 		tokenManager:           tokenManager,
 		accessTokenTTL:         accessTTL,
 		refreshTokenTTL:        refreshTTL,
 		otpGenerator:           otpGenerator,
 		verificationCodeLength: verificationCodeLength,
+		dnsService:             dnsService,
 	}
 }
 
@@ -67,11 +75,6 @@ func (s *UsersService) SignUp(ctx context.Context, input UserSignUpInput) error 
 	}
 
 	// todo. DECIDE ON EMAIL MARKETING STRATEGY
-	//go func() {
-	//	if err := s.emailService.AddToList(student.Name, student.Email); err != nil {
-	//		logger.Error("Failed to add email to the list:", err)
-	//	}
-	//}()
 
 	return s.emailService.SendUserVerificationEmail(VerificationEmailInput{
 		Email:            user.Email,
@@ -120,6 +123,35 @@ func (s *UsersService) Verify(ctx context.Context, userId primitive.ObjectID, ha
 	return nil
 }
 
+func (s *UsersService) CreateSchool(ctx context.Context, userId primitive.ObjectID, schoolName string) (domain.School, error) {
+	// Create School In DB
+	schoolId, err := s.schoolService.Create(ctx, schoolName)
+	if err != nil {
+		return domain.School{}, err
+	}
+
+	if err := s.repo.AttachSchool(ctx, userId, schoolId); err != nil {
+		return domain.School{}, err
+	}
+
+	// Generate Sub Domain
+	subdomain := generateSubdomain(schoolName)
+	logger.Info(subdomain)
+	if err := s.dnsService.AddCNAMERecord(ctx, subdomain); err != nil {
+		return domain.School{}, err
+	}
+
+	// Update Domain In DB
+	if err := s.schoolService.UpdateSettings(ctx, UpdateSchoolSettingsInput{
+		Domains: []string{subdomain}, // todo add domain to subdomain
+	}); err != nil {
+		return domain.School{}, err
+	}
+
+	// Return school
+	return domain.School{ID: schoolId, Settings: domain.Settings{Domains: []string{subdomain}}}, nil
+}
+
 func (s *UsersService) createSession(ctx context.Context, userId primitive.ObjectID) (Tokens, error) {
 	var (
 		res Tokens
@@ -144,4 +176,20 @@ func (s *UsersService) createSession(ctx context.Context, userId primitive.Objec
 	err = s.repo.SetSession(ctx, userId, session)
 
 	return res, err
+}
+
+func generateSubdomain(schoolName string) string {
+	var subdomain string
+
+	parts := strings.Split(schoolName, " ")
+	for i, part := range parts {
+		if i == len(parts)-1 {
+			subdomain += strings.ToLower(part)
+			break
+		}
+
+		subdomain += strings.ToLower(part) + "-"
+	}
+
+	return subdomain
 }

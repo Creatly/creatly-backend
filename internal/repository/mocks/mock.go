@@ -81,17 +81,17 @@ func (mr *MockUsersMockRecorder) GetByRefreshToken(ctx, refreshToken interface{}
 }
 
 // Verify mocks base method
-func (m *MockUsers) Verify(ctx context.Context, code string) error {
+func (m *MockUsers) Verify(ctx context.Context, userId primitive.ObjectID, code string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Verify", ctx, code)
+	ret := m.ctrl.Call(m, "Verify", ctx, userId, code)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Verify indicates an expected call of Verify
-func (mr *MockUsersMockRecorder) Verify(ctx, code interface{}) *gomock.Call {
+func (mr *MockUsersMockRecorder) Verify(ctx, userId, code interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Verify", reflect.TypeOf((*MockUsers)(nil).Verify), ctx, code)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Verify", reflect.TypeOf((*MockUsers)(nil).Verify), ctx, userId, code)
 }
 
 // SetSession mocks base method
@@ -106,6 +106,20 @@ func (m *MockUsers) SetSession(ctx context.Context, userId primitive.ObjectID, s
 func (mr *MockUsersMockRecorder) SetSession(ctx, userId, session interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetSession", reflect.TypeOf((*MockUsers)(nil).SetSession), ctx, userId, session)
+}
+
+// AttachSchool mocks base method
+func (m *MockUsers) AttachSchool(ctx context.Context, userId, schoolId primitive.ObjectID) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AttachSchool", ctx, userId, schoolId)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AttachSchool indicates an expected call of AttachSchool
+func (mr *MockUsersMockRecorder) AttachSchool(ctx, userId, schoolId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AttachSchool", reflect.TypeOf((*MockUsers)(nil).AttachSchool), ctx, userId, schoolId)
 }
 
 // MockSchools is a mock of Schools interface
@@ -129,6 +143,21 @@ func NewMockSchools(ctrl *gomock.Controller) *MockSchools {
 // EXPECT returns an object that allows the caller to indicate expected use
 func (m *MockSchools) EXPECT() *MockSchoolsMockRecorder {
 	return m.recorder
+}
+
+// Create mocks base method
+func (m *MockSchools) Create(ctx context.Context, name string) (primitive.ObjectID, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Create", ctx, name)
+	ret0, _ := ret[0].(primitive.ObjectID)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Create indicates an expected call of Create
+func (mr *MockSchoolsMockRecorder) Create(ctx, name interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockSchools)(nil).Create), ctx, name)
 }
 
 // GetByDomain mocks base method

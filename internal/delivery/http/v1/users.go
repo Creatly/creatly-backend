@@ -2,9 +2,10 @@ package v1
 
 import (
 	"errors"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/zhashkevych/creatly-backend/internal/service"
-	"net/http"
 )
 
 func (h *Handler) initUsersRoutes(api *gin.RouterGroup) {
@@ -17,6 +18,14 @@ func (h *Handler) initUsersRoutes(api *gin.RouterGroup) {
 		authenticated := users.Group("/", h.userIdentity)
 		{
 			authenticated.POST("/verify/:code", h.userVerify)
+
+			schools := authenticated.Group("/schools/")
+			{
+				schools.POST("", h.userCreateSchool)
+				schools.GET("", h.userGetSchools)
+				schools.GET("/:id", h.userGetSchoolById)
+				schools.PUT("/:id", h.userUpdateSchool)
+			}
 		}
 	}
 }
@@ -174,4 +183,52 @@ func (h *Handler) userVerify(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, response{"success"})
+}
+
+type createSchoolInput struct {
+	Name string `json:"name" binding:"required"`
+}
+
+// @Summary User Create New School
+// @Security UsersAuth
+// @Tags users-schools
+// @Description user create school
+// @ModuleID userCreateSchool
+// @Accept  json
+// @Produce  json
+// @Param input body createSchoolInput true "school info"
+// @Success 200 {object} domain.School
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /users/schools [post]
+func (h *Handler) userCreateSchool(c *gin.Context) {
+	var inp createSchoolInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	id, err := getUserId(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	school, err := h.services.Users.CreateSchool(c.Request.Context(), id, inp.Name)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusCreated, school)
+}
+
+func (h *Handler) userGetSchools(c *gin.Context) {
+}
+
+func (h *Handler) userGetSchoolById(c *gin.Context) {
+}
+
+func (h *Handler) userUpdateSchool(c *gin.Context) {
 }

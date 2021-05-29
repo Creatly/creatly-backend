@@ -5,6 +5,8 @@ import (
 	"io"
 	"time"
 
+	"github.com/zhashkevych/creatly-backend/pkg/dns"
+
 	"github.com/zhashkevych/creatly-backend/internal/config"
 	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"github.com/zhashkevych/creatly-backend/internal/repository"
@@ -39,11 +41,15 @@ type Tokens struct {
 	RefreshToken string
 }
 
+// 1. Create School in DB
+// 2. Generate Sub Domain
+
 type Users interface {
 	SignUp(ctx context.Context, input UserSignUpInput) error
 	SignIn(ctx context.Context, input UserSignInInput) (Tokens, error)
 	RefreshTokens(ctx context.Context, refreshToken string) (Tokens, error)
 	Verify(ctx context.Context, userId primitive.ObjectID, hash string) error
+	CreateSchool(ctx context.Context, userId primitive.ObjectID, schoolName string) (domain.School, error)
 }
 
 type UpdateSchoolSettingsInput struct {
@@ -56,6 +62,7 @@ type UpdateSchoolSettingsInput struct {
 }
 
 type Schools interface {
+	Create(ctx context.Context, name string) (primitive.ObjectID, error)
 	GetByDomain(ctx context.Context, domainName string) (domain.School, error)
 	UpdateSettings(ctx context.Context, input UpdateSchoolSettingsInput) error
 }
@@ -322,6 +329,7 @@ type Deps struct {
 	VerificationCodeLength int
 	FrontendURL            string
 	Environment            string
+	DNS                    dns.DomainManager
 }
 
 func NewServices(deps Deps) *Services {
@@ -336,10 +344,12 @@ func NewServices(deps Deps) *Services {
 	studentsService := NewStudentsService(deps.Repos.Students, modulesService, offersService, lessonsService, deps.Hasher,
 		deps.TokenManager, emailsService, studentLessonsService, deps.AccessTokenTTL, deps.RefreshTokenTTL, deps.OtpGenerator, deps.VerificationCodeLength)
 	ordersService := NewOrdersService(deps.Repos.Orders, offersService, promoCodesService, studentsService, deps.PaymentProvider, deps.PaymentCallbackURL, deps.PaymentResponseURL)
-	usersService := NewUsersService(deps.Repos.Users, deps.Hasher, deps.TokenManager, emailsService, deps.AccessTokenTTL, deps.RefreshTokenTTL, deps.OtpGenerator, deps.VerificationCodeLength)
+	schoolsService := NewSchoolsService(deps.Repos.Schools, deps.Cache, deps.CacheTTL)
+	usersService := NewUsersService(deps.Repos.Users, deps.Hasher, deps.TokenManager, emailsService, schoolsService, deps.DNS,
+		deps.AccessTokenTTL, deps.RefreshTokenTTL, deps.OtpGenerator, deps.VerificationCodeLength)
 
 	return &Services{
-		Schools:        NewSchoolsService(deps.Repos.Schools, deps.Cache, deps.CacheTTL),
+		Schools:        schoolsService,
 		Students:       studentsService,
 		StudentLessons: studentLessonsService,
 		Courses:        coursesService,

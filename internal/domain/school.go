@@ -1,15 +1,19 @@
 package domain
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type School struct {
-	ID           primitive.ObjectID  `json:"id" bson:"_id,omitempty"`
-	Name         string              `json:"name" bson:"name"`
-	Description  string              `json:"description" bson:"description"`
-	RegisteredAt primitive.Timestamp `json:"registeredAt" bson:"registeredAt"`
-	Admins       []Admin             `json:"admins" bson:"admins"`
-	Courses      []Course            `json:"courses" bson:"courses"`
-	Settings     Settings            `json:"settings" bson:"settings"`
+	ID           primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	Name         string             `json:"name" bson:"name"`
+	Description  string             `json:"description" bson:"description"`
+	RegisteredAt time.Time          `json:"registeredAt" bson:"registeredAt"`
+	Admins       []Admin            `json:"admins" bson:"admins"`
+	Courses      []Course           `json:"courses" bson:"courses"`
+	Settings     Settings           `json:"settings" bson:"settings"`
 }
 
 type Settings struct {
