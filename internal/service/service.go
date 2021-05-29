@@ -112,13 +112,13 @@ type Files interface {
 	Upload(ctx context.Context, inp UploadInput) (string, error)
 }
 
-type SendVerificationEmailInput struct {
+type VerificationEmailInput struct {
 	Email            string
 	Name             string
 	VerificationCode string
 }
 
-type SendPurchaseSuccessfulEmailInput struct {
+type StudentPurchaseSuccessfulEmailInput struct {
 	Email      string
 	Name       string
 	CourseName string
@@ -126,8 +126,9 @@ type SendPurchaseSuccessfulEmailInput struct {
 
 type Emails interface {
 	AddToList(name, email string) error
-	SendVerificationEmail(SendVerificationEmailInput) error
-	SendPurchaseSuccessfulEmail(SendPurchaseSuccessfulEmailInput) error
+	SendStudentVerificationEmail(VerificationEmailInput) error
+	SendUserVerificationEmail(VerificationEmailInput) error
+	SendStudentPurchaseSuccessfulEmail(StudentPurchaseSuccessfulEmailInput) error
 }
 
 type UpdateCourseInput struct {

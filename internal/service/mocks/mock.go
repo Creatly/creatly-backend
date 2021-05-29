@@ -460,9 +460,9 @@ func (mr *MockEmailsMockRecorder) AddToList(name, email interface{}) *gomock.Cal
 }
 
 // SendPurchaseSuccessfulEmail mocks base method.
-func (m *MockEmails) SendPurchaseSuccessfulEmail(arg0 service.SendPurchaseSuccessfulEmailInput) error {
+func (m *MockEmails) SendStudentPurchaseSuccessfulEmail(arg0 service.StudentPurchaseSuccessfulEmailInput) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SendPurchaseSuccessfulEmail", arg0)
+	ret := m.ctrl.Call(m, "SendStudentPurchaseSuccessfulEmail", arg0)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
@@ -470,13 +470,13 @@ func (m *MockEmails) SendPurchaseSuccessfulEmail(arg0 service.SendPurchaseSucces
 // SendPurchaseSuccessfulEmail indicates an expected call of SendPurchaseSuccessfulEmail.
 func (mr *MockEmailsMockRecorder) SendPurchaseSuccessfulEmail(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendPurchaseSuccessfulEmail", reflect.TypeOf((*MockEmails)(nil).SendPurchaseSuccessfulEmail), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendStudentPurchaseSuccessfulEmail", reflect.TypeOf((*MockEmails)(nil).SendStudentPurchaseSuccessfulEmail), arg0)
 }
 
 // SendVerificationEmail mocks base method.
-func (m *MockEmails) SendVerificationEmail(arg0 service.SendVerificationEmailInput) error {
+func (m *MockEmails) SendStudentVerificationEmail(arg0 service.VerificationEmailInput) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SendVerificationEmail", arg0)
+	ret := m.ctrl.Call(m, "SendStudentVerificationEmail", arg0)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
@@ -484,7 +484,7 @@ func (m *MockEmails) SendVerificationEmail(arg0 service.SendVerificationEmailInp
 // SendVerificationEmail indicates an expected call of SendVerificationEmail.
 func (mr *MockEmailsMockRecorder) SendVerificationEmail(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendVerificationEmail", reflect.TypeOf((*MockEmails)(nil).SendVerificationEmail), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendStudentVerificationEmail", reflect.TypeOf((*MockEmails)(nil).SendStudentVerificationEmail), arg0)
 }
 
 // MockCourses is a mock of Courses interface.

@@ -84,7 +84,7 @@ func (s *StudentsService) SignUp(ctx context.Context, input StudentSignUpInput) 
 	}()
 
 	// TODO: If it fails, what then?
-	return s.emailService.SendVerificationEmail(SendVerificationEmailInput{
+	return s.emailService.SendStudentVerificationEmail(VerificationEmailInput{
 		Email:            student.Email,
 		Name:             student.Name,
 		VerificationCode: verificationCode,
