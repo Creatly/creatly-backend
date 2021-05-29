@@ -22,6 +22,30 @@ import (
 
 // TODO handle "not found" errors
 
+type UserSignUpInput struct {
+	Name     string
+	Email    string
+	Phone    string
+	Password string
+}
+
+type UserSignInInput struct {
+	Email    string
+	Password string
+}
+
+type Tokens struct {
+	AccessToken  string
+	RefreshToken string
+}
+
+type Users interface {
+	SignUp(ctx context.Context, input UserSignUpInput) error
+	SignIn(ctx context.Context, input UserSignInInput) (Tokens, error)
+	RefreshTokens(ctx context.Context, refreshToken string) (Tokens, error)
+	Verify(ctx context.Context, hash string) error
+}
+
 type UpdateSchoolSettingsInput struct {
 	SchoolID    primitive.ObjectID
 	Color       string
@@ -43,20 +67,15 @@ type StudentSignUpInput struct {
 	SchoolID primitive.ObjectID
 }
 
-type SignInInput struct {
+type SchoolSignInInput struct {
 	Email    string
 	Password string
 	SchoolID primitive.ObjectID
 }
 
-type Tokens struct {
-	AccessToken  string
-	RefreshToken string
-}
-
 type Students interface {
 	SignUp(ctx context.Context, input StudentSignUpInput) error
-	SignIn(ctx context.Context, input SignInInput) (Tokens, error)
+	SignIn(ctx context.Context, input SchoolSignInInput) (Tokens, error)
 	RefreshTokens(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (Tokens, error)
 	Verify(ctx context.Context, hash string) error
 	GetModuleLessons(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) ([]domain.Lesson, error)
@@ -74,7 +93,7 @@ type StudentLessons interface {
 }
 
 type Admins interface {
-	SignIn(ctx context.Context, input SignInInput) (Tokens, error)
+	SignIn(ctx context.Context, input SchoolSignInInput) (Tokens, error)
 	RefreshTokens(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (Tokens, error)
 	GetCourses(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Course, error)
 	GetCourseById(ctx context.Context, schoolId, courseId primitive.ObjectID) (domain.Course, error)
@@ -280,6 +299,7 @@ type Services struct {
 	Orders         Orders
 	Admins         Admins
 	Files          Files
+	Users          Users
 }
 
 type Deps struct {

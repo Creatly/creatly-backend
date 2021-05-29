@@ -47,7 +47,7 @@ func TestNewAdminsService_SignInErr(t *testing.T) {
 	adminRepo.EXPECT().GetByCredentials(ctx, gomock.Any(), gomock.Any(), gomock.Any()).Return(domain.Admin{}, errInternalServErr)
 	adminRepo.EXPECT().SetSession(ctx, gomock.Any(), gomock.Any())
 
-	res, err := adminService.SignIn(ctx, service.SignInInput{})
+	res, err := adminService.SignIn(ctx, service.SchoolSignInInput{})
 
 	require.True(t, errors.Is(err, errInternalServErr))
 	require.Equal(t, service.Tokens{}, res)
@@ -61,7 +61,7 @@ func TestNewAdminsService_SignIn(t *testing.T) {
 	adminRepo.EXPECT().GetByCredentials(ctx, gomock.Any(), gomock.Any(), gomock.Any())
 	adminRepo.EXPECT().SetSession(ctx, gomock.Any(), gomock.Any())
 
-	res, err := adminService.SignIn(ctx, service.SignInInput{})
+	res, err := adminService.SignIn(ctx, service.SchoolSignInInput{})
 
 	require.NoError(t, err)
 	require.IsType(t, service.Tokens{}, res)

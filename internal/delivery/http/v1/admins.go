@@ -114,7 +114,7 @@ func (h *Handler) adminSignIn(c *gin.Context) {
 		return
 	}
 
-	res, err := h.services.Admins.SignIn(c.Request.Context(), service.SignInInput{
+	res, err := h.services.Admins.SignIn(c.Request.Context(), service.SchoolSignInInput{
 		Email:    inp.Email,
 		Password: inp.Password,
 		SchoolID: school.ID,

@@ -91,7 +91,7 @@ func (s *StudentsService) SignUp(ctx context.Context, input StudentSignUpInput) 
 	})
 }
 
-func (s *StudentsService) SignIn(ctx context.Context, input SignInInput) (Tokens, error) {
+func (s *StudentsService) SignIn(ctx context.Context, input SchoolSignInInput) (Tokens, error) {
 	passwordHash, err := s.hasher.Hash(input.Password)
 	if err != nil {
 		return Tokens{}, err

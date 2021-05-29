@@ -208,7 +208,7 @@ func (mr *MockStudentsMockRecorder) SetLessonFinished(ctx, studentId, lessonId i
 }
 
 // SignIn mocks base method.
-func (m *MockStudents) SignIn(ctx context.Context, input service.SignInInput) (service.Tokens, error) {
+func (m *MockStudents) SignIn(ctx context.Context, input service.SchoolSignInInput) (service.Tokens, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SignIn", ctx, input)
 	ret0, _ := ret[0].(service.Tokens)
@@ -370,7 +370,7 @@ func (mr *MockAdminsMockRecorder) RefreshTokens(ctx, schoolId, refreshToken inte
 }
 
 // SignIn mocks base method.
-func (m *MockAdmins) SignIn(ctx context.Context, input service.SignInInput) (service.Tokens, error) {
+func (m *MockAdmins) SignIn(ctx context.Context, input service.SchoolSignInInput) (service.Tokens, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SignIn", ctx, input)
 	ret0, _ := ret[0].(service.Tokens)
