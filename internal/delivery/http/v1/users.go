@@ -137,6 +137,7 @@ func (h *Handler) userRefresh(c *gin.Context) {
 }
 
 // @Summary User Verify Registration
+// @Security UsersAuth
 // @Tags users-auth
 // @Description user verify registration
 // @ModuleID userVerify

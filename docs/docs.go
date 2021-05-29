@@ -3204,6 +3204,11 @@ var doc = `{
         },
         "/users/verify/{code}": {
             "post": {
+                "security": [
+                    {
+                        "UsersAuth": []
+                    }
+                ],
                 "description": "user verify registration",
                 "consumes": [
                     "application/json"
@@ -3872,6 +3877,11 @@ var doc = `{
             "in": "header"
         },
         "StudentsAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        },
+        "UsersAuth": {
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"

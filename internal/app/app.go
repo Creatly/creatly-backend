@@ -46,6 +46,10 @@ import (
 // @in header
 // @name Authorization
 
+// @securityDefinitions.apikey UsersAuth
+// @in header
+// @name Authorization
+
 // Run initializes whole application.
 func Run(configPath string) {
 	cfg, err := config.Init(configPath)

@@ -2483,6 +2483,8 @@ paths:
           description: ""
           schema:
             $ref: '#/definitions/v1.response'
+      security:
+      - UsersAuth: []
       summary: User Verify Registration
       tags:
       - users-auth
@@ -2492,6 +2494,10 @@ securityDefinitions:
     name: Authorization
     type: apiKey
   StudentsAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+  UsersAuth:
     in: header
     name: Authorization
     type: apiKey
