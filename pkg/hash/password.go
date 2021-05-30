@@ -26,6 +26,7 @@ func NewBcryptHasher(cost int) *BcryptHasher {
 	return &BcryptHasher{cost: cost}
 }
 
+// Hash creates hash from the provided password using bcrypt.GenerateFromPassword.
 func (h *BcryptHasher) Hash(password string) (string, error) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), h.cost)
 	if err != nil {
@@ -35,6 +36,7 @@ func (h *BcryptHasher) Hash(password string) (string, error) {
 	return string(hash), nil
 }
 
+// CompareHashAndPassword checks hash and password using bcrypt.CompareHashAndPassword.
 func (h *BcryptHasher) CompareHashAndPassword(hash, password string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 }
