@@ -7,7 +7,7 @@ import (
 // PasswordHasher provides hashing logic to securely store passwords.
 type PasswordHasher interface {
 	Hash(password string) (string, error)
-	CompareHashAndPassword(hash string, password string) error
+	CompareHashAndPassword(hash, password string) error
 }
 
 // BcryptHasher uses Bcrypt to has passwords with provided cost.
@@ -35,6 +35,6 @@ func (h *BcryptHasher) Hash(password string) (string, error) {
 	return string(hash), nil
 }
 
-func (h *BcryptHasher) CompareHashAndPassword(hash string, password string) error {
+func (h *BcryptHasher) CompareHashAndPassword(hash, password string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 }
