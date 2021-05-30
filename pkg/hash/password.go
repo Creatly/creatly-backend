@@ -10,7 +10,7 @@ type PasswordHasher interface {
 	CompareHashAndPassword(hash, password string) error
 }
 
-// BcryptHasher uses Bcrypt to has passwords with provided cost.
+// BcryptHasher uses Bcrypt to hash passwords with provided cost.
 type BcryptHasher struct {
 	cost int
 }
