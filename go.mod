@@ -42,7 +42,7 @@ require (
 	github.com/ugorji/go v1.2.3 // indirect
 	github.com/xlzd/gotp v0.0.0-20181030022105-c8557ba2c119
 	go.mongodb.org/mongo-driver v1.4.5
-	golang.org/x/crypto v0.0.0-20210415154028-4f45737414dc // indirect
+	golang.org/x/crypto v0.0.0-20210415154028-4f45737414dc
 	golang.org/x/net v0.0.0-20210420210106-798c2154c571 // indirect
 	golang.org/x/sync v0.0.0-20201207232520-09787c993a3a // indirect
 	golang.org/x/sys v0.0.0-20210420205809-ac73e9fd8988 // indirect

@@ -1,31 +1,40 @@
 package hash
 
 import (
-	"crypto/sha1"
-	"fmt"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // PasswordHasher provides hashing logic to securely store passwords.
 type PasswordHasher interface {
 	Hash(password string) (string, error)
+	CompareHashAndPassword(hash string, password string) error
 }
 
-// SHA1Hasher uses SHA1 to hash passwords with provided salt.
-type SHA1Hasher struct {
-	salt string
+// BcryptHasher uses Bcrypt to has passwords with provided cost.
+type BcryptHasher struct {
+	cost int
 }
 
-func NewSHA1Hasher(salt string) *SHA1Hasher {
-	return &SHA1Hasher{salt: salt}
+// NewBcryptHasher creates new instance of the BcryptHasher with provided cost.
+// If the provided cost is lower than bcrypt.MinCost or greater than bcrypt.MaxCost
+// then bcrypt.DefaultCost will be used.
+func NewBcryptHasher(cost int) *BcryptHasher {
+	if cost < bcrypt.MinCost || cost > bcrypt.MaxCost {
+		cost = bcrypt.DefaultCost
+	}
+
+	return &BcryptHasher{cost: cost}
 }
 
-// Hash creates SHA1 hash of given password.
-func (h *SHA1Hasher) Hash(password string) (string, error) {
-	hash := sha1.New()
-
-	if _, err := hash.Write([]byte(password)); err != nil {
+func (h *BcryptHasher) Hash(password string) (string, error) {
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), h.cost)
+	if err != nil {
 		return "", err
 	}
 
-	return fmt.Sprintf("%x", hash.Sum([]byte(h.salt))), nil
+	return string(hash), nil
+}
+
+func (h *BcryptHasher) CompareHashAndPassword(hash string, password string) error {
+	return bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 }
