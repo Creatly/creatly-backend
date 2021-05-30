@@ -12,4 +12,5 @@ var (
 	ErrUnknownCallbackType     = errors.New("unknown callback type")
 	ErrVerificationCodeInvalid = errors.New("verification code is invalid")
 	ErrUserAlreadyExists       = errors.New("user with such email already exists")
+	ErrLoginDataIsInvalid      = errors.New("provided login data is invalid")
 )

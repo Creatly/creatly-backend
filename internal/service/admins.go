@@ -36,10 +36,13 @@ func NewAdminsService(hasher hash.PasswordHasher, tokenManager auth.TokenManager
 }
 
 func (s *AdminsService) SignIn(ctx context.Context, input SignInInput) (Tokens, error) {
-	// student, err := s.repo.GetByCredentials(ctx, input.SchoolID, input.Email, s.hasher.Hash(input.Password))
-	student, err := s.repo.GetByCredentials(ctx, input.SchoolID, input.Email, input.Password) // TODO implement password hashing
+	student, err := s.repo.GetByCredentials(ctx, input.SchoolID, input.Email)
 	if err != nil {
 		return Tokens{}, err
+	}
+
+	if err := s.hasher.CompareHashAndPassword(student.Password, input.Password); err != nil {
+		return Tokens{}, ErrLoginDataIsInvalid
 	}
 
 	return s.createSession(ctx, student.ID)

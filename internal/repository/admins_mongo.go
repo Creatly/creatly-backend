@@ -18,9 +18,9 @@ func NewAdminsRepo(db *mongo.Database) *AdminsRepo {
 	return &AdminsRepo{db: db.Collection(adminsCollection)}
 }
 
-func (r *AdminsRepo) GetByCredentials(ctx context.Context, schoolId primitive.ObjectID, email, password string) (domain.Admin, error) {
+func (r *AdminsRepo) GetByCredentials(ctx context.Context, schoolId primitive.ObjectID, email string) (domain.Admin, error) {
 	var admin domain.Admin
-	err := r.db.FindOne(ctx, bson.M{"schoolId": schoolId, "email": email, "password": password}).Decode(&admin)
+	err := r.db.FindOne(ctx, bson.M{"schoolId": schoolId, "email": email}).Decode(&admin)
 
 	return admin, err
 }

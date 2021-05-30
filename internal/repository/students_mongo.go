@@ -30,9 +30,9 @@ func (r *StudentsRepo) Create(ctx context.Context, student domain.Student) error
 	return err
 }
 
-func (r *StudentsRepo) GetByCredentials(ctx context.Context, schoolId primitive.ObjectID, email, password string) (domain.Student, error) {
+func (r *StudentsRepo) GetByCredentials(ctx context.Context, schoolId primitive.ObjectID, email string) (domain.Student, error) {
 	var student domain.Student
-	if err := r.db.FindOne(ctx, bson.M{"email": email, "password": password, "schoolId": schoolId, "verification.verified": true}).
+	if err := r.db.FindOne(ctx, bson.M{"email": email, "schoolId": schoolId, "verification.verified": true}).
 		Decode(&student); err != nil {
 		if err == mongo.ErrNoDocuments {
 			return domain.Student{}, ErrUserNotFound

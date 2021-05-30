@@ -64,7 +64,7 @@ func Run(configPath string) {
 	db := mongoClient.Database(cfg.Mongo.Name)
 
 	memCache := cache.NewMemoryCache()
-	hasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
+	hasher := hash.NewBcryptHasher(cfg.Auth.PasswordCost)
 	emailProvider := sendpulse.NewClient(cfg.Email.SendPulse.ClientID, cfg.Email.SendPulse.ClientSecret, memCache)
 	paymentProvider := fondy.NewFondyClient(cfg.Payment.Fondy.MerchantId, cfg.Payment.Fondy.MerchantPassword)
 

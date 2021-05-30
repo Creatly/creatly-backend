@@ -16,6 +16,7 @@ const (
 	defaultLimiterBurst           = 2
 	defaultLimiterTTL             = 10 * time.Minute
 	defaultVerificationCodeLength = 8
+	defaultPasswordCost           = 10
 
 	EnvLocal = "local"
 	Prod     = "prod"
@@ -45,7 +46,7 @@ type (
 
 	AuthConfig struct {
 		JWT                    JWTConfig
-		PasswordSalt           string
+		PasswordCost           int
 		VerificationCodeLength int `mapstructure:"verificationCodeLength"`
 	}
 
@@ -161,6 +162,10 @@ func unmarshal(cfg *Config) error {
 		return err
 	}
 
+	if err := viper.UnmarshalKey("auth.passwordCost", &cfg.Auth.PasswordCost); err != nil {
+		return err
+	}
+
 	if err := viper.UnmarshalKey("fileStorage", &cfg.FileStorage); err != nil {
 		return err
 	}
@@ -189,7 +194,6 @@ func setFromEnv(cfg *Config) {
 	cfg.Mongo.User = viper.GetString("user")
 	cfg.Mongo.Password = viper.GetString("pass")
 
-	cfg.Auth.PasswordSalt = viper.GetString("salt")
 	cfg.Auth.JWT.SigningKey = viper.GetString("signing_key")
 
 	cfg.Email.SendPulse.ClientSecret = viper.GetString("secret")
@@ -240,6 +244,7 @@ func populateDefaults() {
 	viper.SetDefault("auth.accessTokenTTL", defaultAccessTokenTTL)
 	viper.SetDefault("auth.refreshTokenTTL", defaultRefreshTokenTTL)
 	viper.SetDefault("auth.verificationCodeLength", defaultVerificationCodeLength)
+	viper.SetDefault("auth.passwordCost", defaultPasswordCost)
 	viper.SetDefault("limiter.rps", defaultLimiterRPS)
 	viper.SetDefault("limiter.burst", defaultLimiterBurst)
 	viper.SetDefault("limiter.ttl", defaultLimiterTTL)
@@ -282,11 +287,7 @@ func parseEnv() error {
 		return err
 	}
 
-	if err := parseStorageEnvVariables(); err != nil {
-		return err
-	}
-
-	return parsePasswordFromEnv()
+	return parseStorageEnvVariables()
 }
 
 func parseMongoEnvVariables() error {
@@ -343,11 +344,6 @@ func parsePaymentEnvVariables() error {
 	}
 
 	return viper.BindEnv("response_url")
-}
-
-func parsePasswordFromEnv() error {
-	viper.SetEnvPrefix("password")
-	return viper.BindEnv("salt")
 }
 
 func parseJWTFromEnv() error {

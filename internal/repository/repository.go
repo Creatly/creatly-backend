@@ -28,7 +28,7 @@ type Schools interface {
 
 type Students interface {
 	Create(ctx context.Context, student domain.Student) error
-	GetByCredentials(ctx context.Context, schoolId primitive.ObjectID, email, password string) (domain.Student, error)
+	GetByCredentials(ctx context.Context, schoolId primitive.ObjectID, email string) (domain.Student, error)
 	GetByRefreshToken(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (domain.Student, error)
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.Student, error)
 	GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Student, error)
@@ -44,7 +44,7 @@ type StudentLessons interface {
 }
 
 type Admins interface {
-	GetByCredentials(ctx context.Context, schoolId primitive.ObjectID, email, password string) (domain.Admin, error)
+	GetByCredentials(ctx context.Context, schoolId primitive.ObjectID, email string) (domain.Admin, error)
 	GetByRefreshToken(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (domain.Admin, error)
 	SetSession(ctx context.Context, id primitive.ObjectID, session domain.Session) error
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.Admin, error)

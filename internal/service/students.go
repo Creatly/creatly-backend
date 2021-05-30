@@ -92,18 +92,17 @@ func (s *StudentsService) SignUp(ctx context.Context, input StudentSignUpInput) 
 }
 
 func (s *StudentsService) SignIn(ctx context.Context, input SignInInput) (Tokens, error) {
-	passwordHash, err := s.hasher.Hash(input.Password)
-	if err != nil {
-		return Tokens{}, err
-	}
-
-	student, err := s.repo.GetByCredentials(ctx, input.SchoolID, input.Email, passwordHash)
+	student, err := s.repo.GetByCredentials(ctx, input.SchoolID, input.Email)
 	if err != nil {
 		if err == repository.ErrUserNotFound {
 			return Tokens{}, ErrUserNotFound
 		}
 
 		return Tokens{}, err
+	}
+
+	if err := s.hasher.CompareHashAndPassword(student.Password, input.Password); err != nil {
+		return Tokens{}, ErrLoginDataIsInvalid
 	}
 
 	return s.createSession(ctx, student.ID)

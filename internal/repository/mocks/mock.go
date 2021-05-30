@@ -119,18 +119,18 @@ func (mr *MockStudentsMockRecorder) Create(ctx, student interface{}) *gomock.Cal
 }
 
 // GetByCredentials mocks base method.
-func (m *MockStudents) GetByCredentials(ctx context.Context, schoolId primitive.ObjectID, email, password string) (domain.Student, error) {
+func (m *MockStudents) GetByCredentials(ctx context.Context, schoolId primitive.ObjectID, email string) (domain.Student, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetByCredentials", ctx, schoolId, email, password)
+	ret := m.ctrl.Call(m, "GetByCredentials", ctx, schoolId, email)
 	ret0, _ := ret[0].(domain.Student)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetByCredentials indicates an expected call of GetByCredentials.
-func (mr *MockStudentsMockRecorder) GetByCredentials(ctx, schoolId, email, password interface{}) *gomock.Call {
+func (mr *MockStudentsMockRecorder) GetByCredentials(ctx, schoolId, email interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByCredentials", reflect.TypeOf((*MockStudents)(nil).GetByCredentials), ctx, schoolId, email, password)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByCredentials", reflect.TypeOf((*MockStudents)(nil).GetByCredentials), ctx, schoolId, email)
 }
 
 // GetById mocks base method.
@@ -309,18 +309,18 @@ func (m *MockAdmins) EXPECT() *MockAdminsMockRecorder {
 }
 
 // GetByCredentials mocks base method.
-func (m *MockAdmins) GetByCredentials(ctx context.Context, schoolId primitive.ObjectID, email, password string) (domain.Admin, error) {
+func (m *MockAdmins) GetByCredentials(ctx context.Context, schoolId primitive.ObjectID, email string) (domain.Admin, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetByCredentials", ctx, schoolId, email, password)
+	ret := m.ctrl.Call(m, "GetByCredentials", ctx, schoolId, email)
 	ret0, _ := ret[0].(domain.Admin)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetByCredentials indicates an expected call of GetByCredentials.
-func (mr *MockAdminsMockRecorder) GetByCredentials(ctx, schoolId, email, password interface{}) *gomock.Call {
+func (mr *MockAdminsMockRecorder) GetByCredentials(ctx, schoolId, email interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByCredentials", reflect.TypeOf((*MockAdmins)(nil).GetByCredentials), ctx, schoolId, email, password)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByCredentials", reflect.TypeOf((*MockAdmins)(nil).GetByCredentials), ctx, schoolId, email)
 }
 
 // GetById mocks base method.
