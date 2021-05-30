@@ -12,7 +12,6 @@ func TestInit(t *testing.T) {
 		mongoURI           string
 		mongoUser          string
 		mongoPass          string
-		passwordSalt       string
 		jwtSigningKey      string
 		sendpulseListId    string
 		sendpulseId        string
@@ -40,7 +39,6 @@ func TestInit(t *testing.T) {
 		os.Setenv("MONGO_URI", env.mongoURI)
 		os.Setenv("MONGO_USER", env.mongoUser)
 		os.Setenv("MONGO_PASS", env.mongoPass)
-		os.Setenv("PASSWORD_SALT", env.passwordSalt)
 		os.Setenv("JWT_SIGNING_KEY", env.jwtSigningKey)
 		os.Setenv("SENDPULSE_LISTID", env.sendpulseListId)
 		os.Setenv("SENDPULSE_ID", env.sendpulseId)
@@ -73,7 +71,6 @@ func TestInit(t *testing.T) {
 					mongoURI:           "mongodb://localhost:27017",
 					mongoUser:          "admin",
 					mongoPass:          "qwerty",
-					passwordSalt:       "salt",
 					jwtSigningKey:      "key",
 					sendpulseSecret:    "secret",
 					sendpulseId:        "id",
@@ -103,12 +100,12 @@ func TestInit(t *testing.T) {
 					WriteTimeout:       time.Second * 10,
 				},
 				Auth: AuthConfig{
-					PasswordSalt: "salt",
 					JWT: JWTConfig{
 						RefreshTokenTTL: time.Minute * 30,
 						AccessTokenTTL:  time.Minute * 15,
 						SigningKey:      "key",
 					},
+					PasswordCost:           10,
 					VerificationCodeLength: 10,
 				},
 				Mongo: MongoConfig{

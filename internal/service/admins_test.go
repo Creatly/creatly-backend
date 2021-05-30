@@ -14,6 +14,7 @@ import (
 	"github.com/zhashkevych/creatly-backend/pkg/auth"
 	"github.com/zhashkevych/creatly-backend/pkg/hash"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"golang.org/x/crypto/bcrypt"
 )
 
 var errInternalServErr = errors.New("test: internal server error")
@@ -28,7 +29,7 @@ func mockAdminService(t *testing.T) (*service.AdminsService, *mock_repository.Mo
 	schoolsRepo := mock_repository.NewMockSchools(mockCtl)
 
 	adminService := service.NewAdminsService(
-		&hash.SHA1Hasher{},
+		&hash.BcryptHasher{},
 		&auth.Manager{},
 		adminRepo,
 		schoolsRepo,
@@ -44,7 +45,7 @@ func TestNewAdminsService_SignInErr(t *testing.T) {
 
 	ctx := context.Background()
 
-	adminRepo.EXPECT().GetByCredentials(ctx, gomock.Any(), gomock.Any(), gomock.Any()).Return(domain.Admin{}, errInternalServErr)
+	adminRepo.EXPECT().GetByCredentials(ctx, gomock.Any(), gomock.Any()).Return(domain.Admin{}, errInternalServErr)
 	adminRepo.EXPECT().SetSession(ctx, gomock.Any(), gomock.Any())
 
 	res, err := adminService.SignIn(ctx, service.SignInInput{})
@@ -58,10 +59,15 @@ func TestNewAdminsService_SignIn(t *testing.T) {
 
 	ctx := context.Background()
 
-	adminRepo.EXPECT().GetByCredentials(ctx, gomock.Any(), gomock.Any(), gomock.Any())
+	password := gomock.Any().String()
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+
+	require.NoError(t, err)
+
+	adminRepo.EXPECT().GetByCredentials(ctx, gomock.Any(), gomock.Any()).Return(domain.Admin{Password: string(hashedPassword)}, nil)
 	adminRepo.EXPECT().SetSession(ctx, gomock.Any(), gomock.Any())
 
-	res, err := adminService.SignIn(ctx, service.SignInInput{})
+	res, err := adminService.SignIn(ctx, service.SignInInput{Password: password})
 
 	require.NoError(t, err)
 	require.IsType(t, service.Tokens{}, res)

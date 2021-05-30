@@ -58,11 +58,10 @@ func (s *APITestSuite) TestStudentSignUp() {
 	err := s.db.Collection("students").FindOne(context.Background(), bson.M{"email": studentEmail}).Decode(&student)
 	s.NoError(err)
 
-	passwordHash, err := s.hasher.Hash(password)
+	err = s.hasher.CompareHashAndPassword(student.Password, password)
 	s.NoError(err)
 
 	r.Equal(name, student.Name)
-	r.Equal(passwordHash, student.Password)
 	r.Equal(false, student.Verification.Verified)
 	r.Equal(verificationCode, student.Verification.Code)
 }
@@ -83,7 +82,7 @@ func (s *APITestSuite) TestStudentSignInNotVerified() {
 	})
 	s.NoError(err)
 
-	signUpData := fmt.Sprintf(`{"email":"%s","password":"%s"}`, studentEmail, password)
+	signUpData := fmt.Sprintf(`{"email":"%s","password":"%s"}`, studentEmail, "wrong pass")
 	req, _ := http.NewRequest("POST", "/api/v1/students/sign-in", bytes.NewBuffer([]byte(signUpData)))
 	req.Header.Set("Content-type", "application/json")
 

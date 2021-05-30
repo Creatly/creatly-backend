@@ -18,6 +18,7 @@ auth:
   accessTokenTTL: 15m
   refreshTokenTTL: 30m
   verificationCodeLength: 10
+  passwordCost: 10
 
 limiter:
   rps: 10

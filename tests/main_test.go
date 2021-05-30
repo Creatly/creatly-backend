@@ -82,7 +82,7 @@ func (s *APITestSuite) initDeps() {
 	// Init domain deps
 	repos := repository.NewRepositories(s.db)
 	memCache := cache.NewMemoryCache()
-	hasher := hash.NewSHA1Hasher("salt")
+	hasher := hash.NewBcryptHasher(14)
 
 	tokenManager, err := auth.NewManager("signing_key")
 	if err != nil {
