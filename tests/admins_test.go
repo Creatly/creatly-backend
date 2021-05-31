@@ -53,5 +53,5 @@ func (s *APITestSuite) TestAdminGetAllCourses() {
 	err = json.Unmarshal(respData, &respCourses)
 	s.NoError(err)
 
-	r.Equal(1, len(respCourses.Data))
+	r.Equal(2, len(respCourses.Data))
 }
