@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"time"
 
@@ -10,7 +11,6 @@ import (
 	"github.com/zhashkevych/creatly-backend/pkg/auth"
 	"github.com/zhashkevych/creatly-backend/pkg/dns"
 	"github.com/zhashkevych/creatly-backend/pkg/hash"
-	"github.com/zhashkevych/creatly-backend/pkg/logger"
 	"github.com/zhashkevych/creatly-backend/pkg/otp"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -28,10 +28,13 @@ type UsersService struct {
 	accessTokenTTL         time.Duration
 	refreshTokenTTL        time.Duration
 	verificationCodeLength int
+
+	domain string
 }
 
 func NewUsersService(repo repository.Users, hasher hash.PasswordHasher, tokenManager auth.TokenManager,
-	emailService Emails, schoolsService Schools, dnsService dns.DomainManager, accessTTL, refreshTTL time.Duration, otpGenerator otp.Generator, verificationCodeLength int) *UsersService {
+	emailService Emails, schoolsService Schools, dnsService dns.DomainManager, accessTTL, refreshTTL time.Duration, otpGenerator otp.Generator,
+	verificationCodeLength int, domain string) *UsersService {
 	return &UsersService{
 		repo:                   repo,
 		hasher:                 hasher,
@@ -43,6 +46,7 @@ func NewUsersService(repo repository.Users, hasher hash.PasswordHasher, tokenMan
 		otpGenerator:           otpGenerator,
 		verificationCodeLength: verificationCodeLength,
 		dnsService:             dnsService,
+		domain:                 domain,
 	}
 }
 
@@ -124,7 +128,6 @@ func (s *UsersService) Verify(ctx context.Context, userId primitive.ObjectID, ha
 }
 
 func (s *UsersService) CreateSchool(ctx context.Context, userId primitive.ObjectID, schoolName string) (domain.School, error) {
-	// Create School In DB
 	schoolId, err := s.schoolService.Create(ctx, schoolName)
 	if err != nil {
 		return domain.School{}, err
@@ -134,22 +137,24 @@ func (s *UsersService) CreateSchool(ctx context.Context, userId primitive.Object
 		return domain.School{}, err
 	}
 
-	// Generate Sub Domain
 	subdomain := generateSubdomain(schoolName)
-	logger.Info(subdomain)
 	if err := s.dnsService.AddCNAMERecord(ctx, subdomain); err != nil {
 		return domain.School{}, err
 	}
 
-	// Update Domain In DB
-	if err := s.schoolService.UpdateSettings(ctx, UpdateSchoolSettingsInput{
-		Domains: []string{subdomain}, // todo add domain to subdomain
+	schoolDomain := s.generateSchoolDomain(subdomain)
+	if err := s.schoolService.UpdateSettings(ctx, schoolId, UpdateSchoolSettingsInput{
+		Domains: []string{schoolDomain},
 	}); err != nil {
 		return domain.School{}, err
 	}
 
+	// todo create new admin
+
+	// todo send email with info
+
 	// Return school
-	return domain.School{ID: schoolId, Settings: domain.Settings{Domains: []string{subdomain}}}, nil
+	return domain.School{ID: schoolId, Settings: domain.Settings{Domains: []string{schoolDomain}}}, nil
 }
 
 func (s *UsersService) createSession(ctx context.Context, userId primitive.ObjectID) (Tokens, error) {
@@ -178,6 +183,11 @@ func (s *UsersService) createSession(ctx context.Context, userId primitive.Objec
 	return res, err
 }
 
+func (s *UsersService) generateSchoolDomain(subdomain string) string {
+	return fmt.Sprintf("%s.%s", subdomain, s.domain)
+}
+
+// input: Example School Name -> output: example-school-name
 func generateSubdomain(schoolName string) string {
 	var subdomain string
 

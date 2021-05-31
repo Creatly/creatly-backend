@@ -39,9 +39,9 @@ func (s *SchoolsService) GetByDomain(ctx context.Context, domainName string) (do
 	return school, err
 }
 
-func (s *SchoolsService) UpdateSettings(ctx context.Context, inp UpdateSchoolSettingsInput) error {
+func (s *SchoolsService) UpdateSettings(ctx context.Context, schoolId primitive.ObjectID, inp UpdateSchoolSettingsInput) error {
 	return s.repo.UpdateSettings(ctx, repository.UpdateSchoolSettingsInput{
-		SchoolID:    inp.SchoolID,
+		SchoolID:    schoolId,
 		Color:       inp.Color,
 		Domains:     inp.Domains,
 		Email:       inp.Email,

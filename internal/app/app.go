@@ -124,6 +124,7 @@ func Run(configPath string) {
 		FrontendURL:            cfg.FrontendURL,
 		StorageProvider:        storageProvider,
 		Environment:            cfg.Environment,
+		Domain:                 cfg.HTTP.Host,
 		DNS:                    dnsService,
 	})
 	handlers := delivery.NewHandler(services, tokenManager)

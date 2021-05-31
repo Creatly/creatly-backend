@@ -21,7 +21,10 @@ func NewSchoolsRepo(db *mongo.Database) *SchoolsRepo {
 }
 
 func (r *SchoolsRepo) Create(ctx context.Context, name string) (primitive.ObjectID, error) {
-	res, err := r.db.InsertOne(ctx, domain.School{Name: name, RegisteredAt: time.Now()})
+	res, err := r.db.InsertOne(ctx, domain.School{
+		Name:         name,
+		RegisteredAt: time.Now(),
+	})
 	return res.InsertedID.(primitive.ObjectID), err
 }
 

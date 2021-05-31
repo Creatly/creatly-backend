@@ -53,7 +53,6 @@ type Users interface {
 }
 
 type UpdateSchoolSettingsInput struct {
-	SchoolID    primitive.ObjectID
 	Color       string
 	Domains     []string
 	Email       string
@@ -64,7 +63,7 @@ type UpdateSchoolSettingsInput struct {
 type Schools interface {
 	Create(ctx context.Context, name string) (primitive.ObjectID, error)
 	GetByDomain(ctx context.Context, domainName string) (domain.School, error)
-	UpdateSettings(ctx context.Context, input UpdateSchoolSettingsInput) error
+	UpdateSettings(ctx context.Context, schoolId primitive.ObjectID, input UpdateSchoolSettingsInput) error
 }
 
 type StudentSignUpInput struct {
@@ -329,6 +328,7 @@ type Deps struct {
 	VerificationCodeLength int
 	FrontendURL            string
 	Environment            string
+	Domain                 string
 	DNS                    dns.DomainManager
 }
 
@@ -346,7 +346,7 @@ func NewServices(deps Deps) *Services {
 	ordersService := NewOrdersService(deps.Repos.Orders, offersService, promoCodesService, studentsService, deps.PaymentProvider, deps.PaymentCallbackURL, deps.PaymentResponseURL)
 	schoolsService := NewSchoolsService(deps.Repos.Schools, deps.Cache, deps.CacheTTL)
 	usersService := NewUsersService(deps.Repos.Users, deps.Hasher, deps.TokenManager, emailsService, schoolsService, deps.DNS,
-		deps.AccessTokenTTL, deps.RefreshTokenTTL, deps.OtpGenerator, deps.VerificationCodeLength)
+		deps.AccessTokenTTL, deps.RefreshTokenTTL, deps.OtpGenerator, deps.VerificationCodeLength, deps.Domain)
 
 	return &Services{
 		Schools:        schoolsService,
