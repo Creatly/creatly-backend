@@ -114,7 +114,7 @@ func (h *Handler) adminSignIn(c *gin.Context) {
 		return
 	}
 
-	res, err := h.services.Admins.SignIn(c.Request.Context(), service.SignInInput{
+	res, err := h.services.Admins.SignIn(c.Request.Context(), service.SchoolSignInInput{
 		Email:    inp.Email,
 		Password: inp.Password,
 		SchoolID: school.ID,
@@ -1394,10 +1394,9 @@ func (h *Handler) adminUpdateSchoolSettings(c *gin.Context) {
 	}
 
 	updateInput := service.UpdateSchoolSettingsInput{
-		SchoolID: school.ID,
-		Color:    inp.Color,
-		Domains:  inp.Domains,
-		Email:    inp.Email,
+		Color:   inp.Color,
+		Domains: inp.Domains,
+		Email:   inp.Email,
 	}
 
 	if inp.Pages != nil {
@@ -1417,7 +1416,7 @@ func (h *Handler) adminUpdateSchoolSettings(c *gin.Context) {
 		}
 	}
 
-	if err := h.services.Schools.UpdateSettings(c.Request.Context(), updateInput); err != nil {
+	if err := h.services.Schools.UpdateSettings(c.Request.Context(), school.ID, updateInput); err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}

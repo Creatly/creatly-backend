@@ -3,8 +3,16 @@ package v1
 import (
 	"net/http"
 
+	"github.com/zhashkevych/creatly-backend/internal/domain"
+
 	"github.com/gin-gonic/gin"
 )
+
+type schoolSettingsResponse struct {
+	Name        string          `json:"name"`
+	Description string          `json:"description"`
+	Settings    domain.Settings `json:"settings"`
+}
 
 // @Summary School GetSettings
 // @Tags school-settings
@@ -23,5 +31,9 @@ func (h *Handler) getSchoolSettings(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, school.Settings)
+	c.JSON(http.StatusOK, schoolSettingsResponse{
+		Name:        school.Name,
+		Description: school.Description,
+		Settings:    school.Settings,
+	})
 }

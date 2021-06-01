@@ -10,6 +10,9 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/cloudflare/cloudflare-go"
+	"github.com/zhashkevych/creatly-backend/pkg/dns"
+
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/zhashkevych/creatly-backend/pkg/storage"
@@ -43,6 +46,10 @@ import (
 // @name Authorization
 
 // @securityDefinitions.apikey StudentsAuth
+// @in header
+// @name Authorization
+
+// @securityDefinitions.apikey UsersAuth
 // @in header
 // @name Authorization
 
@@ -88,6 +95,14 @@ func Run(configPath string) {
 		return
 	}
 
+	cloudflareClient, err := cloudflare.New(cfg.Cloudflare.ApiKey, cfg.Cloudflare.Email)
+	if err != nil {
+		logger.Error(err)
+		return
+	}
+
+	dnsService := dns.NewService(cloudflareClient, cfg.Cloudflare.ZoneEmail, cfg.Cloudflare.CnameTarget)
+
 	// Services, Repos & API Handlers
 	repos := repository.NewRepositories(db)
 	services := service.NewServices(service.Deps{
@@ -109,6 +124,8 @@ func Run(configPath string) {
 		FrontendURL:            cfg.FrontendURL,
 		StorageProvider:        storageProvider,
 		Environment:            cfg.Environment,
+		Domain:                 cfg.HTTP.Host,
+		DNS:                    dnsService,
 	})
 	handlers := delivery.NewHandler(services, tokenManager)
 

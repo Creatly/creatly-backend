@@ -5,6 +5,8 @@ import (
 	"io"
 	"time"
 
+	"github.com/zhashkevych/creatly-backend/pkg/dns"
+
 	"github.com/zhashkevych/creatly-backend/internal/config"
 	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"github.com/zhashkevych/creatly-backend/internal/repository"
@@ -22,8 +24,35 @@ import (
 
 // TODO handle "not found" errors
 
+type UserSignUpInput struct {
+	Name     string
+	Email    string
+	Phone    string
+	Password string
+}
+
+type UserSignInInput struct {
+	Email    string
+	Password string
+}
+
+type Tokens struct {
+	AccessToken  string
+	RefreshToken string
+}
+
+// 1. Create School in DB
+// 2. Generate Sub Domain
+
+type Users interface {
+	SignUp(ctx context.Context, input UserSignUpInput) error
+	SignIn(ctx context.Context, input UserSignInInput) (Tokens, error)
+	RefreshTokens(ctx context.Context, refreshToken string) (Tokens, error)
+	Verify(ctx context.Context, userId primitive.ObjectID, hash string) error
+	CreateSchool(ctx context.Context, userId primitive.ObjectID, schoolName string) (domain.School, error)
+}
+
 type UpdateSchoolSettingsInput struct {
-	SchoolID    primitive.ObjectID
 	Color       string
 	Domains     []string
 	Email       string
@@ -32,8 +61,9 @@ type UpdateSchoolSettingsInput struct {
 }
 
 type Schools interface {
+	Create(ctx context.Context, name string) (primitive.ObjectID, error)
 	GetByDomain(ctx context.Context, domainName string) (domain.School, error)
-	UpdateSettings(ctx context.Context, input UpdateSchoolSettingsInput) error
+	UpdateSettings(ctx context.Context, schoolId primitive.ObjectID, input UpdateSchoolSettingsInput) error
 }
 
 type StudentSignUpInput struct {
@@ -43,20 +73,15 @@ type StudentSignUpInput struct {
 	SchoolID primitive.ObjectID
 }
 
-type SignInInput struct {
+type SchoolSignInInput struct {
 	Email    string
 	Password string
 	SchoolID primitive.ObjectID
 }
 
-type Tokens struct {
-	AccessToken  string
-	RefreshToken string
-}
-
 type Students interface {
 	SignUp(ctx context.Context, input StudentSignUpInput) error
-	SignIn(ctx context.Context, input SignInInput) (Tokens, error)
+	SignIn(ctx context.Context, input SchoolSignInInput) (Tokens, error)
 	RefreshTokens(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (Tokens, error)
 	Verify(ctx context.Context, hash string) error
 	GetModuleLessons(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) ([]domain.Lesson, error)
@@ -74,7 +99,7 @@ type StudentLessons interface {
 }
 
 type Admins interface {
-	SignIn(ctx context.Context, input SignInInput) (Tokens, error)
+	SignIn(ctx context.Context, input SchoolSignInInput) (Tokens, error)
 	RefreshTokens(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (Tokens, error)
 	GetCourses(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Course, error)
 	GetCourseById(ctx context.Context, schoolId, courseId primitive.ObjectID) (domain.Course, error)
@@ -93,13 +118,13 @@ type Files interface {
 	Upload(ctx context.Context, inp UploadInput) (string, error)
 }
 
-type SendVerificationEmailInput struct {
+type VerificationEmailInput struct {
 	Email            string
 	Name             string
 	VerificationCode string
 }
 
-type SendPurchaseSuccessfulEmailInput struct {
+type StudentPurchaseSuccessfulEmailInput struct {
 	Email      string
 	Name       string
 	CourseName string
@@ -107,8 +132,9 @@ type SendPurchaseSuccessfulEmailInput struct {
 
 type Emails interface {
 	AddToList(name, email string) error
-	SendVerificationEmail(SendVerificationEmailInput) error
-	SendPurchaseSuccessfulEmail(SendPurchaseSuccessfulEmailInput) error
+	SendStudentVerificationEmail(VerificationEmailInput) error
+	SendUserVerificationEmail(VerificationEmailInput) error
+	SendStudentPurchaseSuccessfulEmail(StudentPurchaseSuccessfulEmailInput) error
 }
 
 type UpdateCourseInput struct {
@@ -280,6 +306,7 @@ type Services struct {
 	Orders         Orders
 	Admins         Admins
 	Files          Files
+	Users          Users
 }
 
 type Deps struct {
@@ -301,6 +328,8 @@ type Deps struct {
 	VerificationCodeLength int
 	FrontendURL            string
 	Environment            string
+	Domain                 string
+	DNS                    dns.DomainManager
 }
 
 func NewServices(deps Deps) *Services {
@@ -315,9 +344,12 @@ func NewServices(deps Deps) *Services {
 	studentsService := NewStudentsService(deps.Repos.Students, modulesService, offersService, lessonsService, deps.Hasher,
 		deps.TokenManager, emailsService, studentLessonsService, deps.AccessTokenTTL, deps.RefreshTokenTTL, deps.OtpGenerator, deps.VerificationCodeLength)
 	ordersService := NewOrdersService(deps.Repos.Orders, offersService, promoCodesService, studentsService, deps.PaymentProvider, deps.PaymentCallbackURL, deps.PaymentResponseURL)
+	schoolsService := NewSchoolsService(deps.Repos.Schools, deps.Cache, deps.CacheTTL)
+	usersService := NewUsersService(deps.Repos.Users, deps.Hasher, deps.TokenManager, emailsService, schoolsService, deps.DNS,
+		deps.AccessTokenTTL, deps.RefreshTokenTTL, deps.OtpGenerator, deps.VerificationCodeLength, deps.Domain)
 
 	return &Services{
-		Schools:        NewSchoolsService(deps.Repos.Schools, deps.Cache, deps.CacheTTL),
+		Schools:        schoolsService,
 		Students:       studentsService,
 		StudentLessons: studentLessonsService,
 		Courses:        coursesService,
@@ -330,5 +362,6 @@ func NewServices(deps Deps) *Services {
 		Packages:       packagesService,
 		Lessons:        lessonsService,
 		Files:          NewFilesService(deps.StorageProvider, deps.Environment),
+		Users:          usersService,
 	}
 }

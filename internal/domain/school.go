@@ -1,29 +1,34 @@
 package domain
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type School struct {
-	ID           primitive.ObjectID  `json:"id" bson:"_id,omitempty"`
-	Name         string              `json:"name" bson:"name"`
-	Description  string              `json:"description" bson:"description"`
-	RegisteredAt primitive.Timestamp `json:"registeredAt" bson:"registeredAt"`
-	Admins       []Admin             `json:"admins" bson:"admins"`
-	Courses      []Course            `json:"courses" bson:"courses"`
-	Settings     Settings            `json:"settings" bson:"settings"`
+	ID           primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	Name         string             `json:"name" bson:"name"`
+	Description  string             `json:"description" bson:"description,omitempty"`
+	RegisteredAt time.Time          `json:"registeredAt" bson:"registeredAtm,omitempty"`
+	Admins       []Admin            `json:"admins" bson:"admins,omitempty"`
+	Courses      []Course           `json:"courses" bson:"courses,omitempty"`
+	Settings     Settings           `json:"settings" bson:"settings,omitempty"`
 }
 
 type Settings struct {
-	Color       string      `json:"color" bson:"color"`
-	Domains     []string    `json:"domains" bson:"domains"`
-	ContactInfo ContactInfo `json:"contactInfo" bson:"contactInfo"`
-	Pages       Pages       `json:"pages" bson:"pages"`
+	Color       string      `json:"color" bson:"color,omitempty"`
+	Domains     []string    `json:"domains" bson:"domains,omitempty"`
+	ContactInfo ContactInfo `json:"contactInfo" bson:"contactInfo,omitempty"`
+	Pages       Pages       `json:"pages" bson:"pages,omitempty"`
 }
 
+// todo review fields.
 type ContactInfo struct {
-	BusinessName       string `json:"businessName" bson:"businessName"`
-	RegistrationNumber string `json:"registrationNumber" bson:"RegistrationNumber"`
-	Address            string `json:"address" bson:"address"`
-	Email              string `json:"email" bson:"email"`
+	BusinessName       string `json:"businessName" bson:"businessName,omitempty"`
+	RegistrationNumber string `json:"registrationNumber" bson:"registrationNumber,omitempty"`
+	Address            string `json:"address" bson:"address,omitempty"`
+	Email              string `json:"email" bson:"email,omitempty"`
 }
 
 type Pages struct {

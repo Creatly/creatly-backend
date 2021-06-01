@@ -84,14 +84,14 @@ func (s *StudentsService) SignUp(ctx context.Context, input StudentSignUpInput) 
 	}()
 
 	// TODO: If it fails, what then?
-	return s.emailService.SendVerificationEmail(SendVerificationEmailInput{
+	return s.emailService.SendStudentVerificationEmail(VerificationEmailInput{
 		Email:            student.Email,
 		Name:             student.Name,
 		VerificationCode: verificationCode,
 	})
 }
 
-func (s *StudentsService) SignIn(ctx context.Context, input SignInInput) (Tokens, error) {
+func (s *StudentsService) SignIn(ctx context.Context, input SchoolSignInInput) (Tokens, error) {
 	passwordHash, err := s.hasher.Hash(input.Password)
 	if err != nil {
 		return Tokens{}, err

@@ -43,7 +43,7 @@ func (s *EmailService) AddToList(name, email string) error {
 	})
 }
 
-func (s *EmailService) SendVerificationEmail(input SendVerificationEmailInput) error {
+func (s *EmailService) SendStudentVerificationEmail(input VerificationEmailInput) error {
 	subject := fmt.Sprintf(s.config.Subjects.Verification, input.Name)
 
 	templateInput := verificationEmailInput{s.createVerificationLink(input.VerificationCode)}
@@ -56,7 +56,7 @@ func (s *EmailService) SendVerificationEmail(input SendVerificationEmailInput) e
 	return s.sender.Send(sendInput)
 }
 
-func (s *EmailService) SendPurchaseSuccessfulEmail(input SendPurchaseSuccessfulEmailInput) error {
+func (s *EmailService) SendStudentPurchaseSuccessfulEmail(input StudentPurchaseSuccessfulEmailInput) error {
 	templateInput := purchaseSuccessfulEmailInput{Name: input.Name, CourseName: input.CourseName}
 	sendInput := emailProvider.SendEmailInput{Subject: s.config.Subjects.PurchaseSuccessful, To: input.Email}
 
@@ -65,6 +65,11 @@ func (s *EmailService) SendPurchaseSuccessfulEmail(input SendPurchaseSuccessfulE
 	}
 
 	return s.sender.Send(sendInput)
+}
+
+func (s *EmailService) SendUserVerificationEmail(input VerificationEmailInput) error {
+	// todo implement
+	return nil
 }
 
 func (s *EmailService) createVerificationLink(code string) string {
