@@ -6,12 +6,11 @@ package mock_service
 
 import (
 	context "context"
-	reflect "reflect"
-
 	gomock "github.com/golang/mock/gomock"
 	domain "github.com/zhashkevych/creatly-backend/internal/domain"
 	service "github.com/zhashkevych/creatly-backend/internal/service"
 	primitive "go.mongodb.org/mongo-driver/bson/primitive"
+	reflect "reflect"
 )
 
 // MockUsers is a mock of Users interface
@@ -164,17 +163,17 @@ func (mr *MockSchoolsMockRecorder) GetByDomain(ctx, domainName interface{}) *gom
 }
 
 // UpdateSettings mocks base method
-func (m *MockSchools) UpdateSettings(ctx context.Context, input service.UpdateSchoolSettingsInput) error {
+func (m *MockSchools) UpdateSettings(ctx context.Context, schoolId primitive.ObjectID, input service.UpdateSchoolSettingsInput) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateSettings", ctx, input)
+	ret := m.ctrl.Call(m, "UpdateSettings", ctx, schoolId, input)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // UpdateSettings indicates an expected call of UpdateSettings
-func (mr *MockSchoolsMockRecorder) UpdateSettings(ctx, input interface{}) *gomock.Call {
+func (mr *MockSchoolsMockRecorder) UpdateSettings(ctx, schoolId, input interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateSettings", reflect.TypeOf((*MockSchools)(nil).UpdateSettings), ctx, input)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateSettings", reflect.TypeOf((*MockSchools)(nil).UpdateSettings), ctx, schoolId, input)
 }
 
 // MockStudents is a mock of Students interface

@@ -19,7 +19,7 @@ import (
 )
 
 func TestHandler_adminUpdateSchoolSettings(t *testing.T) {
-	type mockBehavior func(r *mock_service.MockSchools, input service.UpdateSchoolSettingsInput)
+	type mockBehavior func(r *mock_service.MockSchools, schoolID primitive.ObjectID, input service.UpdateSchoolSettingsInput)
 
 	school := domain.School{
 		ID: primitive.NewObjectID(),
@@ -42,23 +42,23 @@ func TestHandler_adminUpdateSchoolSettings(t *testing.T) {
 			body:   `{"color": "black", "pages": {"confidential": "some confidential info"}}`,
 			school: school,
 			input: service.UpdateSchoolSettingsInput{
-				SchoolID: school.ID,
-				Color:    "black",
+				Color: "black",
 				Pages: &domain.Pages{
 					Confidential: "some confidential info",
 				},
 			},
-			mockBehavior: func(r *mock_service.MockSchools, input service.UpdateSchoolSettingsInput) {
-				r.EXPECT().UpdateSettings(context.Background(), input).Return(nil)
+			mockBehavior: func(r *mock_service.MockSchools, schoolID primitive.ObjectID, input service.UpdateSchoolSettingsInput) {
+				r.EXPECT().UpdateSettings(context.Background(), schoolID, input).Return(nil)
 			},
 			statusCode:   200,
 			responseBody: "",
 		},
 		{
-			name:         "invalid input",
-			body:         `{wrong}`,
-			school:       school,
-			mockBehavior: func(r *mock_service.MockSchools, input service.UpdateSchoolSettingsInput) {},
+			name:   "invalid input",
+			body:   `{wrong}`,
+			school: school,
+			mockBehavior: func(r *mock_service.MockSchools, schoolID primitive.ObjectID, input service.UpdateSchoolSettingsInput) {
+			},
 			statusCode:   400,
 			responseBody: `{"message":"invalid input body"}`,
 		},
@@ -67,14 +67,13 @@ func TestHandler_adminUpdateSchoolSettings(t *testing.T) {
 			body:   `{"color": "black", "pages": {"confidential": "some confidential info"}}`,
 			school: school,
 			input: service.UpdateSchoolSettingsInput{
-				SchoolID: school.ID,
-				Color:    "black",
+				Color: "black",
 				Pages: &domain.Pages{
 					Confidential: "some confidential info",
 				},
 			},
-			mockBehavior: func(r *mock_service.MockSchools, input service.UpdateSchoolSettingsInput) {
-				r.EXPECT().UpdateSettings(context.Background(), input).Return(errors.New("failed to update school settings"))
+			mockBehavior: func(r *mock_service.MockSchools, schoolID primitive.ObjectID, input service.UpdateSchoolSettingsInput) {
+				r.EXPECT().UpdateSettings(context.Background(), schoolID, input).Return(errors.New("failed to update school settings"))
 			},
 			statusCode:   500,
 			responseBody: `{"message":"failed to update school settings"}`,
@@ -88,7 +87,7 @@ func TestHandler_adminUpdateSchoolSettings(t *testing.T) {
 			defer c.Finish()
 
 			s := mock_service.NewMockSchools(c)
-			tt.mockBehavior(s, tt.input)
+			tt.mockBehavior(s, school.ID, tt.input)
 
 			services := &service.Services{Schools: s}
 			handler := Handler{services: services}

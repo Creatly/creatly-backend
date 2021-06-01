@@ -25,6 +25,7 @@ func (r *SchoolsRepo) Create(ctx context.Context, name string) (primitive.Object
 		Name:         name,
 		RegisteredAt: time.Now(),
 	})
+
 	return res.InsertedID.(primitive.ObjectID), err
 }
 

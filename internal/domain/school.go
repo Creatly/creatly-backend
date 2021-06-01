@@ -23,7 +23,7 @@ type Settings struct {
 	Pages       Pages       `json:"pages" bson:"pages,omitempty"`
 }
 
-// todo review fields
+// todo review fields.
 type ContactInfo struct {
 	BusinessName       string `json:"businessName" bson:"businessName,omitempty"`
 	RegistrationNumber string `json:"registrationNumber" bson:"registrationNumber,omitempty"`
