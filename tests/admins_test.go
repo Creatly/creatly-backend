@@ -22,12 +22,11 @@ func (s *APITestSuite) TestAdminGetAllCourses() {
 	passwordHash, err := s.hasher.Hash(password)
 	s.NoError(err)
 
-	_, err = s.db.Collection("students").InsertOne(context.Background(), domain.Student{
-		ID:           id,
-		Email:        studentEmail,
-		Password:     passwordHash,
-		SchoolID:     school.ID,
-		Verification: domain.Verification{Verified: true},
+	_, err = s.db.Collection("admins").InsertOne(context.Background(), domain.Student{
+		ID:       id,
+		Email:    studentEmail,
+		Password: passwordHash,
+		SchoolID: school.ID,
 	})
 	s.NoError(err)
 
