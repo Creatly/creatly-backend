@@ -32,6 +32,10 @@ services:
       - STORAGE_ACCESS_KEY
       - STORAGE_SECRET_KEY
       - APP_ENV
+      - CLOUDFLARE_API_KEY
+      - CLOUDFLARE_EMAIL
+      - CLOUDFLARE_ZONE_EMAIL
+      - CLOUDFLARE_CNAME_TARGET
 
   nginx:
     image: ${REGISTRY}/${NGINX_IMAGE}:${TAG}

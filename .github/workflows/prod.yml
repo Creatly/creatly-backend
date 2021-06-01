@@ -123,6 +123,11 @@ jobs:
               export STORAGE_ACCESS_KEY=${{secrets.STORAGE_ACCESS_KEY}}
               export STORAGE_SECRET_KEY="${{secrets.STORAGE_SECRET_KEY}}"
 
+              export CLOUDFLARE_API_KEY=${{secrets.CLOUDFLARE_API_KEY}}
+              export CLOUDFLARE_EMAIL=${{secrets.CLOUDFLARE_EMAIL}}
+              export CLOUDFLARE_ZONE_EMAIL=${{secrets.CLOUDFLARE_ZONE_EMAIL}}
+              export CLOUDFLARE_CNAME_TARGET=${{secrets.CLOUDFLARE_CNAME_TARGET}}
+
               # Login into Digital Ocean Registry
               docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} $(echo $REGISTRY)
 
