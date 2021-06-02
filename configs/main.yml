@@ -26,9 +26,9 @@ limiter:
 
 # todo: smtp settings should be configurable for each school individually
 smtp:
-  host: "mail.privateemail.com"
+  host: "smtp-relay.gmail.com"
   port: 587
-  from: "maksim@zhashkevych.com"
+  from: "maksim@creatly.me"
 
 email:
   templates:
