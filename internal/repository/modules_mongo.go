@@ -20,6 +20,7 @@ func NewModulesRepo(db *mongo.Database) *ModulesRepo {
 
 func (r *ModulesRepo) Create(ctx context.Context, module domain.Module) (primitive.ObjectID, error) {
 	res, err := r.db.InsertOne(ctx, module)
+
 	return res.InsertedID.(primitive.ObjectID), err
 }
 
@@ -86,11 +87,13 @@ func (r *ModulesRepo) Update(ctx context.Context, inp UpdateModuleInput) error {
 
 func (r *ModulesRepo) Delete(ctx context.Context, schoolId, id primitive.ObjectID) error {
 	_, err := r.db.DeleteOne(ctx, bson.M{"_id": id, "schoolId": schoolId})
+
 	return err
 }
 
 func (r *ModulesRepo) AddLesson(ctx context.Context, schoolId, id primitive.ObjectID, lesson domain.Lesson) error {
 	_, err := r.db.UpdateOne(ctx, bson.M{"_id": id, "schoolId": schoolId}, bson.M{"$push": bson.M{"lessons": lesson}})
+
 	return err
 }
 
@@ -124,15 +127,18 @@ func (r *ModulesRepo) UpdateLesson(ctx context.Context, inp UpdateLessonInput) e
 
 func (r *ModulesRepo) DeleteLesson(ctx context.Context, schoolId, id primitive.ObjectID) error {
 	_, err := r.db.UpdateOne(ctx, bson.M{"lessons._id": id, "schoolId": schoolId}, bson.M{"$pull": bson.M{"lessons": bson.M{"_id": id}}})
+
 	return err
 }
 
 func (r *ModulesRepo) AttachPackage(ctx context.Context, schoolId, packageId primitive.ObjectID, modules []primitive.ObjectID) error {
 	_, err := r.db.UpdateMany(ctx, bson.M{"_id": bson.M{"$in": modules}, "schoolId": schoolId}, bson.M{"$set": bson.M{"packageId": packageId}})
+
 	return err
 }
 
 func (r *ModulesRepo) DeleteByCourse(ctx context.Context, schoolId, courseId primitive.ObjectID) error {
 	_, err := r.db.DeleteMany(ctx, bson.M{"courseId": courseId, "schoolId": schoolId})
+
 	return err
 }

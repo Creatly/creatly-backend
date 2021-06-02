@@ -33,6 +33,7 @@ func (h *Handler) getAllCourses(c *gin.Context) {
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -114,24 +115,28 @@ func (h *Handler) getCourseById(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
 		newResponse(c, http.StatusBadRequest, "empty id param")
+
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
 	course, err := studentGetSchoolCourse(school, id)
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
+
 		return
 	}
 
 	modules, err := h.services.Modules.GetByCourse(c.Request.Context(), course.ID)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -170,18 +175,21 @@ func (h *Handler) getCourseOffers(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
 		newResponse(c, http.StatusBadRequest, "empty id param")
+
 		return
 	}
 
 	courseId, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid id param")
+
 		return
 	}
 
 	offers, err := h.services.Offers.GetByCourse(c.Request.Context(), courseId)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 

@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/zhashkevych/creatly-backend/internal/domain"
@@ -34,7 +35,7 @@ func (r *StudentsRepo) GetByCredentials(ctx context.Context, schoolId primitive.
 	var student domain.Student
 	if err := r.db.FindOne(ctx, bson.M{"email": email, "password": password, "schoolId": schoolId, "verification.verified": true}).
 		Decode(&student); err != nil {
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return domain.Student{}, ErrUserNotFound
 		}
 
@@ -50,7 +51,7 @@ func (r *StudentsRepo) GetByRefreshToken(ctx context.Context, schoolId primitive
 		"session.refreshToken": refreshToken, "schoolId": schoolId,
 		"session.expiresAt": bson.M{"$gt": time.Now()},
 	}).Decode(&student); err != nil {
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return domain.Student{}, ErrUserNotFound
 		}
 
@@ -64,7 +65,7 @@ func (r *StudentsRepo) GetById(ctx context.Context, id primitive.ObjectID) (doma
 	var student domain.Student
 
 	if err := r.db.FindOne(ctx, bson.M{"_id": id, "verification.verified": true}).Decode(&student); err != nil {
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return domain.Student{}, ErrUserNotFound
 		}
 
@@ -88,11 +89,13 @@ func (r *StudentsRepo) GetBySchool(ctx context.Context, schoolId primitive.Objec
 
 func (r *StudentsRepo) SetSession(ctx context.Context, studentId primitive.ObjectID, session domain.Session) error {
 	_, err := r.db.UpdateOne(ctx, bson.M{"_id": studentId}, bson.M{"$set": bson.M{"session": session, "lastVisitAt": time.Now()}})
+
 	return err
 }
 
 func (r *StudentsRepo) GiveAccessToCourseAndModule(ctx context.Context, studentId, courseId, moduleId primitive.ObjectID) error {
 	_, err := r.db.UpdateOne(ctx, bson.M{"_id": studentId}, bson.M{"$addToSet": bson.M{"availableModules": moduleId, "availableCourses": courseId}})
+
 	return err
 }
 

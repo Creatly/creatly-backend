@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 
 	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"go.mongodb.org/mongo-driver/bson"
@@ -53,13 +54,14 @@ func (r *PromocodesRepo) Update(ctx context.Context, inp UpdatePromoCodeInput) e
 
 func (r *PromocodesRepo) Delete(ctx context.Context, schoolId, id primitive.ObjectID) error {
 	_, err := r.db.DeleteOne(ctx, bson.M{"_id": id, "schoolId": schoolId})
+
 	return err
 }
 
 func (r *PromocodesRepo) GetByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.PromoCode, error) {
 	var promocode domain.PromoCode
 	if err := r.db.FindOne(ctx, bson.M{"schoolId": schoolId, "code": code}).Decode(&promocode); err != nil {
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return domain.PromoCode{}, ErrPromoNotFound
 		}
 
@@ -72,7 +74,7 @@ func (r *PromocodesRepo) GetByCode(ctx context.Context, schoolId primitive.Objec
 func (r *PromocodesRepo) GetById(ctx context.Context, schoolId, id primitive.ObjectID) (domain.PromoCode, error) {
 	var promocode domain.PromoCode
 	if err := r.db.FindOne(ctx, bson.M{"_id": id, "schoolId": schoolId}).Decode(&promocode); err != nil {
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return domain.PromoCode{}, ErrPromoNotFound
 		}
 
@@ -85,7 +87,7 @@ func (r *PromocodesRepo) GetById(ctx context.Context, schoolId, id primitive.Obj
 func (r *PromocodesRepo) GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.PromoCode, error) {
 	cursor, err := r.db.Find(ctx, bson.M{"schoolId": schoolId})
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return nil, ErrPromoNotFound
 		}
 

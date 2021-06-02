@@ -22,6 +22,7 @@ func (e *SendEmailInput) GenerateBodyFromHTML(templateFileName string, data inte
 	t, err := template.ParseFiles(templateFileName)
 	if err != nil {
 		logger.Errorf("failed to parse file %s:%s", templateFileName, err.Error())
+
 		return err
 	}
 

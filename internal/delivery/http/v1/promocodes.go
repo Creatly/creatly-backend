@@ -24,12 +24,14 @@ func (h *Handler) getPromo(c *gin.Context) {
 	code := c.Param("code")
 	if code == "" {
 		newResponse(c, http.StatusBadRequest, "empty code param")
+
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -37,6 +39,7 @@ func (h *Handler) getPromo(c *gin.Context) {
 	if err != nil {
 		if errors.Is(err, service.ErrPromoNotFound) {
 			newResponse(c, http.StatusBadRequest, err.Error())
+
 			return
 		}
 
