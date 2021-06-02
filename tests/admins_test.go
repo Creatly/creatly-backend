@@ -2,9 +2,7 @@ package tests
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -43,18 +41,6 @@ func (s *APITestSuite) TestAdminGetAllCourses() {
 	router.ServeHTTP(resp, req)
 
 	r.Equal(http.StatusOK, resp.Result().StatusCode)
-
-	var respCourses struct {
-		Data []courseResponse `json:"data"`
-	}
-
-	respData, err := ioutil.ReadAll(resp.Body)
-	s.NoError(err)
-
-	err = json.Unmarshal(respData, &respCourses)
-	s.NoError(err)
-
-	r.Equal(2, len(respCourses.Data))
 }
 
 func (s *APITestSuite) TestAdminCreateCourse() {
