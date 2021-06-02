@@ -168,6 +168,7 @@ func TestInit(t *testing.T) {
 			got, err := Init(tt.args.path)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Init() error = %v, wantErr %v", err, tt.wantErr)
+
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {

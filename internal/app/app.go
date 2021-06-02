@@ -51,6 +51,7 @@ func Run(configPath string) {
 	cfg, err := config.Init(configPath)
 	if err != nil {
 		logger.Error(err)
+
 		return
 	}
 
@@ -58,6 +59,7 @@ func Run(configPath string) {
 	mongoClient, err := mongodb.NewClient(cfg.Mongo.URI, cfg.Mongo.User, cfg.Mongo.Password)
 	if err != nil {
 		logger.Error(err)
+
 		return
 	}
 
@@ -71,12 +73,14 @@ func Run(configPath string) {
 	emailSender, err := smtp.NewSMTPSender(cfg.SMTP.From, cfg.SMTP.Pass, cfg.SMTP.Host, cfg.SMTP.Port)
 	if err != nil {
 		logger.Error(err)
+
 		return
 	}
 
 	tokenManager, err := auth.NewManager(cfg.Auth.JWT.SigningKey)
 	if err != nil {
 		logger.Error(err)
+
 		return
 	}
 
@@ -85,6 +89,7 @@ func Run(configPath string) {
 	storageProvider, err := newStorageProvider(cfg)
 	if err != nil {
 		logger.Error(err)
+
 		return
 	}
 

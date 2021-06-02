@@ -347,31 +347,37 @@ func parsePaymentEnvVariables() error {
 
 func parsePasswordFromEnv() error {
 	viper.SetEnvPrefix("password")
+
 	return viper.BindEnv("salt")
 }
 
 func parseJWTFromEnv() error {
 	viper.SetEnvPrefix("jwt")
+
 	return viper.BindEnv("signing_key")
 }
 
 func parseHostFromEnv() error {
 	viper.SetEnvPrefix("http")
+
 	return viper.BindEnv("host")
 }
 
 func parseFrontendHostFromEnv() error {
 	viper.SetEnvPrefix("frontend")
+
 	return viper.BindEnv("url")
 }
 
 func parseSMTPPassFromEnv() error {
 	viper.SetEnvPrefix("smtp")
+
 	return viper.BindEnv("password")
 }
 
 func parseAppEnvFromEnv() error {
 	viper.SetEnvPrefix("app")
+
 	return viper.BindEnv("env")
 }
 

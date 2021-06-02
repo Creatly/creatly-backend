@@ -52,12 +52,14 @@ func (h *Handler) studentSignUp(c *gin.Context) {
 	var inp studentSignUpInput
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
+
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -69,6 +71,7 @@ func (h *Handler) studentSignUp(c *gin.Context) {
 	}); err != nil {
 		if errors.Is(err, service.ErrUserAlreadyExists) {
 			newResponse(c, http.StatusBadRequest, err.Error())
+
 			return
 		}
 
@@ -106,12 +109,14 @@ func (h *Handler) studentSignIn(c *gin.Context) {
 	var inp signInInput
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
+
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -123,6 +128,7 @@ func (h *Handler) studentSignIn(c *gin.Context) {
 	if err != nil {
 		if errors.Is(err, service.ErrUserNotFound) {
 			newResponse(c, http.StatusBadRequest, err.Error())
+
 			return
 		}
 
@@ -156,18 +162,21 @@ func (h *Handler) studentRefresh(c *gin.Context) {
 	var inp refreshInput
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
+
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
 	res, err := h.services.Students.RefreshTokens(c.Request.Context(), school.ID, inp.Token)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -193,12 +202,14 @@ func (h *Handler) studentVerify(c *gin.Context) {
 	code := c.Param("code")
 	if code == "" {
 		newResponse(c, http.StatusBadRequest, "code is empty")
+
 		return
 	}
 
 	if err := h.services.Students.Verify(c.Request.Context(), code); err != nil {
 		if errors.Is(err, service.ErrVerificationCodeInvalid) {
 			newResponse(c, http.StatusBadRequest, err.Error())
+
 			return
 		}
 
@@ -227,24 +238,28 @@ func (h *Handler) studentGetModuleLessons(c *gin.Context) {
 	moduleIdParam := c.Param("id")
 	if moduleIdParam == "" {
 		newResponse(c, http.StatusBadRequest, "empty id param")
+
 		return
 	}
 
 	moduleId, err := primitive.ObjectIDFromHex(moduleIdParam)
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid id param")
+
 		return
 	}
 
 	studentId, err := getStudentId(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -252,6 +267,7 @@ func (h *Handler) studentGetModuleLessons(c *gin.Context) {
 	if err != nil {
 		if errors.Is(err, service.ErrModuleIsNotAvailable) {
 			newResponse(c, http.StatusForbidden, err.Error())
+
 			return
 		}
 
@@ -280,12 +296,14 @@ func (h *Handler) studentSetLessonFinished(c *gin.Context) {
 	lessonId, err := parseIdFromPath(c)
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
+
 		return
 	}
 
 	studentId, err := getStudentId(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -357,18 +375,21 @@ func (h *Handler) studentGetModuleOffers(c *gin.Context) {
 	moduleId, err := parseIdFromPath(c)
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
+
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
 	offers, err := h.services.Offers.GetByModule(c.Request.Context(), school.ID, moduleId)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -401,12 +422,14 @@ func (h *Handler) studentCreateOrder(c *gin.Context) {
 	var inp createOrderInput
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
+
 		return
 	}
 
 	offerId, err := primitive.ObjectIDFromHex(inp.OfferId)
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid offer id")
+
 		return
 	}
 
@@ -418,6 +441,7 @@ func (h *Handler) studentCreateOrder(c *gin.Context) {
 		promoId, err = primitive.ObjectIDFromHex(inp.PromoId)
 		if err != nil {
 			newResponse(c, http.StatusBadRequest, "invalid promo id")
+
 			return
 		}
 	}
@@ -425,6 +449,7 @@ func (h *Handler) studentCreateOrder(c *gin.Context) {
 	studentId, err := getStudentId(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -433,9 +458,11 @@ func (h *Handler) studentCreateOrder(c *gin.Context) {
 		switch err {
 		case service.ErrPromoNotFound, service.ErrOfferNotFound, service.ErrUserNotFound, service.ErrPromocodeExpired:
 			newResponse(c, http.StatusBadRequest, err.Error())
+
 			return
 		default:
 			newResponse(c, http.StatusInternalServerError, err.Error())
+
 			return
 		}
 	}
@@ -459,18 +486,21 @@ func (h *Handler) studentGetCourses(c *gin.Context) {
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
 	studentId, err := getStudentId(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
 	courses, err := h.services.Students.GetAvailableCourses(c.Request.Context(), school, studentId)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -498,12 +528,14 @@ func (h *Handler) studentGetAccount(c *gin.Context) {
 	studentId, err := getStudentId(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
 	student, err := h.services.Students.GetById(c.Request.Context(), studentId)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 

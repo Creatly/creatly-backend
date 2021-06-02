@@ -135,6 +135,7 @@ func generateSignature(params map[string]interface{}, password string) string {
 		value, ok := params[key].(string)
 		if !ok {
 			values = append(values, fmt.Sprintf("%v", params[key]))
+
 			continue
 		}
 

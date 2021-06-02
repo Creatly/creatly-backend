@@ -19,18 +19,21 @@ func (h *Handler) initCallbackRoutes(api *gin.RouterGroup) {
 func (h *Handler) handleFondyCallback(c *gin.Context) {
 	if c.Request.UserAgent() != fondy.FondyUserAgent {
 		newResponse(c, http.StatusForbidden, "forbidden")
+
 		return
 	}
 
 	var inp fondy.Callback
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
+
 		return
 	}
 
 	if err := h.services.Payments.ProcessTransaction(c.Request.Context(), inp); err != nil {
 		if errors.Is(err, service.ErrTransactionInvalid) {
 			newResponse(c, http.StatusBadRequest, err.Error())
+
 			return
 		}
 

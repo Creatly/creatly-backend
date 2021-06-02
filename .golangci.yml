@@ -63,7 +63,7 @@ linters:
     # - testpackage
     # - cyclop
     # - errorlint
-    # - nlreturn
+    - nlreturn
     # - revive
     # - tagliatelle
     - unparam

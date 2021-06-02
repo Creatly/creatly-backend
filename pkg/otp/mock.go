@@ -8,5 +8,6 @@ type MockGenerator struct {
 
 func (m *MockGenerator) RandomSecret(length int) string {
 	args := m.Called(length)
+
 	return args.Get(0).(string)
 }

@@ -20,6 +20,7 @@ func (h *Handler) getSchoolSettings(c *gin.Context) {
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 

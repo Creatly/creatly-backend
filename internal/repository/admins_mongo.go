@@ -37,6 +37,7 @@ func (r *AdminsRepo) GetByRefreshToken(ctx context.Context, schoolId primitive.O
 
 func (r *AdminsRepo) SetSession(ctx context.Context, id primitive.ObjectID, session domain.Session) error {
 	_, err := r.db.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"session": session}})
+
 	return err
 }
 

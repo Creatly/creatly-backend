@@ -29,6 +29,7 @@ func TestHandler_getPromocode(t *testing.T) {
 
 	setResponseBody := func(promocode domain.PromoCode) string {
 		body, _ := json.Marshal(promocode)
+
 		return string(body)
 	}
 
