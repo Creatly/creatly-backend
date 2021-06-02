@@ -77,11 +77,11 @@ func (s *StudentsService) SignUp(ctx context.Context, input StudentSignUpInput) 
 		return err
 	}
 
-	go func() {
-		if err := s.emailService.AddToList(student.Name, student.Email); err != nil {
-			logger.Error("Failed to add email to the list:", err)
-		}
-	}()
+	// go func() {
+	//	if err := s.emailService.AddToList(student.Name, student.Email); err != nil {
+	//		logger.Error("Failed to add email to the list:", err)
+	//	}
+	// }()
 
 	// TODO: If it fails, what then?
 	return s.emailService.SendStudentVerificationEmail(VerificationEmailInput{
