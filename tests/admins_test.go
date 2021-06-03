@@ -19,15 +19,16 @@ func (s *APITestSuite) TestAdminCreateCourse() {
 
 	// populate DB data
 	id := primitive.NewObjectID()
-	studentEmail, password := "test4@test.com", "qwerty123"
+	schoolID := primitive.NewObjectID()
+	adminEmail, password := "testAdmin@test.com", "qwerty123"
 	passwordHash, err := s.hasher.Hash(password)
 	s.NoError(err)
 
-	_, err = s.db.Collection("admins").InsertOne(context.Background(), domain.Student{
+	_, err = s.db.Collection("admins").InsertOne(context.Background(), domain.Admin{
 		ID:       id,
-		Email:    studentEmail,
+		Email:    adminEmail,
 		Password: passwordHash,
-		SchoolID: school.ID,
+		SchoolId: schoolID,
 	})
 	s.NoError(err)
 
@@ -54,15 +55,16 @@ func (s *APITestSuite) TestAdminGetAllCourses() {
 	r := s.Require()
 
 	id := primitive.NewObjectID()
-	studentEmail, password := "test4@test.com", "qwerty123"
+	schoolID := primitive.NewObjectID()
+	adminEmail, password := "testAdmin@test.com", "qwerty123"
 	passwordHash, err := s.hasher.Hash(password)
 	s.NoError(err)
 
-	_, err = s.db.Collection("admins").InsertOne(context.Background(), domain.Student{
+	_, err = s.db.Collection("admins").InsertOne(context.Background(), domain.Admin{
 		ID:       id,
-		Email:    studentEmail,
+		Email:    adminEmail,
 		Password: passwordHash,
-		SchoolID: school.ID,
+		SchoolId: schoolID,
 	})
 	s.NoError(err)
 
@@ -84,8 +86,26 @@ func (s *APITestSuite) TestAdminGetCourseByID() {
 	s.handler.Init(router.Group("/api"))
 	r := s.Require()
 
+	id := primitive.NewObjectID()
+	schoolID := primitive.NewObjectID()
+	adminEmail, password := "testAdmin@test.com", "qwerty123"
+	passwordHash, err := s.hasher.Hash(password)
+	s.NoError(err)
+
+	_, err = s.db.Collection("admins").InsertOne(context.Background(), domain.Admin{
+		ID:       id,
+		Email:    adminEmail,
+		Password: passwordHash,
+		SchoolId: schoolID,
+	})
+	s.NoError(err)
+
+	jwt, err := s.getJwt(id)
+	s.NoError(err)
+
 	req, _ := http.NewRequest("GET", fmt.Sprintf("/api/v1/admins/courses/%s", school.Courses[0].ID.Hex()), nil)
 	req.Header.Set("Content-type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+jwt)
 
 	resp := httptest.NewRecorder()
 	router.ServeHTTP(resp, req)
