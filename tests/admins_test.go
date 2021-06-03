@@ -12,37 +12,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (s *APITestSuite) TestAdminGetAllCourses() {
-	router := gin.New()
-	s.handler.Init(router.Group("/api"))
-	r := s.Require()
-
-	id := primitive.NewObjectID()
-	studentEmail, password := "test4@test.com", "qwerty123"
-	passwordHash, err := s.hasher.Hash(password)
-	s.NoError(err)
-
-	_, err = s.db.Collection("admins").InsertOne(context.Background(), domain.Student{
-		ID:       id,
-		Email:    studentEmail,
-		Password: passwordHash,
-		SchoolID: school.ID,
-	})
-	s.NoError(err)
-
-	jwt, err := s.getJwt(id)
-	s.NoError(err)
-
-	req, _ := http.NewRequest("GET", "/api/v1/admins/courses", nil)
-	req.Header.Set("Content-type", "application/json")
-	req.Header.Set("Authorization", "Bearer "+jwt)
-
-	resp := httptest.NewRecorder()
-	router.ServeHTTP(resp, req)
-
-	r.Equal(http.StatusOK, resp.Result().StatusCode)
-}
-
 func (s *APITestSuite) TestAdminCreateCourse() {
 	router := gin.New()
 	s.handler.Init(router.Group("/api"))
@@ -77,4 +46,49 @@ func (s *APITestSuite) TestAdminCreateCourse() {
 	router.ServeHTTP(resp, req)
 
 	r.Equal(http.StatusCreated, resp.Result().StatusCode)
+}
+
+func (s *APITestSuite) TestAdminGetAllCourses() {
+	router := gin.New()
+	s.handler.Init(router.Group("/api"))
+	r := s.Require()
+
+	id := primitive.NewObjectID()
+	studentEmail, password := "test4@test.com", "qwerty123"
+	passwordHash, err := s.hasher.Hash(password)
+	s.NoError(err)
+
+	_, err = s.db.Collection("admins").InsertOne(context.Background(), domain.Student{
+		ID:       id,
+		Email:    studentEmail,
+		Password: passwordHash,
+		SchoolID: school.ID,
+	})
+	s.NoError(err)
+
+	jwt, err := s.getJwt(id)
+	s.NoError(err)
+
+	req, _ := http.NewRequest("GET", "/api/v1/admins/courses", nil)
+	req.Header.Set("Content-type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+jwt)
+
+	resp := httptest.NewRecorder()
+	router.ServeHTTP(resp, req)
+
+	r.Equal(http.StatusOK, resp.Result().StatusCode)
+}
+
+func (s *APITestSuite) TestAdminGetCourseByID() {
+	router := gin.New()
+	s.handler.Init(router.Group("/api"))
+	r := s.Require()
+
+	req, _ := http.NewRequest("GET", fmt.Sprintf("/api/v1/admins/courses/%s", school.Courses[0].ID.Hex()), nil)
+	req.Header.Set("Content-type", "application/json")
+
+	resp := httptest.NewRecorder()
+	router.ServeHTTP(resp, req)
+
+	r.Equal(http.StatusOK, resp.Result().StatusCode)
 }
