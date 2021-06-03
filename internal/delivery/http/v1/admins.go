@@ -9,6 +9,7 @@ import (
 	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"github.com/zhashkevych/creatly-backend/internal/service"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // TODO: review response error messages
@@ -123,7 +124,11 @@ func (h *Handler) adminSignIn(c *gin.Context) {
 		SchoolID: school.ID,
 	})
 	if err != nil {
-		newResponse(c, http.StatusInternalServerError, err.Error())
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			newResponse(c, http.StatusUnauthorized, err.Error())
+		} else {
+			newResponse(c, http.StatusInternalServerError, err.Error())
+		}
 
 		return
 	}
