@@ -53,6 +53,7 @@ func (h *Handler) userSignUp(c *gin.Context) {
 	var inp userSignUpInput
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
+
 		return
 	}
 
@@ -64,6 +65,7 @@ func (h *Handler) userSignUp(c *gin.Context) {
 	}); err != nil {
 		if errors.Is(err, service.ErrUserAlreadyExists) {
 			newResponse(c, http.StatusBadRequest, err.Error())
+
 			return
 		}
 
@@ -91,6 +93,7 @@ func (h *Handler) userSignIn(c *gin.Context) {
 	var inp signInInput
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
+
 		return
 	}
 
@@ -101,6 +104,7 @@ func (h *Handler) userSignIn(c *gin.Context) {
 	if err != nil {
 		if errors.Is(err, service.ErrUserNotFound) {
 			newResponse(c, http.StatusBadRequest, err.Error())
+
 			return
 		}
 
@@ -130,12 +134,14 @@ func (h *Handler) userRefresh(c *gin.Context) {
 	var inp refreshInput
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
+
 		return
 	}
 
 	res, err := h.services.Users.RefreshTokens(c.Request.Context(), inp.Token)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -162,18 +168,21 @@ func (h *Handler) userVerify(c *gin.Context) {
 	code := c.Param("code")
 	if code == "" {
 		newResponse(c, http.StatusBadRequest, "code is empty")
+
 		return
 	}
 
 	id, err := getUserId(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
 	if err := h.services.Users.Verify(c.Request.Context(), id, code); err != nil {
 		if errors.Is(err, service.ErrVerificationCodeInvalid) {
 			newResponse(c, http.StatusBadRequest, err.Error())
+
 			return
 		}
 
@@ -206,18 +215,21 @@ func (h *Handler) userCreateSchool(c *gin.Context) {
 	var inp createSchoolInput
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
+
 		return
 	}
 
 	id, err := getUserId(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
 	school, err := h.services.Users.CreateSchool(c.Request.Context(), id, inp.Name)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
