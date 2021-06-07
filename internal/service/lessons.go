@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 
 	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"github.com/zhashkevych/creatly-backend/internal/repository"
@@ -59,7 +60,7 @@ func (s *LessonsService) GetById(ctx context.Context, lessonId primitive.ObjectI
 
 	content, err := s.contentRepo.GetByLesson(ctx, lessonId)
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return lesson, nil
 		}
 

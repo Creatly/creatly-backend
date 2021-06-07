@@ -11,6 +11,15 @@ import (
 
 //go:generate mockgen -source=repository.go -destination=mocks/mock.go
 
+type Users interface {
+	Create(ctx context.Context, user domain.User) error
+	GetByCredentials(ctx context.Context, email, password string) (domain.User, error)
+	GetByRefreshToken(ctx context.Context, refreshToken string) (domain.User, error)
+	Verify(ctx context.Context, userId primitive.ObjectID, code string) error
+	SetSession(ctx context.Context, userId primitive.ObjectID, session domain.Session) error
+	AttachSchool(ctx context.Context, userId, schoolId primitive.ObjectID) error
+}
+
 type UpdateSchoolSettingsInput struct {
 	SchoolID    primitive.ObjectID
 	Color       string
@@ -21,6 +30,7 @@ type UpdateSchoolSettingsInput struct {
 }
 
 type Schools interface {
+	Create(ctx context.Context, name string) (primitive.ObjectID, error)
 	GetByDomain(ctx context.Context, domainName string) (domain.School, error)
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.School, error)
 	UpdateSettings(ctx context.Context, inp UpdateSchoolSettingsInput) error
@@ -84,7 +94,9 @@ type UpdateLessonInput struct {
 
 type Modules interface {
 	Create(ctx context.Context, module domain.Module) (primitive.ObjectID, error)
-	GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
+	GetPublishedByCourseId(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
+	GetByCourseId(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
+	GetPublishedById(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
 	GetById(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
 	GetByPackages(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Module, error)
 	Update(ctx context.Context, inp UpdateModuleInput) error
@@ -174,6 +186,7 @@ type Repositories struct {
 	PromoCodes     PromoCodes
 	Orders         Orders
 	Admins         Admins
+	Users          Users
 }
 
 func NewRepositories(db *mongo.Database) *Repositories {
@@ -189,5 +202,6 @@ func NewRepositories(db *mongo.Database) *Repositories {
 		Orders:         NewOrdersRepo(db),
 		Admins:         NewAdminsRepo(db),
 		Packages:       NewPackagesRepo(db),
+		Users:          NewUsersRepo(db),
 	}
 }

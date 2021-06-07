@@ -49,6 +49,7 @@ func (h *Handler) adminUploadImage(c *gin.Context) {
 	file, fileHeader, err := c.Request.FormFile("file")
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
+
 		return
 	}
 
@@ -58,6 +59,7 @@ func (h *Handler) adminUploadImage(c *gin.Context) {
 
 	if _, err := file.Read(buffer); err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
+
 		return
 	}
 
@@ -66,12 +68,14 @@ func (h *Handler) adminUploadImage(c *gin.Context) {
 	// Validate File Type
 	if _, ex := imageTypes[contentType]; !ex {
 		newResponse(c, http.StatusBadRequest, "file type is not supported")
+
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -85,6 +89,7 @@ func (h *Handler) adminUploadImage(c *gin.Context) {
 	})
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -110,6 +115,7 @@ func (h *Handler) adminUploadVideo(c *gin.Context) {
 	file, fileHeader, err := c.Request.FormFile("file")
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
+
 		return
 	}
 
@@ -119,18 +125,21 @@ func (h *Handler) adminUploadVideo(c *gin.Context) {
 
 	if _, err = file.Read(buffer); err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
+
 		return
 	}
 
 	contentType := http.DetectContentType(buffer)
 	if _, ex := videoTypes[contentType]; !ex {
 		newResponse(c, http.StatusBadRequest, "file type is not supported")
+
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -144,6 +153,7 @@ func (h *Handler) adminUploadVideo(c *gin.Context) {
 	})
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -152,5 +162,6 @@ func (h *Handler) adminUploadVideo(c *gin.Context) {
 
 func getFileExtension(filename string) string {
 	parts := strings.Split(filename, ".")
+
 	return parts[len(parts)-1]
 }

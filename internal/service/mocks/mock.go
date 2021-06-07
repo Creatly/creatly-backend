@@ -14,6 +14,102 @@ import (
 	primitive "go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+// MockUsers is a mock of Users interface.
+type MockUsers struct {
+	ctrl     *gomock.Controller
+	recorder *MockUsersMockRecorder
+}
+
+// MockUsersMockRecorder is the mock recorder for MockUsers.
+type MockUsersMockRecorder struct {
+	mock *MockUsers
+}
+
+// NewMockUsers creates a new mock instance.
+func NewMockUsers(ctrl *gomock.Controller) *MockUsers {
+	mock := &MockUsers{ctrl: ctrl}
+	mock.recorder = &MockUsersMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockUsers) EXPECT() *MockUsersMockRecorder {
+	return m.recorder
+}
+
+// CreateSchool mocks base method.
+func (m *MockUsers) CreateSchool(ctx context.Context, userId primitive.ObjectID, schoolName string) (domain.School, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateSchool", ctx, userId, schoolName)
+	ret0, _ := ret[0].(domain.School)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateSchool indicates an expected call of CreateSchool.
+func (mr *MockUsersMockRecorder) CreateSchool(ctx, userId, schoolName interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateSchool", reflect.TypeOf((*MockUsers)(nil).CreateSchool), ctx, userId, schoolName)
+}
+
+// RefreshTokens mocks base method.
+func (m *MockUsers) RefreshTokens(ctx context.Context, refreshToken string) (service.Tokens, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RefreshTokens", ctx, refreshToken)
+	ret0, _ := ret[0].(service.Tokens)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// RefreshTokens indicates an expected call of RefreshTokens.
+func (mr *MockUsersMockRecorder) RefreshTokens(ctx, refreshToken interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RefreshTokens", reflect.TypeOf((*MockUsers)(nil).RefreshTokens), ctx, refreshToken)
+}
+
+// SignIn mocks base method.
+func (m *MockUsers) SignIn(ctx context.Context, input service.UserSignInInput) (service.Tokens, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SignIn", ctx, input)
+	ret0, _ := ret[0].(service.Tokens)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SignIn indicates an expected call of SignIn.
+func (mr *MockUsersMockRecorder) SignIn(ctx, input interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SignIn", reflect.TypeOf((*MockUsers)(nil).SignIn), ctx, input)
+}
+
+// SignUp mocks base method.
+func (m *MockUsers) SignUp(ctx context.Context, input service.UserSignUpInput) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SignUp", ctx, input)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SignUp indicates an expected call of SignUp.
+func (mr *MockUsersMockRecorder) SignUp(ctx, input interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SignUp", reflect.TypeOf((*MockUsers)(nil).SignUp), ctx, input)
+}
+
+// Verify mocks base method.
+func (m *MockUsers) Verify(ctx context.Context, userId primitive.ObjectID, hash string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Verify", ctx, userId, hash)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Verify indicates an expected call of Verify.
+func (mr *MockUsersMockRecorder) Verify(ctx, userId, hash interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Verify", reflect.TypeOf((*MockUsers)(nil).Verify), ctx, userId, hash)
+}
+
 // MockSchools is a mock of Schools interface.
 type MockSchools struct {
 	ctrl     *gomock.Controller
@@ -37,6 +133,21 @@ func (m *MockSchools) EXPECT() *MockSchoolsMockRecorder {
 	return m.recorder
 }
 
+// Create mocks base method.
+func (m *MockSchools) Create(ctx context.Context, name string) (primitive.ObjectID, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Create", ctx, name)
+	ret0, _ := ret[0].(primitive.ObjectID)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Create indicates an expected call of Create.
+func (mr *MockSchoolsMockRecorder) Create(ctx, name interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockSchools)(nil).Create), ctx, name)
+}
+
 // GetByDomain mocks base method.
 func (m *MockSchools) GetByDomain(ctx context.Context, domainName string) (domain.School, error) {
 	m.ctrl.T.Helper()
@@ -53,17 +164,17 @@ func (mr *MockSchoolsMockRecorder) GetByDomain(ctx, domainName interface{}) *gom
 }
 
 // UpdateSettings mocks base method.
-func (m *MockSchools) UpdateSettings(ctx context.Context, input service.UpdateSchoolSettingsInput) error {
+func (m *MockSchools) UpdateSettings(ctx context.Context, schoolId primitive.ObjectID, input service.UpdateSchoolSettingsInput) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateSettings", ctx, input)
+	ret := m.ctrl.Call(m, "UpdateSettings", ctx, schoolId, input)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // UpdateSettings indicates an expected call of UpdateSettings.
-func (mr *MockSchoolsMockRecorder) UpdateSettings(ctx, input interface{}) *gomock.Call {
+func (mr *MockSchoolsMockRecorder) UpdateSettings(ctx, schoolId, input interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateSettings", reflect.TypeOf((*MockSchools)(nil).UpdateSettings), ctx, input)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateSettings", reflect.TypeOf((*MockSchools)(nil).UpdateSettings), ctx, schoolId, input)
 }
 
 // MockStudents is a mock of Students interface.
@@ -208,7 +319,7 @@ func (mr *MockStudentsMockRecorder) SetLessonFinished(ctx, studentId, lessonId i
 }
 
 // SignIn mocks base method.
-func (m *MockStudents) SignIn(ctx context.Context, input service.SignInInput) (service.Tokens, error) {
+func (m *MockStudents) SignIn(ctx context.Context, input service.SchoolSignInInput) (service.Tokens, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SignIn", ctx, input)
 	ret0, _ := ret[0].(service.Tokens)
@@ -370,7 +481,7 @@ func (mr *MockAdminsMockRecorder) RefreshTokens(ctx, schoolId, refreshToken inte
 }
 
 // SignIn mocks base method.
-func (m *MockAdmins) SignIn(ctx context.Context, input service.SignInInput) (service.Tokens, error) {
+func (m *MockAdmins) SignIn(ctx context.Context, input service.SchoolSignInInput) (service.Tokens, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SignIn", ctx, input)
 	ret0, _ := ret[0].(service.Tokens)
@@ -459,32 +570,46 @@ func (mr *MockEmailsMockRecorder) AddToList(name, email interface{}) *gomock.Cal
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddToList", reflect.TypeOf((*MockEmails)(nil).AddToList), name, email)
 }
 
-// SendPurchaseSuccessfulEmail mocks base method.
-func (m *MockEmails) SendPurchaseSuccessfulEmail(arg0 service.SendPurchaseSuccessfulEmailInput) error {
+// SendStudentPurchaseSuccessfulEmail mocks base method.
+func (m *MockEmails) SendStudentPurchaseSuccessfulEmail(arg0 service.StudentPurchaseSuccessfulEmailInput) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SendPurchaseSuccessfulEmail", arg0)
+	ret := m.ctrl.Call(m, "SendStudentPurchaseSuccessfulEmail", arg0)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// SendPurchaseSuccessfulEmail indicates an expected call of SendPurchaseSuccessfulEmail.
-func (mr *MockEmailsMockRecorder) SendPurchaseSuccessfulEmail(arg0 interface{}) *gomock.Call {
+// SendStudentPurchaseSuccessfulEmail indicates an expected call of SendStudentPurchaseSuccessfulEmail.
+func (mr *MockEmailsMockRecorder) SendStudentPurchaseSuccessfulEmail(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendPurchaseSuccessfulEmail", reflect.TypeOf((*MockEmails)(nil).SendPurchaseSuccessfulEmail), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendStudentPurchaseSuccessfulEmail", reflect.TypeOf((*MockEmails)(nil).SendStudentPurchaseSuccessfulEmail), arg0)
 }
 
-// SendVerificationEmail mocks base method.
-func (m *MockEmails) SendVerificationEmail(arg0 service.SendVerificationEmailInput) error {
+// SendStudentVerificationEmail mocks base method.
+func (m *MockEmails) SendStudentVerificationEmail(arg0 service.VerificationEmailInput) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SendVerificationEmail", arg0)
+	ret := m.ctrl.Call(m, "SendStudentVerificationEmail", arg0)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// SendVerificationEmail indicates an expected call of SendVerificationEmail.
-func (mr *MockEmailsMockRecorder) SendVerificationEmail(arg0 interface{}) *gomock.Call {
+// SendStudentVerificationEmail indicates an expected call of SendStudentVerificationEmail.
+func (mr *MockEmailsMockRecorder) SendStudentVerificationEmail(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendVerificationEmail", reflect.TypeOf((*MockEmails)(nil).SendVerificationEmail), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendStudentVerificationEmail", reflect.TypeOf((*MockEmails)(nil).SendStudentVerificationEmail), arg0)
+}
+
+// SendUserVerificationEmail mocks base method.
+func (m *MockEmails) SendUserVerificationEmail(arg0 service.VerificationEmailInput) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SendUserVerificationEmail", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SendUserVerificationEmail indicates an expected call of SendUserVerificationEmail.
+func (mr *MockEmailsMockRecorder) SendUserVerificationEmail(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendUserVerificationEmail", reflect.TypeOf((*MockEmails)(nil).SendUserVerificationEmail), arg0)
 }
 
 // MockCourses is a mock of Courses interface.
@@ -871,19 +996,19 @@ func (mr *MockModulesMockRecorder) DeleteByCourse(ctx, schoolId, courseId interf
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteByCourse", reflect.TypeOf((*MockModules)(nil).DeleteByCourse), ctx, schoolId, courseId)
 }
 
-// GetByCourse mocks base method.
-func (m *MockModules) GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error) {
+// GetByCourseId mocks base method.
+func (m *MockModules) GetByCourseId(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetByCourse", ctx, courseId)
+	ret := m.ctrl.Call(m, "GetByCourseId", ctx, courseId)
 	ret0, _ := ret[0].([]domain.Module)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetByCourse indicates an expected call of GetByCourse.
-func (mr *MockModulesMockRecorder) GetByCourse(ctx, courseId interface{}) *gomock.Call {
+// GetByCourseId indicates an expected call of GetByCourseId.
+func (mr *MockModulesMockRecorder) GetByCourseId(ctx, courseId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByCourse", reflect.TypeOf((*MockModules)(nil).GetByCourse), ctx, courseId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByCourseId", reflect.TypeOf((*MockModules)(nil).GetByCourseId), ctx, courseId)
 }
 
 // GetById mocks base method.
@@ -929,6 +1054,21 @@ func (m *MockModules) GetByPackages(ctx context.Context, packageIds []primitive.
 func (mr *MockModulesMockRecorder) GetByPackages(ctx, packageIds interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByPackages", reflect.TypeOf((*MockModules)(nil).GetByPackages), ctx, packageIds)
+}
+
+// GetPublishedByCourseId mocks base method.
+func (m *MockModules) GetPublishedByCourseId(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetPublishedByCourseId", ctx, courseId)
+	ret0, _ := ret[0].([]domain.Module)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetPublishedByCourseId indicates an expected call of GetPublishedByCourseId.
+func (mr *MockModulesMockRecorder) GetPublishedByCourseId(ctx, courseId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPublishedByCourseId", reflect.TypeOf((*MockModules)(nil).GetPublishedByCourseId), ctx, courseId)
 }
 
 // GetWithContent mocks base method.

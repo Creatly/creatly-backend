@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 
 	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"go.mongodb.org/mongo-driver/bson"
@@ -34,7 +35,7 @@ func (r *OffersRepo) GetBySchool(ctx context.Context, schoolId primitive.ObjectI
 func (r *OffersRepo) GetById(ctx context.Context, id primitive.ObjectID) (domain.Offer, error) {
 	var offer domain.Offer
 	if err := r.db.FindOne(ctx, bson.M{"_id": id}).Decode(&offer); err != nil {
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return domain.Offer{}, ErrOfferNotFound
 		}
 
@@ -96,5 +97,6 @@ func (r *OffersRepo) Update(ctx context.Context, inp UpdateOfferInput) error {
 
 func (r *OffersRepo) Delete(ctx context.Context, schoolId, id primitive.ObjectID) error {
 	_, err := r.db.DeleteOne(ctx, bson.M{"_id": id, "schoolId": schoolId})
+
 	return err
 }

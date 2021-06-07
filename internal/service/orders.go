@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/zhashkevych/creatly-backend/internal/domain"
@@ -37,7 +38,7 @@ func NewOrdersService(repo repository.Orders, offersService Offers, promoCodesSe
 func (s *OrdersService) Create(ctx context.Context, studentId, offerId, promocodeId primitive.ObjectID) (string, error) { //nolint:funlen
 	offer, err := s.offersService.GetById(ctx, offerId)
 	if err != nil {
-		if err == repository.ErrOfferNotFound {
+		if errors.Is(err, repository.ErrOfferNotFound) {
 			return "", ErrOfferNotFound
 		}
 
@@ -51,7 +52,7 @@ func (s *OrdersService) Create(ctx context.Context, studentId, offerId, promocod
 
 	student, err := s.studentsService.GetById(ctx, studentId)
 	if err != nil {
-		if err == repository.ErrUserNotFound {
+		if errors.Is(err, repository.ErrUserNotFound) {
 			return "", ErrUserNotFound
 		}
 
@@ -72,6 +73,7 @@ func (s *OrdersService) Create(ctx context.Context, studentId, offerId, promocod
 	})
 	if err != nil {
 		logger.Error("Failed to generate payment link: ", err.Error())
+
 		return "", err
 	}
 

@@ -136,7 +136,7 @@ func TestCoursesServiceDelete(t *testing.T) {
 			courseID: primitive.NewObjectID(),
 			mock: func() {
 				coursesRepo.EXPECT().Delete(ctx, gomock.Any(), gomock.Any())
-				modulesRepo.EXPECT().GetByCourse(ctx, gomock.Any()).Return(nil, errInternalServErr)
+				modulesRepo.EXPECT().GetPublishedByCourseId(ctx, gomock.Any()).Return(nil, errInternalServErr)
 				modulesRepo.EXPECT().DeleteByCourse(ctx, gomock.Any(), gomock.Any())
 				lessonsContentRepo.EXPECT().DeleteContent(ctx, gomock.Any(), gomock.Any())
 				modulesRepo.EXPECT().Delete(ctx, gomock.Any(), gomock.Any())
@@ -148,7 +148,7 @@ func TestCoursesServiceDelete(t *testing.T) {
 			courseID: primitive.NewObjectID(),
 			mock: func() {
 				coursesRepo.EXPECT().Delete(ctx, gomock.Any(), gomock.Any())
-				modulesRepo.EXPECT().GetByCourse(ctx, gomock.Any())
+				modulesRepo.EXPECT().GetPublishedByCourseId(ctx, gomock.Any())
 				modulesRepo.EXPECT().DeleteByCourse(ctx, gomock.Any(), gomock.Any())
 				lessonsContentRepo.EXPECT().DeleteContent(ctx, gomock.Any(), gomock.Any())
 				modulesRepo.EXPECT().Delete(ctx, gomock.Any(), gomock.Any())

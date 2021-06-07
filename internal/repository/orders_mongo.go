@@ -21,6 +21,7 @@ func NewOrdersRepo(db *mongo.Database) *OrdersRepo {
 
 func (r *OrdersRepo) Create(ctx context.Context, order domain.Order) error {
 	_, err := r.db.InsertOne(ctx, order)
+
 	return err
 }
 

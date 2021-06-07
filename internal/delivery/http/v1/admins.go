@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"errors"
 	"net/http"
 	"time"
 
@@ -8,6 +9,7 @@ import (
 	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"github.com/zhashkevych/creatly-backend/internal/service"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // TODO: review response error messages
@@ -105,22 +107,29 @@ func (h *Handler) adminSignIn(c *gin.Context) {
 	var inp signInInput
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
+
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
-	res, err := h.services.Admins.SignIn(c.Request.Context(), service.SignInInput{
+	res, err := h.services.Admins.SignIn(c.Request.Context(), service.SchoolSignInInput{
 		Email:    inp.Email,
 		Password: inp.Password,
 		SchoolID: school.ID,
 	})
 	if err != nil {
-		newResponse(c, http.StatusInternalServerError, err.Error())
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			newResponse(c, http.StatusUnauthorized, err.Error())
+		} else {
+			newResponse(c, http.StatusInternalServerError, err.Error())
+		}
+
 		return
 	}
 
@@ -145,18 +154,21 @@ func (h *Handler) adminRefresh(c *gin.Context) {
 	var inp refreshInput
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
+
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
 	res, err := h.services.Admins.RefreshTokens(c.Request.Context(), school.ID, inp.Token)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -187,18 +199,21 @@ func (h *Handler) adminCreateCourse(c *gin.Context) {
 	var inp createCourseInput
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
+
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
 	id, err := h.services.Courses.Create(c.Request.Context(), school.ID, inp.Name)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -221,12 +236,14 @@ func (h *Handler) adminGetAllCourses(c *gin.Context) {
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
 	courses, err := h.services.Admins.GetCourses(c.Request.Context(), school.ID)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -255,24 +272,28 @@ func (h *Handler) adminGetCourseById(c *gin.Context) {
 	id, err := parseIdFromPath(c)
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
+
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
 	course, err := h.services.Admins.GetCourseById(c.Request.Context(), school.ID, id)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
-	modules, err := h.services.Modules.GetByCourse(c.Request.Context(), course.ID)
+	modules, err := h.services.Modules.GetByCourseId(c.Request.Context(), course.ID)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -308,18 +329,21 @@ func (h *Handler) adminUpdateCourse(c *gin.Context) {
 	idParam := c.Param("id")
 	if idParam == "" {
 		newResponse(c, http.StatusBadRequest, "empty id param")
+
 		return
 	}
 
 	var inp updateCourseInput
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, "empty id param")
+
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -333,6 +357,7 @@ func (h *Handler) adminUpdateCourse(c *gin.Context) {
 		Published:   inp.Published,
 	}); err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -357,17 +382,20 @@ func (h *Handler) adminDeleteCourse(c *gin.Context) {
 	id, err := parseIdFromPath(c)
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
+
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
 	if err := h.services.Courses.Delete(c.Request.Context(), school.ID, id); err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -397,18 +425,21 @@ func (h *Handler) adminCreateModule(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
 		newResponse(c, http.StatusBadRequest, "empty id param")
+
 		return
 	}
 
 	var inp createModuleInput
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
+
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -420,6 +451,7 @@ func (h *Handler) adminCreateModule(c *gin.Context) {
 	})
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, "invalid id param")
+
 		return
 	}
 
@@ -450,18 +482,21 @@ func (h *Handler) adminUpdateModule(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
 		newResponse(c, http.StatusBadRequest, "empty id param")
+
 		return
 	}
 
 	var inp updateModuleInput
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
+
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -473,6 +508,7 @@ func (h *Handler) adminUpdateModule(c *gin.Context) {
 		Published: inp.Published,
 	}); err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -496,24 +532,28 @@ func (h *Handler) adminDeleteModule(c *gin.Context) {
 	idParam := c.Param("id")
 	if idParam == "" {
 		newResponse(c, http.StatusBadRequest, "empty id param")
+
 		return
 	}
 
 	id, err := primitive.ObjectIDFromHex(idParam)
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid id param")
+
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
 	err = h.services.Modules.Delete(c.Request.Context(), school.ID, id)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -537,19 +577,22 @@ func (h *Handler) adminGetLessons(c *gin.Context) {
 	moduleIdParam := c.Param("id")
 	if moduleIdParam == "" {
 		newResponse(c, http.StatusBadRequest, "empty id param")
+
 		return
 	}
 
 	moduleId, err := primitive.ObjectIDFromHex(moduleIdParam)
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid id param")
+
 		return
 	}
 
 	module, err := h.services.Modules.GetWithContent(c.Request.Context(), moduleId)
 	if err != nil {
-		if err == service.ErrModuleIsNotAvailable {
+		if errors.Is(err, service.ErrModuleIsNotAvailable) {
 			newResponse(c, http.StatusForbidden, err.Error())
+
 			return
 		}
 
@@ -584,18 +627,21 @@ func (h *Handler) adminCreateLesson(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
 		newResponse(c, http.StatusBadRequest, "empty id param")
+
 		return
 	}
 
 	var inp createLessonInput
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
+
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -607,6 +653,7 @@ func (h *Handler) adminCreateLesson(c *gin.Context) {
 	})
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -630,18 +677,21 @@ func (h *Handler) adminGetLessonById(c *gin.Context) {
 	idParam := c.Param("id")
 	if idParam == "" {
 		newResponse(c, http.StatusBadRequest, "empty id param")
+
 		return
 	}
 
 	id, err := primitive.ObjectIDFromHex(idParam)
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid id param")
+
 		return
 	}
 
 	lesson, err := h.services.Lessons.GetById(c.Request.Context(), id)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -673,18 +723,21 @@ func (h *Handler) adminUpdateLesson(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
 		newResponse(c, http.StatusBadRequest, "empty id param")
+
 		return
 	}
 
 	var inp updateLessonInput
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
+
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -697,6 +750,7 @@ func (h *Handler) adminUpdateLesson(c *gin.Context) {
 		SchoolID:  school.ID.Hex(),
 	}); err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -720,18 +774,21 @@ func (h *Handler) adminDeleteLesson(c *gin.Context) {
 	id, err := parseIdFromPath(c)
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
+
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
 	err = h.services.Lessons.Delete(c.Request.Context(), school.ID, id)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -761,18 +818,21 @@ func (h *Handler) adminCreatePackage(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
 		newResponse(c, http.StatusBadRequest, "empty id param")
+
 		return
 	}
 
 	var inp createPackageInput
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
+
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -784,6 +844,7 @@ func (h *Handler) adminCreatePackage(c *gin.Context) {
 	})
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -807,12 +868,14 @@ func (h *Handler) adminGetAllPackages(c *gin.Context) {
 	id, err := parseIdFromPath(c)
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
+
 		return
 	}
 
 	packages, err := h.services.Packages.GetByCourse(c.Request.Context(), id)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, "invalid id param")
+
 		return
 	}
 
@@ -836,12 +899,14 @@ func (h *Handler) adminGetPackageById(c *gin.Context) {
 	id, err := parseIdFromPath(c)
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
+
 		return
 	}
 
 	pkg, err := h.services.Packages.GetById(c.Request.Context(), id)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, "invalid id param")
+
 		return
 	}
 
@@ -872,18 +937,21 @@ func (h *Handler) adminUpdatePackage(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
 		newResponse(c, http.StatusBadRequest, "empty id param")
+
 		return
 	}
 
 	var inp updatePackageInput
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
+
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -895,6 +963,7 @@ func (h *Handler) adminUpdatePackage(c *gin.Context) {
 		Modules:     inp.Modules,
 	}); err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -918,18 +987,21 @@ func (h *Handler) adminDeletePackage(c *gin.Context) {
 	id, err := parseIdFromPath(c)
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
+
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
 	err = h.services.Packages.Delete(c.Request.Context(), school.ID, id)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, "invalid id param")
+
 		return
 	}
 
@@ -960,12 +1032,14 @@ func (h *Handler) adminCreateOffer(c *gin.Context) {
 	var inp createOfferInput
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
+
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -981,6 +1055,7 @@ func (h *Handler) adminCreateOffer(c *gin.Context) {
 	})
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -1003,12 +1078,14 @@ func (h *Handler) adminGetAllOffers(c *gin.Context) {
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
 	offers, err := h.services.Offers.GetAll(c.Request.Context(), school.ID)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -1032,12 +1109,14 @@ func (h *Handler) adminGetOfferById(c *gin.Context) {
 	id, err := parseIdFromPath(c)
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
+
 		return
 	}
 
 	offer, err := h.services.Offers.GetById(c.Request.Context(), id)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -1070,18 +1149,21 @@ func (h *Handler) adminUpdateOffer(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
 		newResponse(c, http.StatusBadRequest, "empty id param")
+
 		return
 	}
 
 	var inp updateOfferInput
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
+
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -1103,6 +1185,7 @@ func (h *Handler) adminUpdateOffer(c *gin.Context) {
 
 	if err := h.services.Offers.Update(c.Request.Context(), updateInput); err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -1126,18 +1209,21 @@ func (h *Handler) adminDeleteOffer(c *gin.Context) {
 	id, err := parseIdFromPath(c)
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
+
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
 	err = h.services.Offers.Delete(c.Request.Context(), school.ID, id)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -1168,12 +1254,14 @@ func (h *Handler) adminCreatePromocode(c *gin.Context) {
 	var inp createPromocodeInput
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
+
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -1186,6 +1274,7 @@ func (h *Handler) adminCreatePromocode(c *gin.Context) {
 	})
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -1208,12 +1297,14 @@ func (h *Handler) adminGetPromocodes(c *gin.Context) {
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
 	promocodes, err := h.services.PromoCodes.GetBySchool(c.Request.Context(), school.ID)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -1237,18 +1328,21 @@ func (h *Handler) adminGetPromocodeById(c *gin.Context) {
 	id, err := parseIdFromPath(c)
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
+
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
 	promoCode, err := h.services.PromoCodes.GetById(c.Request.Context(), school.ID, id)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -1280,18 +1374,21 @@ func (h *Handler) adminUpdatePromocode(c *gin.Context) {
 	id, err := parseIdFromPath(c)
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
+
 		return
 	}
 
 	var inp updatePromocodeInput
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
+
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -1305,6 +1402,7 @@ func (h *Handler) adminUpdatePromocode(c *gin.Context) {
 	})
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -1328,18 +1426,21 @@ func (h *Handler) adminDeletePromocode(c *gin.Context) {
 	id, err := parseIdFromPath(c)
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
+
 		return
 	}
 
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
 	err = h.services.PromoCodes.Delete(c.Request.Context(), school.ID, id)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -1384,20 +1485,21 @@ func (h *Handler) adminUpdateSchoolSettings(c *gin.Context) {
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
 	var inp updateSchoolSettingsInput
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
+
 		return
 	}
 
 	updateInput := service.UpdateSchoolSettingsInput{
-		SchoolID: school.ID,
-		Color:    inp.Color,
-		Domains:  inp.Domains,
-		Email:    inp.Email,
+		Color:   inp.Color,
+		Domains: inp.Domains,
+		Email:   inp.Email,
 	}
 
 	if inp.Pages != nil {
@@ -1417,8 +1519,9 @@ func (h *Handler) adminUpdateSchoolSettings(c *gin.Context) {
 		}
 	}
 
-	if err := h.services.Schools.UpdateSettings(c.Request.Context(), updateInput); err != nil {
+	if err := h.services.Schools.UpdateSettings(c.Request.Context(), school.ID, updateInput); err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -1441,12 +1544,14 @@ func (h *Handler) adminGetOrders(c *gin.Context) {
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
 	orders, err := h.services.Orders.GetBySchool(c.Request.Context(), school.ID)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -1490,12 +1595,14 @@ func (h *Handler) adminGetStudents(c *gin.Context) {
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
 	students, err := h.services.Students.GetBySchool(c.Request.Context(), school.ID)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 

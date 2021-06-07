@@ -10,6 +10,9 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/cloudflare/cloudflare-go"
+	"github.com/zhashkevych/creatly-backend/pkg/dns"
+
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/zhashkevych/creatly-backend/pkg/storage"
@@ -31,9 +34,9 @@ import (
 	"github.com/zhashkevych/creatly-backend/pkg/logger"
 )
 
-// @title Course Platform API
+// @title Creatly API
 // @version 1.0
-// @description API Server for Course Platform
+// @description REST API for Creatly App
 
 // @host localhost:8000
 // @BasePath /api/v1/
@@ -46,11 +49,16 @@ import (
 // @in header
 // @name Authorization
 
+// @securityDefinitions.apikey UsersAuth
+// @in header
+// @name Authorization
+
 // Run initializes whole application.
 func Run(configPath string) {
 	cfg, err := config.Init(configPath)
 	if err != nil {
 		logger.Error(err)
+
 		return
 	}
 
@@ -58,6 +66,7 @@ func Run(configPath string) {
 	mongoClient, err := mongodb.NewClient(cfg.Mongo.URI, cfg.Mongo.User, cfg.Mongo.Password)
 	if err != nil {
 		logger.Error(err)
+
 		return
 	}
 
@@ -71,12 +80,14 @@ func Run(configPath string) {
 	emailSender, err := smtp.NewSMTPSender(cfg.SMTP.From, cfg.SMTP.Pass, cfg.SMTP.Host, cfg.SMTP.Port)
 	if err != nil {
 		logger.Error(err)
+
 		return
 	}
 
 	tokenManager, err := auth.NewManager(cfg.Auth.JWT.SigningKey)
 	if err != nil {
 		logger.Error(err)
+
 		return
 	}
 
@@ -85,8 +96,18 @@ func Run(configPath string) {
 	storageProvider, err := newStorageProvider(cfg)
 	if err != nil {
 		logger.Error(err)
+
 		return
 	}
+
+	cloudflareClient, err := cloudflare.New(cfg.Cloudflare.ApiKey, cfg.Cloudflare.Email)
+	if err != nil {
+		logger.Error(err)
+
+		return
+	}
+
+	dnsService := dns.NewService(cloudflareClient, cfg.Cloudflare.ZoneEmail, cfg.Cloudflare.CnameTarget)
 
 	// Services, Repos & API Handlers
 	repos := repository.NewRepositories(db)
@@ -109,6 +130,8 @@ func Run(configPath string) {
 		FrontendURL:            cfg.FrontendURL,
 		StorageProvider:        storageProvider,
 		Environment:            cfg.Environment,
+		Domain:                 cfg.HTTP.Host,
+		DNS:                    dnsService,
 	})
 	handlers := delivery.NewHandler(services, tokenManager)
 

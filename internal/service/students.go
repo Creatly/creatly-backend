@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/zhashkevych/creatly-backend/internal/domain"
@@ -70,28 +71,28 @@ func (s *StudentsService) SignUp(ctx context.Context, input StudentSignUpInput) 
 	}
 
 	if err := s.repo.Create(ctx, student); err != nil {
-		if err == repository.ErrUserAlreadyExists {
+		if errors.Is(err, repository.ErrUserAlreadyExists) {
 			return ErrUserAlreadyExists
 		}
 
 		return err
 	}
 
-	go func() {
-		if err := s.emailService.AddToList(student.Name, student.Email); err != nil {
-			logger.Error("Failed to add email to the list:", err)
-		}
-	}()
+	// go func() {
+	//	if err := s.emailService.AddToList(student.Name, student.Email); err != nil {
+	//		logger.Error("Failed to add email to the list:", err)
+	//	}
+	// }()
 
 	// TODO: If it fails, what then?
-	return s.emailService.SendVerificationEmail(SendVerificationEmailInput{
+	return s.emailService.SendStudentVerificationEmail(VerificationEmailInput{
 		Email:            student.Email,
 		Name:             student.Name,
 		VerificationCode: verificationCode,
 	})
 }
 
-func (s *StudentsService) SignIn(ctx context.Context, input SignInInput) (Tokens, error) {
+func (s *StudentsService) SignIn(ctx context.Context, input SchoolSignInInput) (Tokens, error) {
 	passwordHash, err := s.hasher.Hash(input.Password)
 	if err != nil {
 		return Tokens{}, err
@@ -99,7 +100,7 @@ func (s *StudentsService) SignIn(ctx context.Context, input SignInInput) (Tokens
 
 	student, err := s.repo.GetByCredentials(ctx, input.SchoolID, input.Email, passwordHash)
 	if err != nil {
-		if err == repository.ErrUserNotFound {
+		if errors.Is(err, repository.ErrUserNotFound) {
 			return Tokens{}, ErrUserNotFound
 		}
 
@@ -121,7 +122,7 @@ func (s *StudentsService) RefreshTokens(ctx context.Context, schoolId primitive.
 func (s *StudentsService) Verify(ctx context.Context, hash string) error {
 	err := s.repo.Verify(ctx, hash)
 	if err != nil {
-		if err == repository.ErrVerificationCodeInvalid {
+		if errors.Is(err, repository.ErrVerificationCodeInvalid) {
 			return ErrVerificationCodeInvalid
 		}
 
@@ -145,6 +146,7 @@ func (s *StudentsService) GetModuleLessons(ctx context.Context, schoolId, studen
 
 	if student.IsModuleAvailable(module) {
 		logger.Info("Module is available")
+
 		return module.Lessons, nil
 	}
 

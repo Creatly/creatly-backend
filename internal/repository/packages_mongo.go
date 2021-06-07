@@ -65,5 +65,6 @@ func (r *PackagesRepo) Update(ctx context.Context, inp UpdatePackageInput) error
 
 func (r *PackagesRepo) Delete(ctx context.Context, schoolId, id primitive.ObjectID) error {
 	_, err := r.db.DeleteOne(ctx, bson.M{"_id": id, "schoolId": schoolId})
+
 	return err
 }

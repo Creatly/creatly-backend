@@ -9,26 +9,30 @@ import (
 
 func TestInit(t *testing.T) {
 	type env struct {
-		mongoURI           string
-		mongoUser          string
-		mongoPass          string
-		passwordSalt       string
-		jwtSigningKey      string
-		sendpulseListId    string
-		sendpulseId        string
-		sendpulseSecret    string
-		host               string
-		fondyMerchantId    string
-		fondyMerchantPass  string
-		paymentCallbackURL string
-		paymentResponseURL string
-		frontendUrl        string
-		smtpPassword       string
-		appEnv             string
-		storageEndpoint    string
-		storageBucket      string
-		storageAccessKey   string
-		storageSecretKey   string
+		mongoURI              string
+		mongoUser             string
+		mongoPass             string
+		passwordSalt          string
+		jwtSigningKey         string
+		sendpulseListId       string
+		sendpulseId           string
+		sendpulseSecret       string
+		host                  string
+		fondyMerchantId       string
+		fondyMerchantPass     string
+		paymentCallbackURL    string
+		paymentResponseURL    string
+		frontendUrl           string
+		smtpPassword          string
+		appEnv                string
+		storageEndpoint       string
+		storageBucket         string
+		storageAccessKey      string
+		storageSecretKey      string
+		cloudflareApiKey      string
+		cloudflareEmail       string
+		cloudflareZoneEmail   string
+		cloudflareCnameTarget string
 	}
 
 	type args struct {
@@ -57,6 +61,10 @@ func TestInit(t *testing.T) {
 		os.Setenv("STORAGE_BUCKET", env.storageBucket)
 		os.Setenv("STORAGE_ACCESS_KEY", env.storageAccessKey)
 		os.Setenv("STORAGE_SECRET_KEY", env.storageSecretKey)
+		os.Setenv("CLOUDFLARE_API_KEY", env.cloudflareApiKey)
+		os.Setenv("CLOUDFLARE_EMAIL", env.cloudflareEmail)
+		os.Setenv("CLOUDFLARE_ZONE_EMAIL", env.cloudflareZoneEmail)
+		os.Setenv("CLOUDFLARE_CNAME_TARGET", env.cloudflareCnameTarget)
 	}
 
 	tests := []struct {
@@ -70,26 +78,30 @@ func TestInit(t *testing.T) {
 			args: args{
 				path: "fixtures",
 				env: env{
-					mongoURI:           "mongodb://localhost:27017",
-					mongoUser:          "admin",
-					mongoPass:          "qwerty",
-					passwordSalt:       "salt",
-					jwtSigningKey:      "key",
-					sendpulseSecret:    "secret",
-					sendpulseId:        "id",
-					sendpulseListId:    "listId",
-					host:               "localhost",
-					fondyMerchantId:    "123",
-					fondyMerchantPass:  "fondy",
-					paymentResponseURL: "https://zhashkevych.com/",
-					paymentCallbackURL: "https://zhashkevych.com/callback",
-					frontendUrl:        "http://localhost:1337",
-					smtpPassword:       "qwerty123",
-					appEnv:             "local",
-					storageEndpoint:    "test.filestorage.com",
-					storageBucket:      "test",
-					storageAccessKey:   "qwerty123",
-					storageSecretKey:   "qwerty123",
+					mongoURI:              "mongodb://localhost:27017",
+					mongoUser:             "admin",
+					mongoPass:             "qwerty",
+					passwordSalt:          "salt",
+					jwtSigningKey:         "key",
+					sendpulseSecret:       "secret",
+					sendpulseId:           "id",
+					sendpulseListId:       "listId",
+					host:                  "localhost",
+					fondyMerchantId:       "123",
+					fondyMerchantPass:     "fondy",
+					paymentResponseURL:    "https://zhashkevych.com/",
+					paymentCallbackURL:    "https://zhashkevych.com/callback",
+					frontendUrl:           "http://localhost:1337",
+					smtpPassword:          "qwerty123",
+					appEnv:                "local",
+					storageEndpoint:       "test.filestorage.com",
+					storageBucket:         "test",
+					storageAccessKey:      "qwerty123",
+					storageSecretKey:      "qwerty123",
+					cloudflareApiKey:      "api_key",
+					cloudflareEmail:       "email",
+					cloudflareZoneEmail:   "zone_email",
+					cloudflareCnameTarget: "cname_target",
 				},
 			},
 			want: &Config{
@@ -158,6 +170,12 @@ func TestInit(t *testing.T) {
 					From: "maksim@zhashkevych.com",
 					Pass: "qwerty123",
 				},
+				Cloudflare: CloudflareConfig{
+					ApiKey:      "api_key",
+					Email:       "email",
+					CnameTarget: "cname_target",
+					ZoneEmail:   "zone_email",
+				},
 			},
 		},
 	}
@@ -168,6 +186,7 @@ func TestInit(t *testing.T) {
 			got, err := Init(tt.args.path)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Init() error = %v, wantErr %v", err, tt.wantErr)
+
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {

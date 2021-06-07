@@ -34,6 +34,7 @@ type (
 		CacheTTL    time.Duration `mapstructure:"ttl"`
 		FrontendURL string
 		SMTP        SMTPConfig
+		Cloudflare  CloudflareConfig
 	}
 
 	MongoConfig struct {
@@ -114,6 +115,13 @@ type (
 		Port int    `mapstructure:"port"`
 		From string `mapstructure:"from"`
 		Pass string
+	}
+
+	CloudflareConfig struct {
+		ApiKey      string
+		Email       string
+		ZoneEmail   string
+		CnameTarget string
 	}
 )
 
@@ -213,6 +221,11 @@ func setFromEnv(cfg *Config) {
 	cfg.FileStorage.AccessKey = viper.GetString("access_key")
 	cfg.FileStorage.SecretKey = viper.GetString("secret_key")
 	cfg.FileStorage.Bucket = viper.GetString("bucket")
+
+	cfg.Cloudflare.ApiKey = viper.GetString("api_key")
+	cfg.Cloudflare.Email = viper.GetString("email")
+	cfg.Cloudflare.ZoneEmail = viper.GetString("zone_email")
+	cfg.Cloudflare.CnameTarget = viper.GetString("cname_target")
 }
 
 func parseConfigFile(folder, env string) error {
@@ -286,6 +299,10 @@ func parseEnv() error {
 		return err
 	}
 
+	if err := parseCloudflareEnvVariables(); err != nil {
+		return err
+	}
+
 	return parsePasswordFromEnv()
 }
 
@@ -347,31 +364,37 @@ func parsePaymentEnvVariables() error {
 
 func parsePasswordFromEnv() error {
 	viper.SetEnvPrefix("password")
+
 	return viper.BindEnv("salt")
 }
 
 func parseJWTFromEnv() error {
 	viper.SetEnvPrefix("jwt")
+
 	return viper.BindEnv("signing_key")
 }
 
 func parseHostFromEnv() error {
 	viper.SetEnvPrefix("http")
+
 	return viper.BindEnv("host")
 }
 
 func parseFrontendHostFromEnv() error {
 	viper.SetEnvPrefix("frontend")
+
 	return viper.BindEnv("url")
 }
 
 func parseSMTPPassFromEnv() error {
 	viper.SetEnvPrefix("smtp")
+
 	return viper.BindEnv("password")
 }
 
 func parseAppEnvFromEnv() error {
 	viper.SetEnvPrefix("app")
+
 	return viper.BindEnv("env")
 }
 
@@ -391,4 +414,22 @@ func parseStorageEnvVariables() error {
 	}
 
 	return viper.BindEnv("secret_key")
+}
+
+func parseCloudflareEnvVariables() error {
+	viper.SetEnvPrefix("cloudflare")
+
+	if err := viper.BindEnv("api_key"); err != nil {
+		return err
+	}
+
+	if err := viper.BindEnv("zone_email"); err != nil {
+		return err
+	}
+
+	if err := viper.BindEnv("cname_target"); err != nil {
+		return err
+	}
+
+	return viper.BindEnv("email")
 }
