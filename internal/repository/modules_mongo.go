@@ -24,7 +24,23 @@ func (r *ModulesRepo) Create(ctx context.Context, module domain.Module) (primiti
 	return res.InsertedID.(primitive.ObjectID), err
 }
 
-func (r *ModulesRepo) GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error) {
+func (r *ModulesRepo) GetPublishedByCourseId(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error) {
+	var modules []domain.Module
+
+	opts := options.Find()
+	opts.SetSort(bson.D{{"position", 1}}) //nolint:govet
+
+	cur, err := r.db.Find(ctx, bson.M{"courseId": courseId, "published": true}, opts)
+	if err != nil {
+		return nil, err
+	}
+
+	err = cur.All(ctx, &modules)
+
+	return modules, err
+}
+
+func (r *ModulesRepo) GetByCourseId(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error) {
 	var modules []domain.Module
 
 	opts := options.Find()
@@ -40,10 +56,18 @@ func (r *ModulesRepo) GetByCourse(ctx context.Context, courseId primitive.Object
 	return modules, err
 }
 
-func (r *ModulesRepo) GetById(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error) {
+func (r *ModulesRepo) GetPublishedById(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error) {
 	var module domain.Module
 
 	err := r.db.FindOne(ctx, bson.M{"_id": moduleId, "published": true}).Decode(&module)
+
+	return module, err
+}
+
+func (r *ModulesRepo) GetById(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error) {
+	var module domain.Module
+
+	err := r.db.FindOne(ctx, bson.M{"_id": moduleId}).Decode(&module)
 
 	return module, err
 }

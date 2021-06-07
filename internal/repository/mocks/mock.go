@@ -6,12 +6,11 @@ package mock_repository
 
 import (
 	context "context"
-	reflect "reflect"
-
 	gomock "github.com/golang/mock/gomock"
 	domain "github.com/zhashkevych/creatly-backend/internal/domain"
 	repository "github.com/zhashkevych/creatly-backend/internal/repository"
 	primitive "go.mongodb.org/mongo-driver/bson/primitive"
+	reflect "reflect"
 )
 
 // MockUsers is a mock of Users interface
@@ -595,19 +594,49 @@ func (mr *MockModulesMockRecorder) Create(ctx, module interface{}) *gomock.Call 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockModules)(nil).Create), ctx, module)
 }
 
-// GetByCourse mocks base method
-func (m *MockModules) GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error) {
+// GetPublishedByCourseId mocks base method
+func (m *MockModules) GetPublishedByCourseId(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetByCourse", ctx, courseId)
+	ret := m.ctrl.Call(m, "GetPublishedByCourseId", ctx, courseId)
 	ret0, _ := ret[0].([]domain.Module)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetByCourse indicates an expected call of GetByCourse
-func (mr *MockModulesMockRecorder) GetByCourse(ctx, courseId interface{}) *gomock.Call {
+// GetPublishedByCourseId indicates an expected call of GetPublishedByCourseId
+func (mr *MockModulesMockRecorder) GetPublishedByCourseId(ctx, courseId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByCourse", reflect.TypeOf((*MockModules)(nil).GetByCourse), ctx, courseId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPublishedByCourseId", reflect.TypeOf((*MockModules)(nil).GetPublishedByCourseId), ctx, courseId)
+}
+
+// GetByCourseId mocks base method
+func (m *MockModules) GetByCourseId(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByCourseId", ctx, courseId)
+	ret0, _ := ret[0].([]domain.Module)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByCourseId indicates an expected call of GetByCourseId
+func (mr *MockModulesMockRecorder) GetByCourseId(ctx, courseId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByCourseId", reflect.TypeOf((*MockModules)(nil).GetByCourseId), ctx, courseId)
+}
+
+// GetPublishedById mocks base method
+func (m *MockModules) GetPublishedById(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetPublishedById", ctx, moduleId)
+	ret0, _ := ret[0].(domain.Module)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetPublishedById indicates an expected call of GetPublishedById
+func (mr *MockModulesMockRecorder) GetPublishedById(ctx, moduleId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPublishedById", reflect.TypeOf((*MockModules)(nil).GetPublishedById), ctx, moduleId)
 }
 
 // GetById mocks base method

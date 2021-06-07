@@ -903,7 +903,7 @@ func (mr *MockOffersMockRecorder) GetByPackage(ctx, schoolId, packageId interfac
 // GetByCourse mocks base method
 func (m *MockOffers) GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Offer, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetByCourse", ctx, courseId)
+	ret := m.ctrl.Call(m, "GetPublishedByCourseId", ctx, courseId)
 	ret0, _ := ret[0].([]domain.Offer)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
@@ -912,7 +912,7 @@ func (m *MockOffers) GetByCourse(ctx context.Context, courseId primitive.ObjectI
 // GetByCourse indicates an expected call of GetByCourse
 func (mr *MockOffersMockRecorder) GetByCourse(ctx, courseId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByCourse", reflect.TypeOf((*MockOffers)(nil).GetByCourse), ctx, courseId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPublishedByCourseId", reflect.TypeOf((*MockOffers)(nil).GetByCourse), ctx, courseId)
 }
 
 // GetAll mocks base method
@@ -1010,10 +1010,10 @@ func (mr *MockModulesMockRecorder) DeleteByCourse(ctx, schoolId, courseId interf
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteByCourse", reflect.TypeOf((*MockModules)(nil).DeleteByCourse), ctx, schoolId, courseId)
 }
 
-// GetByCourse mocks base method
-func (m *MockModules) GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error) {
+// GetPublishedByCourseId mocks base method
+func (m *MockModules) GetPublishedByCourseId(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetByCourse", ctx, courseId)
+	ret := m.ctrl.Call(m, "GetPublishedByCourseId", ctx, courseId)
 	ret0, _ := ret[0].([]domain.Module)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
@@ -1022,7 +1022,7 @@ func (m *MockModules) GetByCourse(ctx context.Context, courseId primitive.Object
 // GetByCourse indicates an expected call of GetByCourse
 func (mr *MockModulesMockRecorder) GetByCourse(ctx, courseId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByCourse", reflect.TypeOf((*MockModules)(nil).GetByCourse), ctx, courseId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPublishedByCourseId", reflect.TypeOf((*MockModules)(nil).GetPublishedByCourseId), ctx, courseId)
 }
 
 // GetById mocks base method
@@ -1249,7 +1249,7 @@ func (mr *MockPackagesMockRecorder) Delete(ctx, schoolId, id interface{}) *gomoc
 // GetByCourse mocks base method
 func (m *MockPackages) GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Package, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetByCourse", ctx, courseId)
+	ret := m.ctrl.Call(m, "GetPublishedByCourseId", ctx, courseId)
 	ret0, _ := ret[0].([]domain.Package)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
@@ -1258,7 +1258,7 @@ func (m *MockPackages) GetByCourse(ctx context.Context, courseId primitive.Objec
 // GetByCourse indicates an expected call of GetByCourse
 func (mr *MockPackagesMockRecorder) GetByCourse(ctx, courseId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByCourse", reflect.TypeOf((*MockPackages)(nil).GetByCourse), ctx, courseId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPublishedByCourseId", reflect.TypeOf((*MockPackages)(nil).GetByCourse), ctx, courseId)
 }
 
 // GetById mocks base method

@@ -94,7 +94,9 @@ type UpdateLessonInput struct {
 
 type Modules interface {
 	Create(ctx context.Context, module domain.Module) (primitive.ObjectID, error)
-	GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
+	GetPublishedByCourseId(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
+	GetByCourseId(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
+	GetPublishedById(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
 	GetById(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
 	GetByPackages(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Module, error)
 	Update(ctx context.Context, inp UpdateModuleInput) error

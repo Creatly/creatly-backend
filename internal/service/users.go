@@ -196,6 +196,7 @@ func generateSubdomain(schoolName string) string {
 	for i, part := range parts {
 		if i == len(parts)-1 {
 			subdomain += strings.ToLower(part)
+
 			break
 		}
 

@@ -228,7 +228,8 @@ type Modules interface {
 	Update(ctx context.Context, inp UpdateModuleInput) error
 	Delete(ctx context.Context, schoolId, id primitive.ObjectID) error
 	DeleteByCourse(ctx context.Context, schoolId, courseId primitive.ObjectID) error
-	GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
+	GetPublishedByCourseId(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
+	GetByCourseId(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
 	GetById(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
 	GetByPackages(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Module, error)
 	GetWithContent(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)

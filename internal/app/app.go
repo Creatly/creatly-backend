@@ -103,6 +103,7 @@ func Run(configPath string) {
 	cloudflareClient, err := cloudflare.New(cfg.Cloudflare.ApiKey, cfg.Cloudflare.Email)
 	if err != nil {
 		logger.Error(err)
+
 		return
 	}
 

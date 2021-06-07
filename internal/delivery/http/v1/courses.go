@@ -133,7 +133,7 @@ func (h *Handler) getCourseById(c *gin.Context) {
 		return
 	}
 
-	modules, err := h.services.Modules.GetByCourse(c.Request.Context(), course.ID)
+	modules, err := h.services.Modules.GetPublishedByCourseId(c.Request.Context(), course.ID)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 

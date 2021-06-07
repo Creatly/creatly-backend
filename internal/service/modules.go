@@ -18,8 +18,21 @@ func NewModulesService(repo repository.Modules, contentRepo repository.LessonCon
 	return &ModulesService{repo: repo, contentRepo: contentRepo}
 }
 
-func (s *ModulesService) GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error) {
-	modules, err := s.repo.GetByCourse(ctx, courseId)
+func (s *ModulesService) GetPublishedByCourseId(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error) {
+	modules, err := s.repo.GetPublishedByCourseId(ctx, courseId)
+	if err != nil {
+		return nil, err
+	}
+
+	for i := range modules {
+		sortLessons(modules[i].Lessons)
+	}
+
+	return modules, nil
+}
+
+func (s *ModulesService) GetByCourseId(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error) {
+	modules, err := s.repo.GetByCourseId(ctx, courseId)
 	if err != nil {
 		return nil, err
 	}
@@ -32,7 +45,7 @@ func (s *ModulesService) GetByCourse(ctx context.Context, courseId primitive.Obj
 }
 
 func (s *ModulesService) GetById(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error) {
-	module, err := s.repo.GetById(ctx, moduleId)
+	module, err := s.repo.GetPublishedById(ctx, moduleId)
 	if err != nil {
 		return module, err
 	}
@@ -139,7 +152,7 @@ func (s *ModulesService) Update(ctx context.Context, inp UpdateModuleInput) erro
 }
 
 func (s *ModulesService) Delete(ctx context.Context, schoolId, moduleId primitive.ObjectID) error {
-	module, err := s.GetById(ctx, moduleId)
+	module, err := s.repo.GetById(ctx, moduleId)
 	if err != nil {
 		return err
 	}
@@ -157,7 +170,7 @@ func (s *ModulesService) Delete(ctx context.Context, schoolId, moduleId primitiv
 }
 
 func (s *ModulesService) DeleteByCourse(ctx context.Context, schoolId, courseId primitive.ObjectID) error {
-	modules, err := s.repo.GetByCourse(ctx, courseId)
+	modules, err := s.repo.GetPublishedByCourseId(ctx, courseId)
 	if err != nil {
 		return err
 	}

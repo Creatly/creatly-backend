@@ -285,7 +285,7 @@ func (h *Handler) adminGetCourseById(c *gin.Context) {
 		return
 	}
 
-	modules, err := h.services.Modules.GetByCourse(c.Request.Context(), course.ID)
+	modules, err := h.services.Modules.GetByCourseId(c.Request.Context(), course.ID)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 
