@@ -36,8 +36,11 @@ type (
 	}
 )
 
-func NewCoursesService() *CoursesService {
-	return &CoursesService{}
+func NewCoursesService(repo Courses, modulesService Modules) *CoursesService {
+	return &CoursesService{
+		repo:           repo,
+		modulesService: modulesService,
+	}
 }
 
 func (s *CoursesService) Create(ctx context.Context, schoolId primitive.ObjectID, name string) (primitive.ObjectID, error) {

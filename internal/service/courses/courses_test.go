@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 	mock_repository "github.com/zhashkevych/creatly-backend/internal/repository/mocks"
 	"github.com/zhashkevych/creatly-backend/internal/service"
+	"github.com/zhashkevych/creatly-backend/internal/service/courses"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -16,7 +17,7 @@ var errInternalServErr = errors.New("test: internal server error")
 
 type (
 	testCoursesServiceUpdate struct {
-		input       service.UpdateCourseInput
+		input       courses.UpdateCourseInput
 		mock        func()
 		expectedErr error
 	}
@@ -28,7 +29,7 @@ type (
 	}
 )
 
-func mockCoursesService(t *testing.T) (*service.CoursesService, *mock_repository.MockCourses, *mock_repository.MockModules, *mock_repository.MockLessonContent) {
+func mockCoursesService(t *testing.T) (*courses.CoursesService, *mock_repository.MockCourses, *mock_repository.MockModules, *mock_repository.MockLessonContent) {
 	t.Helper()
 
 	mockCtl := gomock.NewController(t)
@@ -40,7 +41,7 @@ func mockCoursesService(t *testing.T) (*service.CoursesService, *mock_repository
 
 	modulesService := service.NewModulesService(modulesRepo, lessonsContentRepo)
 
-	coursesService := service.NewCoursesService(coursesRepo, modulesService)
+	coursesService := courses.NewCoursesService(coursesRepo, modulesService)
 
 	return coursesService, coursesRepo, modulesRepo, lessonsContentRepo
 }
@@ -77,14 +78,14 @@ func TestCoursesServiceUpdate(t *testing.T) {
 
 	tests := map[string]testCoursesServiceUpdate{
 		"invalid courses id": {
-			input: service.UpdateCourseInput{
+			input: courses.UpdateCourseInput{
 				CourseID: "",
 			},
 			mock:        func() {},
 			expectedErr: primitive.ErrInvalidHex,
 		},
 		"invalid school id": {
-			input: service.UpdateCourseInput{
+			input: courses.UpdateCourseInput{
 				CourseID: primitive.NewObjectID().Hex(),
 				SchoolID: "",
 			},
@@ -92,7 +93,7 @@ func TestCoursesServiceUpdate(t *testing.T) {
 			expectedErr: primitive.ErrInvalidHex,
 		},
 		"update course": {
-			input: service.UpdateCourseInput{
+			input: courses.UpdateCourseInput{
 				CourseID: primitive.NewObjectID().Hex(),
 				SchoolID: primitive.NewObjectID().Hex(),
 			},
