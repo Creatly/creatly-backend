@@ -69,7 +69,7 @@ func (h *Handler) studentSignUp(c *gin.Context) {
 		Password: inp.Password,
 		SchoolID: school.ID,
 	}); err != nil {
-		if errors.Is(err, service.ErrUserAlreadyExists) {
+		if errors.Is(err, domain.ErrUserAlreadyExists) {
 			newResponse(c, http.StatusBadRequest, err.Error())
 
 			return
@@ -126,7 +126,7 @@ func (h *Handler) studentSignIn(c *gin.Context) {
 		Password: inp.Password,
 	})
 	if err != nil {
-		if errors.Is(err, service.ErrUserNotFound) {
+		if errors.Is(err, domain.ErrUserNotFound) {
 			newResponse(c, http.StatusBadRequest, err.Error())
 
 			return
@@ -456,7 +456,7 @@ func (h *Handler) studentCreateOrder(c *gin.Context) {
 	paymentLink, err := h.services.Orders.Create(c.Request.Context(), studentId, offerId, promoId)
 	if err != nil {
 		switch err {
-		case service.ErrPromoNotFound, service.ErrOfferNotFound, service.ErrUserNotFound, service.ErrPromocodeExpired:
+		case service.ErrPromoNotFound, domain.ErrOfferNotFound, domain.ErrUserNotFound, service.ErrPromocodeExpired:
 			newResponse(c, http.StatusBadRequest, err.Error())
 
 			return
