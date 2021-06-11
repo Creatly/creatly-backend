@@ -71,8 +71,8 @@ func (s *StudentsService) SignUp(ctx context.Context, input StudentSignUpInput) 
 	}
 
 	if err := s.repo.Create(ctx, student); err != nil {
-		if errors.Is(err, repository.ErrUserAlreadyExists) {
-			return ErrUserAlreadyExists
+		if errors.Is(err, domain.ErrUserAlreadyExists) {
+			return err
 		}
 
 		return err
@@ -100,8 +100,8 @@ func (s *StudentsService) SignIn(ctx context.Context, input SchoolSignInInput) (
 
 	student, err := s.repo.GetByCredentials(ctx, input.SchoolID, input.Email, passwordHash)
 	if err != nil {
-		if errors.Is(err, repository.ErrUserNotFound) {
-			return Tokens{}, ErrUserNotFound
+		if errors.Is(err, domain.ErrUserNotFound) {
+			return Tokens{}, err
 		}
 
 		return Tokens{}, err
