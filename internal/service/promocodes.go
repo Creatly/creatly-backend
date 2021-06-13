@@ -55,8 +55,8 @@ func (s *PromoCodeService) Delete(ctx context.Context, schoolId, id primitive.Ob
 func (s *PromoCodeService) GetByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.PromoCode, error) {
 	promo, err := s.repo.GetByCode(ctx, schoolId, code)
 	if err != nil {
-		if errors.Is(err, repository.ErrPromoNotFound) {
-			return domain.PromoCode{}, ErrPromoNotFound
+		if errors.Is(err, domain.ErrPromoNotFound) {
+			return domain.PromoCode{}, err
 		}
 
 		return domain.PromoCode{}, err
@@ -68,8 +68,8 @@ func (s *PromoCodeService) GetByCode(ctx context.Context, schoolId primitive.Obj
 func (s *PromoCodeService) GetById(ctx context.Context, schoolId, id primitive.ObjectID) (domain.PromoCode, error) {
 	promo, err := s.repo.GetById(ctx, schoolId, id)
 	if err != nil {
-		if errors.Is(err, repository.ErrPromoNotFound) {
-			return domain.PromoCode{}, ErrPromoNotFound
+		if errors.Is(err, domain.ErrPromoNotFound) {
+			return domain.PromoCode{}, err
 		}
 
 		return domain.PromoCode{}, err
