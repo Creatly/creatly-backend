@@ -62,7 +62,7 @@ func (r *PromocodesRepo) GetByCode(ctx context.Context, schoolId primitive.Objec
 	var promocode domain.PromoCode
 	if err := r.db.FindOne(ctx, bson.M{"schoolId": schoolId, "code": code}).Decode(&promocode); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return domain.PromoCode{}, ErrPromoNotFound
+			return domain.PromoCode{}, domain.ErrPromoNotFound
 		}
 
 		return domain.PromoCode{}, err
@@ -75,7 +75,7 @@ func (r *PromocodesRepo) GetById(ctx context.Context, schoolId, id primitive.Obj
 	var promocode domain.PromoCode
 	if err := r.db.FindOne(ctx, bson.M{"_id": id, "schoolId": schoolId}).Decode(&promocode); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return domain.PromoCode{}, ErrPromoNotFound
+			return domain.PromoCode{}, domain.ErrPromoNotFound
 		}
 
 		return domain.PromoCode{}, err
@@ -88,7 +88,7 @@ func (r *PromocodesRepo) GetBySchool(ctx context.Context, schoolId primitive.Obj
 	cursor, err := r.db.Find(ctx, bson.M{"schoolId": schoolId})
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return nil, ErrPromoNotFound
+			return nil, domain.ErrPromoNotFound
 		}
 
 		return nil, err

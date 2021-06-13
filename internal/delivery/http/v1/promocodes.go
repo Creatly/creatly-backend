@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/zhashkevych/creatly-backend/internal/service"
+	"github.com/zhashkevych/creatly-backend/internal/domain"
 )
 
 // @Summary Get PromoCode By Code
@@ -37,7 +37,7 @@ func (h *Handler) getPromo(c *gin.Context) {
 
 	promocode, err := h.services.PromoCodes.GetByCode(c.Request.Context(), school.ID, code)
 	if err != nil {
-		if errors.Is(err, service.ErrPromoNotFound) {
+		if errors.Is(err, domain.ErrPromoNotFound) {
 			newResponse(c, http.StatusBadRequest, err.Error())
 
 			return

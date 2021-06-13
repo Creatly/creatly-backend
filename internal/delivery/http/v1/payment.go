@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/zhashkevych/creatly-backend/internal/service"
+	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"github.com/zhashkevych/creatly-backend/pkg/payment/fondy"
 )
 
@@ -31,7 +31,7 @@ func (h *Handler) handleFondyCallback(c *gin.Context) {
 	}
 
 	if err := h.services.Payments.ProcessTransaction(c.Request.Context(), inp); err != nil {
-		if errors.Is(err, service.ErrTransactionInvalid) {
+		if errors.Is(err, domain.ErrTransactionInvalid) {
 			newResponse(c, http.StatusBadRequest, err.Error())
 
 			return

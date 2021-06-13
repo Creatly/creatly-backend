@@ -24,7 +24,7 @@ func NewUsersRepo(db *mongo.Database) *UsersRepo {
 func (r *UsersRepo) Create(ctx context.Context, user domain.User) error {
 	_, err := r.db.InsertOne(ctx, user)
 	if mongodb.IsDuplicate(err) {
-		return ErrUserAlreadyExists
+		return domain.ErrUserAlreadyExists
 	}
 
 	return err
@@ -34,7 +34,7 @@ func (r *UsersRepo) GetByCredentials(ctx context.Context, email, password string
 	var user domain.User
 	if err := r.db.FindOne(ctx, bson.M{"email": email, "password": password}).Decode(&user); err != nil {
 		if err == mongo.ErrNoDocuments {
-			return domain.User{}, ErrUserNotFound
+			return domain.User{}, domain.ErrUserNotFound
 		}
 
 		return domain.User{}, err
@@ -50,7 +50,7 @@ func (r *UsersRepo) GetByRefreshToken(ctx context.Context, refreshToken string) 
 		"session.expiresAt":    bson.M{"$gt": time.Now()},
 	}).Decode(&user); err != nil {
 		if err == mongo.ErrNoDocuments {
-			return domain.User{}, ErrUserNotFound
+			return domain.User{}, domain.ErrUserNotFound
 		}
 
 		return domain.User{}, err
@@ -68,7 +68,7 @@ func (r *UsersRepo) Verify(ctx context.Context, userId primitive.ObjectID, code 
 	}
 
 	if res.ModifiedCount == 0 {
-		return ErrVerificationCodeInvalid
+		return domain.ErrVerificationCodeInvalid
 	}
 
 	return nil

@@ -25,7 +25,7 @@ func NewStudentsRepo(db *mongo.Database) *StudentsRepo {
 func (r *StudentsRepo) Create(ctx context.Context, student domain.Student) error {
 	_, err := r.db.InsertOne(ctx, student)
 	if mongodb.IsDuplicate(err) {
-		return ErrUserAlreadyExists
+		return domain.ErrUserAlreadyExists
 	}
 
 	return err
@@ -36,7 +36,7 @@ func (r *StudentsRepo) GetByCredentials(ctx context.Context, schoolId primitive.
 	if err := r.db.FindOne(ctx, bson.M{"email": email, "password": password, "schoolId": schoolId, "verification.verified": true}).
 		Decode(&student); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return domain.Student{}, ErrUserNotFound
+			return domain.Student{}, domain.ErrUserNotFound
 		}
 
 		return domain.Student{}, err
@@ -52,7 +52,7 @@ func (r *StudentsRepo) GetByRefreshToken(ctx context.Context, schoolId primitive
 		"session.expiresAt": bson.M{"$gt": time.Now()},
 	}).Decode(&student); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return domain.Student{}, ErrUserNotFound
+			return domain.Student{}, domain.ErrUserNotFound
 		}
 
 		return domain.Student{}, err
@@ -66,7 +66,7 @@ func (r *StudentsRepo) GetById(ctx context.Context, id primitive.ObjectID) (doma
 
 	if err := r.db.FindOne(ctx, bson.M{"_id": id, "verification.verified": true}).Decode(&student); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return domain.Student{}, ErrUserNotFound
+			return domain.Student{}, domain.ErrUserNotFound
 		}
 
 		return domain.Student{}, err
@@ -117,7 +117,7 @@ func (r *StudentsRepo) Verify(ctx context.Context, code string) error {
 	}
 
 	if res.ModifiedCount == 0 {
-		return ErrVerificationCodeInvalid
+		return domain.ErrVerificationCodeInvalid
 	}
 
 	return nil

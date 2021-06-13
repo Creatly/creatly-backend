@@ -36,13 +36,13 @@ func (s *PaymentsService) ProcessTransaction(ctx context.Context, callback inter
 	case fondy.Callback:
 		return s.processFondyCallback(ctx, callbackData)
 	default:
-		return ErrUnknownCallbackType
+		return domain.ErrUnknownCallbackType
 	}
 }
 
 func (s *PaymentsService) processFondyCallback(ctx context.Context, callback fondy.Callback) error {
 	if err := s.paymentProvider.ValidateCallback(callback); err != nil {
-		return ErrTransactionInvalid
+		return domain.ErrTransactionInvalid
 	}
 
 	orderId, err := primitive.ObjectIDFromHex(callback.OrderId)
