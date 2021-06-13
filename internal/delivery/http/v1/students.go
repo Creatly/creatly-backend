@@ -456,7 +456,7 @@ func (h *Handler) studentCreateOrder(c *gin.Context) {
 	paymentLink, err := h.services.Orders.Create(c.Request.Context(), studentId, offerId, promoId)
 	if err != nil {
 		switch err {
-		case service.ErrPromoNotFound, domain.ErrOfferNotFound, domain.ErrUserNotFound, service.ErrPromocodeExpired:
+		case domain.ErrPromoNotFound, domain.ErrOfferNotFound, domain.ErrUserNotFound, service.ErrPromocodeExpired:
 			newResponse(c, http.StatusBadRequest, err.Error())
 
 			return
