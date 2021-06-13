@@ -122,8 +122,8 @@ func (s *StudentsService) RefreshTokens(ctx context.Context, schoolId primitive.
 func (s *StudentsService) Verify(ctx context.Context, hash string) error {
 	err := s.repo.Verify(ctx, hash)
 	if err != nil {
-		if errors.Is(err, repository.ErrVerificationCodeInvalid) {
-			return ErrVerificationCodeInvalid
+		if errors.Is(err, domain.ErrVerificationCodeInvalid) {
+			return domain.ErrVerificationCodeInvalid
 		}
 
 		return err
@@ -157,7 +157,7 @@ func (s *StudentsService) GetModuleLessons(ctx context.Context, schoolId, studen
 	}
 
 	if len(offers) != 0 {
-		return nil, ErrModuleIsNotAvailable
+		return nil, domain.ErrModuleIsNotAvailable
 	}
 
 	// If module has no offers - it's free and available to everyone
@@ -286,7 +286,7 @@ func (s *StudentsService) isLessonAvailable(ctx context.Context, studentId, less
 	}
 
 	if !student.IsModuleAvailable(module) {
-		return ErrModuleIsNotAvailable
+		return domain.ErrModuleIsNotAvailable
 	}
 
 	return nil

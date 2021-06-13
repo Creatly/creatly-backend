@@ -207,7 +207,7 @@ func (h *Handler) studentVerify(c *gin.Context) {
 	}
 
 	if err := h.services.Students.Verify(c.Request.Context(), code); err != nil {
-		if errors.Is(err, service.ErrVerificationCodeInvalid) {
+		if errors.Is(err, domain.ErrVerificationCodeInvalid) {
 			newResponse(c, http.StatusBadRequest, err.Error())
 
 			return
@@ -265,7 +265,7 @@ func (h *Handler) studentGetModuleLessons(c *gin.Context) {
 
 	lessons, err := h.services.Students.GetModuleLessons(c.Request.Context(), school.ID, studentId, moduleId)
 	if err != nil {
-		if errors.Is(err, service.ErrModuleIsNotAvailable) {
+		if errors.Is(err, domain.ErrModuleIsNotAvailable) {
 			newResponse(c, http.StatusForbidden, err.Error())
 
 			return
@@ -308,7 +308,7 @@ func (h *Handler) studentSetLessonFinished(c *gin.Context) {
 	}
 
 	if err := h.services.Students.SetLessonFinished(c.Request.Context(), studentId, lessonId); err != nil {
-		if errors.Is(err, service.ErrModuleIsNotAvailable) {
+		if errors.Is(err, domain.ErrModuleIsNotAvailable) {
 			newResponse(c, http.StatusForbidden, err.Error())
 
 			return
@@ -456,7 +456,7 @@ func (h *Handler) studentCreateOrder(c *gin.Context) {
 	paymentLink, err := h.services.Orders.Create(c.Request.Context(), studentId, offerId, promoId)
 	if err != nil {
 		switch err {
-		case domain.ErrPromoNotFound, domain.ErrOfferNotFound, domain.ErrUserNotFound, service.ErrPromocodeExpired:
+		case domain.ErrPromoNotFound, domain.ErrOfferNotFound, domain.ErrUserNotFound, domain.ErrPromocodeExpired:
 			newResponse(c, http.StatusBadRequest, err.Error())
 
 			return

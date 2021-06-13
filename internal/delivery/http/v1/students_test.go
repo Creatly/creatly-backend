@@ -283,10 +283,10 @@ func TestHandler_studentGetModuleLessons(t *testing.T) {
 			schoolId:  schoolId,
 			studentId: studentId,
 			mockBehavior: func(r *mock_service.MockStudents, schoolId, studentId, moduleId primitive.ObjectID, lessons []domain.Lesson) {
-				r.EXPECT().GetModuleLessons(context.Background(), schoolId, studentId, moduleId).Return(lessons, service.ErrModuleIsNotAvailable)
+				r.EXPECT().GetModuleLessons(context.Background(), schoolId, studentId, moduleId).Return(lessons, domain.ErrModuleIsNotAvailable)
 			},
 			statusCode:   403,
-			responseBody: fmt.Sprintf(`{"message":"%s"}`, service.ErrModuleIsNotAvailable.Error()),
+			responseBody: fmt.Sprintf(`{"message":"%s"}`, domain.ErrModuleIsNotAvailable.Error()),
 		},
 		{
 			name:      "service error",
@@ -381,10 +381,10 @@ func TestHandler_studentSetLessonFinished(t *testing.T) {
 			schoolId:  schoolId,
 			studentId: studentId.Hex(),
 			mockBehavior: func(r *mock_service.MockStudents, studentId, moduleId primitive.ObjectID) {
-				r.EXPECT().SetLessonFinished(context.Background(), studentId, moduleId).Return(service.ErrModuleIsNotAvailable)
+				r.EXPECT().SetLessonFinished(context.Background(), studentId, moduleId).Return(domain.ErrModuleIsNotAvailable)
 			},
 			statusCode:   403,
-			responseBody: fmt.Sprintf(`{"message":"%s"}`, service.ErrModuleIsNotAvailable.Error()),
+			responseBody: fmt.Sprintf(`{"message":"%s"}`, domain.ErrModuleIsNotAvailable.Error()),
 		},
 		{
 			name:      "service error",

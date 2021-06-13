@@ -181,7 +181,7 @@ func (h *Handler) userVerify(c *gin.Context) {
 	}
 
 	if err := h.services.Users.Verify(c.Request.Context(), id, code); err != nil {
-		if errors.Is(err, service.ErrVerificationCodeInvalid) {
+		if errors.Is(err, domain.ErrVerificationCodeInvalid) {
 			newResponse(c, http.StatusBadRequest, err.Error())
 
 			return

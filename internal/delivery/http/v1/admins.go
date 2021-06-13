@@ -590,7 +590,7 @@ func (h *Handler) adminGetLessons(c *gin.Context) {
 
 	module, err := h.services.Modules.GetWithContent(c.Request.Context(), moduleId)
 	if err != nil {
-		if errors.Is(err, service.ErrModuleIsNotAvailable) {
+		if errors.Is(err, domain.ErrModuleIsNotAvailable) {
 			newResponse(c, http.StatusForbidden, err.Error())
 
 			return

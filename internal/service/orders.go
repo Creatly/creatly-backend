@@ -131,7 +131,7 @@ func (s *OrdersService) getOrderPromocode(ctx context.Context, schoolId, promoco
 		}
 
 		if promocode.ExpiresAt.Unix() < time.Now().Unix() {
-			return promocode, ErrPromocodeExpired
+			return promocode, domain.ErrPromocodeExpired
 		}
 	}
 

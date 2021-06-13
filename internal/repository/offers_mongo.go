@@ -36,7 +36,7 @@ func (r *OffersRepo) GetById(ctx context.Context, id primitive.ObjectID) (domain
 	var offer domain.Offer
 	if err := r.db.FindOne(ctx, bson.M{"_id": id}).Decode(&offer); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return domain.Offer{}, ErrOfferNotFound
+			return domain.Offer{}, domain.ErrOfferNotFound
 		}
 
 		return domain.Offer{}, err

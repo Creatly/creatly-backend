@@ -63,7 +63,7 @@ func (r *CoursesRepo) Delete(ctx context.Context, schoolId, courseId primitive.O
 	}
 
 	if res.ModifiedCount == 0 {
-		return ErrCourseNotFound
+		return domain.ErrCourseNotFound
 	}
 
 	return nil

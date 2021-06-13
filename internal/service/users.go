@@ -72,7 +72,7 @@ func (s *UsersService) SignUp(ctx context.Context, input UserSignUpInput) error 
 	}
 
 	if err := s.repo.Create(ctx, user); err != nil {
-		if errors.Is(err, repository.ErrUserAlreadyExists) {
+		if errors.Is(err, domain.ErrUserAlreadyExists) {
 			return err
 		}
 
@@ -118,8 +118,8 @@ func (s *UsersService) RefreshTokens(ctx context.Context, refreshToken string) (
 func (s *UsersService) Verify(ctx context.Context, userId primitive.ObjectID, hash string) error {
 	err := s.repo.Verify(ctx, userId, hash)
 	if err != nil {
-		if err == repository.ErrVerificationCodeInvalid {
-			return ErrVerificationCodeInvalid
+		if errors.Is(err, domain.ErrVerificationCodeInvalid) {
+			return err
 		}
 
 		return err
