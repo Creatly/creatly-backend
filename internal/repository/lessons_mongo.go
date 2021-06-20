@@ -26,8 +26,7 @@ func (r *LessonContentRepo) GetByLessons(ctx context.Context, lessonIds []primit
 		return nil, err
 	}
 
-	err = cur.All(ctx, &content)
-	if err != nil {
+	if err := cur.All(ctx, &content); err != nil {
 		return nil, err
 	}
 
