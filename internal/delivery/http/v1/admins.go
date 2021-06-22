@@ -1392,15 +1392,14 @@ func (h *Handler) adminUpdatePromocode(c *gin.Context) {
 		return
 	}
 
-	err = h.services.PromoCodes.Update(c.Request.Context(), service.UpdatePromoCodeInput{
+	if err := h.services.PromoCodes.Update(c.Request.Context(), service.UpdatePromoCodeInput{
 		ID:                 id,
 		SchoolID:           school.ID,
 		Code:               inp.Code,
 		DiscountPercentage: inp.DiscountPercentage,
 		ExpiresAt:          inp.ExpiresAt,
 		OfferIDs:           inp.OfferIDs,
-	})
-	if err != nil {
+	}); err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 
 		return
@@ -1437,8 +1436,7 @@ func (h *Handler) adminDeletePromocode(c *gin.Context) {
 		return
 	}
 
-	err = h.services.PromoCodes.Delete(c.Request.Context(), school.ID, id)
-	if err != nil {
+	if err := h.services.PromoCodes.Delete(c.Request.Context(), school.ID, id); err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 
 		return
@@ -1447,26 +1445,28 @@ func (h *Handler) adminDeletePromocode(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
-type pages struct {
-	Confidential     string `json:"confidential"`
-	ServiceAgreement string `json:"serviceAgreement"`
-	RefundPolicy     string `json:"refundPolicy"`
-}
+type (
+	pages struct {
+		Confidential     string `json:"confidential"`
+		ServiceAgreement string `json:"serviceAgreement"`
+		RefundPolicy     string `json:"refundPolicy"`
+	}
 
-type contactInfo struct {
-	BusinessName       string `json:"businessName"`
-	RegistrationNumber string `json:"registrationNumber"`
-	Address            string `json:"address"`
-	Email              string `json:"email"`
-}
+	contactInfo struct {
+		BusinessName       string `json:"businessName"`
+		RegistrationNumber string `json:"registrationNumber"`
+		Address            string `json:"address"`
+		Email              string `json:"email"`
+	}
 
-type updateSchoolSettingsInput struct {
-	Color       string       `json:"color"`
-	Domains     []string     `json:"domains"`
-	Email       string       `json:"email"`
-	ContactInfo *contactInfo `json:"contactInfo"`
-	Pages       *pages       `json:"pages"`
-}
+	updateSchoolSettingsInput struct {
+		Color       string       `json:"color"`
+		Domains     []string     `json:"domains"`
+		Email       string       `json:"email"`
+		ContactInfo *contactInfo `json:"contactInfo"`
+		Pages       *pages       `json:"pages"`
+	}
+)
 
 // @Summary Admin Update School settings
 // @Security AdminAuth
