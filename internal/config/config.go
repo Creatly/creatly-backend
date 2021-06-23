@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	defaultHttpPort               = "8000"
+	defaultHTTPPort               = "8000"
 	defaultHttpRWTimeout          = 10 * time.Second
 	defaultHttpMaxHeaderMegabytes = 1
 	defaultAccessTokenTTL         = 15 * time.Minute
@@ -131,92 +131,41 @@ type (
 func Init(configsDir string) (*Config, error) {
 	populateDefaults()
 
-	if err := parseEnv(); err != nil {
-		return nil, err
-	}
-
-	if err := parseConfigFile(configsDir, viper.GetString("env")); err != nil {
+	if err := parseConfigFile(configsDir, os.Getenv("APP_ENV")); err != nil {
 		return nil, err
 	}
 
 	var cfg Config
-	if err := unmarshal(&cfg); err != nil {
-		return nil, err
-	}
 
 	setFromEnv(&cfg)
 
 	return &cfg, nil
 }
 
-func unmarshal(cfg *Config) error {
-	if err := viper.UnmarshalKey("cache.ttl", &cfg.CacheTTL); err != nil {
-		return err
-	}
-
-	if err := viper.UnmarshalKey("mongo", &cfg.Mongo); err != nil {
-		return err
-	}
-
-	if err := viper.UnmarshalKey("http", &cfg.HTTP); err != nil {
-		return err
-	}
-
-	if err := viper.UnmarshalKey("auth", &cfg.Auth.JWT); err != nil {
-		return err
-	}
-
-	if err := viper.UnmarshalKey("auth.verificationCodeLength", &cfg.Auth.VerificationCodeLength); err != nil {
-		return err
-	}
-
-	if err := viper.UnmarshalKey("fileStorage", &cfg.FileStorage); err != nil {
-		return err
-	}
-
-	if err := viper.UnmarshalKey("limiter", &cfg.Limiter); err != nil {
-		return err
-	}
-
-	if err := viper.UnmarshalKey("smtp", &cfg.SMTP); err != nil {
-		return err
-	}
-
-	if err := viper.UnmarshalKey("email.templates", &cfg.Email.Templates); err != nil {
-		return err
-	}
-
-	if err := viper.UnmarshalKey("email.subjects", &cfg.Email.Subjects); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func setFromEnv(cfg *Config) {
-	cfg.Mongo.URI = viper.GetString("uri")
-	cfg.Mongo.User = viper.GetString("user")
-	cfg.Mongo.Password = viper.GetString("pass")
+	cfg.Mongo.URI = os.Getenv("MONGO_URI")
+	cfg.Mongo.User = os.Getenv("MONGO_USER")
+	cfg.Mongo.Password = os.Getenv("MONGO_PASS")
 
-	cfg.Auth.PasswordSalt = viper.GetString("salt")
-	cfg.Auth.JWT.SigningKey = viper.GetString("signing_key")
+	cfg.Auth.PasswordSalt = os.Getenv("PASSWORD_SALT")
+	cfg.Auth.JWT.SigningKey = os.Getenv("JWT_SIGNING_KEY")
 
-	cfg.Email.SendPulse.ClientSecret = viper.GetString("secret")
-	cfg.Email.SendPulse.ClientID = viper.GetString("id")
-	cfg.Email.SendPulse.ListID = viper.GetString("listid")
+	cfg.Email.SendPulse.ClientSecret = os.Getenv("SENDPULSE_SECRET")
+	cfg.Email.SendPulse.ClientID = os.Getenv("SENDPULSE_ID")
+	cfg.Email.SendPulse.ListID = os.Getenv("SENDPULSE_LISTID")
 
-	cfg.HTTP.Host = viper.GetString("host")
+	cfg.HTTP.Host = os.Getenv("HTTP_HOST")
 
-	cfg.Payment.Fondy.MerchantId = viper.GetString("merchant_id")
-	cfg.Payment.Fondy.MerchantPassword = viper.GetString("merchant_pass")
-	cfg.Payment.CallbackURL = viper.GetString("callback_url")
-	cfg.Payment.ResponseURL = viper.GetString("response_url")
+	cfg.Payment.Fondy.MerchantId = os.Getenv("FONDY_MERCHANT_ID")
+	cfg.Payment.Fondy.MerchantPassword = os.Getenv("FONDY_MERCHANT_PASS")
+	cfg.Payment.CallbackURL = os.Getenv("PAYMENT_CALLBACK_URL")
+	cfg.Payment.ResponseURL = os.Getenv("PAYMENT_REDIRECT_URL")
 
-	cfg.FrontendURL = viper.GetString("url")
+	cfg.FrontendURL = os.Getenv("FRONTEND_URL")
 
-	cfg.SMTP.Pass = viper.GetString("password")
+	cfg.SMTP.Pass = os.Getenv("SMTP_PASSWORD")
 
-	cfg.Environment = viper.GetString("env")
+	cfg.Environment = os.Getenv("APP_ENV")
 
 	cfg.FileStorage.Endpoint = os.Getenv("STORAGE_ENDPOINT")
 	cfg.FileStorage.AccessKey = os.Getenv("STORAGE_ACCESS_KEY")
@@ -247,7 +196,10 @@ func parseConfigFile(folder, env string) error {
 }
 
 func populateDefaults() {
-	viper.SetDefault("http.port", defaultHttpPort)
+	if _, ok := os.LookupEnv("HTTP_HOST"); ok {
+		os.Setenv("HTTP_HOST", defaultHTTPPort)
+	}
+
 	viper.SetDefault("http.max_header_megabytes", defaultHttpMaxHeaderMegabytes)
 	viper.SetDefault("http.timeouts.read", defaultHttpRWTimeout)
 	viper.SetDefault("http.timeouts.write", defaultHttpRWTimeout)
@@ -257,136 +209,4 @@ func populateDefaults() {
 	viper.SetDefault("limiter.rps", defaultLimiterRPS)
 	viper.SetDefault("limiter.burst", defaultLimiterBurst)
 	viper.SetDefault("limiter.ttl", defaultLimiterTTL)
-}
-
-func parseEnv() error {
-	if err := parseMongoEnvVariables(); err != nil {
-		return err
-	}
-
-	if err := parseJWTFromEnv(); err != nil {
-		return err
-	}
-
-	if err := parseSendPulseEnvVariables(); err != nil {
-		return err
-	}
-
-	if err := parseHostFromEnv(); err != nil {
-		return err
-	}
-
-	if err := parseFondyEnvVariables(); err != nil {
-		return err
-	}
-
-	if err := parsePaymentEnvVariables(); err != nil {
-		return err
-	}
-
-	if err := parseFrontendHostFromEnv(); err != nil {
-		return err
-	}
-
-	if err := parseSMTPPassFromEnv(); err != nil {
-		return err
-	}
-
-	if err := parseAppEnvFromEnv(); err != nil {
-		return err
-	}
-
-	return parsePasswordFromEnv()
-}
-
-func parseMongoEnvVariables() error {
-	viper.SetEnvPrefix("mongo")
-
-	if err := viper.BindEnv("uri"); err != nil {
-		return err
-	}
-
-	if err := viper.BindEnv("user"); err != nil {
-		return err
-	}
-
-	return viper.BindEnv("pass")
-}
-
-func parseSendPulseEnvVariables() error {
-	viper.SetEnvPrefix("sendpulse")
-
-	if err := viper.BindEnv("listid"); err != nil {
-		return err
-	}
-
-	if err := viper.BindEnv("id"); err != nil {
-		return err
-	}
-
-	return viper.BindEnv("secret")
-}
-
-func parseFondyEnvVariables() error {
-	viper.SetEnvPrefix("fondy")
-
-	if err := viper.BindEnv("merchant_id"); err != nil {
-		return err
-	}
-
-	if err := viper.BindEnv("merchant_pass"); err != nil {
-		return err
-	}
-
-	if err := viper.BindEnv("callback_url"); err != nil {
-		return err
-	}
-
-	return viper.BindEnv("response_url")
-}
-
-func parsePaymentEnvVariables() error {
-	viper.SetEnvPrefix("payment")
-
-	if err := viper.BindEnv("callback_url"); err != nil {
-		return err
-	}
-
-	return viper.BindEnv("response_url")
-}
-
-func parsePasswordFromEnv() error {
-	viper.SetEnvPrefix("password")
-
-	return viper.BindEnv("salt")
-}
-
-func parseJWTFromEnv() error {
-	viper.SetEnvPrefix("jwt")
-
-	return viper.BindEnv("signing_key")
-}
-
-func parseHostFromEnv() error {
-	viper.SetEnvPrefix("http")
-
-	return viper.BindEnv("host")
-}
-
-func parseFrontendHostFromEnv() error {
-	viper.SetEnvPrefix("frontend")
-
-	return viper.BindEnv("url")
-}
-
-func parseSMTPPassFromEnv() error {
-	viper.SetEnvPrefix("smtp")
-
-	return viper.BindEnv("password")
-}
-
-func parseAppEnvFromEnv() error {
-	viper.SetEnvPrefix("app")
-
-	return viper.BindEnv("env")
 }
