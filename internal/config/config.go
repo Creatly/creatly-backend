@@ -136,10 +136,57 @@ func Init(configsDir string) (*Config, error) {
 	}
 
 	var cfg Config
+	if err := unmarshal(&cfg); err != nil {
+		return nil, err
+	}
 
 	setFromEnv(&cfg)
 
 	return &cfg, nil
+}
+
+func unmarshal(cfg *Config) error {
+	if err := viper.UnmarshalKey("cache.ttl", &cfg.CacheTTL); err != nil {
+		return err
+	}
+
+	if err := viper.UnmarshalKey("mongo", &cfg.Mongo); err != nil {
+		return err
+	}
+
+	if err := viper.UnmarshalKey("http", &cfg.HTTP); err != nil {
+		return err
+	}
+
+	if err := viper.UnmarshalKey("auth", &cfg.Auth.JWT); err != nil {
+		return err
+	}
+
+	if err := viper.UnmarshalKey("auth.verificationCodeLength", &cfg.Auth.VerificationCodeLength); err != nil {
+		return err
+	}
+
+	if err := viper.UnmarshalKey("fileStorage", &cfg.FileStorage); err != nil {
+		return err
+	}
+
+	if err := viper.UnmarshalKey("limiter", &cfg.Limiter); err != nil {
+		return err
+	}
+
+	if err := viper.UnmarshalKey("smtp", &cfg.SMTP); err != nil {
+		return err
+	}
+
+	if err := viper.UnmarshalKey("email.templates", &cfg.Email.Templates); err != nil {
+		return err
+	}
+
+	if err := viper.UnmarshalKey("email.subjects", &cfg.Email.Subjects); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func setFromEnv(cfg *Config) {
@@ -159,7 +206,7 @@ func setFromEnv(cfg *Config) {
 	cfg.Payment.Fondy.MerchantId = os.Getenv("FONDY_MERCHANT_ID")
 	cfg.Payment.Fondy.MerchantPassword = os.Getenv("FONDY_MERCHANT_PASS")
 	cfg.Payment.CallbackURL = os.Getenv("PAYMENT_CALLBACK_URL")
-	cfg.Payment.ResponseURL = os.Getenv("PAYMENT_REDIRECT_URL")
+	cfg.Payment.ResponseURL = os.Getenv("PAYMENT_RESPONSE_URL")
 
 	cfg.FrontendURL = os.Getenv("FRONTEND_URL")
 
@@ -196,10 +243,7 @@ func parseConfigFile(folder, env string) error {
 }
 
 func populateDefaults() {
-	if _, ok := os.LookupEnv("HTTP_HOST"); ok {
-		os.Setenv("HTTP_HOST", defaultHTTPPort)
-	}
-
+	viper.SetDefault("http.port", defaultHTTPPort)
 	viper.SetDefault("http.max_header_megabytes", defaultHttpMaxHeaderMegabytes)
 	viper.SetDefault("http.timeouts.read", defaultHttpRWTimeout)
 	viper.SetDefault("http.timeouts.write", defaultHttpRWTimeout)
