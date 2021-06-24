@@ -9,8 +9,8 @@ import (
 
 const (
 	defaultHTTPPort               = "8000"
-	defaultHttpRWTimeout          = 10 * time.Second
-	defaultHttpMaxHeaderMegabytes = 1
+	defaultHTTPRWTimeout          = 10 * time.Second
+	defaultHTTPMaxHeaderMegabytes = 1
 	defaultAccessTokenTTL         = 15 * time.Minute
 	defaultRefreshTokenTTL        = 24 * time.Hour * 30
 	defaultLimiterRPS             = 10
@@ -244,9 +244,9 @@ func parseConfigFile(folder, env string) error {
 
 func populateDefaults() {
 	viper.SetDefault("http.port", defaultHTTPPort)
-	viper.SetDefault("http.max_header_megabytes", defaultHttpMaxHeaderMegabytes)
-	viper.SetDefault("http.timeouts.read", defaultHttpRWTimeout)
-	viper.SetDefault("http.timeouts.write", defaultHttpRWTimeout)
+	viper.SetDefault("http.max_header_megabytes", defaultHTTPMaxHeaderMegabytes)
+	viper.SetDefault("http.timeouts.read", defaultHTTPRWTimeout)
+	viper.SetDefault("http.timeouts.write", defaultHTTPRWTimeout)
 	viper.SetDefault("auth.accessTokenTTL", defaultAccessTokenTTL)
 	viper.SetDefault("auth.refreshTokenTTL", defaultRefreshTokenTTL)
 	viper.SetDefault("auth.verificationCodeLength", defaultVerificationCodeLength)
