@@ -22,7 +22,7 @@ var (
 			},
 		},
 		Settings: domain.Settings{
-			Domains: []string{""},
+			Domains: []string{"http://localhost:1337", ""},
 		},
 	}
 

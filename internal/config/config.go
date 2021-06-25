@@ -33,7 +33,6 @@ type (
 		Payment     PaymentConfig
 		Limiter     LimiterConfig
 		CacheTTL    time.Duration `mapstructure:"ttl"`
-		FrontendURL string
 		SMTP        SMTPConfig
 		Cloudflare  CloudflareConfig
 	}
@@ -207,8 +206,6 @@ func setFromEnv(cfg *Config) {
 	cfg.Payment.Fondy.MerchantPassword = os.Getenv("FONDY_MERCHANT_PASS")
 	cfg.Payment.CallbackURL = os.Getenv("PAYMENT_CALLBACK_URL")
 	cfg.Payment.ResponseURL = os.Getenv("PAYMENT_RESPONSE_URL")
-
-	cfg.FrontendURL = os.Getenv("FRONTEND_URL")
 
 	cfg.SMTP.Pass = os.Getenv("SMTP_PASSWORD")
 

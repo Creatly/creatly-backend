@@ -127,7 +127,6 @@ func Run(configPath string) {
 		CacheTTL:               int64(cfg.CacheTTL.Seconds()),
 		OtpGenerator:           otpGenerator,
 		VerificationCodeLength: cfg.Auth.VerificationCodeLength,
-		FrontendURL:            cfg.FrontendURL,
 		StorageProvider:        storageProvider,
 		Environment:            cfg.Environment,
 		Domain:                 cfg.HTTP.Host,

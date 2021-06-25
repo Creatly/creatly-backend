@@ -117,7 +117,6 @@ func (s *APITestSuite) initDeps() {
 		CacheTTL:               int64(time.Minute.Seconds()),
 		OtpGenerator:           s.mocks.otpGenerator,
 		VerificationCodeLength: 8,
-		FrontendURL:            "http://localhost:1337",
 	})
 
 	s.repos = repos
