@@ -64,10 +64,11 @@ func (h *Handler) studentSignUp(c *gin.Context) {
 	}
 
 	if err := h.services.Students.SignUp(c.Request.Context(), service.StudentSignUpInput{
-		Name:     inp.Name,
-		Email:    inp.Email,
-		Password: inp.Password,
-		SchoolID: school.ID,
+		Name:         inp.Name,
+		Email:        inp.Email,
+		Password:     inp.Password,
+		SchoolID:     school.ID,
+		SchoolDomain: school.Settings.Domains[0],
 	}); err != nil {
 		if errors.Is(err, domain.ErrUserAlreadyExists) {
 			newResponse(c, http.StatusBadRequest, err.Error())

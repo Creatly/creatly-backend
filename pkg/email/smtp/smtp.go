@@ -13,7 +13,7 @@ type SMTPSender struct {
 	port int
 }
 
-func NewSMTPSender(from string, pass string, host string, port int) (*SMTPSender, error) {
+func NewSMTPSender(from, pass, host string, port int) (*SMTPSender, error) {
 	if !email.IsEmailValid(from) {
 		return nil, errors.New("invalid from email")
 	}

@@ -28,7 +28,7 @@ limiter:
 smtp:
   host: "mail.privateemail.com"
   port: 587
-  from: "maksim@zhashkevych.com"
+  from: "no-reply@creatly.me"
 
 email:
   templates:

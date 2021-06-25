@@ -13,10 +13,9 @@ const (
 )
 
 type EmailService struct {
-	provider    emailProvider.Provider
-	sender      emailProvider.Sender
-	config      config.EmailConfig
-	frontendUrl string
+	provider emailProvider.Provider
+	sender   emailProvider.Sender
+	config   config.EmailConfig
 }
 
 // Structures used for templates.
@@ -29,8 +28,8 @@ type purchaseSuccessfulEmailInput struct {
 	CourseName string
 }
 
-func NewEmailsService(provider emailProvider.Provider, sender emailProvider.Sender, config config.EmailConfig, frontendUrl string) *EmailService {
-	return &EmailService{provider: provider, sender: sender, config: config, frontendUrl: frontendUrl}
+func NewEmailsService(provider emailProvider.Provider, sender emailProvider.Sender, config config.EmailConfig) *EmailService {
+	return &EmailService{provider: provider, sender: sender, config: config}
 }
 
 func (s *EmailService) AddToList(name, email string) error {
@@ -46,7 +45,7 @@ func (s *EmailService) AddToList(name, email string) error {
 func (s *EmailService) SendStudentVerificationEmail(input VerificationEmailInput) error {
 	subject := fmt.Sprintf(s.config.Subjects.Verification, input.Name)
 
-	templateInput := verificationEmailInput{s.createVerificationLink(input.VerificationCode)}
+	templateInput := verificationEmailInput{s.createVerificationLink(input.Domain, input.VerificationCode)}
 	sendInput := emailProvider.SendEmailInput{Subject: subject, To: input.Email}
 
 	if err := sendInput.GenerateBodyFromHTML(s.config.Templates.Verification, templateInput); err != nil {
@@ -72,6 +71,6 @@ func (s *EmailService) SendUserVerificationEmail(input VerificationEmailInput) e
 	return nil
 }
 
-func (s *EmailService) createVerificationLink(code string) string {
-	return fmt.Sprintf(verificationLinkTmpl, s.frontendUrl, code)
+func (s *EmailService) createVerificationLink(domain, code string) string {
+	return fmt.Sprintf(verificationLinkTmpl, domain, code)
 }

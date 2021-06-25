@@ -68,10 +68,11 @@ type Schools interface {
 }
 
 type StudentSignUpInput struct {
-	Name     string
-	Email    string
-	Password string
-	SchoolID primitive.ObjectID
+	Name         string
+	Email        string
+	Password     string
+	SchoolID     primitive.ObjectID
+	SchoolDomain string
 }
 
 type SchoolSignInInput struct {
@@ -123,6 +124,7 @@ type VerificationEmailInput struct {
 	Email            string
 	Name             string
 	VerificationCode string
+	Domain           string
 }
 
 type StudentPurchaseSuccessfulEmailInput struct {
@@ -328,14 +330,13 @@ type Deps struct {
 	CacheTTL               int64
 	OtpGenerator           otp.Generator
 	VerificationCodeLength int
-	FrontendURL            string
 	Environment            string
 	Domain                 string
 	DNS                    dns.DomainManager
 }
 
 func NewServices(deps Deps) *Services {
-	emailsService := NewEmailsService(deps.EmailProvider, deps.EmailSender, deps.EmailConfig, deps.FrontendURL)
+	emailsService := NewEmailsService(deps.EmailProvider, deps.EmailSender, deps.EmailConfig)
 	modulesService := NewModulesService(deps.Repos.Modules, deps.Repos.LessonContent)
 	coursesService := NewCoursesService(deps.Repos.Courses, modulesService)
 	packagesService := NewPackagesService(deps.Repos.Packages, deps.Repos.Modules)
