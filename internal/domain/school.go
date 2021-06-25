@@ -17,10 +17,11 @@ type School struct {
 }
 
 type Settings struct {
-	Color       string      `json:"color" bson:"color,omitempty"`
-	Domains     []string    `json:"domains" bson:"domains,omitempty"`
-	ContactInfo ContactInfo `json:"contactInfo" bson:"contactInfo,omitempty"`
-	Pages       Pages       `json:"pages" bson:"pages,omitempty"`
+	Color             string      `json:"color" bson:"color,omitempty"`
+	Domains           []string    `json:"domains" bson:"domains,omitempty"`
+	ContactInfo       ContactInfo `json:"contactInfo" bson:"contactInfo,omitempty"`
+	Pages             Pages       `json:"pages" bson:"pages,omitempty"`
+	ShowPaymentImages bool        `json:"showPaymentImages" bson:"showPaymentImages,omitempty"`
 }
 
 // todo review fields.

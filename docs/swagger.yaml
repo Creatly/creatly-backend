@@ -145,6 +145,8 @@ definitions:
         type: array
       pages:
         $ref: '#/definitions/domain.Pages'
+      showPaymentImages:
+        type: boolean
     type: object
   v1.contactInfo:
     properties:
@@ -414,6 +416,8 @@ definitions:
         type: string
       pages:
         $ref: '#/definitions/v1.pages'
+      showPaymentImages:
+        type: boolean
     type: object
   v1.uploadResponse:
     properties:
