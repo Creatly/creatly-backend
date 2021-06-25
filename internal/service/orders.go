@@ -38,8 +38,8 @@ func NewOrdersService(repo repository.Orders, offersService Offers, promoCodesSe
 func (s *OrdersService) Create(ctx context.Context, studentId, offerId, promocodeId primitive.ObjectID) (string, error) { //nolint:funlen
 	offer, err := s.offersService.GetById(ctx, offerId)
 	if err != nil {
-		if errors.Is(err, repository.ErrOfferNotFound) {
-			return "", ErrOfferNotFound
+		if errors.Is(err, domain.ErrOfferNotFound) {
+			return "", err
 		}
 
 		return "", err
@@ -52,8 +52,8 @@ func (s *OrdersService) Create(ctx context.Context, studentId, offerId, promocod
 
 	student, err := s.studentsService.GetById(ctx, studentId)
 	if err != nil {
-		if errors.Is(err, repository.ErrUserNotFound) {
-			return "", ErrUserNotFound
+		if errors.Is(err, domain.ErrUserNotFound) {
+			return "", err
 		}
 
 		return "", err
@@ -131,7 +131,7 @@ func (s *OrdersService) getOrderPromocode(ctx context.Context, schoolId, promoco
 		}
 
 		if promocode.ExpiresAt.Unix() < time.Now().Unix() {
-			return promocode, ErrPromocodeExpired
+			return promocode, domain.ErrPromocodeExpired
 		}
 	}
 

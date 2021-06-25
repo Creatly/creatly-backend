@@ -3549,6 +3549,9 @@ var doc = `{
                 },
                 "pages": {
                     "$ref": "#/definitions/domain.Pages"
+                },
+                "showPaymentImages": {
+                    "type": "boolean"
                 }
             }
         },
@@ -3961,6 +3964,9 @@ var doc = `{
                 },
                 "pages": {
                     "$ref": "#/definitions/v1.pages"
+                },
+                "showPaymentImages": {
+                    "type": "boolean"
                 }
             }
         },

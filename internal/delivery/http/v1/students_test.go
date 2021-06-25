@@ -283,10 +283,10 @@ func TestHandler_studentGetModuleLessons(t *testing.T) {
 			schoolId:  schoolId,
 			studentId: studentId,
 			mockBehavior: func(r *mock_service.MockStudents, schoolId, studentId, moduleId primitive.ObjectID, lessons []domain.Lesson) {
-				r.EXPECT().GetModuleLessons(context.Background(), schoolId, studentId, moduleId).Return(lessons, service.ErrModuleIsNotAvailable)
+				r.EXPECT().GetModuleLessons(context.Background(), schoolId, studentId, moduleId).Return(lessons, domain.ErrModuleIsNotAvailable)
 			},
 			statusCode:   403,
-			responseBody: fmt.Sprintf(`{"message":"%s"}`, service.ErrModuleIsNotAvailable.Error()),
+			responseBody: fmt.Sprintf(`{"message":"%s"}`, domain.ErrModuleIsNotAvailable.Error()),
 		},
 		{
 			name:      "service error",
@@ -381,10 +381,10 @@ func TestHandler_studentSetLessonFinished(t *testing.T) {
 			schoolId:  schoolId,
 			studentId: studentId.Hex(),
 			mockBehavior: func(r *mock_service.MockStudents, studentId, moduleId primitive.ObjectID) {
-				r.EXPECT().SetLessonFinished(context.Background(), studentId, moduleId).Return(service.ErrModuleIsNotAvailable)
+				r.EXPECT().SetLessonFinished(context.Background(), studentId, moduleId).Return(domain.ErrModuleIsNotAvailable)
 			},
 			statusCode:   403,
-			responseBody: fmt.Sprintf(`{"message":"%s"}`, service.ErrModuleIsNotAvailable.Error()),
+			responseBody: fmt.Sprintf(`{"message":"%s"}`, domain.ErrModuleIsNotAvailable.Error()),
 		},
 		{
 			name:      "service error",
@@ -457,10 +457,11 @@ func TestHandler_studentSignUp(t *testing.T) {
 			requestBody: `{"name":"Vasya","email":"test@test.com","password":"qwerty123","registerSource":"test-course"}`,
 			schoolId:    schoolId,
 			serviceInput: service.StudentSignUpInput{
-				Name:     "Vasya",
-				Email:    "test@test.com",
-				Password: "qwerty123",
-				SchoolID: schoolId,
+				Name:         "Vasya",
+				Email:        "test@test.com",
+				Password:     "qwerty123",
+				SchoolID:     schoolId,
+				SchoolDomain: "localhost",
 			},
 			mockBehavior: func(r *mock_service.MockStudents, input service.StudentSignUpInput) {
 				r.EXPECT().SignUp(context.Background(), input).Return(nil)
@@ -535,6 +536,9 @@ func TestHandler_studentSignUp(t *testing.T) {
 			r.GET("/sign-up", func(c *gin.Context) {
 				c.Set(schoolCtx, domain.School{
 					ID: tt.schoolId,
+					Settings: domain.Settings{
+						Domains: []string{"localhost"},
+					},
 				})
 			}, handler.studentSignUp)
 

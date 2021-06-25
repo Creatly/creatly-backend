@@ -41,11 +41,12 @@ func (s *SchoolsService) GetByDomain(ctx context.Context, domainName string) (do
 
 func (s *SchoolsService) UpdateSettings(ctx context.Context, schoolId primitive.ObjectID, inp UpdateSchoolSettingsInput) error {
 	return s.repo.UpdateSettings(ctx, repository.UpdateSchoolSettingsInput{
-		SchoolID:    schoolId,
-		Color:       inp.Color,
-		Domains:     inp.Domains,
-		Email:       inp.Email,
-		ContactInfo: inp.ContactInfo,
-		Pages:       inp.Pages,
+		SchoolID:          schoolId,
+		Color:             inp.Color,
+		Domains:           inp.Domains,
+		Email:             inp.Email,
+		ContactInfo:       inp.ContactInfo,
+		Pages:             inp.Pages,
+		ShowPaymentImages: inp.ShowPaymentImages,
 	})
 }

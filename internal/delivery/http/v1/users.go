@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"github.com/zhashkevych/creatly-backend/internal/service"
 )
 
@@ -63,7 +64,7 @@ func (h *Handler) userSignUp(c *gin.Context) {
 		Phone:    inp.Phone,
 		Password: inp.Password,
 	}); err != nil {
-		if errors.Is(err, service.ErrUserAlreadyExists) {
+		if errors.Is(err, domain.ErrUserAlreadyExists) {
 			newResponse(c, http.StatusBadRequest, err.Error())
 
 			return
@@ -102,7 +103,7 @@ func (h *Handler) userSignIn(c *gin.Context) {
 		Password: inp.Password,
 	})
 	if err != nil {
-		if errors.Is(err, service.ErrUserNotFound) {
+		if errors.Is(err, domain.ErrUserNotFound) {
 			newResponse(c, http.StatusBadRequest, err.Error())
 
 			return
@@ -180,7 +181,7 @@ func (h *Handler) userVerify(c *gin.Context) {
 	}
 
 	if err := h.services.Users.Verify(c.Request.Context(), id, code); err != nil {
-		if errors.Is(err, service.ErrVerificationCodeInvalid) {
+		if errors.Is(err, domain.ErrVerificationCodeInvalid) {
 			newResponse(c, http.StatusBadRequest, err.Error())
 
 			return
