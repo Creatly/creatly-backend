@@ -457,10 +457,11 @@ func TestHandler_studentSignUp(t *testing.T) {
 			requestBody: `{"name":"Vasya","email":"test@test.com","password":"qwerty123","registerSource":"test-course"}`,
 			schoolId:    schoolId,
 			serviceInput: service.StudentSignUpInput{
-				Name:     "Vasya",
-				Email:    "test@test.com",
-				Password: "qwerty123",
-				SchoolID: schoolId,
+				Name:         "Vasya",
+				Email:        "test@test.com",
+				Password:     "qwerty123",
+				SchoolID:     schoolId,
+				SchoolDomain: "localhost",
 			},
 			mockBehavior: func(r *mock_service.MockStudents, input service.StudentSignUpInput) {
 				r.EXPECT().SignUp(context.Background(), input).Return(nil)
@@ -535,6 +536,9 @@ func TestHandler_studentSignUp(t *testing.T) {
 			r.GET("/sign-up", func(c *gin.Context) {
 				c.Set(schoolCtx, domain.School{
 					ID: tt.schoolId,
+					Settings: domain.Settings{
+						Domains: []string{"localhost"},
+					},
 				})
 			}, handler.studentSignUp)
 

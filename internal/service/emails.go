@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+
 	"github.com/zhashkevych/creatly-backend/internal/config"
 	emailProvider "github.com/zhashkevych/creatly-backend/pkg/email"
 )

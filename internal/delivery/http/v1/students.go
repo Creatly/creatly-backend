@@ -69,7 +69,6 @@ func (h *Handler) studentSignUp(c *gin.Context) {
 		Password:     inp.Password,
 		SchoolID:     school.ID,
 		SchoolDomain: school.Settings.Domains[0],
-		SchoolName:   school.Name,
 	}); err != nil {
 		if errors.Is(err, domain.ErrUserAlreadyExists) {
 			newResponse(c, http.StatusBadRequest, err.Error())

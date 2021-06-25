@@ -73,7 +73,6 @@ type StudentSignUpInput struct {
 	Password     string
 	SchoolID     primitive.ObjectID
 	SchoolDomain string
-	SchoolName   string
 }
 
 type SchoolSignInInput struct {

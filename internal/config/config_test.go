@@ -163,7 +163,6 @@ func TestInit(t *testing.T) {
 					Burst: 2,
 					TTL:   time.Minute * 10,
 				},
-				FrontendURL: "http://localhost:1337",
 				SMTP: SMTPConfig{
 					Host: "mail.privateemail.com",
 					Port: 587,
