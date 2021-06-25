@@ -21,12 +21,13 @@ type Users interface {
 }
 
 type UpdateSchoolSettingsInput struct {
-	SchoolID    primitive.ObjectID
-	Color       string
-	Domains     []string
-	Email       string
-	ContactInfo *domain.ContactInfo
-	Pages       *domain.Pages
+	SchoolID          primitive.ObjectID
+	Color             string
+	Domains           []string
+	Email             string
+	ContactInfo       *domain.ContactInfo
+	Pages             *domain.Pages
+	ShowPaymentImages *bool
 }
 
 type Schools interface {

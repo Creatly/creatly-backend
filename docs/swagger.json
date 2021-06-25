@@ -3534,6 +3534,9 @@
                 },
                 "pages": {
                     "$ref": "#/definitions/domain.Pages"
+                },
+                "showPaymentImages": {
+                    "type": "boolean"
                 }
             }
         },
@@ -3946,6 +3949,9 @@
                 },
                 "pages": {
                     "$ref": "#/definitions/v1.pages"
+                },
+                "showPaymentImages": {
+                    "type": "boolean"
                 }
             }
         },

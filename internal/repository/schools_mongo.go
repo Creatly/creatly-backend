@@ -66,6 +66,10 @@ func (r *SchoolsRepo) UpdateSettings(ctx context.Context, inp UpdateSchoolSettin
 		updateQuery["settings.pages"] = inp.Pages
 	}
 
+	if inp.ShowPaymentImages != nil {
+		updateQuery["settings.showPaymentImages"] = inp.ShowPaymentImages
+	}
+
 	_, err := r.db.UpdateOne(ctx,
 		bson.M{"_id": inp.SchoolID}, bson.M{"$set": updateQuery})
 
