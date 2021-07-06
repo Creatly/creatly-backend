@@ -24,18 +24,19 @@ type Settings struct {
 	ShowPaymentImages bool        `json:"showPaymentImages" bson:"showPaymentImages,omitempty"`
 }
 
-// todo review fields.
 type ContactInfo struct {
 	BusinessName       string `json:"businessName" bson:"businessName,omitempty"`
 	RegistrationNumber string `json:"registrationNumber" bson:"registrationNumber,omitempty"`
 	Address            string `json:"address" bson:"address,omitempty"`
 	Email              string `json:"email" bson:"email,omitempty"`
+	Phone              string `json:"phone" bson:"phone,omitempty"`
 }
 
 type Pages struct {
-	Confidential     string `json:"confidential" bson:"confidential,omitempty"`
-	ServiceAgreement string `json:"serviceAgreement" bson:"serviceAgreement,omitempty"`
-	RefundPolicy     string `json:"refundPolicy" bson:"refundPolicy,omitempty"`
+	Confidential      string `json:"confidential" bson:"confidential,omitempty"`
+	ServiceAgreement  string `json:"serviceAgreement" bson:"serviceAgreement,omitempty"`
+	RefundPolicy      string `json:"refundPolicy" bson:"refundPolicy,omitempty"`
+	NewsletterConsent string `json:"newsletterConsent" bson:"newsletterConsent,omitempty"`
 }
 
 type Admin struct {
