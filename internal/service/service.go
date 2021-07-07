@@ -108,16 +108,20 @@ type Admins interface {
 }
 
 type UploadInput struct {
-	File          io.Reader
-	FileExtension string
-	Size          int64
-	ContentType   string
-	SchoolID      primitive.ObjectID
-	Type          FileType
+	File        io.Reader
+	Filename    string
+	Size        int64
+	ContentType string
+	SchoolID    primitive.ObjectID
+	Type        domain.FileType
 }
 
 type Files interface {
+	Save(ctx context.Context, file domain.File) (primitive.ObjectID, error)
+	UpdateStatus(ctx context.Context, fileName string, status domain.FileStatus) error // TODO check schoolID
 	Upload(ctx context.Context, inp UploadInput) (string, error)
+	GetByID(ctx context.Context, id, schoolId primitive.ObjectID) (domain.File, error)
+	InitStorageUploaderWorkers(ctx context.Context)
 }
 
 type VerificationEmailInput struct {
@@ -364,7 +368,7 @@ func NewServices(deps Deps) *Services {
 		Admins:         NewAdminsService(deps.Hasher, deps.TokenManager, deps.Repos.Admins, deps.Repos.Schools, deps.AccessTokenTTL, deps.RefreshTokenTTL),
 		Packages:       packagesService,
 		Lessons:        lessonsService,
-		Files:          NewFilesService(deps.StorageProvider, deps.Environment),
+		Files:          NewFilesService(deps.Repos.Files, deps.StorageProvider, deps.Environment),
 		Users:          usersService,
 	}
 }

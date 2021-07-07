@@ -770,6 +770,67 @@ var doc = `{
                 }
             }
         },
+        "/admins/media/videos/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "get video by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admins-media"
+                ],
+                "summary": "Get Video By ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "video id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.File"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
         "/admins/modules/{id}": {
             "put": {
                 "security": [
@@ -3360,6 +3421,9 @@ var doc = `{
                 "email": {
                     "type": "string"
                 },
+                "phone": {
+                    "type": "string"
+                },
                 "registrationNumber": {
                     "type": "string"
                 }
@@ -3393,6 +3457,39 @@ var doc = `{
                     "type": "boolean"
                 },
                 "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.File": {
+            "type": "object",
+            "properties": {
+                "contentType": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "schoolId": {
+                    "type": "string"
+                },
+                "size": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "type": {
+                    "description": "todo leave or remove ?",
+                    "type": "string"
+                },
+                "uploadStartedAt": {
+                    "type": "string"
+                },
+                "url": {
                     "type": "string"
                 }
             }
@@ -3453,6 +3550,9 @@ var doc = `{
             "type": "object",
             "properties": {
                 "confidential": {
+                    "type": "string"
+                },
+                "newsletterConsent": {
                     "type": "string"
                 },
                 "refundPolicy": {

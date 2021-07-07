@@ -87,6 +87,11 @@ func (h *Handler) initAdminRoutes(api *gin.RouterGroup) { //nolint:funlen
 				upload.POST("/image", h.adminUploadImage)
 				upload.POST("/video", h.adminUploadVideo)
 			}
+
+			media := authenticated.Group("/media")
+			{
+				media.GET("/videos/:id", h.adminGetVideo)
+			}
 		}
 	}
 }

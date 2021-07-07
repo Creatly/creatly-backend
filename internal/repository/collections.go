@@ -12,4 +12,5 @@ const (
 	contentCollection        = "content"
 	ordersCollection         = "orders"
 	usersCollection          = "users"
+	filesCollection          = "files"
 )

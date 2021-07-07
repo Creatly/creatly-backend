@@ -2,17 +2,67 @@ package v1
 
 import (
 	"bytes"
+	"fmt"
+	"io"
 	"net/http"
+	"os"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"github.com/zhashkevych/creatly-backend/internal/service"
 )
 
 const (
-	maxImageUploadSize = 5 << 20 // 5 megabytes
-	maxVideoUploadSize = 2 << 30 // 2 gigabytes
+	maxUploadSize = 5 << 20 // 5 megabytes
+	maxVideoSize  = 2 << 30 // 2 gigabytes
 )
+
+type contentRange struct {
+	rangeStart int64
+	rangeEnd   int64
+	fileSize   int64
+}
+
+func (cr *contentRange) parse(c *gin.Context) error {
+	contentRangeHeader := c.Request.Header.Get("Content-Range")
+	rangeAndSizeNumbers := strings.Split(contentRangeHeader, " ")
+	rangeAndSize := strings.Split(rangeAndSizeNumbers[1], "/")
+	rangeParts := strings.Split(rangeAndSize[0], "-")
+
+	var err error
+
+	cr.rangeStart, err = strconv.ParseInt(rangeParts[0], 10, 64)
+	if err != nil {
+		return err
+	}
+
+	cr.rangeEnd, err = strconv.ParseInt(rangeParts[1], 10, 64)
+	if err != nil {
+		return err
+	}
+
+	cr.fileSize, err = strconv.ParseInt(rangeAndSize[1], 10, 64)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (cr *contentRange) isUploadCompleted() bool {
+	return cr.fileSize == cr.rangeEnd
+}
+
+func (cr *contentRange) initialUploadRequest() bool {
+	return cr.rangeStart == 0
+}
+
+func (cr *contentRange) validSize(maxSize int64) bool {
+	return cr.fileSize <= maxSize
+}
 
 var (
 	imageTypes = map[string]interface{}{
@@ -44,7 +94,7 @@ type uploadResponse struct {
 // @Failure default {object} response
 // @Router /admins/upload/image [post]
 func (h *Handler) adminUploadImage(c *gin.Context) {
-	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, maxImageUploadSize)
+	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, maxUploadSize)
 
 	file, fileHeader, err := c.Request.FormFile("file")
 	if err != nil {
@@ -80,12 +130,12 @@ func (h *Handler) adminUploadImage(c *gin.Context) {
 	}
 
 	url, err := h.services.Files.Upload(c.Request.Context(), service.UploadInput{
-		Type:          service.FileTypeImage,
-		File:          bytes.NewBuffer(buffer),
-		FileExtension: getFileExtension(fileHeader.Filename),
-		ContentType:   contentType,
-		Size:          fileHeader.Size,
-		SchoolID:      school.ID,
+		Type:        domain.Image,
+		File:        bytes.NewBuffer(buffer),
+		ContentType: contentType,
+		Size:        fileHeader.Size,
+		SchoolID:    school.ID,
+		Filename:    fileHeader.Filename,
 	})
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
@@ -94,6 +144,10 @@ func (h *Handler) adminUploadImage(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, &uploadResponse{url})
+}
+
+type uploadVideoResponse struct {
+	ID string `json:"id"`
 }
 
 // @Summary Admin Upload Video
@@ -109,8 +163,8 @@ func (h *Handler) adminUploadImage(c *gin.Context) {
 // @Failure 500 {object} response
 // @Failure default {object} response
 // @Router /admins/upload/video [post]
-func (h *Handler) adminUploadVideo(c *gin.Context) {
-	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, maxVideoUploadSize)
+func (h *Handler) adminUploadVideo(c *gin.Context) { //nolint:funlen
+	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, maxUploadSize)
 
 	file, fileHeader, err := c.Request.FormFile("file")
 	if err != nil {
@@ -119,7 +173,18 @@ func (h *Handler) adminUploadVideo(c *gin.Context) {
 		return
 	}
 
-	defer file.Close()
+	rangeInfo := new(contentRange)
+	if err := rangeInfo.parse(c); err != nil {
+		newResponse(c, http.StatusBadRequest, err.Error())
+
+		return
+	}
+
+	if !rangeInfo.validSize(maxVideoSize) {
+		newResponse(c, http.StatusBadRequest, "file is bigger than 2 gigabytes")
+
+		return
+	}
 
 	buffer := make([]byte, fileHeader.Size)
 
@@ -143,25 +208,58 @@ func (h *Handler) adminUploadVideo(c *gin.Context) {
 		return
 	}
 
-	url, err := h.services.Files.Upload(c.Request.Context(), service.UploadInput{
-		Type:          service.FileTypeVideo,
-		File:          bytes.NewBuffer(buffer),
-		FileExtension: getFileExtension(fileHeader.Filename),
-		ContentType:   "video/mp4",
-		Size:          fileHeader.Size,
-		SchoolID:      school.ID,
-	})
+	// todo strip symbols in filename
+	tempFilename := fmt.Sprintf("%s-%s", school.ID.Hex(), fileHeader.Filename)
+
+	f, err := os.OpenFile(tempFilename, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0o666)
 	if err != nil {
-		newResponse(c, http.StatusInternalServerError, err.Error())
+		newResponse(c, http.StatusInternalServerError, "failed to create temp file")
 
 		return
 	}
 
-	c.JSON(http.StatusOK, &uploadResponse{url})
-}
+	defer f.Close()
 
-func getFileExtension(filename string) string {
-	parts := strings.Split(filename, ".")
+	if rangeInfo.initialUploadRequest() {
+		id, err := h.services.Files.Save(c.Request.Context(), domain.File{
+			Type:            domain.Video,
+			Status:          domain.ClientUploadInProgress,
+			Name:            tempFilename,
+			Size:            rangeInfo.fileSize,
+			UploadStartedAt: time.Now(),
+			ContentType:     contentType,
+			SchoolID:        school.ID,
+		})
+		if err != nil {
+			newResponse(c, http.StatusInternalServerError, "failed to save file info to DB")
 
-	return parts[len(parts)-1]
+			return
+		}
+
+		c.JSON(http.StatusCreated, &uploadVideoResponse{ID: id.Hex()})
+
+		return
+	}
+
+	if _, err := io.Copy(f, bytes.NewReader(buffer)); err != nil {
+		if err := h.services.Files.UpdateStatus(c.Request.Context(), tempFilename, domain.ClientUploadError); err != nil {
+			newResponse(c, http.StatusInternalServerError, "failed to update file status")
+
+			return
+		}
+
+		newResponse(c, http.StatusInternalServerError, "failed to write chunk to temp file")
+
+		return
+	}
+
+	if rangeInfo.isUploadCompleted() {
+		if err := h.services.Files.UpdateStatus(c.Request.Context(), tempFilename, domain.UploadedByClient); err != nil {
+			newResponse(c, http.StatusInternalServerError, "failed to update file status")
+
+			return
+		}
+	}
+
+	c.Status(http.StatusOK)
 }

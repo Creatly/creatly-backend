@@ -134,6 +134,8 @@ func Run(configPath string) {
 	})
 	handlers := delivery.NewHandler(services, tokenManager)
 
+	services.Files.InitStorageUploaderWorkers(context.Background())
+
 	// HTTP Server
 	srv := server.NewServer(cfg, handlers.Init(cfg))
 

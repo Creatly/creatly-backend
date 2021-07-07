@@ -58,12 +58,12 @@ func TestHandler_adminUploadImage(t *testing.T) {
 				}
 
 				r.EXPECT().Upload(context.Background(), service.UploadInput{
-					Type:          service.FileTypeImage,
-					File:          bytes.NewBuffer(buffer),
-					FileExtension: extension,
-					ContentType:   contentType,
-					Size:          fileSize,
-					SchoolID:      school.ID,
+					Type:        domain.Image,
+					File:        bytes.NewBuffer(buffer),
+					Filename:    "image.jpg",
+					ContentType: contentType,
+					Size:        fileSize,
+					SchoolID:    school.ID,
 				}).Return("https://storage/image.jpg", nil)
 
 				return nil
@@ -92,12 +92,12 @@ func TestHandler_adminUploadImage(t *testing.T) {
 				}
 
 				r.EXPECT().Upload(context.Background(), service.UploadInput{
-					Type:          service.FileTypeImage,
-					File:          bytes.NewBuffer(buffer),
-					FileExtension: extension,
-					ContentType:   contentType,
-					Size:          fileSize,
-					SchoolID:      school.ID,
+					Type:        domain.Image,
+					File:        bytes.NewBuffer(buffer),
+					Filename:    "image.png",
+					ContentType: contentType,
+					Size:        fileSize,
+					SchoolID:    school.ID,
 				}).Return("https://storage/image.jpg", nil)
 
 				return nil
