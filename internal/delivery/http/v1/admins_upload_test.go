@@ -60,6 +60,7 @@ func TestHandler_adminUploadImage(t *testing.T) {
 				r.EXPECT().Upload(context.Background(), service.UploadInput{
 					Type:        domain.Image,
 					File:        bytes.NewBuffer(buffer),
+					Filename:    "image.jpg",
 					ContentType: contentType,
 					Size:        fileSize,
 					SchoolID:    school.ID,
@@ -93,6 +94,7 @@ func TestHandler_adminUploadImage(t *testing.T) {
 				r.EXPECT().Upload(context.Background(), service.UploadInput{
 					Type:        domain.Image,
 					File:        bytes.NewBuffer(buffer),
+					Filename:    "image.png",
 					ContentType: contentType,
 					Size:        fileSize,
 					SchoolID:    school.ID,
