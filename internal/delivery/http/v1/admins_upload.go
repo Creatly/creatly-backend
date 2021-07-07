@@ -3,15 +3,16 @@ package v1
 import (
 	"bytes"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/zhashkevych/creatly-backend/internal/domain"
-	"github.com/zhashkevych/creatly-backend/internal/service"
 	"io"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/zhashkevych/creatly-backend/internal/domain"
+	"github.com/zhashkevych/creatly-backend/internal/service"
 )
 
 const (
@@ -210,7 +211,7 @@ func (h *Handler) adminUploadVideo(c *gin.Context) { //nolint:funlen
 	// todo strip symbols in filename
 	tempFilename := fmt.Sprintf("%s-%s", school.ID.Hex(), fileHeader.Filename)
 
-	f, err := os.OpenFile(tempFilename, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0666)
+	f, err := os.OpenFile(tempFilename, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0o666)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, "failed to create temp file")
 
@@ -236,6 +237,7 @@ func (h *Handler) adminUploadVideo(c *gin.Context) { //nolint:funlen
 		}
 
 		c.JSON(http.StatusCreated, &uploadVideoResponse{ID: id.Hex()})
+
 		return
 	}
 

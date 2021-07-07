@@ -517,6 +517,35 @@ func (m *MockFiles) EXPECT() *MockFilesMockRecorder {
 	return m.recorder
 }
 
+// Save mocks base method
+func (m *MockFiles) Save(ctx context.Context, file domain.File) (primitive.ObjectID, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Save", ctx, file)
+	ret0, _ := ret[0].(primitive.ObjectID)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Save indicates an expected call of Save
+func (mr *MockFilesMockRecorder) Save(ctx, file interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Save", reflect.TypeOf((*MockFiles)(nil).Save), ctx, file)
+}
+
+// UpdateStatus mocks base method
+func (m *MockFiles) UpdateStatus(ctx context.Context, fileName string, status domain.FileStatus) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateStatus", ctx, fileName, status)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateStatus indicates an expected call of UpdateStatus
+func (mr *MockFilesMockRecorder) UpdateStatus(ctx, fileName, status interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateStatus", reflect.TypeOf((*MockFiles)(nil).UpdateStatus), ctx, fileName, status)
+}
+
 // Upload mocks base method
 func (m *MockFiles) Upload(ctx context.Context, inp service.UploadInput) (string, error) {
 	m.ctrl.T.Helper()
@@ -530,6 +559,33 @@ func (m *MockFiles) Upload(ctx context.Context, inp service.UploadInput) (string
 func (mr *MockFilesMockRecorder) Upload(ctx, inp interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Upload", reflect.TypeOf((*MockFiles)(nil).Upload), ctx, inp)
+}
+
+// GetByID mocks base method
+func (m *MockFiles) GetByID(ctx context.Context, id, schoolId primitive.ObjectID) (domain.File, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByID", ctx, id, schoolId)
+	ret0, _ := ret[0].(domain.File)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByID indicates an expected call of GetByID
+func (mr *MockFilesMockRecorder) GetByID(ctx, id, schoolId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByID", reflect.TypeOf((*MockFiles)(nil).GetByID), ctx, id, schoolId)
+}
+
+// InitStorageUploaderWorkers mocks base method
+func (m *MockFiles) InitStorageUploaderWorkers(ctx context.Context) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "InitStorageUploaderWorkers", ctx)
+}
+
+// InitStorageUploaderWorkers indicates an expected call of InitStorageUploaderWorkers
+func (mr *MockFilesMockRecorder) InitStorageUploaderWorkers(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InitStorageUploaderWorkers", reflect.TypeOf((*MockFiles)(nil).InitStorageUploaderWorkers), ctx)
 }
 
 // MockEmails is a mock of Emails interface

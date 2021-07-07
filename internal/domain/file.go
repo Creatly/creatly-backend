@@ -1,12 +1,15 @@
 package domain
 
 import (
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type FileStatus int
-type FileType string
+type (
+	FileStatus int
+	FileType   string
+)
 
 const (
 	ClientUploadInProgress FileStatus = iota

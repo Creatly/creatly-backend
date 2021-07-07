@@ -3,14 +3,15 @@ package service
 import (
 	"context"
 	"fmt"
+	"os"
+	"strings"
+	"time"
+
 	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"github.com/zhashkevych/creatly-backend/internal/repository"
 	"github.com/zhashkevych/creatly-backend/pkg/logger"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"os"
-	"strings"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/zhashkevych/creatly-backend/pkg/storage"
@@ -56,7 +57,7 @@ func (s *FilesService) InitStorageUploaderWorkers(ctx context.Context) {
 func (s *FilesService) processUploadToStorage(ctx context.Context) {
 	for {
 		if err := s.uploadToStorage(ctx); err != nil {
-			logger.Errorf("uploadToStorage(): ", err)
+			logger.Error("uploadToStorage(): ", err)
 		}
 
 		time.Sleep(_workerInterval)
@@ -113,7 +114,7 @@ func (s *FilesService) GetByID(ctx context.Context, id, schoolId primitive.Objec
 	return s.repo.GetByID(ctx, id, schoolId)
 }
 
-// TODO leave only one method
+// TODO leave only one method.
 func (s *FilesService) generateFilename(inp UploadInput) string {
 	filename := fmt.Sprintf("%s.%s", uuid.New().String(), getFileExtension(inp.Filename))
 	folder := folders[inp.Type]
@@ -126,6 +127,7 @@ func (s *FilesService) generateFilenameFromFile(file domain.File) string {
 	folder := folders[file.Type]
 
 	fileNameParts := strings.Split(file.Name, "-") // first part is schoolId
+
 	return fmt.Sprintf("%s/%s/%s/%s", s.env, fileNameParts[0], folder, filename)
 }
 
