@@ -175,6 +175,11 @@ type Orders interface {
 	GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Order, error)
 }
 
+type Files interface {
+	Create(ctx context.Context, file domain.File) (primitive.ObjectID, error)
+	UpdateStatus(ctx context.Context, fileName string, status domain.FileStatus) error
+}
+
 type Repositories struct {
 	Schools        Schools
 	Students       Students
@@ -188,6 +193,7 @@ type Repositories struct {
 	Orders         Orders
 	Admins         Admins
 	Users          Users
+	Files          Files
 }
 
 func NewRepositories(db *mongo.Database) *Repositories {
@@ -204,5 +210,6 @@ func NewRepositories(db *mongo.Database) *Repositories {
 		Admins:         NewAdminsRepo(db),
 		Packages:       NewPackagesRepo(db),
 		Users:          NewUsersRepo(db),
+		Files:          NewFilesRepo(db),
 	}
 }

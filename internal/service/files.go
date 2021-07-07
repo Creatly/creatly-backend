@@ -3,35 +3,41 @@ package service
 import (
 	"context"
 	"fmt"
+	"github.com/zhashkevych/creatly-backend/internal/domain"
+	"github.com/zhashkevych/creatly-backend/internal/repository"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/zhashkevych/creatly-backend/pkg/storage"
 )
 
-type FileType int
-
-const (
-	FileTypeImage FileType = iota
-	FileTypeVideo
-)
-
 const (
 	uploadTimeout = time.Minute
 )
 
-var folders = map[FileType]string{
-	FileTypeImage: "images",
-	FileTypeVideo: "videos",
+var folders = map[domain.FileType]string{
+	domain.Image: "images",
+	domain.Video: "videos",
+	domain.Other: "other",
 }
 
 type FilesService struct {
+	repo    repository.Files
 	storage storage.Provider
 	env     string
 }
 
-func NewFilesService(storage storage.Provider, env string) *FilesService {
-	return &FilesService{storage: storage, env: env}
+func NewFilesService(repo repository.Files, storage storage.Provider, env string) *FilesService {
+	return &FilesService{repo: repo, storage: storage, env: env}
+}
+
+func (s *FilesService) Save(ctx context.Context, file domain.File) (primitive.ObjectID, error) {
+	return s.repo.Create(ctx, file)
+}
+
+func (s *FilesService) UpdateStatus(ctx context.Context, fileName string, status domain.FileStatus) error {
+	return s.repo.UpdateStatus(ctx, fileName, status)
 }
 
 func (s *FilesService) Upload(ctx context.Context, inp UploadInput) (string, error) {
