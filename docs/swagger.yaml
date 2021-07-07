@@ -47,28 +47,6 @@ definitions:
       updatedAt:
         type: string
     type: object
-  domain.File:
-    properties:
-      contentType:
-        type: string
-      id:
-        type: string
-      name:
-        type: string
-      schoolId:
-        type: string
-      size:
-        type: integer
-      status:
-        type: integer
-      type:
-        description: todo leave or remove ?
-        type: string
-      uploadStartedAt:
-        type: string
-      url:
-        type: string
-    type: object
   domain.Offer:
     properties:
       benefits:
@@ -173,6 +151,13 @@ definitions:
         $ref: '#/definitions/domain.Pages'
       showPaymentImages:
         type: boolean
+    type: object
+  v1.adminGetVideoResponse:
+    properties:
+      status:
+        type: integer
+      url:
+        type: string
     type: object
   v1.contactInfo:
     properties:
@@ -970,7 +955,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.File'
+            $ref: '#/definitions/v1.adminGetVideoResponse'
         "400":
           description: Bad Request
           schema:

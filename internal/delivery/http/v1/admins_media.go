@@ -20,7 +20,7 @@ type adminGetVideoResponse struct {
 // @Accept  json
 // @Produce  json
 // @Param id path string true "video id"
-// @Success 200 {object} domain.File
+// @Success 200 {object} adminGetVideoResponse
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response

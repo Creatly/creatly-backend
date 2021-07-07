@@ -801,7 +801,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.File"
+                            "$ref": "#/definitions/v1.adminGetVideoResponse"
                         }
                     },
                     "400": {
@@ -3461,39 +3461,6 @@ var doc = `{
                 }
             }
         },
-        "domain.File": {
-            "type": "object",
-            "properties": {
-                "contentType": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "schoolId": {
-                    "type": "string"
-                },
-                "size": {
-                    "type": "integer"
-                },
-                "status": {
-                    "type": "integer"
-                },
-                "type": {
-                    "description": "todo leave or remove ?",
-                    "type": "string"
-                },
-                "uploadStartedAt": {
-                    "type": "string"
-                },
-                "url": {
-                    "type": "string"
-                }
-            }
-        },
         "domain.Offer": {
             "type": "object",
             "properties": {
@@ -3652,6 +3619,17 @@ var doc = `{
                 },
                 "showPaymentImages": {
                     "type": "boolean"
+                }
+            }
+        },
+        "v1.adminGetVideoResponse": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer"
+                },
+                "url": {
+                    "type": "string"
                 }
             }
         },
