@@ -178,6 +178,9 @@ type Orders interface {
 type Files interface {
 	Create(ctx context.Context, file domain.File) (primitive.ObjectID, error)
 	UpdateStatus(ctx context.Context, fileName string, status domain.FileStatus) error
+	GetForUploading(ctx context.Context) (domain.File, error)
+	UpdateStatusAndSetURL(ctx context.Context, id primitive.ObjectID, url string) error
+	GetByID(ctx context.Context, id, schoolId primitive.ObjectID) (domain.File, error)
 }
 
 type Repositories struct {

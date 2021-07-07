@@ -31,3 +31,24 @@ func (r *FilesRepo) UpdateStatus(ctx context.Context, fileName string, status do
 	_, err := r.db.UpdateOne(ctx, bson.M{"name": fileName}, bson.M{"$set": bson.M{"status": status}})
 	return err
 }
+
+func (r *FilesRepo) GetForUploading(ctx context.Context) (domain.File, error) {
+	var file domain.File
+	res := r.db.FindOneAndUpdate(ctx, bson.M{"status": domain.UploadedByClient}, bson.M{"$set": bson.M{"status": domain.StorageUploadInProgress}})
+	err := res.Decode(&file)
+
+	return file, err
+}
+
+func (r *FilesRepo) UpdateStatusAndSetURL(ctx context.Context, id primitive.ObjectID, url string) error {
+	_, err := r.db.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"url": url, "status": domain.UploadedToStorage}})
+	return err
+}
+
+func (r *FilesRepo) GetByID(ctx context.Context, id, schoolId primitive.ObjectID) (domain.File, error) {
+	var file domain.File
+	res := r.db.FindOne(ctx, bson.M{"_id": id, "schoolId": schoolId})
+	err := res.Decode(&file)
+
+	return file, err
+}

@@ -12,6 +12,7 @@ const (
 	ClientUploadInProgress FileStatus = iota
 	UploadedByClient
 	ClientUploadError
+	StorageUploadInProgress
 	UploadedToStorage
 	StorageUploadError
 )
@@ -24,7 +25,9 @@ const (
 
 type File struct {
 	ID              primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	Type            FileType           `json:"type" bson:"type"`
+	SchoolID        primitive.ObjectID `json:"schoolId" bson:"schoolId"`
+	Type            FileType           `json:"type" bson:"type"` // todo leave or remove ?
+	ContentType     string             `json:"contentType" bson:"contentType"`
 	Name            string             `json:"name" bson:"name"`
 	Size            int64              `json:"size" bson:"size"`
 	Status          FileStatus         `json:"status" bson:"status"`

@@ -108,18 +108,20 @@ type Admins interface {
 }
 
 type UploadInput struct {
-	File          io.Reader
-	FileExtension string
-	Size          int64
-	ContentType   string
-	SchoolID      primitive.ObjectID
-	Type          domain.FileType
+	File        io.Reader
+	Filename    string
+	Size        int64
+	ContentType string
+	SchoolID    primitive.ObjectID
+	Type        domain.FileType
 }
 
 type Files interface {
 	Save(ctx context.Context, file domain.File) (primitive.ObjectID, error)
-	UpdateStatus(ctx context.Context, fileName string, status domain.FileStatus) error
+	UpdateStatus(ctx context.Context, fileName string, status domain.FileStatus) error // TODO check schoolID
 	Upload(ctx context.Context, inp UploadInput) (string, error)
+	GetByID(ctx context.Context, id, schoolId primitive.ObjectID) (domain.File, error)
+	InitStorageUploaderWorkers(ctx context.Context)
 }
 
 type VerificationEmailInput struct {

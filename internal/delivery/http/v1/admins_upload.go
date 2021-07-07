@@ -3,16 +3,20 @@ package v1
 import (
 	"bytes"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"github.com/zhashkevych/creatly-backend/internal/domain"
+	"github.com/zhashkevych/creatly-backend/internal/service"
 	"io"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
 	"time"
+)
 
-	"github.com/gin-gonic/gin"
-	"github.com/zhashkevych/creatly-backend/internal/service"
+const (
+	maxUploadSize = 5 << 20 // 5 megabytes
+	maxVideoSize  = 2 << 30 // 2 gigabytes
 )
 
 type contentRange struct {
@@ -55,9 +59,9 @@ func (cr *contentRange) initialUploadRequest() bool {
 	return cr.rangeStart == 0
 }
 
-const (
-	maxUploadSize = 5 << 20 // 5 megabytes
-)
+func (cr *contentRange) validSize(maxSize int64) bool {
+	return cr.fileSize <= maxSize
+}
 
 var (
 	imageTypes = map[string]interface{}{
@@ -66,6 +70,7 @@ var (
 	}
 
 	videoTypes = map[string]interface{}{
+		"video/mp4":                nil,
 		"application/octet-stream": nil,
 	}
 )
@@ -124,12 +129,12 @@ func (h *Handler) adminUploadImage(c *gin.Context) {
 	}
 
 	url, err := h.services.Files.Upload(c.Request.Context(), service.UploadInput{
-		Type:          domain.Image,
-		File:          bytes.NewBuffer(buffer),
-		FileExtension: getFileExtension(fileHeader.Filename),
-		ContentType:   contentType,
-		Size:          fileHeader.Size,
-		SchoolID:      school.ID,
+		Type:        domain.Image,
+		File:        bytes.NewBuffer(buffer),
+		ContentType: contentType,
+		Size:        fileHeader.Size,
+		SchoolID:    school.ID,
+		Filename:    fileHeader.Filename,
 	})
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
@@ -163,6 +168,19 @@ func (h *Handler) adminUploadVideo(c *gin.Context) { //nolint:funlen
 	file, fileHeader, err := c.Request.FormFile("file")
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
+
+		return
+	}
+
+	rangeInfo := new(contentRange)
+	if err := rangeInfo.parse(c); err != nil {
+		newResponse(c, http.StatusBadRequest, err.Error())
+
+		return
+	}
+
+	if !rangeInfo.validSize(maxVideoSize) {
+		newResponse(c, http.StatusBadRequest, "file is bigger than 2 gigabytes")
 
 		return
 	}
@@ -201,21 +219,6 @@ func (h *Handler) adminUploadVideo(c *gin.Context) { //nolint:funlen
 
 	defer f.Close()
 
-	if _, err := io.Copy(f, file); err != nil {
-		// todo set status in DB
-		newResponse(c, http.StatusInternalServerError, "failed to write chunk to temp file")
-
-		return
-	}
-
-	rangeInfo := new(contentRange)
-	if err := rangeInfo.parse(c); err != nil {
-		newResponse(c, http.StatusBadRequest, err.Error())
-
-		return
-	}
-
-	// that means it is first upload iteration
 	if rangeInfo.initialUploadRequest() {
 		id, err := h.services.Files.Save(c.Request.Context(), domain.File{
 			Type:            domain.Video,
@@ -223,6 +226,8 @@ func (h *Handler) adminUploadVideo(c *gin.Context) { //nolint:funlen
 			Name:            tempFilename,
 			Size:            rangeInfo.fileSize,
 			UploadStartedAt: time.Now(),
+			ContentType:     contentType,
+			SchoolID:        school.ID,
 		})
 		if err != nil {
 			newResponse(c, http.StatusInternalServerError, "failed to save file info to DB")
@@ -231,6 +236,18 @@ func (h *Handler) adminUploadVideo(c *gin.Context) { //nolint:funlen
 		}
 
 		c.JSON(http.StatusCreated, &uploadVideoResponse{ID: id.Hex()})
+		return
+	}
+
+	if _, err := io.Copy(f, bytes.NewReader(buffer)); err != nil {
+		if err := h.services.Files.UpdateStatus(c.Request.Context(), tempFilename, domain.ClientUploadError); err != nil {
+			newResponse(c, http.StatusInternalServerError, "failed to update file status")
+
+			return
+		}
+
+		newResponse(c, http.StatusInternalServerError, "failed to write chunk to temp file")
+
 		return
 	}
 
@@ -243,10 +260,4 @@ func (h *Handler) adminUploadVideo(c *gin.Context) { //nolint:funlen
 	}
 
 	c.Status(http.StatusOK)
-}
-
-func getFileExtension(filename string) string {
-	parts := strings.Split(filename, ".")
-
-	return parts[len(parts)-1]
 }
