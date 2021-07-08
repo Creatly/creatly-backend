@@ -517,6 +517,21 @@ func (m *MockFiles) EXPECT() *MockFilesMockRecorder {
 	return m.recorder
 }
 
+// UploadImage mocks base method
+func (m *MockFiles) UploadImage(ctx context.Context, file domain.File) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UploadImage", ctx, file)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UploadImage indicates an expected call of UploadImage
+func (mr *MockFilesMockRecorder) UploadImage(ctx, file interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UploadImage", reflect.TypeOf((*MockFiles)(nil).UploadImage), ctx, file)
+}
+
 // Save mocks base method
 func (m *MockFiles) Save(ctx context.Context, file domain.File) (primitive.ObjectID, error) {
 	m.ctrl.T.Helper()
@@ -544,21 +559,6 @@ func (m *MockFiles) UpdateStatus(ctx context.Context, fileName string, status do
 func (mr *MockFilesMockRecorder) UpdateStatus(ctx, fileName, status interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateStatus", reflect.TypeOf((*MockFiles)(nil).UpdateStatus), ctx, fileName, status)
-}
-
-// Upload mocks base method
-func (m *MockFiles) Upload(ctx context.Context, inp service.UploadInput) (string, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "upload", ctx, inp)
-	ret0, _ := ret[0].(string)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Upload indicates an expected call of Upload
-func (mr *MockFilesMockRecorder) Upload(ctx, inp interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "upload", reflect.TypeOf((*MockFiles)(nil).Upload), ctx, inp)
 }
 
 // GetByID mocks base method

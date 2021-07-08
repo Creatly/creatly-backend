@@ -92,7 +92,7 @@ type uploadResponse struct {
 // @Failure 500 {object} response
 // @Failure default {object} response
 // @Router /admins/upload/image [post]
-func (h *Handler) adminUploadImage(c *gin.Context) {
+func (h *Handler) adminUploadImage(c *gin.Context) { //nolint:funlen
 	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, maxUploadSize)
 
 	file, fileHeader, err := c.Request.FormFile("file")
@@ -146,11 +146,11 @@ func (h *Handler) adminUploadImage(c *gin.Context) {
 	}
 
 	url, err := h.services.Files.UploadImage(c.Request.Context(), domain.File{
-		SchoolID: school.ID,
-		Type: domain.Image,
+		SchoolID:    school.ID,
+		Type:        domain.Image,
 		ContentType: contentType,
-		Name: tempFilename,
-		Size: fileHeader.Size,
+		Name:        tempFilename,
+		Size:        fileHeader.Size,
 	})
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
