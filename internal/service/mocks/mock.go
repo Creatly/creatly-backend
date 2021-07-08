@@ -549,7 +549,7 @@ func (mr *MockFilesMockRecorder) UpdateStatus(ctx, fileName, status interface{})
 // Upload mocks base method
 func (m *MockFiles) Upload(ctx context.Context, inp service.UploadInput) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Upload", ctx, inp)
+	ret := m.ctrl.Call(m, "upload", ctx, inp)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
@@ -558,7 +558,7 @@ func (m *MockFiles) Upload(ctx context.Context, inp service.UploadInput) (string
 // Upload indicates an expected call of Upload
 func (mr *MockFilesMockRecorder) Upload(ctx, inp interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Upload", reflect.TypeOf((*MockFiles)(nil).Upload), ctx, inp)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "upload", reflect.TypeOf((*MockFiles)(nil).Upload), ctx, inp)
 }
 
 // GetByID mocks base method

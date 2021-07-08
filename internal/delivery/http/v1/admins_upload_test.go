@@ -115,7 +115,7 @@ func TestHandler_adminUploadImage(t *testing.T) {
 			responseBody: `{"message":"http: request body too large"}`,
 		},
 		{
-			name:     "PDF Upload",
+			name:     "PDF upload",
 			filePath: "./fixtures/ccc.pdf",
 			mockBehavior: func(r *mock_service.MockFiles, filepath, extension, contentType string, fileSize int64) error {
 				return nil

@@ -12,7 +12,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/zhashkevych/creatly-backend/internal/domain"
-	"github.com/zhashkevych/creatly-backend/internal/service"
 )
 
 const (
@@ -80,7 +79,7 @@ type uploadResponse struct {
 	URL string `json:"url"`
 }
 
-// @Summary Admin Upload Image
+// @Summary Admin upload Image
 // @Security AdminAuth
 // @Tags admins-upload
 // @Description admin upload image
@@ -129,13 +128,29 @@ func (h *Handler) adminUploadImage(c *gin.Context) {
 		return
 	}
 
-	url, err := h.services.Files.Upload(c.Request.Context(), service.UploadInput{
-		Type:        domain.Image,
-		File:        bytes.NewBuffer(buffer),
+	tempFilename := fmt.Sprintf("%s-%s", school.ID.Hex(), fileHeader.Filename)
+
+	f, err := os.OpenFile(tempFilename, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0o666)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, "failed to create temp file")
+
+		return
+	}
+
+	defer f.Close()
+
+	if _, err := io.Copy(f, bytes.NewReader(buffer)); err != nil {
+		newResponse(c, http.StatusInternalServerError, "failed to write chunk to temp file")
+
+		return
+	}
+
+	url, err := h.services.Files.UploadImage(c.Request.Context(), domain.File{
+		SchoolID: school.ID,
+		Type: domain.Image,
 		ContentType: contentType,
-		Size:        fileHeader.Size,
-		SchoolID:    school.ID,
-		Filename:    fileHeader.Filename,
+		Name: tempFilename,
+		Size: fileHeader.Size,
 	})
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
@@ -150,7 +165,7 @@ type uploadVideoResponse struct {
 	ID string `json:"id"`
 }
 
-// @Summary Admin Upload Video
+// @Summary Admin upload Video
 // @Security AdminAuth
 // @Tags admins-upload
 // @Description admin upload video
