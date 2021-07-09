@@ -1,11 +1,12 @@
 package v1
 
 import (
+	"net/http"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"net/http"
-	"time"
 )
 
 type studentResponse struct {
@@ -121,5 +122,32 @@ func (h *Handler) adminGetStudentById(c *gin.Context) {
 // @Failure default {object} response
 // @Router /admins/students/{id}/offers/{offerId} [post]
 func (h *Handler) adminGiveAccessToOffer(c *gin.Context) {
+	studentId, err := parseIdFromPath(c, "id")
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, err.Error())
 
+		return
+	}
+
+	offerId, err := parseIdFromPath(c, "offerId")
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, err.Error())
+
+		return
+	}
+
+	offer, err := h.services.Offers.GetById(c.Request.Context(), offerId)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	if err := h.services.Students.GiveAccessToPackages(c.Request.Context(), studentId, offer.PackageIDs); err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	c.Status(http.StatusOK)
 }

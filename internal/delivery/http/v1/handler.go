@@ -2,6 +2,7 @@ package v1
 
 import (
 	"errors"
+
 	"github.com/gin-gonic/gin"
 	"github.com/zhashkevych/creatly-backend/internal/service"
 	"github.com/zhashkevych/creatly-backend/pkg/auth"
