@@ -41,7 +41,7 @@ type Students interface {
 	Create(ctx context.Context, student domain.Student) error
 	GetByCredentials(ctx context.Context, schoolId primitive.ObjectID, email, password string) (domain.Student, error)
 	GetByRefreshToken(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (domain.Student, error)
-	GetById(ctx context.Context, id primitive.ObjectID) (domain.Student, error)
+	GetById(ctx context.Context, schoolId, id primitive.ObjectID) (domain.Student, error)
 	GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Student, error)
 	SetSession(ctx context.Context, studentId primitive.ObjectID, session domain.Session) error
 	GiveAccessToCourseAndModule(ctx context.Context, studentId, courseId, moduleId primitive.ObjectID) error

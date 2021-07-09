@@ -301,7 +301,7 @@ func (h *Handler) studentGetModuleLessons(c *gin.Context) {
 // @Failure default {object} response
 // @Router /students/lessons/{id}/finished [post]
 func (h *Handler) studentSetLessonFinished(c *gin.Context) {
-	lessonId, err := parseIdFromPath(c)
+	lessonId, err := parseIdFromPath(c, "id")
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
 
@@ -380,7 +380,7 @@ func toStudentOffer(offer domain.Offer) studentOffer {
 // @Failure default {object} response
 // @Router /students/modules/{id}/offers [get]
 func (h *Handler) studentGetModuleOffers(c *gin.Context) {
-	moduleId, err := parseIdFromPath(c)
+	moduleId, err := parseIdFromPath(c, "id")
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
 
@@ -540,7 +540,14 @@ func (h *Handler) studentGetAccount(c *gin.Context) {
 		return
 	}
 
-	student, err := h.services.Students.GetById(c.Request.Context(), studentId)
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	student, err := h.services.Students.GetById(c.Request.Context(), school.ID, studentId)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 

@@ -91,7 +91,7 @@ type Students interface {
 	SetLessonFinished(ctx context.Context, studentId, lessonId primitive.ObjectID) error
 	GiveAccessToPackages(ctx context.Context, studentId primitive.ObjectID, packageIds []primitive.ObjectID) error
 	GetAvailableCourses(ctx context.Context, school domain.School, studentId primitive.ObjectID) ([]domain.Course, error)
-	GetById(ctx context.Context, id primitive.ObjectID) (domain.Student, error)
+	GetById(ctx context.Context, schoolId, id primitive.ObjectID) (domain.Student, error)
 	GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Student, error)
 }
 
