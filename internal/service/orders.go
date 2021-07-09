@@ -50,7 +50,7 @@ func (s *OrdersService) Create(ctx context.Context, studentId, offerId, promocod
 		return "", err
 	}
 
-	student, err := s.studentsService.GetById(ctx, studentId)
+	student, err := s.studentsService.GetById(ctx, offer.SchoolID, studentId)
 	if err != nil {
 		if errors.Is(err, domain.ErrUserNotFound) {
 			return "", err

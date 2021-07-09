@@ -80,7 +80,13 @@ func (h *Handler) initAdminRoutes(api *gin.RouterGroup) { //nolint:funlen
 			}
 
 			authenticated.GET("/orders", h.adminGetOrders)
-			authenticated.GET("/students", h.adminGetStudents)
+
+			students := authenticated.Group("/students")
+			{
+				students.GET("", h.adminGetStudents)
+				students.GET("/:id", h.adminGetStudentById)
+				students.POST("/:id/offers/:offerId", h.adminGiveAccessToOffer)
+			}
 
 			upload := authenticated.Group("/upload")
 			{
@@ -274,7 +280,7 @@ type adminGetCourseByIdResponse struct {
 // @Failure default {object} response
 // @Router /admins/courses/{id} [get]
 func (h *Handler) adminGetCourseById(c *gin.Context) {
-	id, err := parseIdFromPath(c)
+	id, err := parseIdFromPath(c, "id")
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
 
@@ -384,7 +390,7 @@ func (h *Handler) adminUpdateCourse(c *gin.Context) {
 // @Failure default {object} response
 // @Router /admins/courses/{id} [delete]
 func (h *Handler) adminDeleteCourse(c *gin.Context) {
-	id, err := parseIdFromPath(c)
+	id, err := parseIdFromPath(c, "id")
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
 
@@ -776,7 +782,7 @@ func (h *Handler) adminUpdateLesson(c *gin.Context) {
 // @Failure default {object} response
 // @Router /admins/lessons/{id} [delete]
 func (h *Handler) adminDeleteLesson(c *gin.Context) {
-	id, err := parseIdFromPath(c)
+	id, err := parseIdFromPath(c, "id")
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
 
@@ -870,7 +876,7 @@ func (h *Handler) adminCreatePackage(c *gin.Context) {
 // @Failure default {object} response
 // @Router /admins/courses/{id}/packages [get]
 func (h *Handler) adminGetAllPackages(c *gin.Context) {
-	id, err := parseIdFromPath(c)
+	id, err := parseIdFromPath(c, "id")
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
 
@@ -901,7 +907,7 @@ func (h *Handler) adminGetAllPackages(c *gin.Context) {
 // @Failure default {object} response
 // @Router /admins/packages/{id} [get]
 func (h *Handler) adminGetPackageById(c *gin.Context) {
-	id, err := parseIdFromPath(c)
+	id, err := parseIdFromPath(c, "id")
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
 
@@ -989,7 +995,7 @@ func (h *Handler) adminUpdatePackage(c *gin.Context) {
 // @Failure default {object} response
 // @Router /admins/packages/{id} [delete]
 func (h *Handler) adminDeletePackage(c *gin.Context) {
-	id, err := parseIdFromPath(c)
+	id, err := parseIdFromPath(c, "id")
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
 
@@ -1111,7 +1117,7 @@ func (h *Handler) adminGetAllOffers(c *gin.Context) {
 // @Failure default {object} response
 // @Router /admins/offers/{id} [get]
 func (h *Handler) adminGetOfferById(c *gin.Context) {
-	id, err := parseIdFromPath(c)
+	id, err := parseIdFromPath(c, "id")
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
 
@@ -1211,7 +1217,7 @@ func (h *Handler) adminUpdateOffer(c *gin.Context) {
 // @Failure default {object} response
 // @Router /admins/offers/{id} [delete]
 func (h *Handler) adminDeleteOffer(c *gin.Context) {
-	id, err := parseIdFromPath(c)
+	id, err := parseIdFromPath(c, "id")
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
 
@@ -1330,7 +1336,7 @@ func (h *Handler) adminGetPromocodes(c *gin.Context) {
 // @Failure default {object} response
 // @Router /admins/promocodes/{id} [get]
 func (h *Handler) adminGetPromocodeById(c *gin.Context) {
-	id, err := parseIdFromPath(c)
+	id, err := parseIdFromPath(c, "id")
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
 
@@ -1376,7 +1382,7 @@ type updatePromocodeInput struct {
 // @Failure default {object} response
 // @Router /admins/promocodes/{id} [put]
 func (h *Handler) adminUpdatePromocode(c *gin.Context) {
-	id, err := parseIdFromPath(c)
+	id, err := parseIdFromPath(c, "id")
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
 
@@ -1427,7 +1433,7 @@ func (h *Handler) adminUpdatePromocode(c *gin.Context) {
 // @Failure default {object} response
 // @Router /admins/promocodes/{id} [delete]
 func (h *Handler) adminDeletePromocode(c *gin.Context) {
-	id, err := parseIdFromPath(c)
+	id, err := parseIdFromPath(c, "id")
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
 
@@ -1563,55 +1569,4 @@ func (h *Handler) adminGetOrders(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, dataResponse{orders})
-}
-
-type studentResponse struct {
-	ID           primitive.ObjectID `json:"id"`
-	Name         string             `json:"name"`
-	Email        string             `json:"email"`
-	RegisteredAt time.Time          `json:"registeredAt"`
-	LastVisitAt  time.Time          `json:"lastVisitAt"`
-}
-
-func toStudentsResponse(students []domain.Student) []studentResponse {
-	out := make([]studentResponse, len(students))
-	for i, student := range students {
-		out[i].ID = student.ID
-		out[i].Name = student.Name
-		out[i].Email = student.Email
-		out[i].RegisteredAt = student.RegisteredAt
-		out[i].LastVisitAt = student.LastVisitAt
-	}
-
-	return out
-}
-
-// @Summary Admin Get Students
-// @Security AdminAuth
-// @Tags admins-orders
-// @Description admin get all students
-// @ModuleID adminGetStudents
-// @Accept  json
-// @Produce  json
-// @Success 200 {object} dataResponse
-// @Failure 400,404 {object} response
-// @Failure 500 {object} response
-// @Failure default {object} response
-// @Router /admins/students [get]
-func (h *Handler) adminGetStudents(c *gin.Context) {
-	school, err := getSchoolFromContext(c)
-	if err != nil {
-		newResponse(c, http.StatusInternalServerError, err.Error())
-
-		return
-	}
-
-	students, err := h.services.Students.GetBySchool(c.Request.Context(), school.ID)
-	if err != nil {
-		newResponse(c, http.StatusInternalServerError, err.Error())
-
-		return
-	}
-
-	c.JSON(http.StatusOK, dataResponse{toStudentsResponse(students)})
 }

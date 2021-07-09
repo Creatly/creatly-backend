@@ -6,11 +6,12 @@ package mock_service
 
 import (
 	context "context"
+	reflect "reflect"
+
 	gomock "github.com/golang/mock/gomock"
 	domain "github.com/zhashkevych/creatly-backend/internal/domain"
 	service "github.com/zhashkevych/creatly-backend/internal/service"
 	primitive "go.mongodb.org/mongo-driver/bson/primitive"
-	reflect "reflect"
 )
 
 // MockUsers is a mock of Users interface
@@ -331,33 +332,33 @@ func (mr *MockStudentsMockRecorder) GetAvailableCourses(ctx, school, studentId i
 }
 
 // GetById mocks base method
-func (m *MockStudents) GetById(ctx context.Context, id primitive.ObjectID) (domain.Student, error) {
+func (m *MockStudents) GetById(ctx context.Context, schoolId, id primitive.ObjectID) (domain.Student, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetById", ctx, id)
+	ret := m.ctrl.Call(m, "GetById", ctx, schoolId, id)
 	ret0, _ := ret[0].(domain.Student)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetById indicates an expected call of GetById
-func (mr *MockStudentsMockRecorder) GetById(ctx, id interface{}) *gomock.Call {
+func (mr *MockStudentsMockRecorder) GetById(ctx, schoolId, id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetById", reflect.TypeOf((*MockStudents)(nil).GetById), ctx, id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetById", reflect.TypeOf((*MockStudents)(nil).GetById), ctx, schoolId, id)
 }
 
 // GetBySchool mocks base method
-func (m *MockStudents) GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Student, error) {
+func (m *MockStudents) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Student, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetBySchool", ctx, schoolId)
+	ret := m.ctrl.Call(m, "GetBySchool", ctx, schoolId, pagination)
 	ret0, _ := ret[0].([]domain.Student)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetBySchool indicates an expected call of GetBySchool
-func (mr *MockStudentsMockRecorder) GetBySchool(ctx, schoolId interface{}) *gomock.Call {
+func (mr *MockStudentsMockRecorder) GetBySchool(ctx, schoolId, pagination interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBySchool", reflect.TypeOf((*MockStudents)(nil).GetBySchool), ctx, schoolId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBySchool", reflect.TypeOf((*MockStudents)(nil).GetBySchool), ctx, schoolId, pagination)
 }
 
 // MockStudentLessons is a mock of StudentLessons interface
