@@ -67,7 +67,7 @@ type UpdateCourseInput struct {
 	ID          primitive.ObjectID
 	SchoolID    primitive.ObjectID
 	Name        string
-	Code        string
+	ImageURL    string
 	Description string
 	Color       string
 	Published   *bool

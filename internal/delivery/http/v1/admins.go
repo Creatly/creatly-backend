@@ -316,7 +316,7 @@ func (h *Handler) adminGetCourseById(c *gin.Context) {
 
 type updateCourseInput struct {
 	Name        string `json:"name"`
-	Code        string `json:"code"`
+	ImageURL    string `json:"imageUrl"`
 	Description string `json:"description"`
 	Color       string `json:"color"`
 	Published   *bool  `json:"published"`
@@ -363,7 +363,7 @@ func (h *Handler) adminUpdateCourse(c *gin.Context) {
 		SchoolID:    school.ID.Hex(),
 		Name:        inp.Name,
 		Description: inp.Description,
-		Code:        inp.Code,
+		ImageURL:    inp.ImageURL,
 		Color:       inp.Color,
 		Published:   inp.Published,
 	}); err != nil {
