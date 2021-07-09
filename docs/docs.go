@@ -2094,6 +2094,20 @@ var doc = `{
                     "admins-students"
                 ],
                 "summary": "Admin Get Students",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "skip",
+                        "name": "skip",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",

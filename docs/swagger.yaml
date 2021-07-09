@@ -1822,6 +1822,15 @@ paths:
       consumes:
       - application/json
       description: admin get all students
+      parameters:
+      - description: skip
+        in: query
+        name: skip
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
       produces:
       - application/json
       responses:

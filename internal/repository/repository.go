@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"time"
 
 	"github.com/zhashkevych/creatly-backend/internal/domain"
@@ -42,7 +43,7 @@ type Students interface {
 	GetByCredentials(ctx context.Context, schoolId primitive.ObjectID, email, password string) (domain.Student, error)
 	GetByRefreshToken(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (domain.Student, error)
 	GetById(ctx context.Context, schoolId, id primitive.ObjectID) (domain.Student, error)
-	GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Student, error)
+	GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Student, error)
 	SetSession(ctx context.Context, studentId primitive.ObjectID, session domain.Session) error
 	GiveAccessToCourseAndModule(ctx context.Context, studentId, courseId, moduleId primitive.ObjectID) error
 	GiveAccessToCoursesAndModules(ctx context.Context, studentId primitive.ObjectID, courseIds, moduleIds []primitive.ObjectID) error
@@ -215,4 +216,16 @@ func NewRepositories(db *mongo.Database) *Repositories {
 		Users:          NewUsersRepo(db),
 		Files:          NewFilesRepo(db),
 	}
+}
+
+func getPaginationOpts(pagination *domain.PaginationQuery) *options.FindOptions {
+	var opts *options.FindOptions
+	if pagination != nil {
+		opts = &options.FindOptions{
+			Skip:  pagination.GetSkip(),
+			Limit: pagination.GetLimit(),
+		}
+	}
+
+	return opts
 }

@@ -36,12 +36,21 @@ func toStudentsResponse(students []domain.Student) []studentResponse {
 // @ModuleID adminGetStudents
 // @Accept  json
 // @Produce  json
+// @Param skip query int false "skip"
+// @Param limit query int false "limit"
 // @Success 200 {object} dataResponse
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
 // @Router /admins/students [get]
 func (h *Handler) adminGetStudents(c *gin.Context) {
+	var query domain.PaginationQuery
+	if err := c.Bind(&query); err != nil {
+		newResponse(c, http.StatusBadRequest, err.Error())
+
+		return
+	}
+
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
@@ -49,7 +58,7 @@ func (h *Handler) adminGetStudents(c *gin.Context) {
 		return
 	}
 
-	students, err := h.services.Students.GetBySchool(c.Request.Context(), school.ID)
+	students, err := h.services.Students.GetBySchool(c.Request.Context(), school.ID, &query)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 
