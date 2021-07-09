@@ -384,11 +384,11 @@ definitions:
     type: object
   v1.updateCourseInput:
     properties:
-      code:
-        type: string
       color:
         type: string
       description:
+        type: string
+      imageUrl:
         type: string
       name:
         type: string

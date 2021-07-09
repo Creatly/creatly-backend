@@ -38,8 +38,8 @@ func (r *CoursesRepo) Update(ctx context.Context, inp UpdateCourseInput) error {
 		updateQuery["courses.$.description"] = inp.Description
 	}
 
-	if inp.Code != "" {
-		updateQuery["courses.$.code"] = inp.Code
+	if inp.ImageURL != "" {
+		updateQuery["courses.$.imageUrl"] = inp.ImageURL
 	}
 
 	if inp.Color != "" {

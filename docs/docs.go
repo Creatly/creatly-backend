@@ -4120,13 +4120,13 @@ var doc = `{
         "v1.updateCourseInput": {
             "type": "object",
             "properties": {
-                "code": {
-                    "type": "string"
-                },
                 "color": {
                     "type": "string"
                 },
                 "description": {
+                    "type": "string"
+                },
+                "imageUrl": {
                     "type": "string"
                 },
                 "name": {
