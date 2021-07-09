@@ -2288,7 +2288,7 @@ var doc = `{
                 "tags": [
                     "admins-upload"
                 ],
-                "summary": "Admin Upload Image",
+                "summary": "Admin upload Image",
                 "parameters": [
                     {
                         "type": "file",
@@ -2349,7 +2349,7 @@ var doc = `{
                 "tags": [
                     "admins-upload"
                 ],
-                "summary": "Admin Upload Video",
+                "summary": "Admin upload Video",
                 "parameters": [
                     {
                         "type": "file",

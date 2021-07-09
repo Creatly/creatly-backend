@@ -29,11 +29,11 @@ const (
 type File struct {
 	ID              primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	SchoolID        primitive.ObjectID `json:"schoolId" bson:"schoolId"`
-	Type            FileType           `json:"type" bson:"type"` // todo leave or remove ?
+	Type            FileType           `json:"type" bson:"type"`
 	ContentType     string             `json:"contentType" bson:"contentType"`
 	Name            string             `json:"name" bson:"name"`
 	Size            int64              `json:"size" bson:"size"`
-	Status          FileStatus         `json:"status" bson:"status"`
+	Status          FileStatus         `json:"status" bson:"status,omitempty"`
 	UploadStartedAt time.Time          `json:"uploadStartedAt" bson:"uploadStartedAt"`
 	URL             string             `json:"url" bson:"url,omitempty"`
 }
