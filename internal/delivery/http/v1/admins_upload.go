@@ -145,7 +145,7 @@ func (h *Handler) adminUploadImage(c *gin.Context) { //nolint:funlen
 		return
 	}
 
-	url, err := h.services.Files.UploadImage(c.Request.Context(), domain.File{
+	url, err := h.services.Files.UploadAndSaveFile(c.Request.Context(), domain.File{
 		SchoolID:    school.ID,
 		Type:        domain.Image,
 		ContentType: contentType,
@@ -277,4 +277,79 @@ func (h *Handler) adminUploadVideo(c *gin.Context) { //nolint:funlen
 	}
 
 	c.Status(http.StatusOK)
+}
+
+// @Summary Admin upload File
+// @Security AdminAuth
+// @Tags admins-upload
+// @Description admin upload file
+// @ModuleID adminUploadFile
+// @Accept mpfd
+// @Produce json
+// @Param file formData file true "file"
+// @Success 200 {object} uploadResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/upload/file [post]
+func (h *Handler) adminUploadFile(c *gin.Context) { //nolint:funlen
+	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, maxUploadSize)
+
+	file, fileHeader, err := c.Request.FormFile("file")
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, err.Error())
+
+		return
+	}
+
+	defer file.Close()
+
+	buffer := make([]byte, fileHeader.Size)
+
+	if _, err := file.Read(buffer); err != nil {
+		newResponse(c, http.StatusBadRequest, err.Error())
+
+		return
+	}
+
+	contentType := http.DetectContentType(buffer)
+
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	tempFilename := fmt.Sprintf("%s-%s", school.ID.Hex(), fileHeader.Filename)
+
+	f, err := os.OpenFile(tempFilename, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0o666)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, "failed to create temp file")
+
+		return
+	}
+
+	defer f.Close()
+
+	if _, err := io.Copy(f, bytes.NewReader(buffer)); err != nil {
+		newResponse(c, http.StatusInternalServerError, "failed to write chunk to temp file")
+
+		return
+	}
+
+	url, err := h.services.Files.UploadAndSaveFile(c.Request.Context(), domain.File{
+		SchoolID:    school.ID,
+		Type:        domain.Other,
+		ContentType: contentType,
+		Name:        tempFilename,
+		Size:        fileHeader.Size,
+	})
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	c.JSON(http.StatusOK, &uploadResponse{url})
 }

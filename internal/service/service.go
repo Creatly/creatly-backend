@@ -117,7 +117,7 @@ type UploadInput struct {
 }
 
 type Files interface {
-	UploadImage(ctx context.Context, file domain.File) (string, error)
+	UploadAndSaveFile(ctx context.Context, file domain.File) (string, error)
 	Save(ctx context.Context, file domain.File) (primitive.ObjectID, error)
 	UpdateStatus(ctx context.Context, fileName string, status domain.FileStatus) error // TODO check schoolID
 	GetByID(ctx context.Context, id, schoolId primitive.ObjectID) (domain.File, error)
