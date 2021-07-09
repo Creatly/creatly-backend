@@ -519,9 +519,9 @@ func (m *MockFiles) EXPECT() *MockFilesMockRecorder {
 }
 
 // UploadImage mocks base method
-func (m *MockFiles) UploadImage(ctx context.Context, file domain.File) (string, error) {
+func (m *MockFiles) UploadAndSaveFile(ctx context.Context, file domain.File) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UploadImage", ctx, file)
+	ret := m.ctrl.Call(m, "UploadAndSaveFile", ctx, file)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
@@ -530,7 +530,7 @@ func (m *MockFiles) UploadImage(ctx context.Context, file domain.File) (string, 
 // UploadImage indicates an expected call of UploadImage
 func (mr *MockFilesMockRecorder) UploadImage(ctx, file interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UploadImage", reflect.TypeOf((*MockFiles)(nil).UploadImage), ctx, file)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UploadAndSaveFile", reflect.TypeOf((*MockFiles)(nil).UploadAndSaveFile), ctx, file)
 }
 
 // Save mocks base method

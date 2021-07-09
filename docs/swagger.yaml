@@ -1942,6 +1942,45 @@ paths:
       summary: Admin Give Student Access to Offer
       tags:
       - admins-students
+  /admins/upload/file:
+    post:
+      consumes:
+      - multipart/form-data
+      description: admin upload file
+      parameters:
+      - description: file
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.uploadResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin upload File
+      tags:
+      - admins-upload
   /admins/upload/image:
     post:
       consumes:
@@ -1978,7 +2017,7 @@ paths:
             $ref: '#/definitions/v1.response'
       security:
       - AdminAuth: []
-      summary: Admin Upload Image
+      summary: Admin upload Image
       tags:
       - admins-upload
   /admins/upload/video:
@@ -2017,7 +2056,7 @@ paths:
             $ref: '#/definitions/v1.response'
       security:
       - AdminAuth: []
-      summary: Admin Upload Video
+      summary: Admin upload Video
       tags:
       - admins-upload
   /courses:
