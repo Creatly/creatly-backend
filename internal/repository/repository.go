@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	"go.mongodb.org/mongo-driver/mongo/options"
+
 	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -41,8 +43,8 @@ type Students interface {
 	Create(ctx context.Context, student domain.Student) error
 	GetByCredentials(ctx context.Context, schoolId primitive.ObjectID, email, password string) (domain.Student, error)
 	GetByRefreshToken(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (domain.Student, error)
-	GetById(ctx context.Context, id primitive.ObjectID) (domain.Student, error)
-	GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Student, error)
+	GetById(ctx context.Context, schoolId, id primitive.ObjectID) (domain.Student, error)
+	GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Student, error)
 	SetSession(ctx context.Context, studentId primitive.ObjectID, session domain.Session) error
 	GiveAccessToCourseAndModule(ctx context.Context, studentId, courseId, moduleId primitive.ObjectID) error
 	GiveAccessToCoursesAndModules(ctx context.Context, studentId primitive.ObjectID, courseIds, moduleIds []primitive.ObjectID) error
@@ -65,7 +67,7 @@ type UpdateCourseInput struct {
 	ID          primitive.ObjectID
 	SchoolID    primitive.ObjectID
 	Name        string
-	Code        string
+	ImageURL    string
 	Description string
 	Color       string
 	Published   *bool
@@ -215,4 +217,16 @@ func NewRepositories(db *mongo.Database) *Repositories {
 		Users:          NewUsersRepo(db),
 		Files:          NewFilesRepo(db),
 	}
+}
+
+func getPaginationOpts(pagination *domain.PaginationQuery) *options.FindOptions {
+	var opts *options.FindOptions
+	if pagination != nil {
+		opts = &options.FindOptions{
+			Skip:  pagination.GetSkip(),
+			Limit: pagination.GetLimit(),
+		}
+	}
+
+	return opts
 }

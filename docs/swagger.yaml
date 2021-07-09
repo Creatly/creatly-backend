@@ -137,6 +137,13 @@ definitions:
       settings:
         $ref: '#/definitions/domain.Settings'
     type: object
+  domain.Session:
+    properties:
+      expiresAt:
+        type: string
+      refreshToken:
+        type: string
+    type: object
   domain.Settings:
     properties:
       color:
@@ -150,6 +157,42 @@ definitions:
       pages:
         $ref: '#/definitions/domain.Pages'
       showPaymentImages:
+        type: boolean
+    type: object
+  domain.Student:
+    properties:
+      availableCourses:
+        items:
+          type: string
+        type: array
+      availableModules:
+        items:
+          type: string
+        type: array
+      email:
+        type: string
+      id:
+        type: string
+      lastVisitAt:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      registeredAt:
+        type: string
+      schoolId:
+        type: string
+      session:
+        $ref: '#/definitions/domain.Session'
+      verification:
+        $ref: '#/definitions/domain.Verification'
+    type: object
+  domain.Verification:
+    properties:
+      code:
+        type: string
+      verified:
         type: boolean
     type: object
   v1.adminGetVideoResponse:
@@ -341,11 +384,11 @@ definitions:
     type: object
   v1.updateCourseInput:
     properties:
-      code:
-        type: string
       color:
         type: string
       description:
+        type: string
+      imageUrl:
         type: string
       name:
         type: string
@@ -1779,6 +1822,15 @@ paths:
       consumes:
       - application/json
       description: admin get all students
+      parameters:
+      - description: skip
+        in: query
+        name: skip
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
       produces:
       - application/json
       responses:
@@ -1806,7 +1858,90 @@ paths:
       - AdminAuth: []
       summary: Admin Get Students
       tags:
-      - admins-orders
+      - admins-students
+  /admins/students/{id}:
+    get:
+      consumes:
+      - application/json
+      description: admin get student by id
+      parameters:
+      - description: student id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Student'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Get Student By ID
+      tags:
+      - admins-students
+  /admins/students/{id}/offers/{offerId}:
+    post:
+      consumes:
+      - application/json
+      description: admin give student access to offer
+      parameters:
+      - description: student id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: offer id
+        in: path
+        name: offerId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Student'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Give Student Access to Offer
+      tags:
+      - admins-students
   /admins/upload/image:
     post:
       consumes:

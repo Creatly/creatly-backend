@@ -91,8 +91,8 @@ type Students interface {
 	SetLessonFinished(ctx context.Context, studentId, lessonId primitive.ObjectID) error
 	GiveAccessToPackages(ctx context.Context, studentId primitive.ObjectID, packageIds []primitive.ObjectID) error
 	GetAvailableCourses(ctx context.Context, school domain.School, studentId primitive.ObjectID) ([]domain.Course, error)
-	GetById(ctx context.Context, id primitive.ObjectID) (domain.Student, error)
-	GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Student, error)
+	GetById(ctx context.Context, schoolId, id primitive.ObjectID) (domain.Student, error)
+	GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Student, error)
 }
 
 type StudentLessons interface {
@@ -117,9 +117,9 @@ type UploadInput struct {
 }
 
 type Files interface {
+	UploadImage(ctx context.Context, file domain.File) (string, error)
 	Save(ctx context.Context, file domain.File) (primitive.ObjectID, error)
 	UpdateStatus(ctx context.Context, fileName string, status domain.FileStatus) error // TODO check schoolID
-	Upload(ctx context.Context, inp UploadInput) (string, error)
 	GetByID(ctx context.Context, id, schoolId primitive.ObjectID) (domain.File, error)
 	InitStorageUploaderWorkers(ctx context.Context)
 }
@@ -148,7 +148,7 @@ type UpdateCourseInput struct {
 	CourseID    string
 	SchoolID    string
 	Name        string
-	Code        string
+	ImageURL    string
 	Description string
 	Color       string
 	Published   *bool

@@ -2091,14 +2091,157 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "admins-orders"
+                    "admins-students"
                 ],
                 "summary": "Admin Get Students",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "skip",
+                        "name": "skip",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/v1.dataResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admins/students/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "admin get student by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admins-students"
+                ],
+                "summary": "Admin Get Student By ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "student id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Student"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admins/students/{id}/offers/{offerId}": {
+            "post": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "admin give student access to offer",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admins-students"
+                ],
+                "summary": "Admin Give Student Access to Offer",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "student id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "offer id",
+                        "name": "offerId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Student"
                         }
                     },
                     "400": {
@@ -2145,7 +2288,7 @@ var doc = `{
                 "tags": [
                     "admins-upload"
                 ],
-                "summary": "Admin Upload Image",
+                "summary": "Admin upload Image",
                 "parameters": [
                     {
                         "type": "file",
@@ -2206,7 +2349,7 @@ var doc = `{
                 "tags": [
                     "admins-upload"
                 ],
-                "summary": "Admin Upload Video",
+                "summary": "Admin upload Video",
                 "parameters": [
                     {
                         "type": "file",
@@ -3599,6 +3742,17 @@ var doc = `{
                 }
             }
         },
+        "domain.Session": {
+            "type": "object",
+            "properties": {
+                "expiresAt": {
+                    "type": "string"
+                },
+                "refreshToken": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.Settings": {
             "type": "object",
             "properties": {
@@ -3618,6 +3772,61 @@ var doc = `{
                     "$ref": "#/definitions/domain.Pages"
                 },
                 "showPaymentImages": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "domain.Student": {
+            "type": "object",
+            "properties": {
+                "availableCourses": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "availableModules": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "lastVisitAt": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "registeredAt": {
+                    "type": "string"
+                },
+                "schoolId": {
+                    "type": "string"
+                },
+                "session": {
+                    "$ref": "#/definitions/domain.Session"
+                },
+                "verification": {
+                    "$ref": "#/definitions/domain.Verification"
+                }
+            }
+        },
+        "domain.Verification": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "verified": {
                     "type": "boolean"
                 }
             }
@@ -3911,13 +4120,13 @@ var doc = `{
         "v1.updateCourseInput": {
             "type": "object",
             "properties": {
-                "code": {
-                    "type": "string"
-                },
                 "color": {
                     "type": "string"
                 },
                 "description": {
+                    "type": "string"
+                },
+                "imageUrl": {
                     "type": "string"
                 },
                 "name": {

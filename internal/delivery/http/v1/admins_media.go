@@ -26,7 +26,7 @@ type adminGetVideoResponse struct {
 // @Failure default {object} response
 // @Router /admins/media/videos/{id} [get]
 func (h *Handler) adminGetVideo(c *gin.Context) {
-	id, err := parseIdFromPath(c)
+	id, err := parseIdFromPath(c, "id")
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, "empty id param")
 

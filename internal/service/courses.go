@@ -29,7 +29,7 @@ func (s *CoursesService) Create(ctx context.Context, schoolId primitive.ObjectID
 func (s *CoursesService) Update(ctx context.Context, inp UpdateCourseInput) error {
 	updateInput := repository.UpdateCourseInput{
 		Name:        inp.Name,
-		Code:        inp.Code,
+		ImageURL:    inp.ImageURL,
 		Description: inp.Description,
 		Color:       inp.Color,
 		Published:   inp.Published,

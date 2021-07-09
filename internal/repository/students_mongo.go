@@ -61,10 +61,10 @@ func (r *StudentsRepo) GetByRefreshToken(ctx context.Context, schoolId primitive
 	return student, nil
 }
 
-func (r *StudentsRepo) GetById(ctx context.Context, id primitive.ObjectID) (domain.Student, error) {
+func (r *StudentsRepo) GetById(ctx context.Context, schoolId, id primitive.ObjectID) (domain.Student, error) {
 	var student domain.Student
 
-	if err := r.db.FindOne(ctx, bson.M{"_id": id, "verification.verified": true}).Decode(&student); err != nil {
+	if err := r.db.FindOne(ctx, bson.M{"_id": id, "schoolId": schoolId, "verification.verified": true}).Decode(&student); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return domain.Student{}, domain.ErrUserNotFound
 		}
@@ -75,8 +75,10 @@ func (r *StudentsRepo) GetById(ctx context.Context, id primitive.ObjectID) (doma
 	return student, nil
 }
 
-func (r *StudentsRepo) GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Student, error) {
-	cur, err := r.db.Find(ctx, bson.M{"schoolId": schoolId})
+func (r *StudentsRepo) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Student, error) {
+	opts := getPaginationOpts(pagination)
+
+	cur, err := r.db.Find(ctx, bson.M{"schoolId": schoolId}, opts)
 	if err != nil {
 		return nil, err
 	}

@@ -3,6 +3,7 @@ package v1
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"io"
 	"mime/multipart"
 	"net/http/httptest"
@@ -57,10 +58,9 @@ func TestHandler_adminUploadImage(t *testing.T) {
 					return err
 				}
 
-				r.EXPECT().Upload(context.Background(), service.UploadInput{
+				r.EXPECT().UploadImage(context.Background(), domain.File{
 					Type:        domain.Image,
-					File:        bytes.NewBuffer(buffer),
-					Filename:    "image.jpg",
+					Name:        fmt.Sprintf("%s-image.jpg", school.ID.Hex()),
 					ContentType: contentType,
 					Size:        fileSize,
 					SchoolID:    school.ID,
@@ -91,19 +91,18 @@ func TestHandler_adminUploadImage(t *testing.T) {
 					return err
 				}
 
-				r.EXPECT().Upload(context.Background(), service.UploadInput{
+				r.EXPECT().UploadImage(context.Background(), domain.File{
 					Type:        domain.Image,
-					File:        bytes.NewBuffer(buffer),
-					Filename:    "image.png",
+					Name:        fmt.Sprintf("%s-image.png", school.ID.Hex()),
 					ContentType: contentType,
 					Size:        fileSize,
 					SchoolID:    school.ID,
-				}).Return("https://storage/image.jpg", nil)
+				}).Return("https://storage/image.png", nil)
 
 				return nil
 			},
 			statusCode:   200,
-			responseBody: `{"url":"https://storage/image.jpg"}`,
+			responseBody: `{"url":"https://storage/image.png"}`,
 		},
 		{
 			name:     "Image too large",
@@ -115,7 +114,7 @@ func TestHandler_adminUploadImage(t *testing.T) {
 			responseBody: `{"message":"http: request body too large"}`,
 		},
 		{
-			name:     "PDF Upload",
+			name:     "PDF upload",
 			filePath: "./fixtures/ccc.pdf",
 			mockBehavior: func(r *mock_service.MockFiles, filepath, extension, contentType string, fileSize int64) error {
 				return nil

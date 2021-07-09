@@ -17,11 +17,9 @@ import (
 	"github.com/zhashkevych/creatly-backend/pkg/storage"
 )
 
-// TODO implement background workers for removing bad/broken files
-
 const (
 	_workersCount   = 3
-	_workerInterval = time.Minute
+	_workerInterval = time.Second * 10
 )
 
 var folders = map[domain.FileType]string{
@@ -48,6 +46,22 @@ func (s *FilesService) UpdateStatus(ctx context.Context, fileName string, status
 	return s.repo.UpdateStatus(ctx, fileName, status)
 }
 
+func (s *FilesService) GetByID(ctx context.Context, id, schoolId primitive.ObjectID) (domain.File, error) {
+	return s.repo.GetByID(ctx, id, schoolId)
+}
+
+func (s *FilesService) UploadImage(ctx context.Context, file domain.File) (string, error) {
+	defer removeFile(file.Name)
+
+	file.UploadStartedAt = time.Now()
+
+	if _, err := s.Save(ctx, file); err != nil {
+		return "", err
+	}
+
+	return s.upload(ctx, file)
+}
+
 func (s *FilesService) InitStorageUploaderWorkers(ctx context.Context) {
 	for i := 0; i < _workersCount; i++ {
 		go s.processUploadToStorage(ctx)
@@ -65,7 +79,6 @@ func (s *FilesService) processUploadToStorage(ctx context.Context) {
 }
 
 func (s *FilesService) uploadToStorage(ctx context.Context) error {
-	// select for processing
 	file, err := s.repo.GetForUploading(ctx)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
@@ -75,24 +88,20 @@ func (s *FilesService) uploadToStorage(ctx context.Context) error {
 		return err
 	}
 
+	defer removeFile(file.Name)
+
 	logger.Infof("processing file %s", file.Name)
 
-	// read file
-	f, err := os.Open(file.Name)
+	url, err := s.upload(ctx, file)
 	if err != nil {
+		if err := s.repo.UpdateStatus(ctx, file.Name, domain.StorageUploadError); err != nil {
+			return err
+		}
+
 		return err
 	}
 
-	// upload
-	url, err := s.storage.Upload(ctx, storage.UploadInput{
-		File:        f,
-		Size:        file.Size,
-		ContentType: file.ContentType,
-		Name:        s.generateFilenameFromFile(file),
-	})
-	if err != nil {
-		return err
-	}
+	logger.Infof("file %s processed successfully", file.Name)
 
 	if err := s.repo.UpdateStatusAndSetURL(ctx, file.ID, url); err != nil {
 		return err
@@ -101,28 +110,23 @@ func (s *FilesService) uploadToStorage(ctx context.Context) error {
 	return nil
 }
 
-func (s *FilesService) Upload(ctx context.Context, inp UploadInput) (string, error) {
+func (s *FilesService) upload(ctx context.Context, file domain.File) (string, error) {
+	f, err := os.Open(file.Name)
+	if err != nil {
+		return "", err
+	}
+
+	defer f.Close()
+
 	return s.storage.Upload(ctx, storage.UploadInput{
-		File:        inp.File,
-		Size:        inp.Size,
-		ContentType: inp.ContentType,
-		Name:        s.generateFilename(inp),
+		File:        f,
+		Size:        file.Size,
+		ContentType: file.ContentType,
+		Name:        s.generateFilename(file),
 	})
 }
 
-func (s *FilesService) GetByID(ctx context.Context, id, schoolId primitive.ObjectID) (domain.File, error) {
-	return s.repo.GetByID(ctx, id, schoolId)
-}
-
-// TODO leave only one method.
-func (s *FilesService) generateFilename(inp UploadInput) string {
-	filename := fmt.Sprintf("%s.%s", uuid.New().String(), getFileExtension(inp.Filename))
-	folder := folders[inp.Type]
-
-	return fmt.Sprintf("%s/%s/%s/%s", s.env, inp.SchoolID.Hex(), folder, filename)
-}
-
-func (s *FilesService) generateFilenameFromFile(file domain.File) string {
+func (s *FilesService) generateFilename(file domain.File) string {
 	filename := fmt.Sprintf("%s.%s", uuid.New().String(), getFileExtension(file.Name))
 	folder := folders[file.Type]
 
@@ -135,4 +139,10 @@ func getFileExtension(filename string) string {
 	parts := strings.Split(filename, ".")
 
 	return parts[len(parts)-1]
+}
+
+func removeFile(filename string) {
+	if err := os.Remove(filename); err != nil {
+		logger.Error("removeFile(): ", err)
+	}
 }

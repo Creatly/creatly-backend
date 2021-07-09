@@ -134,7 +134,7 @@ func (s *StudentsService) GetModuleLessons(ctx context.Context, schoolId, studen
 		return nil, err
 	}
 
-	student, err := s.repo.GetById(ctx, studentId)
+	student, err := s.repo.GetById(ctx, schoolId, studentId)
 	if err != nil {
 		return nil, err
 	}
@@ -217,7 +217,7 @@ func (s *StudentsService) GiveAccessToPackages(ctx context.Context, studentId pr
 }
 
 func (s *StudentsService) GetAvailableCourses(ctx context.Context, school domain.School, studentId primitive.ObjectID) ([]domain.Course, error) {
-	student, err := s.repo.GetById(ctx, studentId)
+	student, err := s.repo.GetById(ctx, school.ID, studentId)
 	if err != nil {
 		return nil, err
 	}
@@ -235,12 +235,12 @@ func (s *StudentsService) GetAvailableCourses(ctx context.Context, school domain
 	return courses, nil
 }
 
-func (s *StudentsService) GetById(ctx context.Context, id primitive.ObjectID) (domain.Student, error) {
-	return s.repo.GetById(ctx, id)
+func (s *StudentsService) GetById(ctx context.Context, schoolId, id primitive.ObjectID) (domain.Student, error) {
+	return s.repo.GetById(ctx, schoolId, id)
 }
 
-func (s *StudentsService) GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Student, error) {
-	return s.repo.GetBySchool(ctx, schoolId)
+func (s *StudentsService) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Student, error) {
+	return s.repo.GetBySchool(ctx, schoolId, pagination)
 }
 
 func (s *StudentsService) createSession(ctx context.Context, studentId primitive.ObjectID) (Tokens, error) {
@@ -275,7 +275,7 @@ func (s *StudentsService) isLessonAvailable(ctx context.Context, studentId, less
 		return err
 	}
 
-	student, err := s.GetById(ctx, studentId)
+	student, err := s.GetById(ctx, module.SchoolID, studentId)
 	if err != nil {
 		return err
 	}

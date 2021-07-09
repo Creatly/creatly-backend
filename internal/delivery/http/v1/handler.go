@@ -35,8 +35,8 @@ func (h *Handler) Init(api *gin.RouterGroup) {
 	}
 }
 
-func parseIdFromPath(c *gin.Context) (primitive.ObjectID, error) {
-	idParam := c.Param("id")
+func parseIdFromPath(c *gin.Context, param string) (primitive.ObjectID, error) {
+	idParam := c.Param(param)
 	if idParam == "" {
 		return primitive.ObjectID{}, errors.New("empty id param")
 	}
