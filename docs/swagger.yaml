@@ -305,6 +305,8 @@ definitions:
     type: object
   v1.dataResponse:
     properties:
+      count:
+        type: integer
       data:
         type: object
     type: object
@@ -1384,6 +1386,15 @@ paths:
       consumes:
       - application/json
       description: admin get all orders
+      parameters:
+      - description: skip
+        in: query
+        name: skip
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
       produces:
       - application/json
       responses:

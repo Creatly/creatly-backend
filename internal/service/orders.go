@@ -114,8 +114,8 @@ func (s *OrdersService) AddTransaction(ctx context.Context, id primitive.ObjectI
 	return s.repo.AddTransaction(ctx, id, transaction)
 }
 
-func (s *OrdersService) GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Order, error) {
-	return s.repo.GetBySchool(ctx, schoolId)
+func (s *OrdersService) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Order, int64, error) {
+	return s.repo.GetBySchool(ctx, schoolId, pagination)
 }
 
 func (s *OrdersService) getOrderPromocode(ctx context.Context, schoolId, promocodeId primitive.ObjectID) (domain.PromoCode, error) {

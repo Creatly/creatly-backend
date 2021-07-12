@@ -284,7 +284,7 @@ func (h *Handler) studentGetModuleLessons(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, dataResponse{lessons})
+	c.JSON(http.StatusOK, dataResponse{Data: lessons})
 }
 
 // @Summary Student Set Lesson As Finished By LessonID
@@ -401,7 +401,7 @@ func (h *Handler) studentGetModuleOffers(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, dataResponse{toStudentOffers(offers)})
+	c.JSON(http.StatusOK, dataResponse{Data: toStudentOffers(offers)})
 }
 
 type createOrderInput struct {
@@ -478,6 +478,7 @@ func (h *Handler) studentCreateOrder(c *gin.Context) {
 	c.JSON(http.StatusOK, createOrderResponse{paymentLink})
 }
 
+// TODO currently unused. Leave or delete?
 // @Summary Student Get Opened Courses
 // @Security StudentsAuth
 // @Tags students-courses
@@ -512,7 +513,7 @@ func (h *Handler) studentGetCourses(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, dataResponse{courses})
+	c.JSON(http.StatusOK, dataResponse{Data: courses})
 }
 
 type studentAccountResponse struct {

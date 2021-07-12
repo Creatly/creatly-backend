@@ -248,7 +248,7 @@ func TestHandler_adminGetPromocodes(t *testing.T) {
 				}, nil)
 			},
 			statusCode:   200,
-			responseBody: fmt.Sprintf(`{"data":[{"id":"%s","schoolId":"%s","code":"FIRSTPROMO","discountPercentage":15,"expiresAt":"2022-12-10T13:49:51Z","offerIds":["%s"]}]}`, promocodeId.Hex(), school.ID.Hex(), offerId.Hex()),
+			responseBody: fmt.Sprintf(`{"data":[{"id":"%s","schoolId":"%s","code":"FIRSTPROMO","discountPercentage":15,"expiresAt":"2022-12-10T13:49:51Z","offerIds":["%s"]}],"count":0}`, promocodeId.Hex(), school.ID.Hex(), offerId.Hex()),
 		},
 		{
 			name:   "service error",

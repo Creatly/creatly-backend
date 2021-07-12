@@ -59,14 +59,17 @@ func (h *Handler) adminGetStudents(c *gin.Context) {
 		return
 	}
 
-	students, err := h.services.Students.GetBySchool(c.Request.Context(), school.ID, &query)
+	students, count, err := h.services.Students.GetBySchool(c.Request.Context(), school.ID, &query)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 
 		return
 	}
 
-	c.JSON(http.StatusOK, dataResponse{toStudentsResponse(students)})
+	c.JSON(http.StatusOK, dataResponse{
+		Data:  toStudentsResponse(students),
+		Count: count,
+	})
 }
 
 // @Summary Admin Get Student By ID

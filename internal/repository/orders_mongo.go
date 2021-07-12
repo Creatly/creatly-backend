@@ -45,14 +45,21 @@ func (r *OrdersRepo) AddTransaction(ctx context.Context, id primitive.ObjectID, 
 	return order, err
 }
 
-func (r *OrdersRepo) GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Order, error) {
-	cur, err := r.db.Find(ctx, bson.M{"schoolId": schoolId})
+func (r *OrdersRepo) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Order, int64, error) {
+	opts := getPaginationOpts(pagination)
+	filter := bson.M{"schoolId": schoolId}
+
+	cur, err := r.db.Find(ctx, filter, opts)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
 	var orders []domain.Order
-	err = cur.All(ctx, &orders)
+	if err := cur.All(ctx, &orders); err != nil {
+		return nil, 0, err
+	}
 
-	return orders, err
+	count, err := r.db.CountDocuments(ctx, filter)
+
+	return orders, count, err
 }

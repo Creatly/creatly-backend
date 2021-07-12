@@ -75,18 +75,23 @@ func (r *StudentsRepo) GetById(ctx context.Context, schoolId, id primitive.Objec
 	return student, nil
 }
 
-func (r *StudentsRepo) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Student, error) {
+func (r *StudentsRepo) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Student, int64, error) {
 	opts := getPaginationOpts(pagination)
+	filter := bson.M{"schoolId": schoolId}
 
-	cur, err := r.db.Find(ctx, bson.M{"schoolId": schoolId}, opts)
+	cur, err := r.db.Find(ctx, filter, opts)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
 	var students []domain.Student
-	err = cur.All(ctx, &students)
+	if err := cur.All(ctx, &students); err != nil {
+		return nil, 0, err
+	}
 
-	return students, err
+	count, err := r.db.CountDocuments(ctx, filter)
+
+	return students, count, err
 }
 
 func (r *StudentsRepo) SetSession(ctx context.Context, studentId primitive.ObjectID, session domain.Session) error {
