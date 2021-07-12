@@ -59,7 +59,7 @@ func TestHandler_adminUploadImage(t *testing.T) {
 					return err
 				}
 
-				r.EXPECT().UploadImage(context.Background(), domain.File{
+				r.EXPECT().UploadAndSaveFile(context.Background(), domain.File{
 					Type:        domain.Image,
 					Name:        fmt.Sprintf("%s-image.jpg", school.ID.Hex()),
 					ContentType: contentType,
@@ -92,7 +92,7 @@ func TestHandler_adminUploadImage(t *testing.T) {
 					return err
 				}
 
-				r.EXPECT().UploadImage(context.Background(), domain.File{
+				r.EXPECT().UploadAndSaveFile(context.Background(), domain.File{
 					Type:        domain.Image,
 					Name:        fmt.Sprintf("%s-image.png", school.ID.Hex()),
 					ContentType: contentType,

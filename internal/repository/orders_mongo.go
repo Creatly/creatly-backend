@@ -55,8 +55,7 @@ func (r *OrdersRepo) GetBySchool(ctx context.Context, schoolId primitive.ObjectI
 	}
 
 	var orders []domain.Order
-	err = cur.All(ctx, &orders)
-	if err != nil {
+	if err := cur.All(ctx, &orders); err != nil {
 		return nil, 0, err
 	}
 

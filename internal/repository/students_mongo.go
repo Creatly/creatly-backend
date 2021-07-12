@@ -85,13 +85,12 @@ func (r *StudentsRepo) GetBySchool(ctx context.Context, schoolId primitive.Objec
 	}
 
 	var students []domain.Student
-	err = cur.All(ctx, &students)
-	if err != nil {
+	if err := cur.All(ctx, &students); err != nil {
 		return nil, 0, err
 	}
 
 	count, err := r.db.CountDocuments(ctx, filter)
-	
+
 	return students, count, err
 }
 
