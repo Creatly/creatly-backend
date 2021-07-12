@@ -31,50 +31,50 @@ func mockStudentLessonsService(t *testing.T) (*service.StudentLessonsService, *m
 
 	return studentLessonsService, studentLessonsRepo
 }
-
-func TestStudentLessonsServiceAddFinished(t *testing.T) {
-	t.Parallel()
-
-	studentLessonsService, studentLessonsRepo := mockStudentLessonsService(t)
-
-	ctx := context.Background()
-
-	studentID := primitive.NewObjectID()
-	lessonID := primitive.NewObjectID()
-
-	tests := map[string]testStudentLessonsService{
-		"repository error": {
-			studentID: studentID,
-			lessonID:  lessonID,
-			mock: func() {
-				studentLessonsRepo.EXPECT().AddFinished(ctx, studentID, lessonID).Return(errInternalServErr)
-			},
-			expectedErr: errInternalServErr,
-		},
-		"add finished": {
-			studentID: studentID,
-			lessonID:  lessonID,
-			mock: func() {
-				studentLessonsRepo.EXPECT().AddFinished(ctx, studentID, lessonID)
-			},
-			expectedErr: nil,
-		},
-	}
-
-	for name, tc := range tests {
-		tc := tc
-
-		t.Run(name, func(t *testing.T) {
-			t.Parallel()
-
-			tc.mock()
-
-			err := studentLessonsService.AddFinished(ctx, tc.studentID, tc.lessonID)
-
-			require.True(t, errors.Is(err, tc.expectedErr))
-		})
-	}
-}
+//
+//func TestStudentLessonsServiceAddFinished(t *testing.T) {
+//	t.Parallel()
+//
+//	studentLessonsService, studentLessonsRepo := mockStudentLessonsService(t)
+//
+//	ctx := context.Background()
+//
+//	studentID := primitive.NewObjectID()
+//	lessonID := primitive.NewObjectID()
+//
+//	tests := map[string]testStudentLessonsService{
+//		"repository error": {
+//			studentID: studentID,
+//			lessonID:  lessonID,
+//			mock: func() {
+//				studentLessonsRepo.EXPECT().AddFinished(ctx, studentID, lessonID).Return(errInternalServErr)
+//			},
+//			expectedErr: errInternalServErr,
+//		},
+//		"add finished": {
+//			studentID: studentID,
+//			lessonID:  lessonID,
+//			mock: func() {
+//				studentLessonsRepo.EXPECT().AddFinished(ctx, studentID, lessonID)
+//			},
+//			expectedErr: nil,
+//		},
+//	}
+//
+//	for name, tc := range tests {
+//		tc := tc
+//
+//		t.Run(name, func(t *testing.T) {
+//			t.Parallel()
+//
+//			tc.mock()
+//
+//			err := studentLessonsService.AddFinished(ctx, tc.studentID, tc.lessonID)
+//
+//			require.True(t, errors.Is(err, tc.expectedErr))
+//		})
+//	}
+//}
 
 func TestStudentLessonsServiceSetLastOpened(t *testing.T) {
 	t.Parallel()
