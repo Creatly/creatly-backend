@@ -259,7 +259,7 @@ func (h *Handler) adminGetAllCourses(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, dataResponse{courses})
+	c.JSON(http.StatusOK, dataResponse{Data: courses})
 }
 
 type adminGetCourseByIdResponse struct {
@@ -613,7 +613,7 @@ func (h *Handler) adminGetLessons(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, dataResponse{module.Lessons})
+	c.JSON(http.StatusOK, dataResponse{Data: module.Lessons})
 }
 
 type createLessonInput struct {
@@ -891,7 +891,7 @@ func (h *Handler) adminGetAllPackages(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, dataResponse{packages})
+	c.JSON(http.StatusOK, dataResponse{Data: packages})
 }
 
 // @Summary Admin Get Package By ID
@@ -1101,7 +1101,7 @@ func (h *Handler) adminGetAllOffers(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, dataResponse{offers})
+	c.JSON(http.StatusOK, dataResponse{Data: offers})
 }
 
 // @Summary Admin Get Offer By Id
@@ -1320,7 +1320,7 @@ func (h *Handler) adminGetPromocodes(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, dataResponse{promocodes})
+	c.JSON(http.StatusOK, dataResponse{Data: promocodes})
 }
 
 // @Summary Admin Get Promocode By Id
@@ -1549,12 +1549,21 @@ func (h *Handler) adminUpdateSchoolSettings(c *gin.Context) {
 // @ModuleID adminGetOrders
 // @Accept  json
 // @Produce  json
+// @Param skip query int false "skip"
+// @Param limit query int false "limit"
 // @Success 200 {object} dataResponse
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
 // @Router /admins/orders [get]
 func (h *Handler) adminGetOrders(c *gin.Context) {
+	var query domain.PaginationQuery
+	if err := c.Bind(&query); err != nil {
+		newResponse(c, http.StatusBadRequest, err.Error())
+
+		return
+	}
+
 	school, err := getSchoolFromContext(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
@@ -1562,12 +1571,15 @@ func (h *Handler) adminGetOrders(c *gin.Context) {
 		return
 	}
 
-	orders, err := h.services.Orders.GetBySchool(c.Request.Context(), school.ID)
+	orders, count, err := h.services.Orders.GetBySchool(c.Request.Context(), school.ID, &query)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 
 		return
 	}
 
-	c.JSON(http.StatusOK, dataResponse{orders})
+	c.JSON(http.StatusOK, dataResponse{
+		Data:  orders,
+		Count: count,
+	})
 }

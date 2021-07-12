@@ -1408,6 +1408,20 @@ var doc = `{
                     "admins-orders"
                 ],
                 "summary": "Admin Get Orders",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "skip",
+                        "name": "skip",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -4060,6 +4074,9 @@ var doc = `{
         "v1.dataResponse": {
             "type": "object",
             "properties": {
+                "count": {
+                    "type": "integer"
+                },
                 "data": {
                     "type": "object"
                 }

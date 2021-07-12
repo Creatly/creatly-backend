@@ -6,12 +6,11 @@ package mock_service
 
 import (
 	context "context"
-	reflect "reflect"
-
 	gomock "github.com/golang/mock/gomock"
 	domain "github.com/zhashkevych/creatly-backend/internal/domain"
 	service "github.com/zhashkevych/creatly-backend/internal/service"
 	primitive "go.mongodb.org/mongo-driver/bson/primitive"
+	reflect "reflect"
 )
 
 // MockUsers is a mock of Users interface
@@ -347,12 +346,13 @@ func (mr *MockStudentsMockRecorder) GetById(ctx, schoolId, id interface{}) *gomo
 }
 
 // GetBySchool mocks base method
-func (m *MockStudents) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Student, error) {
+func (m *MockStudents) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Student, int64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetBySchool", ctx, schoolId, pagination)
 	ret0, _ := ret[0].([]domain.Student)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret1, _ := ret[1].(int64)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
 }
 
 // GetBySchool indicates an expected call of GetBySchool
@@ -518,7 +518,7 @@ func (m *MockFiles) EXPECT() *MockFilesMockRecorder {
 	return m.recorder
 }
 
-// UploadImage mocks base method
+// UploadAndSaveFile mocks base method
 func (m *MockFiles) UploadAndSaveFile(ctx context.Context, file domain.File) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UploadAndSaveFile", ctx, file)
@@ -527,8 +527,8 @@ func (m *MockFiles) UploadAndSaveFile(ctx context.Context, file domain.File) (st
 	return ret0, ret1
 }
 
-// UploadImage indicates an expected call of UploadImage
-func (mr *MockFilesMockRecorder) UploadImage(ctx, file interface{}) *gomock.Call {
+// UploadAndSaveFile indicates an expected call of UploadAndSaveFile
+func (mr *MockFilesMockRecorder) UploadAndSaveFile(ctx, file interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UploadAndSaveFile", reflect.TypeOf((*MockFiles)(nil).UploadAndSaveFile), ctx, file)
 }
@@ -1401,18 +1401,19 @@ func (mr *MockOrdersMockRecorder) AddTransaction(ctx, id, transaction interface{
 }
 
 // GetBySchool mocks base method
-func (m *MockOrders) GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Order, error) {
+func (m *MockOrders) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Order, int64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetBySchool", ctx, schoolId)
+	ret := m.ctrl.Call(m, "GetBySchool", ctx, schoolId, pagination)
 	ret0, _ := ret[0].([]domain.Order)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret1, _ := ret[1].(int64)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
 }
 
 // GetBySchool indicates an expected call of GetBySchool
-func (mr *MockOrdersMockRecorder) GetBySchool(ctx, schoolId interface{}) *gomock.Call {
+func (mr *MockOrdersMockRecorder) GetBySchool(ctx, schoolId, pagination interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBySchool", reflect.TypeOf((*MockOrders)(nil).GetBySchool), ctx, schoolId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBySchool", reflect.TypeOf((*MockOrders)(nil).GetBySchool), ctx, schoolId, pagination)
 }
 
 // MockPayments is a mock of Payments interface

@@ -239,7 +239,7 @@ func (s *StudentsService) GetById(ctx context.Context, schoolId, id primitive.Ob
 	return s.repo.GetById(ctx, schoolId, id)
 }
 
-func (s *StudentsService) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Student, error) {
+func (s *StudentsService) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Student, int64,  error) {
 	return s.repo.GetBySchool(ctx, schoolId, pagination)
 }
 

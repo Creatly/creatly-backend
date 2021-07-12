@@ -46,7 +46,7 @@ func (h *Handler) getAllCourses(c *gin.Context) {
 		}
 	}
 
-	c.JSON(http.StatusOK, dataResponse{courses})
+	c.JSON(http.StatusOK, dataResponse{Data: courses})
 }
 
 type getCourseByIdResponse struct {
@@ -193,5 +193,5 @@ func (h *Handler) getCourseOffers(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, dataResponse{offers})
+	c.JSON(http.StatusOK, dataResponse{Data: offers})
 }
