@@ -115,6 +115,15 @@ func (r *StudentsRepo) GiveAccessToCoursesAndModules(ctx context.Context, studen
 	return err
 }
 
+func (r *StudentsRepo) RemoveAccessToCoursesAndModules(ctx context.Context, studentId primitive.ObjectID, courseIds, moduleIds []primitive.ObjectID) error {
+	_, err := r.db.UpdateOne(ctx, bson.M{"_id": studentId}, bson.M{"$pull": bson.M{
+		"availableModules": bson.M{"$in": moduleIds},
+		"availableCourses": bson.M{"$in": courseIds},
+	}})
+
+	return err
+}
+
 func (r *StudentsRepo) Verify(ctx context.Context, code string) error {
 	res, err := r.db.UpdateOne(ctx,
 		bson.M{"verification.code": code},

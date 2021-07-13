@@ -2279,7 +2279,7 @@ var doc = `{
             }
         },
         "/admins/students/{id}/offers/{offerId}": {
-            "post": {
+            "patch": {
                 "security": [
                     {
                         "AdminAuth": []
@@ -2297,6 +2297,15 @@ var doc = `{
                 ],
                 "summary": "Admin Give Student Access to Offer",
                 "parameters": [
+                    {
+                        "description": "permission type",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.manageOfferPermissionInput"
+                        }
+                    },
                     {
                         "type": "string",
                         "description": "student id",
@@ -4167,6 +4176,17 @@ var doc = `{
             "properties": {
                 "id": {
                     "type": "object"
+                }
+            }
+        },
+        "v1.manageOfferPermissionInput": {
+            "type": "object",
+            "required": [
+                "available"
+            ],
+            "properties": {
+                "available": {
+                    "type": "boolean"
                 }
             }
         },
