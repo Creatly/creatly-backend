@@ -6,12 +6,11 @@ package mock_service
 
 import (
 	context "context"
-	reflect "reflect"
-
 	gomock "github.com/golang/mock/gomock"
 	domain "github.com/zhashkevych/creatly-backend/internal/domain"
 	service "github.com/zhashkevych/creatly-backend/internal/service"
 	primitive "go.mongodb.org/mongo-driver/bson/primitive"
+	reflect "reflect"
 )
 
 // MockUsers is a mock of Users interface
@@ -314,6 +313,20 @@ func (m *MockStudents) GiveAccessToPackages(ctx context.Context, studentId primi
 func (mr *MockStudentsMockRecorder) GiveAccessToPackages(ctx, studentId, packageIds interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GiveAccessToPackages", reflect.TypeOf((*MockStudents)(nil).GiveAccessToPackages), ctx, studentId, packageIds)
+}
+
+// RemoveAccessToPackages mocks base method
+func (m *MockStudents) RemoveAccessToPackages(ctx context.Context, studentId primitive.ObjectID, packageIds []primitive.ObjectID) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RemoveAccessToPackages", ctx, studentId, packageIds)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// RemoveAccessToPackages indicates an expected call of RemoveAccessToPackages
+func (mr *MockStudentsMockRecorder) RemoveAccessToPackages(ctx, studentId, packageIds interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveAccessToPackages", reflect.TypeOf((*MockStudents)(nil).RemoveAccessToPackages), ctx, studentId, packageIds)
 }
 
 // GetAvailableCourses mocks base method

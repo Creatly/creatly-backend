@@ -328,6 +328,13 @@ definitions:
       id:
         type: object
     type: object
+  v1.manageOfferPermissionInput:
+    properties:
+      available:
+        type: boolean
+    required:
+    - available
+    type: object
   v1.pages:
     properties:
       confidential:
@@ -1962,11 +1969,17 @@ paths:
       tags:
       - admins-students
   /admins/students/{id}/offers/{offerId}:
-    post:
+    patch:
       consumes:
       - application/json
       description: admin give student access to offer
       parameters:
+      - description: permission type
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.manageOfferPermissionInput'
       - description: student id
         in: path
         name: id

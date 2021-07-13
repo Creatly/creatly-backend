@@ -86,7 +86,7 @@ func (h *Handler) initAdminRoutes(api *gin.RouterGroup) { //nolint:funlen
 				students.GET("", h.adminGetStudents)
 				students.POST("", h.adminCreateStudent)
 				students.GET("/:id", h.adminGetStudentById)
-				students.POST("/:id/offers/:offerId", h.adminGiveAccessToOffer)
+				students.PATCH("/:id/offers/:offerId", h.adminManageOfferPermission)
 			}
 
 			upload := authenticated.Group("/upload")

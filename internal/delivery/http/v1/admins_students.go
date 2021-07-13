@@ -160,21 +160,33 @@ func (h *Handler) adminCreateStudent(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
+type manageOfferPermissionInput struct {
+	Available bool `json:"available"`
+}
+
 // @Summary Admin Give Student Access to Offer
 // @Security AdminAuth
 // @Tags admins-students
 // @Description admin give student access to offer
-// @ModuleID adminGiveAccessToOffer
+// @ModuleID adminManageOfferPermission
 // @Accept  json
 // @Produce  json
+// @Param input body manageOfferPermissionInput true "permission type"
 // @Param id path string true "student id"
 // @Param offerId path string true "offer id"
 // @Success 200 {object} domain.Student
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/students/{id}/offers/{offerId} [post]
-func (h *Handler) adminGiveAccessToOffer(c *gin.Context) {
+// @Router /admins/students/{id}/offers/{offerId} [patch]
+func (h *Handler) adminManageOfferPermission(c *gin.Context) {
+	var inp manageOfferPermissionInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+
+		return
+	}
+
 	studentId, err := parseIdFromPath(c, "id")
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
@@ -196,7 +208,19 @@ func (h *Handler) adminGiveAccessToOffer(c *gin.Context) {
 		return
 	}
 
-	if err := h.services.Students.GiveAccessToPackages(c.Request.Context(), studentId, offer.PackageIDs); err != nil {
+	if inp.Available {
+		if err := h.services.Students.GiveAccessToPackages(c.Request.Context(), studentId, offer.PackageIDs); err != nil {
+			newResponse(c, http.StatusInternalServerError, err.Error())
+
+			return
+		}
+
+		c.Status(http.StatusOK)
+
+		return
+	}
+
+	if err := h.services.Students.RemoveAccessToPackages(c.Request.Context(), studentId, offer.PackageIDs); err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 
 		return

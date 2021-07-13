@@ -216,6 +216,29 @@ func (s *StudentsService) GiveAccessToPackages(ctx context.Context, studentId pr
 	return s.repo.GiveAccessToCoursesAndModules(ctx, studentId, courseIds, moduleIds)
 }
 
+func (s *StudentsService) RemoveAccessToPackages(ctx context.Context, studentId primitive.ObjectID, packageIds []primitive.ObjectID) error {
+	modules, err := s.modulesService.GetByPackages(ctx, packageIds)
+	if err != nil {
+		return err
+	}
+
+	moduleIds := make([]primitive.ObjectID, len(modules))
+	courses := map[primitive.ObjectID]struct{}{}
+
+	for i := range modules {
+		moduleIds[i] = modules[i].ID
+		courses[modules[i].CourseID] = struct{}{}
+	}
+
+	courseIds := make([]primitive.ObjectID, 0)
+
+	for id := range courses {
+		courseIds = append(courseIds, id)
+	}
+
+	return s.repo.RemoveAccessToCoursesAndModules(ctx, studentId, courseIds, moduleIds)
+}
+
 func (s *StudentsService) GetAvailableCourses(ctx context.Context, school domain.School, studentId primitive.ObjectID) ([]domain.Course, error) {
 	student, err := s.repo.GetById(ctx, school.ID, studentId)
 	if err != nil {
