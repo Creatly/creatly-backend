@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/zhashkevych/creatly-backend/internal/service"
+
 	"github.com/gin-gonic/gin"
 	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -108,6 +110,54 @@ func (h *Handler) adminGetStudentById(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, student)
+}
+
+type createStudentInput struct {
+	Name     string `json:"name" binding:"required,min=2"`
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required,min=6"`
+}
+
+// @Summary Admin Create Student
+// @Security AdminAuth
+// @Tags admins-students
+// @Description admin create student
+// @ModuleID adminCreateStudent
+// @Accept  json
+// @Produce  json
+// @Param input body createStudentInput true "student info"
+// @Success 200 {object} domain.Student
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/students [post]
+func (h *Handler) adminCreateStudent(c *gin.Context) {
+	var inp createStudentInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+
+		return
+	}
+
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	if err := h.services.Admins.CreateStudent(c.Request.Context(), service.CreateStudentInput{
+		SchoolID: school.ID,
+		Name:     inp.Name,
+		Email:    inp.Email,
+		Password: inp.Password,
+	}); err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	c.Status(http.StatusOK)
 }
 
 // @Summary Admin Give Student Access to Offer
