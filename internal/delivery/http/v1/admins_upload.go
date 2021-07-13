@@ -3,6 +3,7 @@ package v1
 import (
 	"bytes"
 	"fmt"
+	"github.com/zhashkevych/creatly-backend/pkg/logger"
 	"io"
 	"net/http"
 	"os"
@@ -258,9 +259,11 @@ func (h *Handler) adminUploadVideo(c *gin.Context) { //nolint:funlen
 
 	if _, err := io.Copy(f, bytes.NewReader(buffer)); err != nil {
 		if err := h.services.Files.UpdateStatus(c.Request.Context(), tempFilename, domain.ClientUploadError); err != nil {
-			newResponse(c, http.StatusInternalServerError, "failed to update file status")
+			logger.Error("failed to write chunk to temp file & failed to update file status: %s", err.Error())
+		}
 
-			return
+		if err := os.Remove(tempFilename); err != nil {
+			logger.Error("failed to delete corrupted temp file: %s", err.Error())
 		}
 
 		newResponse(c, http.StatusInternalServerError, "failed to write chunk to temp file")
