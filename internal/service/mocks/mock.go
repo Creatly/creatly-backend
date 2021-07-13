@@ -301,32 +301,32 @@ func (mr *MockStudentsMockRecorder) SetLessonFinished(ctx, studentId, lessonId i
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetLessonFinished", reflect.TypeOf((*MockStudents)(nil).SetLessonFinished), ctx, studentId, lessonId)
 }
 
-// GiveAccessToPackages mocks base method
-func (m *MockStudents) GiveAccessToPackages(ctx context.Context, studentId primitive.ObjectID, packageIds []primitive.ObjectID) error {
+// GiveAccessToOffer mocks base method
+func (m *MockStudents) GiveAccessToOffer(ctx context.Context, studentId primitive.ObjectID, offer domain.Offer) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GiveAccessToPackages", ctx, studentId, packageIds)
+	ret := m.ctrl.Call(m, "GiveAccessToOffer", ctx, studentId, offer)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// GiveAccessToPackages indicates an expected call of GiveAccessToPackages
-func (mr *MockStudentsMockRecorder) GiveAccessToPackages(ctx, studentId, packageIds interface{}) *gomock.Call {
+// GiveAccessToOffer indicates an expected call of GiveAccessToOffer
+func (mr *MockStudentsMockRecorder) GiveAccessToOffer(ctx, studentId, offer interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GiveAccessToPackages", reflect.TypeOf((*MockStudents)(nil).GiveAccessToPackages), ctx, studentId, packageIds)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GiveAccessToOffer", reflect.TypeOf((*MockStudents)(nil).GiveAccessToOffer), ctx, studentId, offer)
 }
 
-// RemoveAccessToPackages mocks base method
-func (m *MockStudents) RemoveAccessToPackages(ctx context.Context, studentId primitive.ObjectID, packageIds []primitive.ObjectID) error {
+// RemoveAccessToOffer mocks base method
+func (m *MockStudents) RemoveAccessToOffer(ctx context.Context, studentId primitive.ObjectID, offer domain.Offer) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RemoveAccessToPackages", ctx, studentId, packageIds)
+	ret := m.ctrl.Call(m, "RemoveAccessToOffer", ctx, studentId, offer)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// RemoveAccessToPackages indicates an expected call of RemoveAccessToPackages
-func (mr *MockStudentsMockRecorder) RemoveAccessToPackages(ctx, studentId, packageIds interface{}) *gomock.Call {
+// RemoveAccessToOffer indicates an expected call of RemoveAccessToOffer
+func (mr *MockStudentsMockRecorder) RemoveAccessToOffer(ctx, studentId, offer interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveAccessToPackages", reflect.TypeOf((*MockStudents)(nil).RemoveAccessToPackages), ctx, studentId, packageIds)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveAccessToOffer", reflect.TypeOf((*MockStudents)(nil).RemoveAccessToOffer), ctx, studentId, offer)
 }
 
 // GetAvailableCourses mocks base method

@@ -106,19 +106,21 @@ func (r *StudentsRepo) GiveAccessToCourseAndModule(ctx context.Context, studentI
 	return err
 }
 
-func (r *StudentsRepo) GiveAccessToCoursesAndModules(ctx context.Context, studentId primitive.ObjectID, courseIds, moduleIds []primitive.ObjectID) error {
+func (r *StudentsRepo) AttachOffer(ctx context.Context, studentId, offerId primitive.ObjectID, courseIds, moduleIds []primitive.ObjectID) error {
 	_, err := r.db.UpdateOne(ctx, bson.M{"_id": studentId}, bson.M{"$addToSet": bson.M{
 		"availableModules": bson.M{"$each": moduleIds},
 		"availableCourses": bson.M{"$each": courseIds},
+		"availableOffers":  offerId,
 	}})
 
 	return err
 }
 
-func (r *StudentsRepo) RemoveAccessToCoursesAndModules(ctx context.Context, studentId primitive.ObjectID, courseIds, moduleIds []primitive.ObjectID) error {
+func (r *StudentsRepo) DetachOffer(ctx context.Context, studentId, offerId primitive.ObjectID, courseIds, moduleIds []primitive.ObjectID) error {
 	_, err := r.db.UpdateOne(ctx, bson.M{"_id": studentId}, bson.M{"$pull": bson.M{
 		"availableModules": bson.M{"$in": moduleIds},
 		"availableCourses": bson.M{"$in": courseIds},
+		"availableOffers":  offerId,
 	}})
 
 	return err

@@ -77,7 +77,7 @@ func (s *PaymentsService) processFondyCallback(ctx context.Context, callback fon
 		logger.Errorf("failed to send email after purchase: %s", err.Error())
 	}
 
-	return s.studentsService.GiveAccessToPackages(ctx, order.Student.ID, offer.PackageIDs)
+	return s.studentsService.GiveAccessToOffer(ctx, order.Student.ID, offer)
 }
 
 func createTransaction(callbackData fondy.Callback) (domain.Transaction, error) {

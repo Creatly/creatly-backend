@@ -209,7 +209,7 @@ func (h *Handler) adminManageOfferPermission(c *gin.Context) {
 	}
 
 	if inp.Available {
-		if err := h.services.Students.GiveAccessToPackages(c.Request.Context(), studentId, offer.PackageIDs); err != nil {
+		if err := h.services.Students.GiveAccessToOffer(c.Request.Context(), studentId, offer); err != nil {
 			newResponse(c, http.StatusInternalServerError, err.Error())
 
 			return
@@ -220,7 +220,7 @@ func (h *Handler) adminManageOfferPermission(c *gin.Context) {
 		return
 	}
 
-	if err := h.services.Students.RemoveAccessToPackages(c.Request.Context(), studentId, offer.PackageIDs); err != nil {
+	if err := h.services.Students.RemoveAccessToOffer(c.Request.Context(), studentId, offer); err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 
 		return
