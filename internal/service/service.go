@@ -100,11 +100,19 @@ type StudentLessons interface {
 	SetLastOpened(ctx context.Context, studentId, lessonId primitive.ObjectID) error
 }
 
+type CreateStudentInput struct {
+	Name     string
+	Email    string
+	Password string
+	SchoolID primitive.ObjectID
+}
+
 type Admins interface {
 	SignIn(ctx context.Context, input SchoolSignInInput) (Tokens, error)
 	RefreshTokens(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (Tokens, error)
 	GetCourses(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Course, error)
 	GetCourseById(ctx context.Context, schoolId, courseId primitive.ObjectID) (domain.Course, error)
+	CreateStudent(ctx context.Context, inp CreateStudentInput) error
 }
 
 type UploadInput struct {
@@ -365,10 +373,11 @@ func NewServices(deps Deps) *Services {
 		Modules:        modulesService,
 		Payments:       NewPaymentsService(deps.PaymentProvider, ordersService, offersService, studentsService, emailsService),
 		Orders:         ordersService,
-		Admins:         NewAdminsService(deps.Hasher, deps.TokenManager, deps.Repos.Admins, deps.Repos.Schools, deps.AccessTokenTTL, deps.RefreshTokenTTL),
-		Packages:       packagesService,
-		Lessons:        lessonsService,
-		Files:          NewFilesService(deps.Repos.Files, deps.StorageProvider, deps.Environment),
-		Users:          usersService,
+		Admins: NewAdminsService(deps.Hasher, deps.TokenManager, deps.Repos.Admins, deps.Repos.Schools, deps.Repos.Students,
+			deps.AccessTokenTTL, deps.RefreshTokenTTL),
+		Packages: packagesService,
+		Lessons:  lessonsService,
+		Files:    NewFilesService(deps.Repos.Files, deps.StorageProvider, deps.Environment),
+		Users:    usersService,
 	}
 }

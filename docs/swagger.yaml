@@ -303,6 +303,19 @@ definitions:
     required:
     - name
     type: object
+  v1.createStudentInput:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - name
+    - password
+    type: object
   v1.dataResponse:
     properties:
       count:
@@ -1868,6 +1881,45 @@ paths:
       security:
       - AdminAuth: []
       summary: Admin Get Students
+      tags:
+      - admins-students
+    post:
+      consumes:
+      - application/json
+      description: admin create student
+      parameters:
+      - description: student info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.createStudentInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Student'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Create Student
       tags:
       - admins-students
   /admins/students/{id}:

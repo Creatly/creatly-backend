@@ -6,11 +6,12 @@ package mock_service
 
 import (
 	context "context"
+	reflect "reflect"
+
 	gomock "github.com/golang/mock/gomock"
 	domain "github.com/zhashkevych/creatly-backend/internal/domain"
 	service "github.com/zhashkevych/creatly-backend/internal/service"
 	primitive "go.mongodb.org/mongo-driver/bson/primitive"
-	reflect "reflect"
 )
 
 // MockUsers is a mock of Users interface
@@ -493,6 +494,20 @@ func (m *MockAdmins) GetCourseById(ctx context.Context, schoolId, courseId primi
 func (mr *MockAdminsMockRecorder) GetCourseById(ctx, schoolId, courseId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCourseById", reflect.TypeOf((*MockAdmins)(nil).GetCourseById), ctx, schoolId, courseId)
+}
+
+// CreateStudent mocks base method
+func (m *MockAdmins) CreateStudent(ctx context.Context, inp service.CreateStudentInput) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateStudent", ctx, inp)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateStudent indicates an expected call of CreateStudent
+func (mr *MockAdminsMockRecorder) CreateStudent(ctx, inp interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateStudent", reflect.TypeOf((*MockAdmins)(nil).CreateStudent), ctx, inp)
 }
 
 // MockFiles is a mock of Files interface

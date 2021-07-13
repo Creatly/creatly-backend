@@ -26,12 +26,14 @@ func mockAdminService(t *testing.T) (*service.AdminsService, *mock_repository.Mo
 
 	adminRepo := mock_repository.NewMockAdmins(mockCtl)
 	schoolsRepo := mock_repository.NewMockSchools(mockCtl)
+	studentsRepo := mock_repository.NewMockStudents(mockCtl)
 
 	adminService := service.NewAdminsService(
 		&hash.SHA1Hasher{},
 		&auth.Manager{},
 		adminRepo,
 		schoolsRepo,
+		studentsRepo,
 		1*time.Minute,
 		1*time.Minute,
 	)

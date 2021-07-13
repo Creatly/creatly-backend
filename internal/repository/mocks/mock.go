@@ -6,11 +6,12 @@ package mock_repository
 
 import (
 	context "context"
+	reflect "reflect"
+
 	gomock "github.com/golang/mock/gomock"
 	domain "github.com/zhashkevych/creatly-backend/internal/domain"
 	repository "github.com/zhashkevych/creatly-backend/internal/repository"
 	primitive "go.mongodb.org/mongo-driver/bson/primitive"
-	reflect "reflect"
 )
 
 // MockUsers is a mock of Users interface
