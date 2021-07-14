@@ -47,8 +47,8 @@ type Students interface {
 	GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Student, int64, error)
 	SetSession(ctx context.Context, studentId primitive.ObjectID, session domain.Session) error
 	GiveAccessToCourseAndModule(ctx context.Context, studentId, courseId, moduleId primitive.ObjectID) error
-	GiveAccessToCoursesAndModules(ctx context.Context, studentId primitive.ObjectID, courseIds, moduleIds []primitive.ObjectID) error
-	RemoveAccessToCoursesAndModules(ctx context.Context, studentId primitive.ObjectID, courseIds, moduleIds []primitive.ObjectID) error
+	AttachOffer(ctx context.Context, studentId, offerId primitive.ObjectID, courseIds, moduleIds []primitive.ObjectID) error
+	DetachOffer(ctx context.Context, studentId, offerId primitive.ObjectID, courseIds, moduleIds []primitive.ObjectID) error
 	Verify(ctx context.Context, code string) error
 }
 

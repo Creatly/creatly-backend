@@ -16,6 +16,7 @@ type Student struct {
 	SchoolID         primitive.ObjectID   `json:"schoolId" bson:"schoolId"`
 	AvailableModules []primitive.ObjectID `json:"availableModules" bson:"availableModules,omitempty"`
 	AvailableCourses []primitive.ObjectID `json:"availableCourses" bson:"availableCourses,omitempty"`
+	AvailableOffers  []primitive.ObjectID `json:"availableOffers" bson:"availableOffers,omitempty"`
 	Verification     Verification         `json:"verification" bson:"verification"`
 	Session          Session              `json:"session" bson:"session,omitempty"`
 }

@@ -193,8 +193,8 @@ func (s *StudentsService) SetLessonFinished(ctx context.Context, studentId, less
 	return nil
 }
 
-func (s *StudentsService) GiveAccessToPackages(ctx context.Context, studentId primitive.ObjectID, packageIds []primitive.ObjectID) error {
-	modules, err := s.modulesService.GetByPackages(ctx, packageIds)
+func (s *StudentsService) GiveAccessToOffer(ctx context.Context, studentId primitive.ObjectID, offer domain.Offer) error {
+	modules, err := s.modulesService.GetByPackages(ctx, offer.PackageIDs)
 	if err != nil {
 		return err
 	}
@@ -213,11 +213,11 @@ func (s *StudentsService) GiveAccessToPackages(ctx context.Context, studentId pr
 		courseIds = append(courseIds, id)
 	}
 
-	return s.repo.GiveAccessToCoursesAndModules(ctx, studentId, courseIds, moduleIds)
+	return s.repo.AttachOffer(ctx, studentId, offer.ID, courseIds, moduleIds)
 }
 
-func (s *StudentsService) RemoveAccessToPackages(ctx context.Context, studentId primitive.ObjectID, packageIds []primitive.ObjectID) error {
-	modules, err := s.modulesService.GetByPackages(ctx, packageIds)
+func (s *StudentsService) RemoveAccessToOffer(ctx context.Context, studentId primitive.ObjectID, offer domain.Offer) error {
+	modules, err := s.modulesService.GetByPackages(ctx, offer.PackageIDs)
 	if err != nil {
 		return err
 	}
@@ -236,7 +236,7 @@ func (s *StudentsService) RemoveAccessToPackages(ctx context.Context, studentId 
 		courseIds = append(courseIds, id)
 	}
 
-	return s.repo.RemoveAccessToCoursesAndModules(ctx, studentId, courseIds, moduleIds)
+	return s.repo.DetachOffer(ctx, studentId, offer.ID, courseIds, moduleIds)
 }
 
 func (s *StudentsService) GetAvailableCourses(ctx context.Context, school domain.School, studentId primitive.ObjectID) ([]domain.Course, error) {
