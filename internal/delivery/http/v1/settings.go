@@ -10,6 +10,7 @@ import (
 
 type schoolSettingsResponse struct {
 	Name        string          `json:"name"`
+	Subtitle    string          `json:"subtitle"`
 	Description string          `json:"description"`
 	Settings    domain.Settings `json:"settings"`
 }
@@ -34,6 +35,7 @@ func (h *Handler) getSchoolSettings(c *gin.Context) {
 
 	c.JSON(http.StatusOK, schoolSettingsResponse{
 		Name:        school.Name,
+		Subtitle:    school.Subtitle,
 		Description: school.Description,
 		Settings:    school.Settings,
 	})

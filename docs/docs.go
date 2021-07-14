@@ -3884,6 +3884,9 @@ var doc = `{
                 },
                 "settings": {
                     "$ref": "#/definitions/domain.Settings"
+                },
+                "subtitle": {
+                    "type": "string"
                 }
             }
         },
@@ -3913,6 +3916,9 @@ var doc = `{
                         "type": "string"
                     }
                 },
+                "logo": {
+                    "type": "string"
+                },
                 "pages": {
                     "$ref": "#/definitions/domain.Pages"
                 },
@@ -3931,6 +3937,12 @@ var doc = `{
                     }
                 },
                 "availableModules": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "availableOffers": {
                     "type": "array",
                     "items": {
                         "type": "string"
@@ -4181,9 +4193,6 @@ var doc = `{
         },
         "v1.manageOfferPermissionInput": {
             "type": "object",
-            "required": [
-                "available"
-            ],
             "properties": {
                 "available": {
                     "type": "boolean"

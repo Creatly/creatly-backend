@@ -3869,6 +3869,9 @@
                 },
                 "settings": {
                     "$ref": "#/definitions/domain.Settings"
+                },
+                "subtitle": {
+                    "type": "string"
                 }
             }
         },
@@ -3898,6 +3901,9 @@
                         "type": "string"
                     }
                 },
+                "logo": {
+                    "type": "string"
+                },
                 "pages": {
                     "$ref": "#/definitions/domain.Pages"
                 },
@@ -3916,6 +3922,12 @@
                     }
                 },
                 "availableModules": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "availableOffers": {
                     "type": "array",
                     "items": {
                         "type": "string"
@@ -4166,9 +4178,6 @@
         },
         "v1.manageOfferPermissionInput": {
             "type": "object",
-            "required": [
-                "available"
-            ],
             "properties": {
                 "available": {
                     "type": "boolean"
