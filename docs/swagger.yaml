@@ -373,6 +373,17 @@ definitions:
       message:
         type: string
     type: object
+  v1.schoolSettingsResponse:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      settings:
+        $ref: '#/definitions/domain.Settings'
+      subtitle:
+        type: string
+    type: object
   v1.signInInput:
     properties:
       email:
@@ -2292,7 +2303,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.Settings'
+            $ref: '#/definitions/v1.schoolSettingsResponse'
         "400":
           description: Bad Request
           schema:

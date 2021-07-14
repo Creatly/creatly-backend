@@ -2767,7 +2767,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Settings"
+                            "$ref": "#/definitions/v1.schoolSettingsResponse"
                         }
                     },
                     "400": {
@@ -4244,6 +4244,23 @@ var doc = `{
             "type": "object",
             "properties": {
                 "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.schoolSettingsResponse": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "settings": {
+                    "$ref": "#/definitions/domain.Settings"
+                },
+                "subtitle": {
                     "type": "string"
                 }
             }

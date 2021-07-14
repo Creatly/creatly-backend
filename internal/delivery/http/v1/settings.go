@@ -20,7 +20,7 @@ type schoolSettingsResponse struct {
 // @Description school get settings
 // @ModuleID getSchoolSettings
 // @Produce  json
-// @Success 200 {object} domain.Settings
+// @Success 200 {object} schoolSettingsResponse
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
