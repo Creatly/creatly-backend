@@ -136,6 +136,8 @@ definitions:
         type: string
       settings:
         $ref: '#/definitions/domain.Settings'
+      subtitle:
+        type: string
     type: object
   domain.Session:
     properties:
@@ -154,6 +156,8 @@ definitions:
         items:
           type: string
         type: array
+      logo:
+        type: string
       pages:
         $ref: '#/definitions/domain.Pages'
       showPaymentImages:
@@ -166,6 +170,10 @@ definitions:
           type: string
         type: array
       availableModules:
+        items:
+          type: string
+        type: array
+      availableOffers:
         items:
           type: string
         type: array
@@ -332,8 +340,6 @@ definitions:
     properties:
       available:
         type: boolean
-    required:
-    - available
     type: object
   v1.pages:
     properties:
@@ -365,6 +371,17 @@ definitions:
   v1.response:
     properties:
       message:
+        type: string
+    type: object
+  v1.schoolSettingsResponse:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      settings:
+        $ref: '#/definitions/domain.Settings'
+      subtitle:
         type: string
     type: object
   v1.signInInput:
@@ -2286,7 +2303,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.Settings'
+            $ref: '#/definitions/v1.schoolSettingsResponse'
         "400":
           description: Bad Request
           schema:
