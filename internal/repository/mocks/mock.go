@@ -6,12 +6,11 @@ package mock_repository
 
 import (
 	context "context"
-	reflect "reflect"
-
 	gomock "github.com/golang/mock/gomock"
 	domain "github.com/zhashkevych/creatly-backend/internal/domain"
 	repository "github.com/zhashkevych/creatly-backend/internal/repository"
 	primitive "go.mongodb.org/mongo-driver/bson/primitive"
+	reflect "reflect"
 )
 
 // MockUsers is a mock of Users interface
@@ -317,46 +316,46 @@ func (mr *MockStudentsMockRecorder) SetSession(ctx, studentId, session interface
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetSession", reflect.TypeOf((*MockStudents)(nil).SetSession), ctx, studentId, session)
 }
 
-// GiveAccessToCourseAndModule mocks base method
-func (m *MockStudents) GiveAccessToCourseAndModule(ctx context.Context, studentId, courseId, moduleId primitive.ObjectID) error {
+// GiveAccessToModule mocks base method
+func (m *MockStudents) GiveAccessToModule(ctx context.Context, studentId, moduleId primitive.ObjectID) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GiveAccessToCourseAndModule", ctx, studentId, courseId, moduleId)
+	ret := m.ctrl.Call(m, "GiveAccessToModule", ctx, studentId, moduleId)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// GiveAccessToCourseAndModule indicates an expected call of GiveAccessToCourseAndModule
-func (mr *MockStudentsMockRecorder) GiveAccessToCourseAndModule(ctx, studentId, courseId, moduleId interface{}) *gomock.Call {
+// GiveAccessToModule indicates an expected call of GiveAccessToModule
+func (mr *MockStudentsMockRecorder) GiveAccessToModule(ctx, studentId, moduleId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GiveAccessToCourseAndModule", reflect.TypeOf((*MockStudents)(nil).GiveAccessToCourseAndModule), ctx, studentId, courseId, moduleId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GiveAccessToModule", reflect.TypeOf((*MockStudents)(nil).GiveAccessToModule), ctx, studentId, moduleId)
 }
 
 // AttachOffer mocks base method
-func (m *MockStudents) AttachOffer(ctx context.Context, studentId, offerId primitive.ObjectID, courseIds, moduleIds []primitive.ObjectID) error {
+func (m *MockStudents) AttachOffer(ctx context.Context, studentId, offerId primitive.ObjectID, moduleIds []primitive.ObjectID) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AttachOffer", ctx, studentId, offerId, courseIds, moduleIds)
+	ret := m.ctrl.Call(m, "AttachOffer", ctx, studentId, offerId, moduleIds)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // AttachOffer indicates an expected call of AttachOffer
-func (mr *MockStudentsMockRecorder) AttachOffer(ctx, studentId, offerId, courseIds, moduleIds interface{}) *gomock.Call {
+func (mr *MockStudentsMockRecorder) AttachOffer(ctx, studentId, offerId, moduleIds interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AttachOffer", reflect.TypeOf((*MockStudents)(nil).AttachOffer), ctx, studentId, offerId, courseIds, moduleIds)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AttachOffer", reflect.TypeOf((*MockStudents)(nil).AttachOffer), ctx, studentId, offerId, moduleIds)
 }
 
 // DetachOffer mocks base method
-func (m *MockStudents) DetachOffer(ctx context.Context, studentId, offerId primitive.ObjectID, courseIds, moduleIds []primitive.ObjectID) error {
+func (m *MockStudents) DetachOffer(ctx context.Context, studentId, offerId primitive.ObjectID, moduleIds []primitive.ObjectID) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DetachOffer", ctx, studentId, offerId, courseIds, moduleIds)
+	ret := m.ctrl.Call(m, "DetachOffer", ctx, studentId, offerId, moduleIds)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // DetachOffer indicates an expected call of DetachOffer
-func (mr *MockStudentsMockRecorder) DetachOffer(ctx, studentId, offerId, courseIds, moduleIds interface{}) *gomock.Call {
+func (mr *MockStudentsMockRecorder) DetachOffer(ctx, studentId, offerId, moduleIds interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DetachOffer", reflect.TypeOf((*MockStudents)(nil).DetachOffer), ctx, studentId, offerId, courseIds, moduleIds)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DetachOffer", reflect.TypeOf((*MockStudents)(nil).DetachOffer), ctx, studentId, offerId, moduleIds)
 }
 
 // Verify mocks base method
