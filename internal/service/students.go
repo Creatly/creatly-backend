@@ -156,7 +156,7 @@ func (s *StudentsService) GetModuleLessons(ctx context.Context, schoolId, studen
 	}
 
 	// If module has no offers - it's free and available to everyone
-	if err := s.repo.GiveAccessToCourseAndModule(ctx, studentId, module.CourseID, moduleId); err != nil {
+	if err := s.repo.GiveAccessToModule(ctx, studentId, moduleId); err != nil {
 		return nil, err
 	}
 
@@ -200,20 +200,12 @@ func (s *StudentsService) GiveAccessToOffer(ctx context.Context, studentId primi
 	}
 
 	moduleIds := make([]primitive.ObjectID, len(modules))
-	courses := map[primitive.ObjectID]struct{}{}
 
 	for i := range modules {
 		moduleIds[i] = modules[i].ID
-		courses[modules[i].CourseID] = struct{}{}
 	}
 
-	courseIds := make([]primitive.ObjectID, 0)
-
-	for id := range courses {
-		courseIds = append(courseIds, id)
-	}
-
-	return s.repo.AttachOffer(ctx, studentId, offer.ID, courseIds, moduleIds)
+	return s.repo.AttachOffer(ctx, studentId, offer.ID, moduleIds)
 }
 
 func (s *StudentsService) RemoveAccessToOffer(ctx context.Context, studentId primitive.ObjectID, offer domain.Offer) error {
@@ -223,39 +215,12 @@ func (s *StudentsService) RemoveAccessToOffer(ctx context.Context, studentId pri
 	}
 
 	moduleIds := make([]primitive.ObjectID, len(modules))
-	courses := map[primitive.ObjectID]struct{}{}
 
 	for i := range modules {
 		moduleIds[i] = modules[i].ID
-		courses[modules[i].CourseID] = struct{}{}
 	}
 
-	courseIds := make([]primitive.ObjectID, 0)
-
-	for id := range courses {
-		courseIds = append(courseIds, id)
-	}
-
-	return s.repo.DetachOffer(ctx, studentId, offer.ID, courseIds, moduleIds)
-}
-
-func (s *StudentsService) GetAvailableCourses(ctx context.Context, school domain.School, studentId primitive.ObjectID) ([]domain.Course, error) {
-	student, err := s.repo.GetById(ctx, school.ID, studentId)
-	if err != nil {
-		return nil, err
-	}
-
-	courses := make([]domain.Course, 0)
-
-	for _, id := range student.AvailableCourses {
-		for _, course := range school.Courses {
-			if id == course.ID {
-				courses = append(courses, course)
-			}
-		}
-	}
-
-	return courses, nil
+	return s.repo.DetachOffer(ctx, studentId, offer.ID, moduleIds)
 }
 
 func (s *StudentsService) GetById(ctx context.Context, schoolId, id primitive.ObjectID) (domain.Student, error) {
