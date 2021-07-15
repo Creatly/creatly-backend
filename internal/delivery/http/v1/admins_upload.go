@@ -61,6 +61,10 @@ func (cr *contentRange) initialUploadRequest() bool {
 	return cr.rangeStart == 0
 }
 
+func (cr *contentRange) chunkSize() int64 {
+	return cr.rangeEnd - cr.rangeStart
+}
+
 func (cr *contentRange) validSize(maxSize int64) bool {
 	return cr.fileSize <= maxSize
 }
@@ -203,7 +207,8 @@ func (h *Handler) adminUploadVideo(c *gin.Context) { //nolint:funlen
 		return
 	}
 
-	buffer := make([]byte, fileHeader.Size)
+	logger.Infof("chunk size: %d", rangeInfo.chunkSize())
+	buffer := make([]byte, rangeInfo.chunkSize())
 
 	if _, err = file.Read(buffer); err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
@@ -237,6 +242,20 @@ func (h *Handler) adminUploadVideo(c *gin.Context) { //nolint:funlen
 
 	defer f.Close()
 
+	if _, err := io.Copy(f, bytes.NewReader(buffer)); err != nil {
+		if err := h.services.Files.UpdateStatus(c.Request.Context(), tempFilename, domain.ClientUploadError); err != nil {
+			logger.Errorf("failed to write chunk to temp file & failed to update file status: %s", err.Error())
+		}
+
+		if err := os.Remove(tempFilename); err != nil {
+			logger.Errorf("failed to delete corrupted temp file: %s", err.Error())
+		}
+
+		newResponse(c, http.StatusInternalServerError, "failed to write chunk to temp file")
+
+		return
+	}
+
 	if rangeInfo.initialUploadRequest() {
 		id, err := h.services.Files.Save(c.Request.Context(), domain.File{
 			Type:            domain.Video,
@@ -254,20 +273,6 @@ func (h *Handler) adminUploadVideo(c *gin.Context) { //nolint:funlen
 		}
 
 		c.JSON(http.StatusCreated, &uploadVideoResponse{ID: id.Hex()})
-
-		return
-	}
-
-	if _, err := io.Copy(f, bytes.NewReader(buffer)); err != nil {
-		if err := h.services.Files.UpdateStatus(c.Request.Context(), tempFilename, domain.ClientUploadError); err != nil {
-			logger.Errorf("failed to write chunk to temp file & failed to update file status: %s", err.Error())
-		}
-
-		if err := os.Remove(tempFilename); err != nil {
-			logger.Errorf("failed to delete corrupted temp file: %s", err.Error())
-		}
-
-		newResponse(c, http.StatusInternalServerError, "failed to write chunk to temp file")
 
 		return
 	}
