@@ -75,18 +75,23 @@ func (r *StudentsRepo) GetById(ctx context.Context, schoolId, id primitive.Objec
 	return student, nil
 }
 
-func (r *StudentsRepo) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Student, error) {
+func (r *StudentsRepo) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Student, int64, error) {
 	opts := getPaginationOpts(pagination)
+	filter := bson.M{"schoolId": schoolId}
 
-	cur, err := r.db.Find(ctx, bson.M{"schoolId": schoolId}, opts)
+	cur, err := r.db.Find(ctx, filter, opts)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
 	var students []domain.Student
-	err = cur.All(ctx, &students)
+	if err := cur.All(ctx, &students); err != nil {
+		return nil, 0, err
+	}
 
-	return students, err
+	count, err := r.db.CountDocuments(ctx, filter)
+
+	return students, count, err
 }
 
 func (r *StudentsRepo) SetSession(ctx context.Context, studentId primitive.ObjectID, session domain.Session) error {
@@ -95,16 +100,25 @@ func (r *StudentsRepo) SetSession(ctx context.Context, studentId primitive.Objec
 	return err
 }
 
-func (r *StudentsRepo) GiveAccessToCourseAndModule(ctx context.Context, studentId, courseId, moduleId primitive.ObjectID) error {
-	_, err := r.db.UpdateOne(ctx, bson.M{"_id": studentId}, bson.M{"$addToSet": bson.M{"availableModules": moduleId, "availableCourses": courseId}})
+func (r *StudentsRepo) GiveAccessToModule(ctx context.Context, studentId, moduleId primitive.ObjectID) error {
+	_, err := r.db.UpdateOne(ctx, bson.M{"_id": studentId}, bson.M{"$addToSet": bson.M{"availableModules": moduleId}})
 
 	return err
 }
 
-func (r *StudentsRepo) GiveAccessToCoursesAndModules(ctx context.Context, studentId primitive.ObjectID, courseIds, moduleIds []primitive.ObjectID) error {
+func (r *StudentsRepo) AttachOffer(ctx context.Context, studentId, offerId primitive.ObjectID, moduleIds []primitive.ObjectID) error {
 	_, err := r.db.UpdateOne(ctx, bson.M{"_id": studentId}, bson.M{"$addToSet": bson.M{
 		"availableModules": bson.M{"$each": moduleIds},
-		"availableCourses": bson.M{"$each": courseIds},
+		"availableOffers":  offerId,
+	}})
+
+	return err
+}
+
+func (r *StudentsRepo) DetachOffer(ctx context.Context, studentId, offerId primitive.ObjectID, moduleIds []primitive.ObjectID) error {
+	_, err := r.db.UpdateOne(ctx, bson.M{"_id": studentId}, bson.M{"$pull": bson.M{
+		"availableModules": bson.M{"$in": moduleIds},
+		"availableOffers":  offerId,
 	}})
 
 	return err

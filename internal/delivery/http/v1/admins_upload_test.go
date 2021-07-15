@@ -9,6 +9,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -58,7 +59,7 @@ func TestHandler_adminUploadImage(t *testing.T) {
 					return err
 				}
 
-				r.EXPECT().UploadImage(context.Background(), domain.File{
+				r.EXPECT().UploadAndSaveFile(context.Background(), domain.File{
 					Type:        domain.Image,
 					Name:        fmt.Sprintf("%s-image.jpg", school.ID.Hex()),
 					ContentType: contentType,
@@ -91,7 +92,7 @@ func TestHandler_adminUploadImage(t *testing.T) {
 					return err
 				}
 
-				r.EXPECT().UploadImage(context.Background(), domain.File{
+				r.EXPECT().UploadAndSaveFile(context.Background(), domain.File{
 					Type:        domain.Image,
 					Name:        fmt.Sprintf("%s-image.png", school.ID.Hex()),
 					ContentType: contentType,
@@ -169,6 +170,11 @@ func TestHandler_adminUploadImage(t *testing.T) {
 			// Assert
 			assert.Equal(t, w.Code, tt.statusCode)
 			assert.Equal(t, w.Body.String(), tt.responseBody)
+
+			// Remove files
+			filenameParts := strings.Split(tt.filePath, "/")
+			filename := fmt.Sprintf("%s-%s", school.ID.Hex(), filenameParts[len(filenameParts)-1])
+			os.Remove(filename)
 		})
 	}
 }

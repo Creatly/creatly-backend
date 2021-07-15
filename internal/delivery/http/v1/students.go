@@ -20,7 +20,6 @@ func (h *Handler) initStudentsRoutes(api *gin.RouterGroup) {
 
 		authenticated := students.Group("/", h.studentIdentity)
 		{
-			authenticated.GET("/courses", h.studentGetCourses)
 			authenticated.GET("/modules/:id/lessons", h.studentGetModuleLessons)
 			authenticated.GET("/modules/:id/offers", h.studentGetModuleOffers)
 			authenticated.POST("/lessons/:id/finished", h.studentSetLessonFinished)
@@ -284,7 +283,7 @@ func (h *Handler) studentGetModuleLessons(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, dataResponse{lessons})
+	c.JSON(http.StatusOK, dataResponse{Data: lessons})
 }
 
 // @Summary Student Set Lesson As Finished By LessonID
@@ -401,7 +400,7 @@ func (h *Handler) studentGetModuleOffers(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, dataResponse{toStudentOffers(offers)})
+	c.JSON(http.StatusOK, dataResponse{Data: toStudentOffers(offers)})
 }
 
 type createOrderInput struct {
@@ -476,43 +475,6 @@ func (h *Handler) studentCreateOrder(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, createOrderResponse{paymentLink})
-}
-
-// @Summary Student Get Opened Courses
-// @Security StudentsAuth
-// @Tags students-courses
-// @Description student get opened courses
-// @ModuleID studentGetCourses
-// @Accept  json
-// @Produce  json
-// @Success 200 {object} dataResponse
-// @Failure 400,404 {object} response
-// @Failure 500 {object} response
-// @Failure default {object} response
-// @Router /students/courses/ [get]
-func (h *Handler) studentGetCourses(c *gin.Context) {
-	school, err := getSchoolFromContext(c)
-	if err != nil {
-		newResponse(c, http.StatusInternalServerError, err.Error())
-
-		return
-	}
-
-	studentId, err := getStudentId(c)
-	if err != nil {
-		newResponse(c, http.StatusInternalServerError, err.Error())
-
-		return
-	}
-
-	courses, err := h.services.Students.GetAvailableCourses(c.Request.Context(), school, studentId)
-	if err != nil {
-		newResponse(c, http.StatusInternalServerError, err.Error())
-
-		return
-	}
-
-	c.JSON(http.StatusOK, dataResponse{courses})
 }
 
 type studentAccountResponse struct {

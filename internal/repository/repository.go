@@ -44,10 +44,11 @@ type Students interface {
 	GetByCredentials(ctx context.Context, schoolId primitive.ObjectID, email, password string) (domain.Student, error)
 	GetByRefreshToken(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (domain.Student, error)
 	GetById(ctx context.Context, schoolId, id primitive.ObjectID) (domain.Student, error)
-	GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Student, error)
+	GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Student, int64, error)
 	SetSession(ctx context.Context, studentId primitive.ObjectID, session domain.Session) error
-	GiveAccessToCourseAndModule(ctx context.Context, studentId, courseId, moduleId primitive.ObjectID) error
-	GiveAccessToCoursesAndModules(ctx context.Context, studentId primitive.ObjectID, courseIds, moduleIds []primitive.ObjectID) error
+	GiveAccessToModule(ctx context.Context, studentId, moduleId primitive.ObjectID) error
+	AttachOffer(ctx context.Context, studentId, offerId primitive.ObjectID, moduleIds []primitive.ObjectID) error
+	DetachOffer(ctx context.Context, studentId, offerId primitive.ObjectID, moduleIds []primitive.ObjectID) error
 	Verify(ctx context.Context, code string) error
 }
 
@@ -174,7 +175,7 @@ type PromoCodes interface {
 type Orders interface {
 	Create(ctx context.Context, order domain.Order) error
 	AddTransaction(ctx context.Context, id primitive.ObjectID, transaction domain.Transaction) (domain.Order, error)
-	GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Order, error)
+	GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Order, int64, error)
 }
 
 type Files interface {

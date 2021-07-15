@@ -9,6 +9,7 @@ import (
 type School struct {
 	ID           primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	Name         string             `json:"name" bson:"name"`
+	Subtitle     string             `json:"subtitle" bson:"subtitle,omitempty"`
 	Description  string             `json:"description" bson:"description,omitempty"`
 	RegisteredAt time.Time          `json:"registeredAt" bson:"registeredAtm,omitempty"`
 	Admins       []Admin            `json:"admins" bson:"admins,omitempty"`
@@ -22,6 +23,7 @@ type Settings struct {
 	ContactInfo       ContactInfo `json:"contactInfo" bson:"contactInfo,omitempty"`
 	Pages             Pages       `json:"pages" bson:"pages,omitempty"`
 	ShowPaymentImages bool        `json:"showPaymentImages" bson:"showPaymentImages,omitempty"`
+	Logo              string      `json:"logo" bson:"logo,omitempty"`
 }
 
 type ContactInfo struct {

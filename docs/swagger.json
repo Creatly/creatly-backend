@@ -1393,6 +1393,20 @@
                     "admins-orders"
                 ],
                 "summary": "Admin Get Orders",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "skip",
+                        "name": "skip",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -2125,6 +2139,67 @@
                         }
                     }
                 }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "admin create student",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admins-students"
+                ],
+                "summary": "Admin Create Student",
+                "parameters": [
+                    {
+                        "description": "student info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.createStudentInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Student"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
             }
         },
         "/admins/students/{id}": {
@@ -2189,7 +2264,7 @@
             }
         },
         "/admins/students/{id}/offers/{offerId}": {
-            "post": {
+            "patch": {
                 "security": [
                     {
                         "AdminAuth": []
@@ -2207,6 +2282,15 @@
                 ],
                 "summary": "Admin Give Student Access to Offer",
                 "parameters": [
+                    {
+                        "description": "permission type",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.manageOfferPermissionInput"
+                        }
+                    },
                     {
                         "type": "string",
                         "description": "student id",
@@ -2256,6 +2340,67 @@
                 }
             }
         },
+        "/admins/upload/file": {
+            "post": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "admin upload file",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admins-upload"
+                ],
+                "summary": "Admin upload File",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "file",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.uploadResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
         "/admins/upload/image": {
             "post": {
                 "security": [
@@ -2273,7 +2418,7 @@
                 "tags": [
                     "admins-upload"
                 ],
-                "summary": "Admin Upload Image",
+                "summary": "Admin upload Image",
                 "parameters": [
                     {
                         "type": "file",
@@ -2334,7 +2479,7 @@
                 "tags": [
                     "admins-upload"
                 ],
-                "summary": "Admin Upload Video",
+                "summary": "Admin upload Video",
                 "parameters": [
                     {
                         "type": "file",
@@ -2607,7 +2752,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Settings"
+                            "$ref": "#/definitions/v1.schoolSettingsResponse"
                         }
                     },
                     "400": {
@@ -2718,58 +2863,6 @@
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/v1.tokenResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/v1.response"
-                        }
-                    },
-                    "404": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/v1.response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/v1.response"
-                        }
-                    },
-                    "default": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/v1.response"
-                        }
-                    }
-                }
-            }
-        },
-        "/students/courses/": {
-            "get": {
-                "security": [
-                    {
-                        "StudentsAuth": []
-                    }
-                ],
-                "description": "student get opened courses",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "students-courses"
-                ],
-                "summary": "Student Get Opened Courses",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/v1.dataResponse"
                         }
                     },
                     "400": {
@@ -3724,6 +3817,9 @@
                 },
                 "settings": {
                     "$ref": "#/definitions/domain.Settings"
+                },
+                "subtitle": {
+                    "type": "string"
                 }
             }
         },
@@ -3753,6 +3849,9 @@
                         "type": "string"
                     }
                 },
+                "logo": {
+                    "type": "string"
+                },
                 "pages": {
                     "$ref": "#/definitions/domain.Pages"
                 },
@@ -3771,6 +3870,12 @@
                     }
                 },
                 "availableModules": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "availableOffers": {
                     "type": "array",
                     "items": {
                         "type": "string"
@@ -3981,9 +4086,31 @@
                 }
             }
         },
+        "v1.createStudentInput": {
+            "type": "object",
+            "required": [
+                "email",
+                "name",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
         "v1.dataResponse": {
             "type": "object",
             "properties": {
+                "count": {
+                    "type": "integer"
+                },
                 "data": {
                     "type": "object"
                 }
@@ -3994,6 +4121,14 @@
             "properties": {
                 "id": {
                     "type": "object"
+                }
+            }
+        },
+        "v1.manageOfferPermissionInput": {
+            "type": "object",
+            "properties": {
+                "available": {
+                    "type": "boolean"
                 }
             }
         },
@@ -4042,6 +4177,23 @@
             "type": "object",
             "properties": {
                 "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.schoolSettingsResponse": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "settings": {
+                    "$ref": "#/definitions/domain.Settings"
+                },
+                "subtitle": {
                     "type": "string"
                 }
             }

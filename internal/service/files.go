@@ -50,7 +50,7 @@ func (s *FilesService) GetByID(ctx context.Context, id, schoolId primitive.Objec
 	return s.repo.GetByID(ctx, id, schoolId)
 }
 
-func (s *FilesService) UploadImage(ctx context.Context, file domain.File) (string, error) {
+func (s *FilesService) UploadAndSaveFile(ctx context.Context, file domain.File) (string, error) {
 	defer removeFile(file.Name)
 
 	file.UploadStartedAt = time.Now()

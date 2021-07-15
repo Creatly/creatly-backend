@@ -136,6 +136,8 @@ definitions:
         type: string
       settings:
         $ref: '#/definitions/domain.Settings'
+      subtitle:
+        type: string
     type: object
   domain.Session:
     properties:
@@ -154,6 +156,8 @@ definitions:
         items:
           type: string
         type: array
+      logo:
+        type: string
       pages:
         $ref: '#/definitions/domain.Pages'
       showPaymentImages:
@@ -166,6 +170,10 @@ definitions:
           type: string
         type: array
       availableModules:
+        items:
+          type: string
+        type: array
+      availableOffers:
         items:
           type: string
         type: array
@@ -303,8 +311,23 @@ definitions:
     required:
     - name
     type: object
+  v1.createStudentInput:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - name
+    - password
+    type: object
   v1.dataResponse:
     properties:
+      count:
+        type: integer
       data:
         type: object
     type: object
@@ -312,6 +335,11 @@ definitions:
     properties:
       id:
         type: object
+    type: object
+  v1.manageOfferPermissionInput:
+    properties:
+      available:
+        type: boolean
     type: object
   v1.pages:
     properties:
@@ -343,6 +371,17 @@ definitions:
   v1.response:
     properties:
       message:
+        type: string
+    type: object
+  v1.schoolSettingsResponse:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      settings:
+        $ref: '#/definitions/domain.Settings'
+      subtitle:
         type: string
     type: object
   v1.signInInput:
@@ -1384,6 +1423,15 @@ paths:
       consumes:
       - application/json
       description: admin get all orders
+      parameters:
+      - description: skip
+        in: query
+        name: skip
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
       produces:
       - application/json
       responses:
@@ -1859,6 +1907,45 @@ paths:
       summary: Admin Get Students
       tags:
       - admins-students
+    post:
+      consumes:
+      - application/json
+      description: admin create student
+      parameters:
+      - description: student info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.createStudentInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Student'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Create Student
+      tags:
+      - admins-students
   /admins/students/{id}:
     get:
       consumes:
@@ -1899,11 +1986,17 @@ paths:
       tags:
       - admins-students
   /admins/students/{id}/offers/{offerId}:
-    post:
+    patch:
       consumes:
       - application/json
       description: admin give student access to offer
       parameters:
+      - description: permission type
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.manageOfferPermissionInput'
       - description: student id
         in: path
         name: id
@@ -1942,6 +2035,45 @@ paths:
       summary: Admin Give Student Access to Offer
       tags:
       - admins-students
+  /admins/upload/file:
+    post:
+      consumes:
+      - multipart/form-data
+      description: admin upload file
+      parameters:
+      - description: file
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.uploadResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin upload File
+      tags:
+      - admins-upload
   /admins/upload/image:
     post:
       consumes:
@@ -1978,7 +2110,7 @@ paths:
             $ref: '#/definitions/v1.response'
       security:
       - AdminAuth: []
-      summary: Admin Upload Image
+      summary: Admin upload Image
       tags:
       - admins-upload
   /admins/upload/video:
@@ -2017,7 +2149,7 @@ paths:
             $ref: '#/definitions/v1.response'
       security:
       - AdminAuth: []
-      summary: Admin Upload Video
+      summary: Admin upload Video
       tags:
       - admins-upload
   /courses:
@@ -2171,7 +2303,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.Settings'
+            $ref: '#/definitions/v1.schoolSettingsResponse'
         "400":
           description: Bad Request
           schema:
@@ -2262,39 +2394,6 @@ paths:
       summary: Student Refresh Tokens
       tags:
       - students-auth
-  /students/courses/:
-    get:
-      consumes:
-      - application/json
-      description: student get opened courses
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/v1.dataResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/v1.response'
-        "404":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/v1.response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/v1.response'
-        default:
-          description: ""
-          schema:
-            $ref: '#/definitions/v1.response'
-      security:
-      - StudentsAuth: []
-      summary: Student Get Opened Courses
-      tags:
-      - students-courses
   /students/lessons/{id}/finished:
     post:
       consumes:

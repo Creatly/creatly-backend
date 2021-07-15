@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/zhashkevych/creatly-backend/internal/service"
+
 	"github.com/gin-gonic/gin"
 	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -59,14 +61,17 @@ func (h *Handler) adminGetStudents(c *gin.Context) {
 		return
 	}
 
-	students, err := h.services.Students.GetBySchool(c.Request.Context(), school.ID, &query)
+	students, count, err := h.services.Students.GetBySchool(c.Request.Context(), school.ID, &query)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 
 		return
 	}
 
-	c.JSON(http.StatusOK, dataResponse{toStudentsResponse(students)})
+	c.JSON(http.StatusOK, dataResponse{
+		Data:  toStudentsResponse(students),
+		Count: count,
+	})
 }
 
 // @Summary Admin Get Student By ID
@@ -107,21 +112,81 @@ func (h *Handler) adminGetStudentById(c *gin.Context) {
 	c.JSON(http.StatusOK, student)
 }
 
+type createStudentInput struct {
+	Name     string `json:"name" binding:"required,min=2"`
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required,min=6"`
+}
+
+// @Summary Admin Create Student
+// @Security AdminAuth
+// @Tags admins-students
+// @Description admin create student
+// @ModuleID adminCreateStudent
+// @Accept  json
+// @Produce  json
+// @Param input body createStudentInput true "student info"
+// @Success 200 {object} domain.Student
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/students [post]
+func (h *Handler) adminCreateStudent(c *gin.Context) {
+	var inp createStudentInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+
+		return
+	}
+
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	if err := h.services.Admins.CreateStudent(c.Request.Context(), service.CreateStudentInput{
+		SchoolID: school.ID,
+		Name:     inp.Name,
+		Email:    inp.Email,
+		Password: inp.Password,
+	}); err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	c.Status(http.StatusOK)
+}
+
+type manageOfferPermissionInput struct {
+	Available bool `json:"available"`
+}
+
 // @Summary Admin Give Student Access to Offer
 // @Security AdminAuth
 // @Tags admins-students
 // @Description admin give student access to offer
-// @ModuleID adminGiveAccessToOffer
+// @ModuleID adminManageOfferPermission
 // @Accept  json
 // @Produce  json
+// @Param input body manageOfferPermissionInput true "permission type"
 // @Param id path string true "student id"
 // @Param offerId path string true "offer id"
 // @Success 200 {object} domain.Student
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admins/students/{id}/offers/{offerId} [post]
-func (h *Handler) adminGiveAccessToOffer(c *gin.Context) {
+// @Router /admins/students/{id}/offers/{offerId} [patch]
+func (h *Handler) adminManageOfferPermission(c *gin.Context) {
+	var inp manageOfferPermissionInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+
+		return
+	}
+
 	studentId, err := parseIdFromPath(c, "id")
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
@@ -143,7 +208,19 @@ func (h *Handler) adminGiveAccessToOffer(c *gin.Context) {
 		return
 	}
 
-	if err := h.services.Students.GiveAccessToPackages(c.Request.Context(), studentId, offer.PackageIDs); err != nil {
+	if inp.Available {
+		if err := h.services.Students.GiveAccessToOffer(c.Request.Context(), studentId, offer); err != nil {
+			newResponse(c, http.StatusInternalServerError, err.Error())
+
+			return
+		}
+
+		c.Status(http.StatusOK)
+
+		return
+	}
+
+	if err := h.services.Students.RemoveAccessToOffer(c.Request.Context(), studentId, offer); err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 
 		return

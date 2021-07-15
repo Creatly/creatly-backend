@@ -6,12 +6,11 @@ package mock_repository
 
 import (
 	context "context"
-	reflect "reflect"
-
 	gomock "github.com/golang/mock/gomock"
 	domain "github.com/zhashkevych/creatly-backend/internal/domain"
 	repository "github.com/zhashkevych/creatly-backend/internal/repository"
 	primitive "go.mongodb.org/mongo-driver/bson/primitive"
+	reflect "reflect"
 )
 
 // MockUsers is a mock of Users interface
@@ -288,12 +287,13 @@ func (mr *MockStudentsMockRecorder) GetById(ctx, schoolId, id interface{}) *gomo
 }
 
 // GetBySchool mocks base method
-func (m *MockStudents) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Student, error) {
+func (m *MockStudents) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Student, int64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetBySchool", ctx, schoolId, pagination)
 	ret0, _ := ret[0].([]domain.Student)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret1, _ := ret[1].(int64)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
 }
 
 // GetBySchool indicates an expected call of GetBySchool
@@ -316,32 +316,46 @@ func (mr *MockStudentsMockRecorder) SetSession(ctx, studentId, session interface
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetSession", reflect.TypeOf((*MockStudents)(nil).SetSession), ctx, studentId, session)
 }
 
-// GiveAccessToCourseAndModule mocks base method
-func (m *MockStudents) GiveAccessToCourseAndModule(ctx context.Context, studentId, courseId, moduleId primitive.ObjectID) error {
+// GiveAccessToModule mocks base method
+func (m *MockStudents) GiveAccessToModule(ctx context.Context, studentId, moduleId primitive.ObjectID) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GiveAccessToCourseAndModule", ctx, studentId, courseId, moduleId)
+	ret := m.ctrl.Call(m, "GiveAccessToModule", ctx, studentId, moduleId)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// GiveAccessToCourseAndModule indicates an expected call of GiveAccessToCourseAndModule
-func (mr *MockStudentsMockRecorder) GiveAccessToCourseAndModule(ctx, studentId, courseId, moduleId interface{}) *gomock.Call {
+// GiveAccessToModule indicates an expected call of GiveAccessToModule
+func (mr *MockStudentsMockRecorder) GiveAccessToModule(ctx, studentId, moduleId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GiveAccessToCourseAndModule", reflect.TypeOf((*MockStudents)(nil).GiveAccessToCourseAndModule), ctx, studentId, courseId, moduleId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GiveAccessToModule", reflect.TypeOf((*MockStudents)(nil).GiveAccessToModule), ctx, studentId, moduleId)
 }
 
-// GiveAccessToCoursesAndModules mocks base method
-func (m *MockStudents) GiveAccessToCoursesAndModules(ctx context.Context, studentId primitive.ObjectID, courseIds, moduleIds []primitive.ObjectID) error {
+// AttachOffer mocks base method
+func (m *MockStudents) AttachOffer(ctx context.Context, studentId, offerId primitive.ObjectID, moduleIds []primitive.ObjectID) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GiveAccessToCoursesAndModules", ctx, studentId, courseIds, moduleIds)
+	ret := m.ctrl.Call(m, "AttachOffer", ctx, studentId, offerId, moduleIds)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// GiveAccessToCoursesAndModules indicates an expected call of GiveAccessToCoursesAndModules
-func (mr *MockStudentsMockRecorder) GiveAccessToCoursesAndModules(ctx, studentId, courseIds, moduleIds interface{}) *gomock.Call {
+// AttachOffer indicates an expected call of AttachOffer
+func (mr *MockStudentsMockRecorder) AttachOffer(ctx, studentId, offerId, moduleIds interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GiveAccessToCoursesAndModules", reflect.TypeOf((*MockStudents)(nil).GiveAccessToCoursesAndModules), ctx, studentId, courseIds, moduleIds)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AttachOffer", reflect.TypeOf((*MockStudents)(nil).AttachOffer), ctx, studentId, offerId, moduleIds)
+}
+
+// DetachOffer mocks base method
+func (m *MockStudents) DetachOffer(ctx context.Context, studentId, offerId primitive.ObjectID, moduleIds []primitive.ObjectID) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DetachOffer", ctx, studentId, offerId, moduleIds)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DetachOffer indicates an expected call of DetachOffer
+func (mr *MockStudentsMockRecorder) DetachOffer(ctx, studentId, offerId, moduleIds interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DetachOffer", reflect.TypeOf((*MockStudents)(nil).DetachOffer), ctx, studentId, offerId, moduleIds)
 }
 
 // Verify mocks base method
@@ -1235,18 +1249,19 @@ func (mr *MockOrdersMockRecorder) AddTransaction(ctx, id, transaction interface{
 }
 
 // GetBySchool mocks base method
-func (m *MockOrders) GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Order, error) {
+func (m *MockOrders) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Order, int64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetBySchool", ctx, schoolId)
+	ret := m.ctrl.Call(m, "GetBySchool", ctx, schoolId, pagination)
 	ret0, _ := ret[0].([]domain.Order)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret1, _ := ret[1].(int64)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
 }
 
 // GetBySchool indicates an expected call of GetBySchool
-func (mr *MockOrdersMockRecorder) GetBySchool(ctx, schoolId interface{}) *gomock.Call {
+func (mr *MockOrdersMockRecorder) GetBySchool(ctx, schoolId, pagination interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBySchool", reflect.TypeOf((*MockOrders)(nil).GetBySchool), ctx, schoolId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBySchool", reflect.TypeOf((*MockOrders)(nil).GetBySchool), ctx, schoolId, pagination)
 }
 
 // MockFiles is a mock of Files interface

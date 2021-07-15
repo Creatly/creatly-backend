@@ -89,10 +89,10 @@ type Students interface {
 	GetModuleLessons(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) ([]domain.Lesson, error)
 	GetLesson(ctx context.Context, studentId, lessonId primitive.ObjectID) (domain.Lesson, error)
 	SetLessonFinished(ctx context.Context, studentId, lessonId primitive.ObjectID) error
-	GiveAccessToPackages(ctx context.Context, studentId primitive.ObjectID, packageIds []primitive.ObjectID) error
-	GetAvailableCourses(ctx context.Context, school domain.School, studentId primitive.ObjectID) ([]domain.Course, error)
+	GiveAccessToOffer(ctx context.Context, studentId primitive.ObjectID, offer domain.Offer) error
+	RemoveAccessToOffer(ctx context.Context, studentId primitive.ObjectID, offer domain.Offer) error
 	GetById(ctx context.Context, schoolId, id primitive.ObjectID) (domain.Student, error)
-	GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Student, error)
+	GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Student, int64, error)
 }
 
 type StudentLessons interface {
@@ -100,11 +100,19 @@ type StudentLessons interface {
 	SetLastOpened(ctx context.Context, studentId, lessonId primitive.ObjectID) error
 }
 
+type CreateStudentInput struct {
+	Name     string
+	Email    string
+	Password string
+	SchoolID primitive.ObjectID
+}
+
 type Admins interface {
 	SignIn(ctx context.Context, input SchoolSignInInput) (Tokens, error)
 	RefreshTokens(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (Tokens, error)
 	GetCourses(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Course, error)
 	GetCourseById(ctx context.Context, schoolId, courseId primitive.ObjectID) (domain.Course, error)
+	CreateStudent(ctx context.Context, inp CreateStudentInput) error
 }
 
 type UploadInput struct {
@@ -117,7 +125,7 @@ type UploadInput struct {
 }
 
 type Files interface {
-	UploadImage(ctx context.Context, file domain.File) (string, error)
+	UploadAndSaveFile(ctx context.Context, file domain.File) (string, error)
 	Save(ctx context.Context, file domain.File) (primitive.ObjectID, error)
 	UpdateStatus(ctx context.Context, fileName string, status domain.FileStatus) error // TODO check schoolID
 	GetByID(ctx context.Context, id, schoolId primitive.ObjectID) (domain.File, error)
@@ -293,7 +301,7 @@ type Packages interface {
 type Orders interface {
 	Create(ctx context.Context, studentId, offerId, promocodeId primitive.ObjectID) (string, error)
 	AddTransaction(ctx context.Context, id primitive.ObjectID, transaction domain.Transaction) (domain.Order, error)
-	GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Order, error)
+	GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Order, int64, error)
 }
 
 type Payments interface {
@@ -365,10 +373,11 @@ func NewServices(deps Deps) *Services {
 		Modules:        modulesService,
 		Payments:       NewPaymentsService(deps.PaymentProvider, ordersService, offersService, studentsService, emailsService),
 		Orders:         ordersService,
-		Admins:         NewAdminsService(deps.Hasher, deps.TokenManager, deps.Repos.Admins, deps.Repos.Schools, deps.AccessTokenTTL, deps.RefreshTokenTTL),
-		Packages:       packagesService,
-		Lessons:        lessonsService,
-		Files:          NewFilesService(deps.Repos.Files, deps.StorageProvider, deps.Environment),
-		Users:          usersService,
+		Admins: NewAdminsService(deps.Hasher, deps.TokenManager, deps.Repos.Admins, deps.Repos.Schools, deps.Repos.Students,
+			deps.AccessTokenTTL, deps.RefreshTokenTTL),
+		Packages: packagesService,
+		Lessons:  lessonsService,
+		Files:    NewFilesService(deps.Repos.Files, deps.StorageProvider, deps.Environment),
+		Users:    usersService,
 	}
 }

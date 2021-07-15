@@ -16,20 +16,23 @@ type AdminsService struct {
 	hasher       hash.PasswordHasher
 	tokenManager auth.TokenManager
 
-	repo       repository.Admins
-	schoolRepo repository.Schools
+	repo        repository.Admins
+	schoolRepo  repository.Schools
+	studentRepo repository.Students
 
 	accessTokenTTL  time.Duration
 	refreshTokenTTL time.Duration
 }
 
 func NewAdminsService(hasher hash.PasswordHasher, tokenManager auth.TokenManager,
-	repo repository.Admins, schoolRepo repository.Schools, accessTokenTTL time.Duration, refreshTokenTTL time.Duration) *AdminsService {
+	repo repository.Admins, schoolRepo repository.Schools, studentRepo repository.Students,
+	accessTokenTTL time.Duration, refreshTokenTTL time.Duration) *AdminsService {
 	return &AdminsService{
 		hasher:          hasher,
 		tokenManager:    tokenManager,
 		repo:            repo,
 		schoolRepo:      schoolRepo,
+		studentRepo:     studentRepo,
 		accessTokenTTL:  accessTokenTTL,
 		refreshTokenTTL: refreshTokenTTL,
 	}
@@ -82,6 +85,24 @@ func (s *AdminsService) GetCourseById(ctx context.Context, schoolId, courseId pr
 	}
 
 	return searchedCourse, nil
+}
+
+func (s *AdminsService) CreateStudent(ctx context.Context, inp CreateStudentInput) error {
+	passwordHash, err := s.hasher.Hash(inp.Password)
+	if err != nil {
+		return err
+	}
+
+	student := domain.Student{
+		Name:         inp.Name,
+		Email:        inp.Email,
+		Password:     passwordHash,
+		RegisteredAt: time.Now(),
+		SchoolID:     inp.SchoolID,
+		Verification: domain.Verification{Verified: true},
+	}
+
+	return s.studentRepo.Create(ctx, student)
 }
 
 func (s *AdminsService) createSession(ctx context.Context, adminId primitive.ObjectID) (Tokens, error) {
