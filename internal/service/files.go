@@ -116,6 +116,9 @@ func (s *FilesService) upload(ctx context.Context, file domain.File) (string, er
 		return "", err
 	}
 
+	info, _ := f.Stat()
+	logger.Infof("file info: %+v", info)
+
 	defer f.Close()
 
 	return s.storage.Upload(ctx, storage.UploadInput{
