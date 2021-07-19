@@ -18,7 +18,7 @@ import (
 )
 
 const (
-	_workersCount   = 3
+	_workersCount   = 2
 	_workerInterval = time.Second * 10
 )
 
@@ -115,9 +115,6 @@ func (s *FilesService) upload(ctx context.Context, file domain.File) (string, er
 	if err != nil {
 		return "", err
 	}
-
-	info, _ := f.Stat()
-	logger.Infof("file info: %+v", info)
 
 	defer f.Close()
 
