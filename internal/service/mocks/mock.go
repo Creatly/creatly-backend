@@ -6,12 +6,11 @@ package mock_service
 
 import (
 	context "context"
-	reflect "reflect"
-
 	gomock "github.com/golang/mock/gomock"
 	domain "github.com/zhashkevych/creatly-backend/internal/domain"
 	service "github.com/zhashkevych/creatly-backend/internal/service"
 	primitive "go.mongodb.org/mongo-driver/bson/primitive"
+	reflect "reflect"
 )
 
 // MockUsers is a mock of Users interface
@@ -328,21 +327,6 @@ func (m *MockStudents) RemoveAccessToOffer(ctx context.Context, studentId primit
 func (mr *MockStudentsMockRecorder) RemoveAccessToOffer(ctx, studentId, offer interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveAccessToOffer", reflect.TypeOf((*MockStudents)(nil).RemoveAccessToOffer), ctx, studentId, offer)
-}
-
-// GetAvailableCourses mocks base method
-func (m *MockStudents) GetAvailableCourses(ctx context.Context, school domain.School, studentId primitive.ObjectID) ([]domain.Course, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAvailableCourses", ctx, school, studentId)
-	ret0, _ := ret[0].([]domain.Course)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetAvailableCourses indicates an expected call of GetAvailableCourses
-func (mr *MockStudentsMockRecorder) GetAvailableCourses(ctx, school, studentId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAvailableCourses", reflect.TypeOf((*MockStudents)(nil).GetAvailableCourses), ctx, school, studentId)
 }
 
 // GetById mocks base method
@@ -1480,4 +1464,41 @@ func (m *MockPayments) ProcessTransaction(ctx context.Context, callback interfac
 func (mr *MockPaymentsMockRecorder) ProcessTransaction(ctx, callback interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ProcessTransaction", reflect.TypeOf((*MockPayments)(nil).ProcessTransaction), ctx, callback)
+}
+
+// MockSurveys is a mock of Surveys interface
+type MockSurveys struct {
+	ctrl     *gomock.Controller
+	recorder *MockSurveysMockRecorder
+}
+
+// MockSurveysMockRecorder is the mock recorder for MockSurveys
+type MockSurveysMockRecorder struct {
+	mock *MockSurveys
+}
+
+// NewMockSurveys creates a new mock instance
+func NewMockSurveys(ctrl *gomock.Controller) *MockSurveys {
+	mock := &MockSurveys{ctrl: ctrl}
+	mock.recorder = &MockSurveysMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockSurveys) EXPECT() *MockSurveysMockRecorder {
+	return m.recorder
+}
+
+// Create mocks base method
+func (m *MockSurveys) Create(ctx context.Context, inp service.CreateSurveyInput) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Create", ctx, inp)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Create indicates an expected call of Create
+func (mr *MockSurveysMockRecorder) Create(ctx, inp interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockSurveys)(nil).Create), ctx, inp)
 }

@@ -324,6 +324,19 @@ definitions:
     - name
     - password
     type: object
+  v1.createSurveyInput:
+    properties:
+      questions:
+        items:
+          $ref: '#/definitions/v1.question'
+        type: array
+      required:
+        type: boolean
+      title:
+        type: string
+    required:
+    - title
+    type: object
   v1.dataResponse:
     properties:
       count:
@@ -360,6 +373,20 @@ definitions:
     required:
     - currency
     - value
+    type: object
+  v1.question:
+    properties:
+      answerOptions:
+        items:
+          type: string
+        type: array
+      answerType:
+        type: string
+      question:
+        type: string
+    required:
+    - answerType
+    - question
     type: object
   v1.refreshInput:
     properties:
@@ -1225,6 +1252,51 @@ paths:
       summary: Admin Create Lesson
       tags:
       - admins-lessons
+  /admins/modules/{id}/survey:
+    post:
+      consumes:
+      - application/json
+      description: admin create survey
+      parameters:
+      - description: module id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: survey info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.createSurveyInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Create Survey
+      tags:
+      - admins-surveys
   /admins/offers:
     get:
       consumes:

@@ -1089,6 +1089,76 @@ var doc = `{
                 }
             }
         },
+        "/admins/modules/{id}/survey": {
+            "post": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "admin create survey",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admins-surveys"
+                ],
+                "summary": "Admin Create Survey",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "module id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "survey info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.createSurveyInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
         "/admins/offers": {
             "get": {
                 "security": [
@@ -4120,6 +4190,26 @@ var doc = `{
                 }
             }
         },
+        "v1.createSurveyInput": {
+            "type": "object",
+            "required": [
+                "title"
+            ],
+            "properties": {
+                "questions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.question"
+                    }
+                },
+                "required": {
+                    "type": "boolean"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
         "v1.dataResponse": {
             "type": "object",
             "properties": {
@@ -4174,6 +4264,27 @@ var doc = `{
                 },
                 "value": {
                     "type": "integer"
+                }
+            }
+        },
+        "v1.question": {
+            "type": "object",
+            "required": [
+                "answerType",
+                "question"
+            ],
+            "properties": {
+                "answerOptions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "answerType": {
+                    "type": "string"
+                },
+                "question": {
+                    "type": "string"
                 }
             }
         },

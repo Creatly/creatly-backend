@@ -308,6 +308,16 @@ type Payments interface {
 	ProcessTransaction(ctx context.Context, callback interface{}) error
 }
 
+type CreateSurveyInput struct {
+	ModuleID primitive.ObjectID
+	SchoolID primitive.ObjectID
+	Survey   domain.Survey
+}
+
+type Surveys interface {
+	Create(ctx context.Context, inp CreateSurveyInput) error
+}
+
 type Services struct {
 	Schools        Schools
 	Students       Students
@@ -323,6 +333,7 @@ type Services struct {
 	Admins         Admins
 	Files          Files
 	Users          Users
+	Surveys        Surveys
 }
 
 type Deps struct {
@@ -379,5 +390,6 @@ func NewServices(deps Deps) *Services {
 		Lessons:  lessonsService,
 		Files:    NewFilesService(deps.Repos.Files, deps.StorageProvider, deps.Environment),
 		Users:    usersService,
+		Surveys:  NewSurveysService(deps.Repos.Modules),
 	}
 }

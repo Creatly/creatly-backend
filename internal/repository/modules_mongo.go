@@ -166,3 +166,9 @@ func (r *ModulesRepo) DeleteByCourse(ctx context.Context, schoolId, courseId pri
 
 	return err
 }
+
+func (r *ModulesRepo) AttachSurvey(ctx context.Context, schoolId, id primitive.ObjectID, survey domain.Survey) error {
+	_, err := r.db.UpdateOne(ctx, bson.M{"_id": id, "schoolId": schoolId}, bson.M{"$set": bson.M{"survey": survey}})
+
+	return err
+}

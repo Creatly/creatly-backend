@@ -797,6 +797,20 @@ func (mr *MockModulesMockRecorder) AttachPackage(ctx, schoolId, packageId, modul
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AttachPackage", reflect.TypeOf((*MockModules)(nil).AttachPackage), ctx, schoolId, packageId, modules)
 }
 
+// AttachSurvey mocks base method
+func (m *MockModules) AttachSurvey(ctx context.Context, schoolId, id primitive.ObjectID, survey domain.Survey) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AttachSurvey", ctx, schoolId, id, survey)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AttachSurvey indicates an expected call of AttachSurvey
+func (mr *MockModulesMockRecorder) AttachSurvey(ctx, schoolId, id, survey interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AttachSurvey", reflect.TypeOf((*MockModules)(nil).AttachSurvey), ctx, schoolId, id, survey)
+}
+
 // MockLessonContent is a mock of LessonContent interface
 type MockLessonContent struct {
 	ctrl     *gomock.Controller

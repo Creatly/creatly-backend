@@ -6,16 +6,16 @@ import (
 )
 
 type Survey struct {
-	Title     string           `json:"title"`
-	Questions []SurveyQuestion `json:"questions"`
-	Required  bool             `json:"required"`
+	Title     string           `json:"title" bson:"title"`
+	Questions []SurveyQuestion `json:"questions" bson:"questions"`
+	Required  bool             `json:"required" bson:"required"`
 }
 
 type SurveyQuestion struct {
 	ID            primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	Question      string             `json:"question"`
-	AnswerType    string             `json:"answerType"`
-	AnswerOptions []string           `json:"answerOptions"`
+	Question      string             `json:"question" bson:"question"`
+	AnswerType    string             `json:"answerType" bson:"answerType"`
+	AnswerOptions []string           `json:"answerOptions" bson:"answerOptions,omitempty"`
 }
 
 type SurveyResult struct {
@@ -28,5 +28,5 @@ type SurveyResult struct {
 
 type SurveyAnswer struct {
 	QuestionID primitive.ObjectID `json:"questionId" bson:"questionId"`
-	Answer     string             `json:"answer"`
+	Answer     string             `json:"answer" bson:"answer"`
 }
