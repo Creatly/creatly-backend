@@ -196,6 +196,30 @@ definitions:
       verification:
         $ref: '#/definitions/domain.Verification'
     type: object
+  domain.Survey:
+    properties:
+      questions:
+        items:
+          $ref: '#/definitions/domain.SurveyQuestion'
+        type: array
+      required:
+        type: boolean
+      title:
+        type: string
+    type: object
+  domain.SurveyQuestion:
+    properties:
+      answerOptions:
+        items:
+          type: string
+        type: array
+      answerType:
+        type: string
+      id:
+        type: string
+      question:
+        type: string
+    type: object
   domain.Verification:
     properties:
       code:
@@ -1253,10 +1277,48 @@ paths:
       tags:
       - admins-lessons
   /admins/modules/{id}/survey:
+    get:
+      consumes:
+      - application/json
+      description: admin get survey
+      parameters:
+      - description: module id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Survey'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Get Survey
+      tags:
+      - admins-surveys
     post:
       consumes:
       - application/json
-      description: admin create survey
+      description: admin create/update survey
       parameters:
       - description: module id
         in: path
@@ -1294,7 +1356,7 @@ paths:
             $ref: '#/definitions/v1.response'
       security:
       - AdminAuth: []
-      summary: Admin Create Survey
+      summary: Admin Create/Update Survey
       tags:
       - admins-surveys
   /admins/offers:

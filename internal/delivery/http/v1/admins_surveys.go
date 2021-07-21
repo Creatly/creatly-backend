@@ -7,14 +7,35 @@ import (
 	"net/http"
 )
 
+// @Summary Admin Get Survey
+// @Security AdminAuth
+// @Tags admins-surveys
+// @Description admin get survey
+// @ModuleID adminGetSurvey
+// @Accept  json
+// @Produce  json
+// @Param id path string true "module id"
+// @Success 200 {object} domain.Survey
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/modules/{id}/survey [get]
 func (h *Handler) adminGetSurvey(c *gin.Context) {
-	//id, err := parseIdFromPath(c, "id")
-	//if err != nil {
-	//	newResponse(c, http.StatusBadRequest, "invalid id param")
-	//
-	//	return
-	//}
+	id, err := parseIdFromPath(c, "id")
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid id param")
 
+		return
+	}
+
+	module, err := h.services.Modules.GetById(c.Request.Context(), id)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, "failed to get module")
+
+		return
+	}
+
+	c.JSON(http.StatusOK, module.Survey)
 }
 
 type createSurveyInput struct {

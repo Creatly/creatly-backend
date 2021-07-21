@@ -1090,13 +1090,13 @@ var doc = `{
             }
         },
         "/admins/modules/{id}/survey": {
-            "post": {
+            "get": {
                 "security": [
                     {
                         "AdminAuth": []
                     }
                 ],
-                "description": "admin create survey",
+                "description": "admin get survey",
                 "consumes": [
                     "application/json"
                 ],
@@ -1106,7 +1106,66 @@ var doc = `{
                 "tags": [
                     "admins-surveys"
                 ],
-                "summary": "Admin Create Survey",
+                "summary": "Admin Get Survey",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "module id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Survey"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "admin create/update survey",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admins-surveys"
+                ],
+                "summary": "Admin Create/Update Survey",
                 "parameters": [
                     {
                         "type": "string",
@@ -3992,6 +4051,43 @@ var doc = `{
                 },
                 "verification": {
                     "$ref": "#/definitions/domain.Verification"
+                }
+            }
+        },
+        "domain.Survey": {
+            "type": "object",
+            "properties": {
+                "questions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.SurveyQuestion"
+                    }
+                },
+                "required": {
+                    "type": "boolean"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.SurveyQuestion": {
+            "type": "object",
+            "properties": {
+                "answerOptions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "answerType": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "question": {
+                    "type": "string"
                 }
             }
         },
