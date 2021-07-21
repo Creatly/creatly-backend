@@ -316,6 +316,7 @@ type CreateSurveyInput struct {
 
 type Surveys interface {
 	Create(ctx context.Context, inp CreateSurveyInput) error
+	Delete(ctx context.Context, schoolId, moduleId primitive.ObjectID) error
 }
 
 type Services struct {

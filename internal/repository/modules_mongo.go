@@ -172,3 +172,9 @@ func (r *ModulesRepo) AttachSurvey(ctx context.Context, schoolId, id primitive.O
 
 	return err
 }
+
+func (r *ModulesRepo) DetachSurvey(ctx context.Context, schoolId, id primitive.ObjectID) error {
+	_, err := r.db.UpdateOne(ctx, bson.M{"_id": id, "schoolId": schoolId}, bson.M{"$unset": bson.M{"survey": ""}})
+
+	return err
+}

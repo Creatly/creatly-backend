@@ -21,3 +21,7 @@ func (s *SurveysService) Create(ctx context.Context, inp CreateSurveyInput) erro
 
 	return s.modulesRepo.AttachSurvey(ctx, inp.SchoolID, inp.ModuleID, inp.Survey)
 }
+
+func (s *SurveysService) Delete(ctx context.Context, schoolId, moduleId primitive.ObjectID) error {
+	return s.modulesRepo.DetachSurvey(ctx, schoolId, moduleId)
+}

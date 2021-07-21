@@ -103,12 +103,41 @@ func (h *Handler) adminCreateOrUpdateSurvey(c *gin.Context) {
 	c.Status(http.StatusCreated)
 }
 
-func (h *Handler) adminUpdateSurvey(c *gin.Context) {
-
-}
-
+// @Summary Admin Delete Survey
+// @Security AdminAuth
+// @Tags admins-surveys
+// @Description admin delete survey
+// @ModuleID adminDeleteSurvey
+// @Accept  json
+// @Produce  json
+// @Param id path string true "module id"
+// @Success 200 {object} domain.Survey
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/modules/{id}/survey [delete]
 func (h *Handler) adminDeleteSurvey(c *gin.Context) {
+	id, err := parseIdFromPath(c, "id")
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid id param")
 
+		return
+	}
+
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	if err := h.services.Surveys.Delete(c.Request.Context(), school.ID, id); err != nil {
+		newResponse(c, http.StatusInternalServerError, "failed to delete survey")
+
+		return
+	}
+
+	c.Status(http.StatusOK)
 }
 
 func (h *Handler) adminGetSurveyResults(c *gin.Context) {

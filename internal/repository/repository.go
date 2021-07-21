@@ -112,6 +112,7 @@ type Modules interface {
 	DeleteLesson(ctx context.Context, schoolId, id primitive.ObjectID) error
 	AttachPackage(ctx context.Context, schoolId, packageId primitive.ObjectID, modules []primitive.ObjectID) error
 	AttachSurvey(ctx context.Context, schoolId, id primitive.ObjectID, survey domain.Survey) error
+	DetachSurvey(ctx context.Context, schoolId, id primitive.ObjectID) error
 }
 
 type LessonContent interface {

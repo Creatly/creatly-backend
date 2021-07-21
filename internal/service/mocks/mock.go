@@ -1502,3 +1502,17 @@ func (mr *MockSurveysMockRecorder) Create(ctx, inp interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockSurveys)(nil).Create), ctx, inp)
 }
+
+// Delete mocks base method
+func (m *MockSurveys) Delete(ctx context.Context, schoolId, moduleId primitive.ObjectID) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Delete", ctx, schoolId, moduleId)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Delete indicates an expected call of Delete
+func (mr *MockSurveysMockRecorder) Delete(ctx, schoolId, moduleId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockSurveys)(nil).Delete), ctx, schoolId, moduleId)
+}
