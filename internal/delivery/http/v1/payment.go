@@ -17,7 +17,7 @@ func (h *Handler) initCallbackRoutes(api *gin.RouterGroup) {
 }
 
 func (h *Handler) handleFondyCallback(c *gin.Context) {
-	if c.Request.UserAgent() != fondy.FondyUserAgent {
+	if c.Request.UserAgent() != fondy.UserAgent {
 		newResponse(c, http.StatusForbidden, "forbidden")
 
 		return
