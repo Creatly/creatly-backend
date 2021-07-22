@@ -18,7 +18,7 @@ import (
 )
 
 const (
-	_workersCount   = 3
+	_workersCount   = 2
 	_workerInterval = time.Second * 10
 )
 

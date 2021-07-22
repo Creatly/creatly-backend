@@ -63,7 +63,7 @@ func (s *APITestSuite) TestFondyCallbackApproved() {
 
 	req, _ := http.NewRequest("POST", "/api/v1/callback/fondy", bytes.NewBuffer(file))
 	req.Header.Set("Content-type", "application/json")
-	req.Header.Set("User-Agent", fondy.FondyUserAgent)
+	req.Header.Set("User-Agent", fondy.UserAgent)
 
 	resp := httptest.NewRecorder()
 	router.ServeHTTP(resp, req)
@@ -115,7 +115,7 @@ func (s *APITestSuite) TestFondyCallbackDeclined() {
 
 	req, _ := http.NewRequest("POST", "/api/v1/callback/fondy", bytes.NewBuffer(file))
 	req.Header.Set("Content-type", "application/json")
-	req.Header.Set("User-Agent", fondy.FondyUserAgent)
+	req.Header.Set("User-Agent", fondy.UserAgent)
 
 	resp := httptest.NewRecorder()
 	router.ServeHTTP(resp, req)
