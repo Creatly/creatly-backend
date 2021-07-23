@@ -140,8 +140,48 @@ func (h *Handler) adminDeleteSurvey(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
+// @Summary Admin Get Survey Results
+// @Security AdminAuth
+// @Tags admins-surveys
+// @Description admin get all survey results
+// @ModuleID adminGetSurveyResults
+// @Accept  json
+// @Produce  json
+// @Param skip query int false "skip"
+// @Param limit query int false "limit"
+// @Param id path string true "module id"
+// @Success 200 {object} dataResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/modules/{id}/survey/results [get]
 func (h *Handler) adminGetSurveyResults(c *gin.Context) {
+	var query domain.PaginationQuery
+	if err := c.Bind(&query); err != nil {
+		newResponse(c, http.StatusBadRequest, err.Error())
 
+		return
+	}
+
+	id, err := parseIdFromPath(c, "id")
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid id param")
+
+		return
+	}
+
+	results, count, err := h.services.Surveys.GetResultsByModule(c.Request.Context(), id, &query)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, "failed to delete survey")
+
+		return
+	}
+
+	// todo student info in results response
+	c.JSON(http.StatusOK, dataResponse{
+		Data:  results,
+		Count: count,
+	})
 }
 
 func (h *Handler) adminGetSurveyStudentResults(c *gin.Context) {

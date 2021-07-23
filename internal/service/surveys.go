@@ -37,3 +37,8 @@ func (s *SurveysService) SaveStudentAnswers(ctx context.Context, inp SaveStudent
 		Answers:     inp.Answers,
 	})
 }
+
+func (s *SurveysService) GetResultsByModule(ctx context.Context, moduleId primitive.ObjectID,
+	pagination *domain.PaginationQuery) ([]domain.SurveyResult, int64, error) {
+	return s.surveyResultsRepo.GetAllByModule(ctx, moduleId, pagination)
+}

@@ -324,6 +324,8 @@ type Surveys interface {
 	Create(ctx context.Context, inp CreateSurveyInput) error
 	Delete(ctx context.Context, schoolId, moduleId primitive.ObjectID) error
 	SaveStudentAnswers(ctx context.Context, inp SaveStudentAnswersInput) error
+	GetResultsByModule(ctx context.Context, moduleId primitive.ObjectID,
+		pagination *domain.PaginationQuery) ([]domain.SurveyResult, int64, error)
 }
 
 type Services struct {

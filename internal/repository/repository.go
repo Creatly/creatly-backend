@@ -190,6 +190,7 @@ type Files interface {
 
 type SurveyResults interface {
 	Save(ctx context.Context, results domain.SurveyResult) error
+	GetAllByModule(ctx context.Context, moduleId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.SurveyResult, int64, error)
 }
 
 type Repositories struct {

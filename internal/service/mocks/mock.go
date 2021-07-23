@@ -1530,3 +1530,18 @@ func (mr *MockSurveysMockRecorder) SaveStudentAnswers(ctx, inp interface{}) *gom
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveStudentAnswers", reflect.TypeOf((*MockSurveys)(nil).SaveStudentAnswers), ctx, inp)
 }
+
+// GetResultsByModule mocks base method
+func (m *MockSurveys) GetResultsByModule(ctx context.Context, moduleId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.SurveyResult, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetResultsByModule", ctx, moduleId, pagination)
+	ret0, _ := ret[0].([]domain.SurveyResult)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetResultsByModule indicates an expected call of GetResultsByModule
+func (mr *MockSurveysMockRecorder) GetResultsByModule(ctx, moduleId, pagination interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetResultsByModule", reflect.TypeOf((*MockSurveys)(nil).GetResultsByModule), ctx, moduleId, pagination)
+}
