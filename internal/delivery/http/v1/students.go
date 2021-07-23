@@ -22,6 +22,7 @@ func (h *Handler) initStudentsRoutes(api *gin.RouterGroup) {
 		{
 			authenticated.GET("/modules/:id/lessons", h.studentGetModuleLessons)
 			authenticated.GET("/modules/:id/offers", h.studentGetModuleOffers)
+			authenticated.POST("/modules/:id/survey", h.studentSubmitSurvey)
 			authenticated.POST("/lessons/:id/finished", h.studentSetLessonFinished)
 			authenticated.POST("/order", h.studentCreateOrder)
 			authenticated.GET("/account", h.studentGetAccount)
@@ -286,6 +287,71 @@ func (h *Handler) studentGetModuleLessons(c *gin.Context) {
 	c.JSON(http.StatusOK, dataResponse{Data: lessons})
 }
 
+type submitSurveyInput struct {
+	Answers []surveyAnswer `json:"answers"`
+}
+
+type surveyAnswer struct {
+	QuestionID string `json:"questionId"`
+	Answer     string `json:"answer"`
+}
+
+// @Summary Student Submit Survey by Module ID
+// @Security StudentsAuth
+// @Tags students-courses
+// @Description student submit survey by module id
+// @ModuleID studentSetLessonFinished
+// @Accept  json
+// @Produce  json
+// @Param input body submitSurveyInput true "survey answers"
+// @Param id path string true "module id"
+// @Success 200 {string} string "ok"
+// @Failure 400,403 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /students/modules/{id}/survey [post]
+func (h *Handler) studentSubmitSurvey(c *gin.Context) {
+	moduleId, err := parseIdFromPath(c, "id")
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, err.Error())
+
+		return
+	}
+
+	var inp submitSurveyInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+
+		return
+	}
+
+	answers, err := toSurveyAnswers(inp.Answers)
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+
+		return
+	}
+
+	studentId, err := getStudentId(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	if err := h.services.Surveys.SaveStudentAnswers(c.Request.Context(), service.SaveStudentAnswersInput{
+		StudentID: studentId,
+		ModuleID:  moduleId,
+		Answers:   answers,
+	}); err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	c.Status(http.StatusOK)
+}
+
 // @Summary Student Set Lesson As Finished By LessonID
 // @Security StudentsAuth
 // @Tags students-courses
@@ -520,4 +586,22 @@ func (h *Handler) studentGetAccount(c *gin.Context) {
 		Name:  student.Name,
 		Email: student.Email,
 	})
+}
+
+func toSurveyAnswers(answers []surveyAnswer) ([]domain.SurveyAnswer, error) {
+	res := make([]domain.SurveyAnswer, len(answers))
+
+	for i := range answers {
+		id, err := primitive.ObjectIDFromHex(answers[i].QuestionID)
+		if err != nil {
+			return nil, err
+		}
+
+		res[i] = domain.SurveyAnswer{
+			QuestionID: id,
+			Answer:     answers[i].Answer,
+		}
+	}
+
+	return res, nil
 }

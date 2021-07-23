@@ -1387,3 +1387,40 @@ func (mr *MockFilesMockRecorder) GetByID(ctx, id, schoolId interface{}) *gomock.
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByID", reflect.TypeOf((*MockFiles)(nil).GetByID), ctx, id, schoolId)
 }
+
+// MockSurveyResults is a mock of SurveyResults interface
+type MockSurveyResults struct {
+	ctrl     *gomock.Controller
+	recorder *MockSurveyResultsMockRecorder
+}
+
+// MockSurveyResultsMockRecorder is the mock recorder for MockSurveyResults
+type MockSurveyResultsMockRecorder struct {
+	mock *MockSurveyResults
+}
+
+// NewMockSurveyResults creates a new mock instance
+func NewMockSurveyResults(ctrl *gomock.Controller) *MockSurveyResults {
+	mock := &MockSurveyResults{ctrl: ctrl}
+	mock.recorder = &MockSurveyResultsMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockSurveyResults) EXPECT() *MockSurveyResultsMockRecorder {
+	return m.recorder
+}
+
+// Save mocks base method
+func (m *MockSurveyResults) Save(ctx context.Context, results domain.SurveyResult) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Save", ctx, results)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Save indicates an expected call of Save
+func (mr *MockSurveyResultsMockRecorder) Save(ctx, results interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Save", reflect.TypeOf((*MockSurveyResults)(nil).Save), ctx, results)
+}

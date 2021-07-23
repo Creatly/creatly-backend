@@ -3278,6 +3278,76 @@ var doc = `{
                 }
             }
         },
+        "/students/modules/{id}/survey": {
+            "post": {
+                "security": [
+                    {
+                        "StudentsAuth": []
+                    }
+                ],
+                "description": "student submit survey by module id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "students-courses"
+                ],
+                "summary": "Student Submit Survey by Module ID",
+                "parameters": [
+                    {
+                        "description": "survey answers",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.submitSurveyInput"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "module id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "403": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
         "/students/order": {
             "post": {
                 "security": [
@@ -4520,6 +4590,28 @@ var doc = `{
                     "type": "string"
                 },
                 "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.submitSurveyInput": {
+            "type": "object",
+            "properties": {
+                "answers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.surveyAnswer"
+                    }
+                }
+            }
+        },
+        "v1.surveyAnswer": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string"
+                },
+                "questionId": {
                     "type": "string"
                 }
             }

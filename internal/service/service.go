@@ -314,9 +314,16 @@ type CreateSurveyInput struct {
 	Survey   domain.Survey
 }
 
+type SaveStudentAnswersInput struct {
+	ModuleID  primitive.ObjectID
+	StudentID primitive.ObjectID
+	Answers   []domain.SurveyAnswer
+}
+
 type Surveys interface {
 	Create(ctx context.Context, inp CreateSurveyInput) error
 	Delete(ctx context.Context, schoolId, moduleId primitive.ObjectID) error
+	SaveStudentAnswers(ctx context.Context, inp SaveStudentAnswersInput) error
 }
 
 type Services struct {
@@ -391,6 +398,6 @@ func NewServices(deps Deps) *Services {
 		Lessons:  lessonsService,
 		Files:    NewFilesService(deps.Repos.Files, deps.StorageProvider, deps.Environment),
 		Users:    usersService,
-		Surveys:  NewSurveysService(deps.Repos.Modules),
+		Surveys:  NewSurveysService(deps.Repos.Modules, deps.Repos.SurveyResults),
 	}
 }

@@ -188,6 +188,10 @@ type Files interface {
 	GetByID(ctx context.Context, id, schoolId primitive.ObjectID) (domain.File, error)
 }
 
+type SurveyResults interface {
+	Save(ctx context.Context, results domain.SurveyResult) error
+}
+
 type Repositories struct {
 	Schools        Schools
 	Students       Students
@@ -202,6 +206,7 @@ type Repositories struct {
 	Admins         Admins
 	Users          Users
 	Files          Files
+	SurveyResults  SurveyResults
 }
 
 func NewRepositories(db *mongo.Database) *Repositories {
@@ -219,6 +224,7 @@ func NewRepositories(db *mongo.Database) *Repositories {
 		Packages:       NewPackagesRepo(db),
 		Users:          NewUsersRepo(db),
 		Files:          NewFilesRepo(db),
+		SurveyResults:  NewSurveyResultsRepo(db),
 	}
 }
 

@@ -13,4 +13,5 @@ const (
 	ordersCollection         = "orders"
 	usersCollection          = "users"
 	filesCollection          = "files"
+	surveyResultsCollection  = "surveyResults"
 )

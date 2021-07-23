@@ -1516,3 +1516,17 @@ func (mr *MockSurveysMockRecorder) Delete(ctx, schoolId, moduleId interface{}) *
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockSurveys)(nil).Delete), ctx, schoolId, moduleId)
 }
+
+// SaveStudentAnswers mocks base method
+func (m *MockSurveys) SaveStudentAnswers(ctx context.Context, inp service.SaveStudentAnswersInput) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SaveStudentAnswers", ctx, inp)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SaveStudentAnswers indicates an expected call of SaveStudentAnswers
+func (mr *MockSurveysMockRecorder) SaveStudentAnswers(ctx, inp interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveStudentAnswers", reflect.TypeOf((*MockSurveys)(nil).SaveStudentAnswers), ctx, inp)
+}
