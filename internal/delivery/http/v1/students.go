@@ -339,8 +339,16 @@ func (h *Handler) studentSubmitSurvey(c *gin.Context) {
 		return
 	}
 
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
 	if err := h.services.Surveys.SaveStudentAnswers(c.Request.Context(), service.SaveStudentAnswersInput{
 		StudentID: studentId,
+		SchoolID:  school.ID,
 		ModuleID:  moduleId,
 		Answers:   answers,
 	}); err != nil {

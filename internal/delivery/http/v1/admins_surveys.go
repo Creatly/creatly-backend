@@ -177,7 +177,6 @@ func (h *Handler) adminGetSurveyResults(c *gin.Context) {
 		return
 	}
 
-	// todo student info in results response
 	c.JSON(http.StatusOK, dataResponse{
 		Data:  results,
 		Count: count,

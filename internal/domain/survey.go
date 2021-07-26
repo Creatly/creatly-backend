@@ -20,7 +20,7 @@ type SurveyQuestion struct {
 
 type SurveyResult struct {
 	ID          primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	StudentID   primitive.ObjectID `json:"studentId" bson:"studentId"`
+	Student     StudentInfoShort   `json:"student" bson:"student"`
 	ModuleID    primitive.ObjectID `json:"moduleId" bson:"moduleId"`
 	SubmittedAt time.Time          `json:"submittedAt" bson:"submittedAt"`
 	Answers     []SurveyAnswer     `json:"answers" bson:"answers"`

@@ -39,7 +39,7 @@ func (s *APITestSuite) TestFondyCallbackApproved() {
 		ID:       id,
 		SchoolId: school.ID,
 		Offer:    domain.OrderOfferInfo{ID: offers[0].(domain.Offer).ID, Name: offerName},
-		Student:  domain.OrderStudentInfo{ID: studentId, Email: studentEmail, Name: studentName},
+		Student:  domain.StudentInfoShort{ID: studentId, Email: studentEmail, Name: studentName},
 		Status:   "created",
 	})
 	s.NoError(err)
@@ -105,7 +105,7 @@ func (s *APITestSuite) TestFondyCallbackDeclined() {
 		ID:       id,
 		SchoolId: school.ID,
 		Offer:    domain.OrderOfferInfo{ID: offers[0].(domain.Offer).ID},
-		Student:  domain.OrderStudentInfo{ID: studentId},
+		Student:  domain.StudentInfoShort{ID: studentId},
 		Status:   "created",
 	})
 	s.NoError(err)

@@ -16,7 +16,7 @@ const (
 type Order struct {
 	ID           primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	SchoolId     primitive.ObjectID `json:"schoolId" bson:"schoolId"`
-	Student      OrderStudentInfo   `json:"student" bson:"student"`
+	Student      StudentInfoShort   `json:"student" bson:"student"`
 	Offer        OrderOfferInfo     `json:"offer" bson:"offer"`
 	Promo        OrderPromoInfo     `json:"promo" bson:"promo,omitempty"`
 	CreatedAt    time.Time          `json:"createdAt" bson:"createdAt"`
@@ -24,12 +24,6 @@ type Order struct {
 	Currency     string             `json:"currency" bson:"currency"`
 	Status       string             `json:"status" bson:"status"`
 	Transactions []Transaction      `json:"transactions" bson:"transactions,omitempty"`
-}
-
-type OrderStudentInfo struct {
-	ID    primitive.ObjectID `json:"id" bson:"id"`
-	Name  string             `json:"name" bson:"name"`
-	Email string             `json:"email" bson:"email"`
 }
 
 type OrderOfferInfo struct {

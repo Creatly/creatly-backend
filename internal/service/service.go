@@ -317,6 +317,7 @@ type CreateSurveyInput struct {
 type SaveStudentAnswersInput struct {
 	ModuleID  primitive.ObjectID
 	StudentID primitive.ObjectID
+	SchoolID  primitive.ObjectID
 	Answers   []domain.SurveyAnswer
 }
 
