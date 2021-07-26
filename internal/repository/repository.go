@@ -191,6 +191,7 @@ type Files interface {
 type SurveyResults interface {
 	Save(ctx context.Context, results domain.SurveyResult) error
 	GetAllByModule(ctx context.Context, moduleId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.SurveyResult, int64, error)
+	GetByStudent(ctx context.Context, moduleId, studentId primitive.ObjectID) (domain.SurveyResult, error)
 }
 
 type Repositories struct {

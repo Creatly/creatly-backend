@@ -42,3 +42,10 @@ func (r *SurveyResultsRepo) GetAllByModule(ctx context.Context, moduleId primiti
 
 	return results, count, err
 }
+
+func (r *SurveyResultsRepo) GetByStudent(ctx context.Context, moduleId, studentId primitive.ObjectID) (domain.SurveyResult, error) {
+	var res domain.SurveyResult
+	err := r.db.FindOne(ctx, bson.M{"student.id": studentId, "moduleId": moduleId}).Decode(&res)
+
+	return res, err
+}

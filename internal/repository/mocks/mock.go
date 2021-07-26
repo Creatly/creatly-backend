@@ -1440,3 +1440,18 @@ func (mr *MockSurveyResultsMockRecorder) GetAllByModule(ctx, moduleId, paginatio
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllByModule", reflect.TypeOf((*MockSurveyResults)(nil).GetAllByModule), ctx, moduleId, pagination)
 }
+
+// GetByStudent mocks base method
+func (m *MockSurveyResults) GetByStudent(ctx context.Context, moduleId, studentId primitive.ObjectID) (domain.SurveyResult, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByStudent", ctx, moduleId, studentId)
+	ret0, _ := ret[0].(domain.SurveyResult)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByStudent indicates an expected call of GetByStudent
+func (mr *MockSurveyResultsMockRecorder) GetByStudent(ctx, moduleId, studentId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByStudent", reflect.TypeOf((*MockSurveyResults)(nil).GetByStudent), ctx, moduleId, studentId)
+}

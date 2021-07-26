@@ -1350,6 +1350,74 @@ var doc = `{
                 }
             }
         },
+        "/admins/modules/{id}/survey/results/{studentId}": {
+            "get": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "admin get all survey results",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admins-surveys"
+                ],
+                "summary": "Admin Get Survey Results",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "module id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "student id",
+                        "name": "studentId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.SurveyResult"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
         "/admins/offers": {
             "get": {
                 "security": [
@@ -4256,6 +4324,20 @@ var doc = `{
                 }
             }
         },
+        "domain.StudentInfoShort": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.Survey": {
             "type": "object",
             "properties": {
@@ -4269,6 +4351,17 @@ var doc = `{
                     "type": "boolean"
                 },
                 "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.SurveyAnswer": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string"
+                },
+                "questionId": {
                     "type": "string"
                 }
             }
@@ -4289,6 +4382,29 @@ var doc = `{
                     "type": "string"
                 },
                 "question": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.SurveyResult": {
+            "type": "object",
+            "properties": {
+                "answers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.SurveyAnswer"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "moduleId": {
+                    "type": "string"
+                },
+                "student": {
+                    "$ref": "#/definitions/domain.StudentInfoShort"
+                },
+                "submittedAt": {
                     "type": "string"
                 }
             }

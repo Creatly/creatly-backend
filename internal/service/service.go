@@ -327,6 +327,7 @@ type Surveys interface {
 	SaveStudentAnswers(ctx context.Context, inp SaveStudentAnswersInput) error
 	GetResultsByModule(ctx context.Context, moduleId primitive.ObjectID,
 		pagination *domain.PaginationQuery) ([]domain.SurveyResult, int64, error)
+	GetStudentResults(ctx context.Context, moduleId, studentId primitive.ObjectID) (domain.SurveyResult, error)
 }
 
 type Services struct {
@@ -401,6 +402,6 @@ func NewServices(deps Deps) *Services {
 		Lessons:  lessonsService,
 		Files:    NewFilesService(deps.Repos.Files, deps.StorageProvider, deps.Environment),
 		Users:    usersService,
-		Surveys:  NewSurveysService(deps.Repos.Modules, deps.Repos.SurveyResults),
+		Surveys:  NewSurveysService(deps.Repos.Modules, deps.Repos.SurveyResults, deps.Repos.Students),
 	}
 }

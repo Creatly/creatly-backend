@@ -196,6 +196,15 @@ definitions:
       verification:
         $ref: '#/definitions/domain.Verification'
     type: object
+  domain.StudentInfoShort:
+    properties:
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+    type: object
   domain.Survey:
     properties:
       questions:
@@ -205,6 +214,13 @@ definitions:
       required:
         type: boolean
       title:
+        type: string
+    type: object
+  domain.SurveyAnswer:
+    properties:
+      answer:
+        type: string
+      questionId:
         type: string
     type: object
   domain.SurveyQuestion:
@@ -218,6 +234,21 @@ definitions:
       id:
         type: string
       question:
+        type: string
+    type: object
+  domain.SurveyResult:
+    properties:
+      answers:
+        items:
+          $ref: '#/definitions/domain.SurveyAnswer'
+        type: array
+      id:
+        type: string
+      moduleId:
+        type: string
+      student:
+        $ref: '#/definitions/domain.StudentInfoShort'
+      submittedAt:
         type: string
     type: object
   domain.Verification:
@@ -1437,6 +1468,50 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/v1.dataResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Get Survey Results
+      tags:
+      - admins-surveys
+  /admins/modules/{id}/survey/results/{studentId}:
+    get:
+      consumes:
+      - application/json
+      description: admin get all survey results
+      parameters:
+      - description: module id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: student id
+        in: path
+        name: studentId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.SurveyResult'
         "400":
           description: Bad Request
           schema:

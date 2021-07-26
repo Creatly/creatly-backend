@@ -183,8 +183,43 @@ func (h *Handler) adminGetSurveyResults(c *gin.Context) {
 	})
 }
 
+// @Summary Admin Get Survey Results
+// @Security AdminAuth
+// @Tags admins-surveys
+// @Description admin get all survey results
+// @ModuleID adminGetSurveyResults
+// @Accept  json
+// @Produce  json
+// @Param id path string true "module id"
+// @Param studentId path string true "student id"
+// @Success 200 {object} domain.SurveyResult
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/modules/{id}/survey/results/{studentId} [get]
 func (h *Handler) adminGetSurveyStudentResults(c *gin.Context) {
+	moduleId, err := parseIdFromPath(c, "id")
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid id param")
 
+		return
+	}
+
+	studentId, err := parseIdFromPath(c, "studentId")
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid id param")
+
+		return
+	}
+
+	results, err := h.services.Surveys.GetStudentResults(c.Request.Context(), moduleId, studentId)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, "failed to delete survey")
+
+		return
+	}
+
+	c.JSON(http.StatusOK, results)
 }
 
 func toQuestions(qs []question) []domain.SurveyQuestion {
