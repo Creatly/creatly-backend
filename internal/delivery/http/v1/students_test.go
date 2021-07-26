@@ -319,7 +319,7 @@ func TestHandler_studentGetModuleContent(t *testing.T) {
 
 			// Init Endpoint
 			r := gin.New()
-			r.GET("/modules/:id/lessons", func(c *gin.Context) {
+			r.GET("/modules/:id/content", func(c *gin.Context) {
 				c.Set(schoolCtx, domain.School{
 					ID: schoolId,
 				})
@@ -328,7 +328,7 @@ func TestHandler_studentGetModuleContent(t *testing.T) {
 
 			// Create Request
 			w := httptest.NewRecorder()
-			req := httptest.NewRequest("GET", fmt.Sprintf("/modules/%s/lessons", tt.moduleId), nil)
+			req := httptest.NewRequest("GET", fmt.Sprintf("/modules/%s/content", tt.moduleId), nil)
 
 			// Make Request
 			r.ServeHTTP(w, req)

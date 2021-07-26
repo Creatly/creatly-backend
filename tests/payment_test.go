@@ -76,7 +76,7 @@ func (s *APITestSuite) TestFondyCallbackApproved() {
 	jwt, err := s.getJwt(studentId)
 	s.NoError(err)
 
-	req, _ = http.NewRequest("GET", fmt.Sprintf("/api/v1/students/modules/%s/lessons", modules[1].(domain.Module).ID.Hex()), nil)
+	req, _ = http.NewRequest("GET", fmt.Sprintf("/api/v1/students/modules/%s/content", modules[1].(domain.Module).ID.Hex()), nil)
 	req.Header.Set("Content-type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+jwt)
 
@@ -128,7 +128,7 @@ func (s *APITestSuite) TestFondyCallbackDeclined() {
 	jwt, err := s.getJwt(studentId)
 	s.NoError(err)
 
-	req, _ = http.NewRequest("GET", fmt.Sprintf("/api/v1/students/modules/%s/lessons", modules[1].(domain.Module).ID.Hex()), nil)
+	req, _ = http.NewRequest("GET", fmt.Sprintf("/api/v1/students/modules/%s/content", modules[1].(domain.Module).ID.Hex()), nil)
 	req.Header.Set("Content-type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+jwt)
 

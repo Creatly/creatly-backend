@@ -218,7 +218,6 @@ type Offers interface {
 	Delete(ctx context.Context, schoolId, id primitive.ObjectID) error
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.Offer, error)
 	GetByModule(ctx context.Context, schoolId, moduleId primitive.ObjectID) ([]domain.Offer, error)
-	getByPackage(ctx context.Context, schoolId, packageId primitive.ObjectID) ([]domain.Offer, error)
 	GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Offer, error)
 	GetAll(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Offer, error)
 }
