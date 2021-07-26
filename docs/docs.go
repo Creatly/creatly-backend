@@ -3297,14 +3297,14 @@ var doc = `{
                 }
             }
         },
-        "/students/modules/{id}/lessons": {
+        "/students/modules/{id}/content": {
             "get": {
                 "security": [
                     {
                         "StudentsAuth": []
                     }
                 ],
-                "description": "student get lessons by module id",
+                "description": "student get content by module id",
                 "consumes": [
                     "application/json"
                 ],
@@ -3314,7 +3314,7 @@ var doc = `{
                 "tags": [
                     "students-courses"
                 ],
-                "summary": "Student Get Lessons By Module ModuleID",
+                "summary": "Student Get Content By Module ID",
                 "parameters": [
                     {
                         "type": "string",
@@ -3328,7 +3328,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.dataResponse"
+                            "$ref": "#/definitions/domain.ModuleContent"
                         }
                     },
                     "400": {
@@ -4093,6 +4093,43 @@ var doc = `{
                 },
                 "updatedAt": {
                     "type": "string"
+                }
+            }
+        },
+        "domain.Lesson": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "position": {
+                    "type": "integer"
+                },
+                "published": {
+                    "type": "boolean"
+                },
+                "schoolId": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.ModuleContent": {
+            "type": "object",
+            "properties": {
+                "lessons": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Lesson"
+                    }
+                },
+                "survey": {
+                    "$ref": "#/definitions/domain.Survey"
                 }
             }
         },

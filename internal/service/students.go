@@ -9,7 +9,6 @@ import (
 	"github.com/zhashkevych/creatly-backend/internal/repository"
 	"github.com/zhashkevych/creatly-backend/pkg/auth"
 	"github.com/zhashkevych/creatly-backend/pkg/hash"
-	"github.com/zhashkevych/creatly-backend/pkg/logger"
 	"github.com/zhashkevych/creatly-backend/pkg/otp"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -127,40 +126,44 @@ func (s *StudentsService) Verify(ctx context.Context, hash string) error {
 	return nil
 }
 
-func (s *StudentsService) GetModuleLessons(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) ([]domain.Lesson, error) {
+func (s *StudentsService) GetModuleContent(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) (domain.ModuleContent, error) {
 	// Get module with lessons content, check if it is available for student
 	module, err := s.modulesService.GetWithContent(ctx, moduleId)
 	if err != nil {
-		return nil, err
+		return domain.ModuleContent{}, err
 	}
 
 	student, err := s.repo.GetById(ctx, schoolId, studentId)
 	if err != nil {
-		return nil, err
+		return domain.ModuleContent{}, err
 	}
 
 	if student.IsModuleAvailable(module) {
-		logger.Info("Module is available")
-
-		return module.Lessons, nil
+		return domain.ModuleContent{
+			Lessons: module.Lessons,
+			Survey:  module.Survey,
+		}, nil
 	}
 
 	// Find module offers
 	offers, err := s.offersService.GetByModule(ctx, schoolId, module.ID)
 	if err != nil {
-		return nil, err
+		return domain.ModuleContent{}, err
 	}
 
 	if len(offers) != 0 {
-		return nil, domain.ErrModuleIsNotAvailable
+		return domain.ModuleContent{}, domain.ErrModuleIsNotAvailable
 	}
 
 	// If module has no offers - it's free and available to everyone
 	if err := s.repo.GiveAccessToModule(ctx, studentId, moduleId); err != nil {
-		return nil, err
+		return domain.ModuleContent{}, err
 	}
 
-	return module.Lessons, nil
+	return domain.ModuleContent{
+		Lessons: module.Lessons,
+		Survey:  module.Survey,
+	}, nil
 }
 
 func (s *StudentsService) GetLesson(ctx context.Context, studentId, lessonId primitive.ObjectID) (domain.Lesson, error) {

@@ -257,19 +257,19 @@ func (mr *MockStudentsMockRecorder) Verify(ctx, hash interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Verify", reflect.TypeOf((*MockStudents)(nil).Verify), ctx, hash)
 }
 
-// GetModuleLessons mocks base method
-func (m *MockStudents) GetModuleLessons(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) ([]domain.Lesson, error) {
+// GetModuleContent mocks base method
+func (m *MockStudents) GetModuleContent(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) (domain.ModuleContent, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetModuleLessons", ctx, schoolId, studentId, moduleId)
-	ret0, _ := ret[0].([]domain.Lesson)
+	ret := m.ctrl.Call(m, "GetModuleContent", ctx, schoolId, studentId, moduleId)
+	ret0, _ := ret[0].(domain.ModuleContent)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetModuleLessons indicates an expected call of GetModuleLessons
-func (mr *MockStudentsMockRecorder) GetModuleLessons(ctx, schoolId, studentId, moduleId interface{}) *gomock.Call {
+// GetModuleContent indicates an expected call of GetModuleContent
+func (mr *MockStudentsMockRecorder) GetModuleContent(ctx, schoolId, studentId, moduleId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetModuleLessons", reflect.TypeOf((*MockStudents)(nil).GetModuleLessons), ctx, schoolId, studentId, moduleId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetModuleContent", reflect.TypeOf((*MockStudents)(nil).GetModuleContent), ctx, schoolId, studentId, moduleId)
 }
 
 // GetLesson mocks base method
@@ -955,9 +955,9 @@ func (mr *MockOffersMockRecorder) GetByModule(ctx, schoolId, moduleId interface{
 }
 
 // GetByPackage mocks base method
-func (m *MockOffers) GetByPackage(ctx context.Context, schoolId, packageId primitive.ObjectID) ([]domain.Offer, error) {
+func (m *MockOffers) getByPackage(ctx context.Context, schoolId, packageId primitive.ObjectID) ([]domain.Offer, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetByPackage", ctx, schoolId, packageId)
+	ret := m.ctrl.Call(m, "getByPackage", ctx, schoolId, packageId)
 	ret0, _ := ret[0].([]domain.Offer)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
@@ -966,7 +966,7 @@ func (m *MockOffers) GetByPackage(ctx context.Context, schoolId, packageId primi
 // GetByPackage indicates an expected call of GetByPackage
 func (mr *MockOffersMockRecorder) GetByPackage(ctx, schoolId, packageId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByPackage", reflect.TypeOf((*MockOffers)(nil).GetByPackage), ctx, schoolId, packageId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "getByPackage", reflect.TypeOf((*MockOffers)(nil).getByPackage), ctx, schoolId, packageId)
 }
 
 // GetByCourse mocks base method

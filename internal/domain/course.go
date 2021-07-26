@@ -52,3 +52,8 @@ type Package struct {
 	CourseID    primitive.ObjectID `json:"courseId" bson:"courseId"`
 	SchoolID    primitive.ObjectID `json:"schoolId" bson:"schoolId"`
 }
+
+type ModuleContent struct {
+	Lessons []Lesson `json:"lessons" bson:"lessons"`
+	Survey  Survey   `json:"survey" bson:"survey"`
+}

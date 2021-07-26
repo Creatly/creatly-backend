@@ -230,8 +230,8 @@ func TestHandler_studentGetModuleOffers(t *testing.T) {
 	}
 }
 
-func TestHandler_studentGetModuleLessons(t *testing.T) {
-	type mockBehavior func(r *mock_service.MockStudents, schoolId, moduleId, studentId primitive.ObjectID, lessons []domain.Lesson)
+func TestHandler_studentGetModuleContent(t *testing.T) {
+	type mockBehavior func(r *mock_service.MockStudents, schoolId, studentId, moduleId primitive.ObjectID, content domain.ModuleContent)
 
 	schoolId := primitive.NewObjectID()
 	moduleId := primitive.NewObjectID()
@@ -242,7 +242,7 @@ func TestHandler_studentGetModuleLessons(t *testing.T) {
 		moduleId     string
 		schoolId     primitive.ObjectID
 		studentId    primitive.ObjectID
-		lessons      []domain.Lesson
+		content      domain.ModuleContent
 		mockBehavior mockBehavior
 		statusCode   int
 		responseBody string
@@ -252,27 +252,29 @@ func TestHandler_studentGetModuleLessons(t *testing.T) {
 			moduleId:  moduleId.Hex(),
 			schoolId:  schoolId,
 			studentId: studentId,
-			lessons: []domain.Lesson{
-				{
-					Name:      "test lesson",
-					Position:  0,
-					Published: true,
-					Content:   "content",
-					SchoolID:  schoolId,
+			content: domain.ModuleContent{
+				Lessons: []domain.Lesson{
+					{
+						Name:      "test lesson",
+						Position:  0,
+						Published: true,
+						Content:   "content",
+						SchoolID:  schoolId,
+					},
 				},
 			},
-			mockBehavior: func(r *mock_service.MockStudents, schoolId, studentId, moduleId primitive.ObjectID, lessons []domain.Lesson) {
-				r.EXPECT().GetModuleLessons(context.Background(), schoolId, studentId, moduleId).Return(lessons, nil)
+			mockBehavior: func(r *mock_service.MockStudents, schoolId, studentId, moduleId primitive.ObjectID, content domain.ModuleContent) {
+				r.EXPECT().GetModuleContent(context.Background(), schoolId, studentId, moduleId).Return(content, nil)
 			},
 			statusCode:   200,
-			responseBody: fmt.Sprintf(`{"data":[{"id":"000000000000000000000000","name":"test lesson","position":0,"published":true,"content":"content","schoolId":"%s"}],"count":0}`, schoolId.Hex()),
+			responseBody: fmt.Sprintf(`{"lessons":[{"id":"000000000000000000000000","name":"test lesson","position":0,"published":true,"content":"content","schoolId":"%s"}],"survey":{"title":"","questions":null,"required":false}}`, schoolId.Hex()),
 		},
 		{
 			name:      "invalid module id",
 			moduleId:  "123",
 			schoolId:  schoolId,
 			studentId: studentId,
-			mockBehavior: func(r *mock_service.MockStudents, schoolId, studentId, moduleId primitive.ObjectID, lessons []domain.Lesson) {
+			mockBehavior: func(r *mock_service.MockStudents, schoolId, studentId, moduleId primitive.ObjectID, content domain.ModuleContent) {
 			},
 			statusCode:   400,
 			responseBody: `{"message":"invalid id param"}`,
@@ -282,8 +284,8 @@ func TestHandler_studentGetModuleLessons(t *testing.T) {
 			moduleId:  moduleId.Hex(),
 			schoolId:  schoolId,
 			studentId: studentId,
-			mockBehavior: func(r *mock_service.MockStudents, schoolId, studentId, moduleId primitive.ObjectID, lessons []domain.Lesson) {
-				r.EXPECT().GetModuleLessons(context.Background(), schoolId, studentId, moduleId).Return(lessons, domain.ErrModuleIsNotAvailable)
+			mockBehavior: func(r *mock_service.MockStudents, schoolId, studentId, moduleId primitive.ObjectID, content domain.ModuleContent) {
+				r.EXPECT().GetModuleContent(context.Background(), schoolId, studentId, moduleId).Return(content, domain.ErrModuleIsNotAvailable)
 			},
 			statusCode:   403,
 			responseBody: fmt.Sprintf(`{"message":"%s"}`, domain.ErrModuleIsNotAvailable.Error()),
@@ -293,8 +295,8 @@ func TestHandler_studentGetModuleLessons(t *testing.T) {
 			moduleId:  moduleId.Hex(),
 			schoolId:  schoolId,
 			studentId: studentId,
-			mockBehavior: func(r *mock_service.MockStudents, schoolId, studentId, moduleId primitive.ObjectID, lessons []domain.Lesson) {
-				r.EXPECT().GetModuleLessons(context.Background(), schoolId, studentId, moduleId).Return(lessons, errors.New("failed to get module"))
+			mockBehavior: func(r *mock_service.MockStudents, schoolId, studentId, moduleId primitive.ObjectID, content domain.ModuleContent) {
+				r.EXPECT().GetModuleContent(context.Background(), schoolId, studentId, moduleId).Return(content, errors.New("failed to get module"))
 			},
 			statusCode:   500,
 			responseBody: `{"message":"failed to get module"}`,
@@ -310,7 +312,7 @@ func TestHandler_studentGetModuleLessons(t *testing.T) {
 			s := mock_service.NewMockStudents(c)
 
 			id, _ := primitive.ObjectIDFromHex(tt.moduleId)
-			tt.mockBehavior(s, tt.schoolId, tt.studentId, id, tt.lessons)
+			tt.mockBehavior(s, tt.schoolId, tt.studentId, id, tt.content)
 
 			services := &service.Services{Students: s}
 			handler := Handler{services: services}
@@ -322,7 +324,7 @@ func TestHandler_studentGetModuleLessons(t *testing.T) {
 					ID: schoolId,
 				})
 				c.Set(studentCtx, tt.studentId.Hex())
-			}, handler.studentGetModuleLessons)
+			}, handler.studentGetModuleContent)
 
 			// Create Request
 			w := httptest.NewRecorder()
