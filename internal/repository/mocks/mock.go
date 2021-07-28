@@ -798,6 +798,34 @@ func (mr *MockModulesMockRecorder) AttachPackage(ctx, schoolId, packageId, modul
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AttachPackage", reflect.TypeOf((*MockModules)(nil).AttachPackage), ctx, schoolId, packageId, modules)
 }
 
+// AttachSurvey mocks base method
+func (m *MockModules) AttachSurvey(ctx context.Context, schoolId, id primitive.ObjectID, survey domain.Survey) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AttachSurvey", ctx, schoolId, id, survey)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AttachSurvey indicates an expected call of AttachSurvey
+func (mr *MockModulesMockRecorder) AttachSurvey(ctx, schoolId, id, survey interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AttachSurvey", reflect.TypeOf((*MockModules)(nil).AttachSurvey), ctx, schoolId, id, survey)
+}
+
+// DetachSurvey mocks base method
+func (m *MockModules) DetachSurvey(ctx context.Context, schoolId, id primitive.ObjectID) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DetachSurvey", ctx, schoolId, id)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DetachSurvey indicates an expected call of DetachSurvey
+func (mr *MockModulesMockRecorder) DetachSurvey(ctx, schoolId, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DetachSurvey", reflect.TypeOf((*MockModules)(nil).DetachSurvey), ctx, schoolId, id)
+}
+
 // MockLessonContent is a mock of LessonContent interface
 type MockLessonContent struct {
 	ctrl     *gomock.Controller
@@ -1359,4 +1387,72 @@ func (m *MockFiles) GetByID(ctx context.Context, id, schoolId primitive.ObjectID
 func (mr *MockFilesMockRecorder) GetByID(ctx, id, schoolId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByID", reflect.TypeOf((*MockFiles)(nil).GetByID), ctx, id, schoolId)
+}
+
+// MockSurveyResults is a mock of SurveyResults interface
+type MockSurveyResults struct {
+	ctrl     *gomock.Controller
+	recorder *MockSurveyResultsMockRecorder
+}
+
+// MockSurveyResultsMockRecorder is the mock recorder for MockSurveyResults
+type MockSurveyResultsMockRecorder struct {
+	mock *MockSurveyResults
+}
+
+// NewMockSurveyResults creates a new mock instance
+func NewMockSurveyResults(ctrl *gomock.Controller) *MockSurveyResults {
+	mock := &MockSurveyResults{ctrl: ctrl}
+	mock.recorder = &MockSurveyResultsMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockSurveyResults) EXPECT() *MockSurveyResultsMockRecorder {
+	return m.recorder
+}
+
+// Save mocks base method
+func (m *MockSurveyResults) Save(ctx context.Context, results domain.SurveyResult) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Save", ctx, results)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Save indicates an expected call of Save
+func (mr *MockSurveyResultsMockRecorder) Save(ctx, results interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Save", reflect.TypeOf((*MockSurveyResults)(nil).Save), ctx, results)
+}
+
+// GetAllByModule mocks base method
+func (m *MockSurveyResults) GetAllByModule(ctx context.Context, moduleId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.SurveyResult, int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAllByModule", ctx, moduleId, pagination)
+	ret0, _ := ret[0].([]domain.SurveyResult)
+	ret1, _ := ret[1].(int64)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// GetAllByModule indicates an expected call of GetAllByModule
+func (mr *MockSurveyResultsMockRecorder) GetAllByModule(ctx, moduleId, pagination interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllByModule", reflect.TypeOf((*MockSurveyResults)(nil).GetAllByModule), ctx, moduleId, pagination)
+}
+
+// GetByStudent mocks base method
+func (m *MockSurveyResults) GetByStudent(ctx context.Context, moduleId, studentId primitive.ObjectID) (domain.SurveyResult, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByStudent", ctx, moduleId, studentId)
+	ret0, _ := ret[0].(domain.SurveyResult)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByStudent indicates an expected call of GetByStudent
+func (mr *MockSurveyResultsMockRecorder) GetByStudent(ctx, moduleId, studentId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByStudent", reflect.TypeOf((*MockSurveyResults)(nil).GetByStudent), ctx, moduleId, studentId)
 }

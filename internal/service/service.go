@@ -86,7 +86,7 @@ type Students interface {
 	SignIn(ctx context.Context, input SchoolSignInInput) (Tokens, error)
 	RefreshTokens(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (Tokens, error)
 	Verify(ctx context.Context, hash string) error
-	GetModuleLessons(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) ([]domain.Lesson, error)
+	GetModuleContent(ctx context.Context, schoolId, studentId, moduleId primitive.ObjectID) (domain.ModuleContent, error)
 	GetLesson(ctx context.Context, studentId, lessonId primitive.ObjectID) (domain.Lesson, error)
 	SetLessonFinished(ctx context.Context, studentId, lessonId primitive.ObjectID) error
 	GiveAccessToOffer(ctx context.Context, studentId primitive.ObjectID, offer domain.Offer) error
@@ -218,7 +218,6 @@ type Offers interface {
 	Delete(ctx context.Context, schoolId, id primitive.ObjectID) error
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.Offer, error)
 	GetByModule(ctx context.Context, schoolId, moduleId primitive.ObjectID) ([]domain.Offer, error)
-	GetByPackage(ctx context.Context, schoolId, packageId primitive.ObjectID) ([]domain.Offer, error)
 	GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Offer, error)
 	GetAll(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Offer, error)
 }
@@ -308,6 +307,28 @@ type Payments interface {
 	ProcessTransaction(ctx context.Context, callback interface{}) error
 }
 
+type CreateSurveyInput struct {
+	ModuleID primitive.ObjectID
+	SchoolID primitive.ObjectID
+	Survey   domain.Survey
+}
+
+type SaveStudentAnswersInput struct {
+	ModuleID  primitive.ObjectID
+	StudentID primitive.ObjectID
+	SchoolID  primitive.ObjectID
+	Answers   []domain.SurveyAnswer
+}
+
+type Surveys interface {
+	Create(ctx context.Context, inp CreateSurveyInput) error
+	Delete(ctx context.Context, schoolId, moduleId primitive.ObjectID) error
+	SaveStudentAnswers(ctx context.Context, inp SaveStudentAnswersInput) error
+	GetResultsByModule(ctx context.Context, moduleId primitive.ObjectID,
+		pagination *domain.PaginationQuery) ([]domain.SurveyResult, int64, error)
+	GetStudentResults(ctx context.Context, moduleId, studentId primitive.ObjectID) (domain.SurveyResult, error)
+}
+
 type Services struct {
 	Schools        Schools
 	Students       Students
@@ -323,6 +344,7 @@ type Services struct {
 	Admins         Admins
 	Files          Files
 	Users          Users
+	Surveys        Surveys
 }
 
 type Deps struct {
@@ -379,5 +401,6 @@ func NewServices(deps Deps) *Services {
 		Lessons:  lessonsService,
 		Files:    NewFilesService(deps.Repos.Files, deps.StorageProvider, deps.Environment),
 		Users:    usersService,
+		Surveys:  NewSurveysService(deps.Repos.Modules, deps.Repos.SurveyResults, deps.Repos.Students),
 	}
 }

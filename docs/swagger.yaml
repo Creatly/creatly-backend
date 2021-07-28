@@ -47,6 +47,30 @@ definitions:
       updatedAt:
         type: string
     type: object
+  domain.Lesson:
+    properties:
+      content:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      position:
+        type: integer
+      published:
+        type: boolean
+      schoolId:
+        type: string
+    type: object
+  domain.ModuleContent:
+    properties:
+      lessons:
+        items:
+          $ref: '#/definitions/domain.Lesson'
+        type: array
+      survey:
+        $ref: '#/definitions/domain.Survey'
+    type: object
   domain.Offer:
     properties:
       benefits:
@@ -196,6 +220,61 @@ definitions:
       verification:
         $ref: '#/definitions/domain.Verification'
     type: object
+  domain.StudentInfoShort:
+    properties:
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  domain.Survey:
+    properties:
+      questions:
+        items:
+          $ref: '#/definitions/domain.SurveyQuestion'
+        type: array
+      required:
+        type: boolean
+      title:
+        type: string
+    type: object
+  domain.SurveyAnswer:
+    properties:
+      answer:
+        type: string
+      questionId:
+        type: string
+    type: object
+  domain.SurveyQuestion:
+    properties:
+      answerOptions:
+        items:
+          type: string
+        type: array
+      answerType:
+        type: string
+      id:
+        type: string
+      question:
+        type: string
+    type: object
+  domain.SurveyResult:
+    properties:
+      answers:
+        items:
+          $ref: '#/definitions/domain.SurveyAnswer'
+        type: array
+      id:
+        type: string
+      moduleId:
+        type: string
+      student:
+        $ref: '#/definitions/domain.StudentInfoShort'
+      submittedAt:
+        type: string
+    type: object
   domain.Verification:
     properties:
       code:
@@ -324,6 +403,19 @@ definitions:
     - name
     - password
     type: object
+  v1.createSurveyInput:
+    properties:
+      questions:
+        items:
+          $ref: '#/definitions/v1.question'
+        type: array
+      required:
+        type: boolean
+      title:
+        type: string
+    required:
+    - title
+    type: object
   v1.dataResponse:
     properties:
       count:
@@ -360,6 +452,20 @@ definitions:
     required:
     - currency
     - value
+    type: object
+  v1.question:
+    properties:
+      answerOptions:
+        items:
+          type: string
+        type: array
+      answerType:
+        type: string
+      question:
+        type: string
+    required:
+    - answerType
+    - question
     type: object
   v1.refreshInput:
     properties:
@@ -413,6 +519,20 @@ definitions:
     - email
     - name
     - password
+    type: object
+  v1.submitSurveyInput:
+    properties:
+      answers:
+        items:
+          $ref: '#/definitions/v1.surveyAnswer'
+        type: array
+    type: object
+  v1.surveyAnswer:
+    properties:
+      answer:
+        type: string
+      questionId:
+        type: string
     type: object
   v1.tokenResponse:
     properties:
@@ -1225,6 +1345,218 @@ paths:
       summary: Admin Create Lesson
       tags:
       - admins-lessons
+  /admins/modules/{id}/survey:
+    delete:
+      consumes:
+      - application/json
+      description: admin delete survey
+      parameters:
+      - description: module id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Survey'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Delete Survey
+      tags:
+      - admins-surveys
+    get:
+      consumes:
+      - application/json
+      description: admin get survey
+      parameters:
+      - description: module id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Survey'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Get Survey
+      tags:
+      - admins-surveys
+    post:
+      consumes:
+      - application/json
+      description: admin create/update survey
+      parameters:
+      - description: module id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: survey info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.createSurveyInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Create/Update Survey
+      tags:
+      - admins-surveys
+  /admins/modules/{id}/survey/results:
+    get:
+      consumes:
+      - application/json
+      description: admin get all survey results
+      parameters:
+      - description: skip
+        in: query
+        name: skip
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: module id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.dataResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Get Survey Results
+      tags:
+      - admins-surveys
+  /admins/modules/{id}/survey/results/{studentId}:
+    get:
+      consumes:
+      - application/json
+      description: admin get all survey results
+      parameters:
+      - description: module id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: student id
+        in: path
+        name: studentId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.SurveyResult'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Get Survey Results
+      tags:
+      - admins-surveys
   /admins/offers:
     get:
       consumes:
@@ -2433,11 +2765,11 @@ paths:
       summary: Student Set Lesson As Finished By LessonID
       tags:
       - students-courses
-  /students/modules/{id}/lessons:
+  /students/modules/{id}/content:
     get:
       consumes:
       - application/json
-      description: student get lessons by module id
+      description: student get content by module id
       parameters:
       - description: module id
         in: path
@@ -2450,7 +2782,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1.dataResponse'
+            $ref: '#/definitions/domain.ModuleContent'
         "400":
           description: Bad Request
           schema:
@@ -2469,7 +2801,7 @@ paths:
             $ref: '#/definitions/v1.response'
       security:
       - StudentsAuth: []
-      summary: Student Get Lessons By Module ModuleID
+      summary: Student Get Content By Module ID
       tags:
       - students-courses
   /students/modules/{id}/offers:
@@ -2509,6 +2841,51 @@ paths:
       security:
       - StudentsAuth: []
       summary: Student Get Offers By Module ModuleID
+      tags:
+      - students-courses
+  /students/modules/{id}/survey:
+    post:
+      consumes:
+      - application/json
+      description: student submit survey by module id
+      parameters:
+      - description: survey answers
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.submitSurveyInput'
+      - description: module id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "403":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - StudentsAuth: []
+      summary: Student Submit Survey by Module ID
       tags:
       - students-courses
   /students/order:

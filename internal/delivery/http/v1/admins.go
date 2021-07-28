@@ -38,8 +38,15 @@ func (h *Handler) initAdminRoutes(api *gin.RouterGroup) { //nolint:funlen
 			{
 				modules.PUT("/:id", h.adminUpdateModule)
 				modules.DELETE("/:id", h.adminDeleteModule)
+
 				modules.GET("/:id/lessons", h.adminGetLessons)
 				modules.POST("/:id/lessons", h.adminCreateLesson)
+
+				modules.GET("/:id/survey", h.adminGetSurvey)
+				modules.POST("/:id/survey", h.adminCreateOrUpdateSurvey)
+				modules.DELETE("/:id/survey", h.adminDeleteSurvey)
+				modules.GET("/:id/survey/results", h.adminGetSurveyResults)
+				modules.GET("/:id/survey/results/:studentId", h.adminGetSurveyStudentResults)
 			}
 
 			lessons := authenticated.Group("/lessons")
