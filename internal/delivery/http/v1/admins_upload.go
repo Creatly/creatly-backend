@@ -76,8 +76,9 @@ var (
 	}
 
 	videoTypes = map[string]interface{}{
-		"video/mp4":                nil,
-		"application/octet-stream": nil,
+		"video/mp4":                 nil,
+		"application/octet-stream":  nil,
+		"text/plain; charset=utf-8": nil, // for strange files with such content-type
 	}
 )
 
@@ -217,6 +218,7 @@ func (h *Handler) adminUploadVideo(c *gin.Context) { //nolint:funlen
 	}
 
 	contentType := http.DetectContentType(buffer)
+	logger.Infof("chunk content type: %s", contentType)
 	if _, ex := videoTypes[contentType]; !ex {
 		newResponse(c, http.StatusBadRequest, "file type is not supported")
 

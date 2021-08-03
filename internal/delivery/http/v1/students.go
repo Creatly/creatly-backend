@@ -20,8 +20,9 @@ func (h *Handler) initStudentsRoutes(api *gin.RouterGroup) {
 
 		authenticated := students.Group("/", h.studentIdentity)
 		{
-			authenticated.GET("/modules/:id/lessons", h.studentGetModuleLessons)
+			authenticated.GET("/modules/:id/content", h.studentGetModuleContent)
 			authenticated.GET("/modules/:id/offers", h.studentGetModuleOffers)
+			authenticated.POST("/modules/:id/survey", h.studentSubmitSurvey)
 			authenticated.POST("/lessons/:id/finished", h.studentSetLessonFinished)
 			authenticated.POST("/order", h.studentCreateOrder)
 			authenticated.GET("/account", h.studentGetAccount)
@@ -228,28 +229,21 @@ func (h *Handler) studentVerify(c *gin.Context) {
 	c.JSON(http.StatusOK, response{"success"})
 }
 
-// @Summary Student Get Lessons By Module ModuleID
+// @Summary Student Get Content By Module ID
 // @Security StudentsAuth
 // @Tags students-courses
-// @Description student get lessons by module id
-// @ModuleID studentGetModuleLessons
+// @Description student get content by module id
+// @ModuleID studentGetModuleContent
 // @Accept  json
 // @Produce  json
 // @Param id path string true "module id"
-// @Success 200 {object} dataResponse
+// @Success 200 {object} domain.ModuleContent
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /students/modules/{id}/lessons [get]
-func (h *Handler) studentGetModuleLessons(c *gin.Context) {
-	moduleIdParam := c.Param("id")
-	if moduleIdParam == "" {
-		newResponse(c, http.StatusBadRequest, "empty id param")
-
-		return
-	}
-
-	moduleId, err := primitive.ObjectIDFromHex(moduleIdParam)
+// @Router /students/modules/{id}/content [get]
+func (h *Handler) studentGetModuleContent(c *gin.Context) {
+	moduleId, err := parseIdFromPath(c, "id")
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid id param")
 
@@ -270,7 +264,7 @@ func (h *Handler) studentGetModuleLessons(c *gin.Context) {
 		return
 	}
 
-	lessons, err := h.services.Students.GetModuleLessons(c.Request.Context(), school.ID, studentId, moduleId)
+	content, err := h.services.Students.GetModuleContent(c.Request.Context(), school.ID, studentId, moduleId)
 	if err != nil {
 		if errors.Is(err, domain.ErrModuleIsNotAvailable) {
 			newResponse(c, http.StatusForbidden, err.Error())
@@ -283,7 +277,80 @@ func (h *Handler) studentGetModuleLessons(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, dataResponse{Data: lessons})
+	c.JSON(http.StatusOK, content)
+}
+
+type submitSurveyInput struct {
+	Answers []surveyAnswer `json:"answers"`
+}
+
+type surveyAnswer struct {
+	QuestionID string `json:"questionId"`
+	Answer     string `json:"answer"`
+}
+
+// @Summary Student Submit Survey by Module ID
+// @Security StudentsAuth
+// @Tags students-courses
+// @Description student submit survey by module id
+// @ModuleID studentSetLessonFinished
+// @Accept  json
+// @Produce  json
+// @Param input body submitSurveyInput true "survey answers"
+// @Param id path string true "module id"
+// @Success 200 {string} string "ok"
+// @Failure 400,403 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /students/modules/{id}/survey [post]
+func (h *Handler) studentSubmitSurvey(c *gin.Context) {
+	moduleId, err := parseIdFromPath(c, "id")
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, err.Error())
+
+		return
+	}
+
+	var inp submitSurveyInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+
+		return
+	}
+
+	answers, err := toSurveyAnswers(inp.Answers)
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+
+		return
+	}
+
+	studentId, err := getStudentId(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	if err := h.services.Surveys.SaveStudentAnswers(c.Request.Context(), service.SaveStudentAnswersInput{
+		StudentID: studentId,
+		SchoolID:  school.ID,
+		ModuleID:  moduleId,
+		Answers:   answers,
+	}); err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	c.Status(http.StatusOK)
 }
 
 // @Summary Student Set Lesson As Finished By LessonID
@@ -520,4 +587,22 @@ func (h *Handler) studentGetAccount(c *gin.Context) {
 		Name:  student.Name,
 		Email: student.Email,
 	})
+}
+
+func toSurveyAnswers(answers []surveyAnswer) ([]domain.SurveyAnswer, error) {
+	res := make([]domain.SurveyAnswer, len(answers))
+
+	for i := range answers {
+		id, err := primitive.ObjectIDFromHex(answers[i].QuestionID)
+		if err != nil {
+			return nil, err
+		}
+
+		res[i] = domain.SurveyAnswer{
+			QuestionID: id,
+			Answer:     answers[i].Answer,
+		}
+	}
+
+	return res, nil
 }

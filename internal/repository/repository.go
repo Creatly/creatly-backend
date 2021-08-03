@@ -111,6 +111,8 @@ type Modules interface {
 	UpdateLesson(ctx context.Context, inp UpdateLessonInput) error
 	DeleteLesson(ctx context.Context, schoolId, id primitive.ObjectID) error
 	AttachPackage(ctx context.Context, schoolId, packageId primitive.ObjectID, modules []primitive.ObjectID) error
+	AttachSurvey(ctx context.Context, schoolId, id primitive.ObjectID, survey domain.Survey) error
+	DetachSurvey(ctx context.Context, schoolId, id primitive.ObjectID) error
 }
 
 type LessonContent interface {
@@ -186,6 +188,12 @@ type Files interface {
 	GetByID(ctx context.Context, id, schoolId primitive.ObjectID) (domain.File, error)
 }
 
+type SurveyResults interface {
+	Save(ctx context.Context, results domain.SurveyResult) error
+	GetAllByModule(ctx context.Context, moduleId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.SurveyResult, int64, error)
+	GetByStudent(ctx context.Context, moduleId, studentId primitive.ObjectID) (domain.SurveyResult, error)
+}
+
 type Repositories struct {
 	Schools        Schools
 	Students       Students
@@ -200,6 +208,7 @@ type Repositories struct {
 	Admins         Admins
 	Users          Users
 	Files          Files
+	SurveyResults  SurveyResults
 }
 
 func NewRepositories(db *mongo.Database) *Repositories {
@@ -217,6 +226,7 @@ func NewRepositories(db *mongo.Database) *Repositories {
 		Packages:       NewPackagesRepo(db),
 		Users:          NewUsersRepo(db),
 		Files:          NewFilesRepo(db),
+		SurveyResults:  NewSurveyResultsRepo(db),
 	}
 }
 

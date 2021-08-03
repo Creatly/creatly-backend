@@ -22,7 +22,7 @@ func (s *OffersService) GetById(ctx context.Context, id primitive.ObjectID) (dom
 	return s.repo.GetById(ctx, id)
 }
 
-func (s *OffersService) GetByPackage(ctx context.Context, schoolId, packageId primitive.ObjectID) ([]domain.Offer, error) {
+func (s *OffersService) getByPackage(ctx context.Context, schoolId, packageId primitive.ObjectID) ([]domain.Offer, error) {
 	offers, err := s.repo.GetBySchool(ctx, schoolId)
 	if err != nil {
 		return nil, err
@@ -45,7 +45,7 @@ func (s *OffersService) GetByModule(ctx context.Context, schoolId, moduleId prim
 		return nil, err
 	}
 
-	return s.GetByPackage(ctx, schoolId, module.PackageID)
+	return s.getByPackage(ctx, schoolId, module.PackageID)
 }
 
 func (s *OffersService) GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Offer, error) {

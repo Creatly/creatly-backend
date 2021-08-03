@@ -80,7 +80,7 @@ func (s *OrdersService) Create(ctx context.Context, studentId, offerId, promocod
 	order := domain.Order{
 		ID:       id,
 		SchoolId: offer.SchoolID,
-		Student: domain.OrderStudentInfo{
+		Student: domain.StudentInfoShort{
 			ID:    student.ID,
 			Name:  student.Name,
 			Email: student.Email,

@@ -41,3 +41,9 @@ type StudentLessons struct {
 	Finished   []primitive.ObjectID `json:"finished" bson:"finished"`
 	LastOpened primitive.ObjectID   `json:"lastOpened" bson:"lastOpened"`
 }
+
+type StudentInfoShort struct {
+	ID    primitive.ObjectID `json:"id" bson:"id"`
+	Name  string             `json:"name" bson:"name"`
+	Email string             `json:"email" bson:"email"`
+}
