@@ -7,9 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-var (
-	ErrFondyIsNotConnected = errors.New("fondy is not connected")
-)
+var ErrFondyIsNotConnected = errors.New("fondy is not connected")
 
 type School struct {
 	ID           primitive.ObjectID `json:"id" bson:"_id,omitempty"`

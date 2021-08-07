@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+
 	"github.com/zhashkevych/creatly-backend/pkg/payment"
 	"github.com/zhashkevych/creatly-backend/pkg/payment/fondy"
 
@@ -62,6 +63,7 @@ func (s *SchoolsService) ConnectFondy(ctx context.Context, input ConnectFondyInp
 	client := fondy.NewFondyClient(input.MerchantID, input.MerchantPassword)
 
 	id := primitive.NewObjectID()
+
 	_, err := client.GeneratePaymentLink(payment.GeneratePaymentLinkInput{
 		OrderId:   id.Hex(),
 		Amount:    1000,

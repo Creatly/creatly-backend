@@ -73,6 +73,7 @@ func (s *OrdersService) Create(ctx context.Context, studentId, offerId, promocod
 	}
 
 	err = s.repo.Create(ctx, order)
+
 	return id, err
 }
 

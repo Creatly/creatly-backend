@@ -2,6 +2,7 @@ package domain
 
 import (
 	"errors"
+
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 

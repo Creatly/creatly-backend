@@ -88,15 +88,15 @@ func (s *APITestSuite) initDeps() {
 		s.FailNow("Failed to initialize token manager", err)
 	}
 
-	//paymentProvider := fondy.NewFondyClient("1396424", "test") // Fondy Testing Credentials
+	// paymentProvider := fondy.NewFondyClient("1396424", "test") // Fondy Testing Credentials
 
 	services := service.NewServices(service.Deps{
-		Repos:           repos,
-		Cache:           memCache,
-		Hasher:          hasher,
-		TokenManager:    tokenManager,
-		EmailProvider:   s.mocks.emailProvider,
-		EmailSender:     s.mocks.emailSender,
+		Repos:         repos,
+		Cache:         memCache,
+		Hasher:        hasher,
+		TokenManager:  tokenManager,
+		EmailProvider: s.mocks.emailProvider,
+		EmailSender:   s.mocks.emailSender,
 		EmailConfig: config.EmailConfig{
 			SendPulse: config.SendPulseConfig{
 				ListID: listId,

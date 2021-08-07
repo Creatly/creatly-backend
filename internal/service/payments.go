@@ -134,7 +134,7 @@ func (s *PaymentsService) generateFondyPaymentLink(ctx context.Context, schoolId
 	input payment.GeneratePaymentLinkInput) (string, error) {
 	client, err := s.getFondyClient(ctx, schoolId)
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 
 	input.CallbackURL = s.fondyCallbackURL
