@@ -17,16 +17,13 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-const (
-	paymentLink = "http://payment.link/"
-)
-
 func TestHandler_studentCreateOrder(t *testing.T) {
 	type mockBehavior func(r *mock_service.MockOrders, studentId, offerId, promoId primitive.ObjectID)
 
 	studentId := primitive.NewObjectID()
 	offerId := primitive.NewObjectID()
 	promoId := primitive.NewObjectID()
+	orderId := primitive.NewObjectID()
 
 	tests := []struct {
 		name         string
@@ -44,10 +41,10 @@ func TestHandler_studentCreateOrder(t *testing.T) {
 			studentId: studentId,
 			offerId:   offerId,
 			mockBehavior: func(r *mock_service.MockOrders, studentId, offerId, promoId primitive.ObjectID) {
-				r.EXPECT().Create(context.Background(), studentId, offerId, promoId).Return(paymentLink, nil)
+				r.EXPECT().Create(context.Background(), studentId, offerId, promoId).Return(orderId, nil)
 			},
 			statusCode:   200,
-			responseBody: fmt.Sprintf(`{"paymentLink":"%s"}`, paymentLink),
+			responseBody: fmt.Sprintf(`{"orderId":"%s"}`, orderId.Hex()),
 		},
 		{
 			name:      "ok w/ promocode",
@@ -56,10 +53,10 @@ func TestHandler_studentCreateOrder(t *testing.T) {
 			offerId:   offerId,
 			promoId:   promoId,
 			mockBehavior: func(r *mock_service.MockOrders, studentId, offerId, promoId primitive.ObjectID) {
-				r.EXPECT().Create(context.Background(), studentId, offerId, promoId).Return(paymentLink, nil)
+				r.EXPECT().Create(context.Background(), studentId, offerId, promoId).Return(orderId, nil)
 			},
 			statusCode:   200,
-			responseBody: fmt.Sprintf(`{"paymentLink":"%s"}`, paymentLink),
+			responseBody: fmt.Sprintf(`{"orderId":"%s"}`, orderId.Hex()),
 		},
 		{
 			name:         "offerId missing",
@@ -89,7 +86,7 @@ func TestHandler_studentCreateOrder(t *testing.T) {
 			offerId:   offerId,
 			promoId:   promoId,
 			mockBehavior: func(r *mock_service.MockOrders, studentId, offerId, promoId primitive.ObjectID) {
-				r.EXPECT().Create(context.Background(), studentId, offerId, promoId).Return("", errors.New("failed to create order"))
+				r.EXPECT().Create(context.Background(), studentId, offerId, promoId).Return(orderId, errors.New("failed to create order"))
 			},
 			statusCode:   500,
 			responseBody: `{"message":"failed to create order"}`,

@@ -6,12 +6,11 @@ package mock_repository
 
 import (
 	context "context"
-	reflect "reflect"
-
 	gomock "github.com/golang/mock/gomock"
 	domain "github.com/zhashkevych/creatly-backend/internal/domain"
 	repository "github.com/zhashkevych/creatly-backend/internal/repository"
 	primitive "go.mongodb.org/mongo-driver/bson/primitive"
+	reflect "reflect"
 )
 
 // MockUsers is a mock of Users interface
@@ -203,6 +202,20 @@ func (m *MockSchools) UpdateSettings(ctx context.Context, inp repository.UpdateS
 func (mr *MockSchoolsMockRecorder) UpdateSettings(ctx, inp interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateSettings", reflect.TypeOf((*MockSchools)(nil).UpdateSettings), ctx, inp)
+}
+
+// SetFondyCredentials mocks base method
+func (m *MockSchools) SetFondyCredentials(ctx context.Context, id primitive.ObjectID, fondy domain.Fondy) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SetFondyCredentials", ctx, id, fondy)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SetFondyCredentials indicates an expected call of SetFondyCredentials
+func (mr *MockSchoolsMockRecorder) SetFondyCredentials(ctx, id, fondy interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetFondyCredentials", reflect.TypeOf((*MockSchools)(nil).SetFondyCredentials), ctx, id, fondy)
 }
 
 // MockStudents is a mock of Students interface
@@ -1291,6 +1304,21 @@ func (m *MockOrders) GetBySchool(ctx context.Context, schoolId primitive.ObjectI
 func (mr *MockOrdersMockRecorder) GetBySchool(ctx, schoolId, pagination interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBySchool", reflect.TypeOf((*MockOrders)(nil).GetBySchool), ctx, schoolId, pagination)
+}
+
+// GetById mocks base method
+func (m *MockOrders) GetById(ctx context.Context, id primitive.ObjectID) (domain.Order, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetById", ctx, id)
+	ret0, _ := ret[0].(domain.Order)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetById indicates an expected call of GetById
+func (mr *MockOrdersMockRecorder) GetById(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetById", reflect.TypeOf((*MockOrders)(nil).GetById), ctx, id)
 }
 
 // MockFiles is a mock of Files interface
