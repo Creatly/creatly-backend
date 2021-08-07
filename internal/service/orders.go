@@ -74,30 +74,6 @@ func (s *OrdersService) Create(ctx context.Context, studentId, offerId, promocod
 
 	err = s.repo.Create(ctx, order)
 	return id, err
-	//
-	//if !offer.PaymentMethod.UsesProvider {
-	//	return "", nil
-	//}
-	//
-	//paymentLink, err := s.paymentsService.GeneratePaymentLink(ctx, GeneratePaymentLinkInput{
-	//	OrderID:  order.ID,
-	//	SchoolID: student.SchoolID,
-	//	Data: payment.GeneratePaymentLinkInput{
-	//		OrderId:     id.Hex(),
-	//		Amount:      orderAmount,
-	//		Currency:    offer.Price.Currency,
-	//		OrderDesc:   offer.Description, // TODO proper order description
-	//		CallbackURL: s.callbackURL,
-	//		RedicrectURL: s.redirectURL,
-	//	},
-	//})
-	//if err != nil {
-	//	logger.Error("Failed to generate payment link: ", err.Error())
-	//
-	//	return "", err
-	//}
-	//
-	//return paymentLink, nil
 }
 
 func (s *OrdersService) AddTransaction(ctx context.Context, id primitive.ObjectID, transaction domain.Transaction) (domain.Order, error) {

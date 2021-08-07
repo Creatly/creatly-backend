@@ -196,8 +196,6 @@ func setFromEnv(cfg *Config) {
 
 	cfg.HTTP.Host = os.Getenv("HTTP_HOST")
 
-	//cfg.Payment.Fondy.MerchantId = os.Getenv("FONDY_MERCHANT_ID")
-	//cfg.Payment.Fondy.MerchantPassword = os.Getenv("FONDY_MERCHANT_PASS")
 	cfg.Payment.FondyCallbackURL = os.Getenv("FONDY_CALLBACK_URL")
 	cfg.Payment.RedicrectURL = os.Getenv("PAYMENT_REDIRECT_URL")
 
