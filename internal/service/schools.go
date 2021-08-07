@@ -45,12 +45,13 @@ func (s *SchoolsService) GetById(ctx context.Context, id primitive.ObjectID) (do
 
 func (s *SchoolsService) UpdateSettings(ctx context.Context, schoolId primitive.ObjectID, inp UpdateSchoolSettingsInput) error {
 	return s.repo.UpdateSettings(ctx, repository.UpdateSchoolSettingsInput{
-		SchoolID:          schoolId,
-		Color:             inp.Color,
-		Domains:           inp.Domains,
-		Email:             inp.Email,
-		ContactInfo:       inp.ContactInfo,
-		Pages:             inp.Pages,
-		ShowPaymentImages: inp.ShowPaymentImages,
+		SchoolID:            schoolId,
+		Color:               inp.Color,
+		Domains:             inp.Domains,
+		Email:               inp.Email,
+		ContactInfo:         inp.ContactInfo,
+		Pages:               inp.Pages,
+		ShowPaymentImages:   inp.ShowPaymentImages,
+		GoogleAnalyticsCode: inp.GoogleAnalyticsCode,
 	})
 }

@@ -1480,12 +1480,13 @@ type (
 	}
 
 	updateSchoolSettingsInput struct {
-		Color             string       `json:"color"`
-		Domains           []string     `json:"domains"`
-		Email             string       `json:"email"`
-		ContactInfo       *contactInfo `json:"contactInfo"`
-		Pages             *pages       `json:"pages"`
-		ShowPaymentImages *bool        `json:"showPaymentImages"`
+		Color               string       `json:"color"`
+		Domains             []string     `json:"domains"`
+		Email               string       `json:"email"`
+		ContactInfo         *contactInfo `json:"contactInfo"`
+		Pages               *pages       `json:"pages"`
+		ShowPaymentImages   *bool        `json:"showPaymentImages"`
+		GoogleAnalyticsCode string       `json:"googleAnalyticsCode"`
 	}
 )
 
@@ -1518,10 +1519,11 @@ func (h *Handler) adminUpdateSchoolSettings(c *gin.Context) {
 	}
 
 	updateInput := service.UpdateSchoolSettingsInput{
-		Color:             inp.Color,
-		Domains:           inp.Domains,
-		Email:             inp.Email,
-		ShowPaymentImages: inp.ShowPaymentImages,
+		Color:               inp.Color,
+		Domains:             inp.Domains,
+		Email:               inp.Email,
+		ShowPaymentImages:   inp.ShowPaymentImages,
+		GoogleAnalyticsCode: inp.GoogleAnalyticsCode,
 	}
 
 	if inp.Pages != nil {
