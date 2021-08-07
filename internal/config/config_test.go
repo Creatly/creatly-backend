@@ -155,8 +155,8 @@ func TestInit(t *testing.T) {
 						MerchantId:       "123",
 						MerchantPassword: "fondy",
 					},
-					CallbackURL: "https://zhashkevych.com/callback",
-					ResponseURL: "https://zhashkevych.com/",
+					CallbackURL:  "https://zhashkevych.com/callback",
+					RedicrectURL: "https://zhashkevych.com/",
 				},
 				Limiter: LimiterConfig{
 					RPS:   10,

@@ -86,14 +86,8 @@ type (
 	}
 
 	PaymentConfig struct {
-		Fondy       FondyConfig
-		CallbackURL string
-		ResponseURL string
-	}
-
-	FondyConfig struct {
-		MerchantId       string
-		MerchantPassword string
+		FondyCallbackURL string
+		RedicrectURL     string
 	}
 
 	HTTPConfig struct {
@@ -202,10 +196,10 @@ func setFromEnv(cfg *Config) {
 
 	cfg.HTTP.Host = os.Getenv("HTTP_HOST")
 
-	cfg.Payment.Fondy.MerchantId = os.Getenv("FONDY_MERCHANT_ID")
-	cfg.Payment.Fondy.MerchantPassword = os.Getenv("FONDY_MERCHANT_PASS")
-	cfg.Payment.CallbackURL = os.Getenv("PAYMENT_CALLBACK_URL")
-	cfg.Payment.ResponseURL = os.Getenv("PAYMENT_RESPONSE_URL")
+	//cfg.Payment.Fondy.MerchantId = os.Getenv("FONDY_MERCHANT_ID")
+	//cfg.Payment.Fondy.MerchantPassword = os.Getenv("FONDY_MERCHANT_PASS")
+	cfg.Payment.FondyCallbackURL = os.Getenv("FONDY_CALLBACK_URL")
+	cfg.Payment.RedicrectURL = os.Getenv("PAYMENT_REDIRECT_URL")
 
 	cfg.SMTP.Pass = os.Getenv("SMTP_PASSWORD")
 

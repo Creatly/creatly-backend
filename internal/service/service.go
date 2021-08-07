@@ -15,7 +15,6 @@ import (
 	"github.com/zhashkevych/creatly-backend/pkg/email"
 	"github.com/zhashkevych/creatly-backend/pkg/hash"
 	"github.com/zhashkevych/creatly-backend/pkg/otp"
-	"github.com/zhashkevych/creatly-backend/pkg/payment"
 	"github.com/zhashkevych/creatly-backend/pkg/storage"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -64,6 +63,7 @@ type UpdateSchoolSettingsInput struct {
 type Schools interface {
 	Create(ctx context.Context, name string) (primitive.ObjectID, error)
 	GetByDomain(ctx context.Context, domainName string) (domain.School, error)
+	GetById(ctx context.Context, id primitive.ObjectID) (domain.School, error)
 	UpdateSettings(ctx context.Context, schoolId primitive.ObjectID, input UpdateSchoolSettingsInput) error
 }
 
@@ -298,12 +298,14 @@ type Packages interface {
 }
 
 type Orders interface {
-	Create(ctx context.Context, studentId, offerId, promocodeId primitive.ObjectID) (string, error)
+	Create(ctx context.Context, studentId, offerId, promocodeId primitive.ObjectID) (primitive.ObjectID, error)
 	AddTransaction(ctx context.Context, id primitive.ObjectID, transaction domain.Transaction) (domain.Order, error)
 	GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Order, int64, error)
+	GetById(ctx context.Context, id primitive.ObjectID) (domain.Order, error)
 }
 
 type Payments interface {
+	GeneratePaymentLink(ctx context.Context, orderId primitive.ObjectID) (string, error)
 	ProcessTransaction(ctx context.Context, callback interface{}) error
 }
 
@@ -355,12 +357,11 @@ type Deps struct {
 	EmailProvider          email.Provider
 	EmailSender            email.Sender
 	EmailConfig            config.EmailConfig
-	PaymentProvider        payment.Provider
 	StorageProvider        storage.Provider
 	AccessTokenTTL         time.Duration
 	RefreshTokenTTL        time.Duration
-	PaymentCallbackURL     string
-	PaymentResponseURL     string
+	FondyCallbackURL       string
+	PaymentRedirectURL     string
 	CacheTTL               int64
 	OtpGenerator           otp.Generator
 	VerificationCodeLength int
@@ -380,7 +381,7 @@ func NewServices(deps Deps) *Services {
 	studentLessonsService := NewStudentLessonsService(deps.Repos.StudentLessons)
 	studentsService := NewStudentsService(deps.Repos.Students, modulesService, offersService, lessonsService, deps.Hasher,
 		deps.TokenManager, emailsService, studentLessonsService, deps.AccessTokenTTL, deps.RefreshTokenTTL, deps.OtpGenerator, deps.VerificationCodeLength)
-	ordersService := NewOrdersService(deps.Repos.Orders, offersService, promoCodesService, studentsService, deps.PaymentProvider, deps.PaymentCallbackURL, deps.PaymentResponseURL)
+	ordersService := NewOrdersService(deps.Repos.Orders, offersService, promoCodesService, studentsService)
 	schoolsService := NewSchoolsService(deps.Repos.Schools, deps.Cache, deps.CacheTTL)
 	usersService := NewUsersService(deps.Repos.Users, deps.Hasher, deps.TokenManager, emailsService, schoolsService, deps.DNS,
 		deps.AccessTokenTTL, deps.RefreshTokenTTL, deps.OtpGenerator, deps.VerificationCodeLength, deps.Domain)
@@ -393,8 +394,9 @@ func NewServices(deps Deps) *Services {
 		PromoCodes:     promoCodesService,
 		Offers:         offersService,
 		Modules:        modulesService,
-		Payments:       NewPaymentsService(deps.PaymentProvider, ordersService, offersService, studentsService, emailsService),
-		Orders:         ordersService,
+		Payments: NewPaymentsService(ordersService, offersService, studentsService, emailsService, schoolsService,
+			deps.FondyCallbackURL, deps.PaymentRedirectURL),
+		Orders: ordersService,
 		Admins: NewAdminsService(deps.Hasher, deps.TokenManager, deps.Repos.Admins, deps.Repos.Schools, deps.Repos.Students,
 			deps.AccessTokenTTL, deps.RefreshTokenTTL),
 		Packages: packagesService,

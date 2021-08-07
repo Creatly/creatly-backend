@@ -39,6 +39,10 @@ func (s *SchoolsService) GetByDomain(ctx context.Context, domainName string) (do
 	return school, err
 }
 
+func (s *SchoolsService) GetById(ctx context.Context, id primitive.ObjectID) (domain.School, error) {
+	return s.repo.GetById(ctx, id)
+}
+
 func (s *SchoolsService) UpdateSettings(ctx context.Context, schoolId primitive.ObjectID, inp UpdateSchoolSettingsInput) error {
 	return s.repo.UpdateSettings(ctx, repository.UpdateSchoolSettingsInput{
 		SchoolID:          schoolId,

@@ -6,7 +6,7 @@ type GeneratePaymentLinkInput struct {
 	Currency    string
 	OrderDesc   string
 	CallbackURL string
-	ResponseURL string
+	RedirectURL string
 }
 
 type Provider interface {

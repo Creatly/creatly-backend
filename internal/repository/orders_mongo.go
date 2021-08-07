@@ -63,3 +63,11 @@ func (r *OrdersRepo) GetBySchool(ctx context.Context, schoolId primitive.ObjectI
 
 	return orders, count, err
 }
+
+func (r *OrdersRepo) GetById(ctx context.Context, id primitive.ObjectID) (domain.Order, error) {
+	var order domain.Order
+
+	err := r.db.FindOne(ctx, bson.M{"_id": id}).Decode(&order)
+
+	return order, err
+}

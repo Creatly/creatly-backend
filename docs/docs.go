@@ -3489,7 +3489,7 @@ var doc = `{
                 }
             }
         },
-        "/students/order": {
+        "/students/orders": {
             "post": {
                 "security": [
                     {
@@ -3504,7 +3504,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "students-courses"
+                    "students-orders"
                 ],
                 "summary": "Student CreateOrder",
                 "parameters": [
@@ -3523,6 +3523,67 @@ var doc = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/v1.createOrderResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/students/orders/{id}/payment": {
+            "get": {
+                "security": [
+                    {
+                        "StudentsAuth": []
+                    }
+                ],
+                "description": "student generate order payment link",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "students-orders"
+                ],
+                "summary": "Student Generate Payment Link",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "order id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.generatePaymentLinkResponse"
                         }
                     },
                     "400": {
@@ -4096,6 +4157,20 @@ var doc = `{
                 }
             }
         },
+        "domain.Fondy": {
+            "type": "object",
+            "properties": {
+                "connected": {
+                    "type": "boolean"
+                },
+                "merchantId": {
+                    "type": "string"
+                },
+                "merchantPassword": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.Lesson": {
             "type": "object",
             "properties": {
@@ -4157,6 +4232,9 @@ var doc = `{
                         "type": "string"
                     }
                 },
+                "paymentMethod": {
+                    "$ref": "#/definitions/domain.PaymentMethod"
+                },
                 "price": {
                     "$ref": "#/definitions/domain.Price"
                 },
@@ -4199,6 +4277,17 @@ var doc = `{
                 },
                 "serviceAgreement": {
                     "type": "string"
+                }
+            }
+        },
+        "domain.PaymentMethod": {
+            "type": "object",
+            "properties": {
+                "provider": {
+                    "type": "string"
+                },
+                "usesProvider": {
+                    "type": "boolean"
                 }
             }
         },
@@ -4299,6 +4388,12 @@ var doc = `{
                     "items": {
                         "type": "string"
                     }
+                },
+                "fondy": {
+                    "$ref": "#/definitions/domain.Fondy"
+                },
+                "googleAnalyticsCode": {
+                    "type": "string"
                 },
                 "logo": {
                     "type": "string"
@@ -4566,7 +4661,7 @@ var doc = `{
         "v1.createOrderResponse": {
             "type": "object",
             "properties": {
-                "paymentLink": {
+                "orderId": {
                     "type": "string"
                 }
             }
@@ -4669,6 +4764,14 @@ var doc = `{
                 },
                 "data": {
                     "type": "object"
+                }
+            }
+        },
+        "v1.generatePaymentLinkResponse": {
+            "type": "object",
+            "properties": {
+                "url": {
+                    "type": "string"
                 }
             }
         },

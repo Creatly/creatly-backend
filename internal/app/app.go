@@ -17,10 +17,6 @@ import (
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/zhashkevych/creatly-backend/pkg/storage"
 
-	"github.com/zhashkevych/creatly-backend/pkg/email/smtp"
-	"github.com/zhashkevych/creatly-backend/pkg/otp"
-	"github.com/zhashkevych/creatly-backend/pkg/payment/fondy"
-
 	"github.com/zhashkevych/creatly-backend/internal/config"
 	delivery "github.com/zhashkevych/creatly-backend/internal/delivery/http"
 	"github.com/zhashkevych/creatly-backend/internal/repository"
@@ -30,8 +26,10 @@ import (
 	"github.com/zhashkevych/creatly-backend/pkg/cache"
 	"github.com/zhashkevych/creatly-backend/pkg/database/mongodb"
 	"github.com/zhashkevych/creatly-backend/pkg/email/sendpulse"
+	"github.com/zhashkevych/creatly-backend/pkg/email/smtp"
 	"github.com/zhashkevych/creatly-backend/pkg/hash"
 	"github.com/zhashkevych/creatly-backend/pkg/logger"
+	"github.com/zhashkevych/creatly-backend/pkg/otp"
 )
 
 // @title Creatly API
@@ -75,7 +73,6 @@ func Run(configPath string) {
 	memCache := cache.NewMemoryCache()
 	hasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
 	emailProvider := sendpulse.NewClient(cfg.Email.SendPulse.ClientID, cfg.Email.SendPulse.ClientSecret, memCache)
-	paymentProvider := fondy.NewFondyClient(cfg.Payment.Fondy.MerchantId, cfg.Payment.Fondy.MerchantPassword)
 
 	emailSender, err := smtp.NewSMTPSender(cfg.SMTP.From, cfg.SMTP.Pass, cfg.SMTP.Host, cfg.SMTP.Port)
 	if err != nil {
@@ -119,11 +116,10 @@ func Run(configPath string) {
 		EmailProvider:          emailProvider,
 		EmailSender:            emailSender,
 		EmailConfig:            cfg.Email,
-		PaymentProvider:        paymentProvider,
 		AccessTokenTTL:         cfg.Auth.JWT.AccessTokenTTL,
 		RefreshTokenTTL:        cfg.Auth.JWT.RefreshTokenTTL,
-		PaymentResponseURL:     cfg.Payment.ResponseURL,
-		PaymentCallbackURL:     cfg.Payment.CallbackURL,
+		PaymentRedirectURL:     cfg.Payment.RedicrectURL,
+		FondyCallbackURL:       cfg.Payment.FondyCallbackURL,
 		CacheTTL:               int64(cfg.CacheTTL.Seconds()),
 		OtpGenerator:           otpGenerator,
 		VerificationCodeLength: cfg.Auth.VerificationCodeLength,
