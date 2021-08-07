@@ -38,6 +38,7 @@ type Schools interface {
 	GetByDomain(ctx context.Context, domainName string) (domain.School, error)
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.School, error)
 	UpdateSettings(ctx context.Context, inp UpdateSchoolSettingsInput) error
+	SetFondyCredentials(ctx context.Context, id primitive.ObjectID, fondy domain.Fondy) error
 }
 
 type Students interface {

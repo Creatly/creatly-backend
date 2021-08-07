@@ -75,6 +75,7 @@ func (h *Handler) initAdminRoutes(api *gin.RouterGroup) { //nolint:funlen
 			school := authenticated.Group("/school")
 			{
 				school.PUT("/settings", h.adminUpdateSchoolSettings)
+				school.PUT("/settings/fondy", h.adminConnectFondy)
 			}
 
 			promocodes := authenticated.Group("/promocodes")
@@ -1544,6 +1545,52 @@ func (h *Handler) adminUpdateSchoolSettings(c *gin.Context) {
 	}
 
 	if err := h.services.Schools.UpdateSettings(c.Request.Context(), school.ID, updateInput); err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	c.Status(http.StatusOK)
+}
+
+type connectFondyInput struct {
+	MerchantID       string `json:"merchantId"`
+	MerchantPassword string `json:"merchantPassword"`
+}
+
+// @Summary Admin Connect Fondy
+// @Security AdminAuth
+// @Tags admins-school
+// @Description admin connect fondy
+// @ModuleID adminConnectFondy
+// @Accept  json
+// @Produce  json
+// @Param input body connectFondyInput true "update school settings"
+// @Success 200 {string} string "ok"
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/school/settings/fondy [put]
+func (h *Handler) adminConnectFondy(c *gin.Context) {
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	var inp connectFondyInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+
+		return
+	}
+
+	if err := h.services.Schools.ConnectFondy(c.Request.Context(), service.ConnectFondyInput{
+		SchoolID:         school.ID,
+		MerchantID:       inp.MerchantID,
+		MerchantPassword: inp.MerchantPassword,
+	}); err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 
 		return

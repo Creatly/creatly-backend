@@ -2361,6 +2361,69 @@ var doc = `{
                 }
             }
         },
+        "/admins/school/settings/fondy": {
+            "put": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "admin connect fondy",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admins-school"
+                ],
+                "summary": "Admin Connect Fondy",
+                "parameters": [
+                    {
+                        "description": "update school settings",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.connectFondyInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
         "/admins/sign-in": {
             "post": {
                 "description": "admin sign in",
@@ -4563,6 +4626,17 @@ var doc = `{
                 }
             }
         },
+        "v1.connectFondyInput": {
+            "type": "object",
+            "properties": {
+                "merchantId": {
+                    "type": "string"
+                },
+                "merchantPassword": {
+                    "type": "string"
+                }
+            }
+        },
         "v1.contactInfo": {
             "type": "object",
             "properties": {
@@ -5086,6 +5160,9 @@ var doc = `{
                     }
                 },
                 "email": {
+                    "type": "string"
+                },
+                "googleAnalyticsCode": {
                     "type": "string"
                 },
                 "pages": {

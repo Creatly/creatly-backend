@@ -61,11 +61,18 @@ type UpdateSchoolSettingsInput struct {
 	GoogleAnalyticsCode string
 }
 
+type ConnectFondyInput struct {
+	SchoolID         primitive.ObjectID
+	MerchantID       string
+	MerchantPassword string
+}
+
 type Schools interface {
 	Create(ctx context.Context, name string) (primitive.ObjectID, error)
 	GetByDomain(ctx context.Context, domainName string) (domain.School, error)
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.School, error)
 	UpdateSettings(ctx context.Context, schoolId primitive.ObjectID, input UpdateSchoolSettingsInput) error
+	ConnectFondy(ctx context.Context, input ConnectFondyInput) error
 }
 
 type StudentSignUpInput struct {
