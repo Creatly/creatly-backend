@@ -67,12 +67,19 @@ func (s *OffersService) GetByCourse(ctx context.Context, courseId primitive.Obje
 }
 
 func (s *OffersService) Create(ctx context.Context, inp CreateOfferInput) (primitive.ObjectID, error) {
+	if inp.PaymentMethod.UsesProvider {
+		if err := inp.PaymentMethod.Validate(); err != nil {
+			return primitive.ObjectID{}, err
+		}
+	}
+
 	return s.repo.Create(ctx, domain.Offer{
-		SchoolID:    inp.SchoolID,
-		Name:        inp.Name,
-		Description: inp.Description,
-		Benefits:    inp.Benefits,
-		Price:       inp.Price,
+		SchoolID:      inp.SchoolID,
+		Name:          inp.Name,
+		Description:   inp.Description,
+		Benefits:      inp.Benefits,
+		Price:         inp.Price,
+		PaymentMethod: inp.PaymentMethod,
 	})
 }
 

@@ -35,3 +35,12 @@ type PaymentMethod struct {
 	UsesProvider bool   `json:"usesProvider" bson:"usesProvider"`
 	Provider     string `json:"provider" bson:"provider,omitempty"`
 }
+
+func (pm PaymentMethod) Validate() error {
+	switch pm.Provider {
+	case PaymentProviderFondy:
+		return nil
+	default:
+		return errors.New("unknown payment provider")
+	}
+}

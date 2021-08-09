@@ -4698,6 +4698,7 @@ var doc = `{
             "required": [
                 "benefits",
                 "name",
+                "paymentMethod",
                 "price"
             ],
             "properties": {
@@ -4712,6 +4713,9 @@ var doc = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "paymentMethod": {
+                    "$ref": "#/definitions/v1.paymentMethod"
                 },
                 "price": {
                     "$ref": "#/definitions/v1.price"
@@ -4876,6 +4880,20 @@ var doc = `{
                 },
                 "serviceAgreement": {
                     "type": "string"
+                }
+            }
+        },
+        "v1.paymentMethod": {
+            "type": "object",
+            "required": [
+                "usesProvider"
+            ],
+            "properties": {
+                "provider": {
+                    "type": "string"
+                },
+                "usesProvider": {
+                    "type": "boolean"
                 }
             }
         },

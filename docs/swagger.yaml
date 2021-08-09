@@ -364,11 +364,14 @@ definitions:
         type: string
       name:
         type: string
+      paymentMethod:
+        $ref: '#/definitions/v1.paymentMethod'
       price:
         $ref: '#/definitions/v1.price'
     required:
     - benefits
     - name
+    - paymentMethod
     - price
     type: object
   v1.createOrderInput:
@@ -475,6 +478,15 @@ definitions:
         type: string
       serviceAgreement:
         type: string
+    type: object
+  v1.paymentMethod:
+    properties:
+      provider:
+        type: string
+      usesProvider:
+        type: boolean
+    required:
+    - usesProvider
     type: object
   v1.price:
     properties:

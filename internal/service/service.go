@@ -203,11 +203,12 @@ type PromoCodes interface {
 }
 
 type CreateOfferInput struct {
-	Name        string
-	Description string
-	Benefits    []string
-	SchoolID    primitive.ObjectID
-	Price       domain.Price
+	Name          string
+	Description   string
+	Benefits      []string
+	SchoolID      primitive.ObjectID
+	Price         domain.Price
+	PaymentMethod domain.PaymentMethod
 }
 
 type UpdateOfferInput struct {
