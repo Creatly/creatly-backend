@@ -12,8 +12,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// TODO: review response error messages
-
 func (h *Handler) initAdminRoutes(api *gin.RouterGroup) { //nolint:funlen
 	admins := api.Group("/admins", h.setSchoolFromRequest)
 	{
