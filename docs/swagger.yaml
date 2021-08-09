@@ -634,6 +634,8 @@ definitions:
         items:
           type: string
         type: array
+      paymentMethod:
+        $ref: '#/definitions/v1.paymentMethod'
       price:
         $ref: '#/definitions/v1.price'
     type: object

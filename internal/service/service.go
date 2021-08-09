@@ -212,13 +212,26 @@ type CreateOfferInput struct {
 }
 
 type UpdateOfferInput struct {
-	ID          string
-	SchoolID    string
-	Name        string
-	Description string
-	Benefits    []string
-	Price       *domain.Price
-	Packages    []string
+	ID            string
+	SchoolID      string
+	Name          string
+	Description   string
+	Benefits      []string
+	Price         *domain.Price
+	Packages      []string
+	PaymentMethod *domain.PaymentMethod
+}
+
+func (i UpdateOfferInput) ValidatePayment() error {
+	if i.PaymentMethod == nil {
+		return nil
+	}
+
+	if !i.PaymentMethod.UsesProvider {
+		return nil
+	}
+
+	return i.PaymentMethod.Validate()
 }
 
 type Offers interface {

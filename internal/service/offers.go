@@ -88,6 +88,10 @@ func (s *OffersService) GetAll(ctx context.Context, schoolId primitive.ObjectID)
 }
 
 func (s *OffersService) Update(ctx context.Context, inp UpdateOfferInput) error {
+	if err := inp.ValidatePayment(); err != nil {
+		return err
+	}
+
 	id, err := primitive.ObjectIDFromHex(inp.ID)
 	if err != nil {
 		return err
@@ -99,12 +103,13 @@ func (s *OffersService) Update(ctx context.Context, inp UpdateOfferInput) error 
 	}
 
 	updateInput := repository.UpdateOfferInput{
-		ID:          id,
-		SchoolID:    schoolId,
-		Name:        inp.Name,
-		Description: inp.Description,
-		Price:       inp.Price,
-		Benefits:    inp.Benefits,
+		ID:            id,
+		SchoolID:      schoolId,
+		Name:          inp.Name,
+		Description:   inp.Description,
+		Price:         inp.Price,
+		Benefits:      inp.Benefits,
+		PaymentMethod: inp.PaymentMethod,
 	}
 
 	if inp.Packages != nil {

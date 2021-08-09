@@ -5120,6 +5120,9 @@ var doc = `{
                         "type": "string"
                     }
                 },
+                "paymentMethod": {
+                    "$ref": "#/definitions/v1.paymentMethod"
+                },
                 "price": {
                     "$ref": "#/definitions/v1.price"
                 }

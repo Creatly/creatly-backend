@@ -140,13 +140,14 @@ type Packages interface {
 }
 
 type UpdateOfferInput struct {
-	ID          primitive.ObjectID
-	SchoolID    primitive.ObjectID
-	Name        string
-	Description string
-	Benefits    []string
-	Price       *domain.Price
-	Packages    []primitive.ObjectID
+	ID            primitive.ObjectID
+	SchoolID      primitive.ObjectID
+	Name          string
+	Description   string
+	Benefits      []string
+	Price         *domain.Price
+	Packages      []primitive.ObjectID
+	PaymentMethod *domain.PaymentMethod
 }
 
 type Offers interface {

@@ -89,6 +89,10 @@ func (r *OffersRepo) Update(ctx context.Context, inp UpdateOfferInput) error {
 		updateQuery["packages"] = inp.Packages
 	}
 
+	if inp.PaymentMethod != nil {
+		updateQuery["paymentMethod"] = inp.PaymentMethod
+	}
+
 	_, err := r.db.UpdateOne(ctx,
 		bson.M{"_id": inp.ID, "schoolId": inp.SchoolID}, bson.M{"$set": updateQuery})
 

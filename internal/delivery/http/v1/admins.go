@@ -1155,11 +1155,12 @@ func (h *Handler) adminGetOfferById(c *gin.Context) {
 }
 
 type updateOfferInput struct {
-	Name        string   `json:"name"`
-	Description string   `json:"description"`
-	Benefits    []string `json:"benefits"`
-	Price       *price   `json:"price"`
-	Packages    []string `json:"packages"`
+	Name          string         `json:"name"`
+	Description   string         `json:"description"`
+	Benefits      []string       `json:"benefits"`
+	Price         *price         `json:"price"`
+	Packages      []string       `json:"packages"`
+	PaymentMethod *paymentMethod `json:"paymentMethod"`
 }
 
 // @Summary Admin Update Offer
@@ -1211,6 +1212,13 @@ func (h *Handler) adminUpdateOffer(c *gin.Context) {
 		updateInput.Price = &domain.Price{
 			Value:    inp.Price.Value,
 			Currency: inp.Price.Currency,
+		}
+	}
+
+	if inp.PaymentMethod != nil {
+		updateInput.PaymentMethod = &domain.PaymentMethod{
+			UsesProvider: inp.PaymentMethod.UsesProvider,
+			Provider:     inp.PaymentMethod.Provider,
 		}
 	}
 
