@@ -62,6 +62,29 @@ definitions:
       schoolId:
         type: string
     type: object
+  domain.Module:
+    properties:
+      courseId:
+        type: string
+      id:
+        type: string
+      lessons:
+        items:
+          $ref: '#/definitions/domain.Lesson'
+        type: array
+      name:
+        type: string
+      packageId:
+        type: string
+      position:
+        type: integer
+      published:
+        type: boolean
+      schoolId:
+        type: string
+      survey:
+        $ref: '#/definitions/domain.Survey'
+    type: object
   domain.ModuleContent:
     properties:
       lessons:
@@ -100,6 +123,10 @@ definitions:
         type: string
       id:
         type: string
+      modules:
+        items:
+          $ref: '#/definitions/domain.Module'
+        type: array
       name:
         type: string
       schoolId:

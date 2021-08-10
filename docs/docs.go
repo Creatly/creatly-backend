@@ -4119,6 +4119,41 @@ var doc = `{
                 }
             }
         },
+        "domain.Module": {
+            "type": "object",
+            "properties": {
+                "courseId": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "lessons": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Lesson"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "packageId": {
+                    "type": "string"
+                },
+                "position": {
+                    "type": "integer"
+                },
+                "published": {
+                    "type": "boolean"
+                },
+                "schoolId": {
+                    "type": "string"
+                },
+                "survey": {
+                    "$ref": "#/definitions/domain.Survey"
+                }
+            }
+        },
         "domain.ModuleContent": {
             "type": "object",
             "properties": {
@@ -4176,6 +4211,12 @@ var doc = `{
                 },
                 "id": {
                     "type": "string"
+                },
+                "modules": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Module"
+                    }
                 },
                 "name": {
                     "type": "string"
