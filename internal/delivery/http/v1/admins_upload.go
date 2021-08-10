@@ -219,6 +219,7 @@ func (h *Handler) adminUploadVideo(c *gin.Context) { //nolint:funlen
 
 	contentType := http.DetectContentType(buffer)
 	logger.Infof("chunk content type: %s", contentType)
+
 	if _, ex := videoTypes[contentType]; !ex {
 		newResponse(c, http.StatusBadRequest, "file type is not supported")
 
