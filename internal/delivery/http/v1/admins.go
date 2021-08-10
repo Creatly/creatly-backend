@@ -874,12 +874,12 @@ func (h *Handler) adminCreatePackage(c *gin.Context) {
 type packageResponse struct {
 	ID      primitive.ObjectID `json:"id"`
 	Name    string             `json:"name"`
-	Modules []packageModule    `json:"modules`
+	Modules []packageModule    `json:"modules"`
 }
 
 type packageModule struct {
 	ID   primitive.ObjectID `json:"id"`
-	Name string             `json:"name`
+	Name string             `json:"name"`
 }
 
 // @Summary Admin Get All Course Packages
