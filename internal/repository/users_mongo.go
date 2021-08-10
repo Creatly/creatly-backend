@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/zhashkevych/creatly-backend/internal/domain"
@@ -33,7 +34,7 @@ func (r *UsersRepo) Create(ctx context.Context, user domain.User) error {
 func (r *UsersRepo) GetByCredentials(ctx context.Context, email, password string) (domain.User, error) {
 	var user domain.User
 	if err := r.db.FindOne(ctx, bson.M{"email": email, "password": password}).Decode(&user); err != nil {
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return domain.User{}, domain.ErrUserNotFound
 		}
 
@@ -49,7 +50,7 @@ func (r *UsersRepo) GetByRefreshToken(ctx context.Context, refreshToken string) 
 		"session.refreshToken": refreshToken,
 		"session.expiresAt":    bson.M{"$gt": time.Now()},
 	}).Decode(&user); err != nil {
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return domain.User{}, domain.ErrUserNotFound
 		}
 
