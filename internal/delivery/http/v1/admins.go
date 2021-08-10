@@ -871,6 +871,17 @@ func (h *Handler) adminCreatePackage(c *gin.Context) {
 	c.JSON(http.StatusCreated, idResponse{moduleId})
 }
 
+type packageResponse struct {
+	ID      primitive.ObjectID `json:"id"`
+	Name    string             `json:"name"`
+	Modules []packageModule    `json:"modules"`
+}
+
+type packageModule struct {
+	ID   primitive.ObjectID `json:"id"`
+	Name string             `json:"name"`
+}
+
 // @Summary Admin Get All Course Packages
 // @Security AdminAuth
 // @Tags admins-packages
@@ -892,14 +903,14 @@ func (h *Handler) adminGetAllPackages(c *gin.Context) {
 		return
 	}
 
-	packages, err := h.services.Packages.GetByCourse(c.Request.Context(), id)
+	pkg, err := h.services.Packages.GetByCourse(c.Request.Context(), id)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, "invalid id param")
 
 		return
 	}
 
-	c.JSON(http.StatusOK, dataResponse{Data: packages})
+	c.JSON(http.StatusOK, dataResponse{Data: toPackagesResponse(pkg)})
 }
 
 // @Summary Admin Get Package By ID
@@ -930,7 +941,11 @@ func (h *Handler) adminGetPackageById(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, pkg)
+	c.JSON(http.StatusOK, packageResponse{
+		ID:      pkg.ID,
+		Name:    pkg.Name,
+		Modules: toPackageModules(pkg.Modules),
+	})
 }
 
 type updatePackageInput struct {
@@ -1590,4 +1605,31 @@ func (h *Handler) adminGetOrders(c *gin.Context) {
 		Data:  orders,
 		Count: count,
 	})
+}
+
+func toPackagesResponse(pkgs []domain.Package) []packageResponse {
+	out := make([]packageResponse, len(pkgs))
+
+	for i, pkg := range pkgs {
+		out[i] = packageResponse{
+			ID:      pkg.ID,
+			Name:    pkg.Name,
+			Modules: toPackageModules(pkg.Modules),
+		}
+	}
+
+	return out
+}
+
+func toPackageModules(modules []domain.Module) []packageModule {
+	out := make([]packageModule, len(modules))
+
+	for i, module := range modules {
+		out[i] = packageModule{
+			ID:   module.ID,
+			Name: module.Name,
+		}
+	}
+
+	return out
 }

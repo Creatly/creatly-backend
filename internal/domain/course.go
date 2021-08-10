@@ -51,6 +51,7 @@ type Package struct {
 	Description string             `json:"description,omitempty" bson:"description,omitempty"`
 	CourseID    primitive.ObjectID `json:"courseId" bson:"courseId"`
 	SchoolID    primitive.ObjectID `json:"schoolId" bson:"schoolId"`
+	Modules     []Module           `json:"modules" bson:"-"`
 }
 
 type ModuleContent struct {
