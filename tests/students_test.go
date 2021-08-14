@@ -31,13 +31,6 @@ func (s *APITestSuite) TestStudentSignUp() {
 	signUpData := fmt.Sprintf(`{"name":"%s","email":"%s","password":"%s"}`, name, studentEmail, password)
 
 	s.mocks.otpGenerator.On("RandomSecret", 8).Return(verificationCode)
-	s.mocks.emailProvider.On("AddEmailToList", email.AddEmailInput{
-		Email:  studentEmail,
-		ListID: listId,
-		Variables: map[string]string{
-			"name": name,
-		},
-	}).Return(nil)
 	s.mocks.emailSender.On("Send", email.SendEmailInput{
 		To:      studentEmail,
 		Subject: "Спасибо за регистрацию, Test Student!",

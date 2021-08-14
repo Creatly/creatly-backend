@@ -29,7 +29,6 @@ import (
 	"github.com/zhashkevych/creatly-backend/pkg/auth"
 	"github.com/zhashkevych/creatly-backend/pkg/cache"
 	"github.com/zhashkevych/creatly-backend/pkg/database/mongodb"
-	"github.com/zhashkevych/creatly-backend/pkg/email/sendpulse"
 	"github.com/zhashkevych/creatly-backend/pkg/hash"
 	"github.com/zhashkevych/creatly-backend/pkg/logger"
 )
@@ -74,7 +73,6 @@ func Run(configPath string) {
 
 	memCache := cache.NewMemoryCache()
 	hasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
-	emailProvider := sendpulse.NewClient(cfg.Email.SendPulse.ClientID, cfg.Email.SendPulse.ClientSecret, memCache)
 	paymentProvider := fondy.NewFondyClient(cfg.Payment.Fondy.MerchantId, cfg.Payment.Fondy.MerchantPassword)
 
 	emailSender, err := smtp.NewSMTPSender(cfg.SMTP.From, cfg.SMTP.Pass, cfg.SMTP.Host, cfg.SMTP.Port)
@@ -116,7 +114,6 @@ func Run(configPath string) {
 		Cache:                  memCache,
 		Hasher:                 hasher,
 		TokenManager:           tokenManager,
-		EmailProvider:          emailProvider,
 		EmailSender:            emailSender,
 		EmailConfig:            cfg.Email,
 		PaymentProvider:        paymentProvider,

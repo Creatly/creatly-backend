@@ -46,9 +46,8 @@ type APITestSuite struct {
 }
 
 type mocks struct {
-	emailProvider *emailmock.EmailProvider
-	emailSender   *emailmock.EmailSender
-	otpGenerator  *otp.MockGenerator
+	emailSender  *emailmock.EmailSender
+	otpGenerator *otp.MockGenerator
 }
 
 func TestAPISuite(t *testing.T) {
@@ -97,7 +96,6 @@ func (s *APITestSuite) initDeps() {
 		Hasher:          hasher,
 		TokenManager:    tokenManager,
 		PaymentProvider: paymentProvider,
-		EmailProvider:   s.mocks.emailProvider,
 		EmailSender:     s.mocks.emailSender,
 		EmailConfig: config.EmailConfig{
 			SendPulse: config.SendPulseConfig{
@@ -128,9 +126,8 @@ func (s *APITestSuite) initDeps() {
 
 func (s *APITestSuite) initMocks() {
 	s.mocks = &mocks{
-		emailProvider: new(emailmock.EmailProvider),
-		emailSender:   new(emailmock.EmailSender),
-		otpGenerator:  new(otp.MockGenerator),
+		emailSender:  new(emailmock.EmailSender),
+		otpGenerator: new(otp.MockGenerator),
 	}
 }
 

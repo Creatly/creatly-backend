@@ -146,7 +146,6 @@ type StudentPurchaseSuccessfulEmailInput struct {
 }
 
 type Emails interface {
-	AddToList(name, email string) error
 	SendStudentVerificationEmail(VerificationEmailInput) error
 	SendUserVerificationEmail(VerificationEmailInput) error
 	SendStudentPurchaseSuccessfulEmail(StudentPurchaseSuccessfulEmailInput) error
@@ -352,7 +351,6 @@ type Deps struct {
 	Cache                  cache.Cache
 	Hasher                 hash.PasswordHasher
 	TokenManager           auth.TokenManager
-	EmailProvider          email.Provider
 	EmailSender            email.Sender
 	EmailConfig            config.EmailConfig
 	PaymentProvider        payment.Provider
@@ -370,7 +368,7 @@ type Deps struct {
 }
 
 func NewServices(deps Deps) *Services {
-	emailsService := NewEmailsService(deps.EmailProvider, deps.EmailSender, deps.EmailConfig)
+	emailsService := NewEmailsService(deps.EmailSender, deps.EmailConfig)
 	modulesService := NewModulesService(deps.Repos.Modules, deps.Repos.LessonContent)
 	coursesService := NewCoursesService(deps.Repos.Courses, modulesService)
 	packagesService := NewPackagesService(deps.Repos.Packages, deps.Repos.Modules)

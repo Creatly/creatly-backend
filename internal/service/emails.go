@@ -8,14 +8,12 @@ import (
 )
 
 const (
-	nameField            = "name"
 	verificationLinkTmpl = "https://%s/verification?code=%s" // https://<school host>/verification?code=<verification_code>
 )
 
 type EmailService struct {
-	provider emailProvider.Provider
-	sender   emailProvider.Sender
-	config   config.EmailConfig
+	sender emailProvider.Sender
+	config config.EmailConfig
 }
 
 // Structures used for templates.
@@ -28,18 +26,8 @@ type purchaseSuccessfulEmailInput struct {
 	CourseName string
 }
 
-func NewEmailsService(provider emailProvider.Provider, sender emailProvider.Sender, config config.EmailConfig) *EmailService {
-	return &EmailService{provider: provider, sender: sender, config: config}
-}
-
-func (s *EmailService) AddToList(name, email string) error {
-	return s.provider.AddEmailToList(emailProvider.AddEmailInput{
-		Email:  email,
-		ListID: s.config.SendPulse.ListID,
-		Variables: map[string]string{
-			nameField: name,
-		},
-	})
+func NewEmailsService(sender emailProvider.Sender, config config.EmailConfig) *EmailService {
+	return &EmailService{sender: sender, config: config}
 }
 
 func (s *EmailService) SendStudentVerificationEmail(input VerificationEmailInput) error {
