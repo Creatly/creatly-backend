@@ -23,13 +23,14 @@ type Users interface {
 }
 
 type UpdateSchoolSettingsInput struct {
-	SchoolID          primitive.ObjectID
-	Color             string
-	Domains           []string
-	Email             string
-	ContactInfo       *domain.ContactInfo
-	Pages             *domain.Pages
-	ShowPaymentImages *bool
+	SchoolID            primitive.ObjectID
+	Color               string
+	Domains             []string
+	Email               string
+	ContactInfo         *domain.ContactInfo
+	Pages               *domain.Pages
+	ShowPaymentImages   *bool
+	GoogleAnalyticsCode string
 }
 
 type Schools interface {
@@ -37,6 +38,7 @@ type Schools interface {
 	GetByDomain(ctx context.Context, domainName string) (domain.School, error)
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.School, error)
 	UpdateSettings(ctx context.Context, inp UpdateSchoolSettingsInput) error
+	SetFondyCredentials(ctx context.Context, id primitive.ObjectID, fondy domain.Fondy) error
 }
 
 type Students interface {
@@ -138,13 +140,14 @@ type Packages interface {
 }
 
 type UpdateOfferInput struct {
-	ID          primitive.ObjectID
-	SchoolID    primitive.ObjectID
-	Name        string
-	Description string
-	Benefits    []string
-	Price       *domain.Price
-	Packages    []primitive.ObjectID
+	ID            primitive.ObjectID
+	SchoolID      primitive.ObjectID
+	Name          string
+	Description   string
+	Benefits      []string
+	Price         *domain.Price
+	Packages      []primitive.ObjectID
+	PaymentMethod *domain.PaymentMethod
 }
 
 type Offers interface {
@@ -178,6 +181,7 @@ type Orders interface {
 	Create(ctx context.Context, order domain.Order) error
 	AddTransaction(ctx context.Context, id primitive.ObjectID, transaction domain.Transaction) (domain.Order, error)
 	GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Order, int64, error)
+	GetById(ctx context.Context, id primitive.ObjectID) (domain.Order, error)
 }
 
 type Files interface {

@@ -163,6 +163,21 @@ func (mr *MockSchoolsMockRecorder) GetByDomain(ctx, domainName interface{}) *gom
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByDomain", reflect.TypeOf((*MockSchools)(nil).GetByDomain), ctx, domainName)
 }
 
+// GetById mocks base method
+func (m *MockSchools) GetById(ctx context.Context, id primitive.ObjectID) (domain.School, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetById", ctx, id)
+	ret0, _ := ret[0].(domain.School)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetById indicates an expected call of GetById
+func (mr *MockSchoolsMockRecorder) GetById(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetById", reflect.TypeOf((*MockSchools)(nil).GetById), ctx, id)
+}
+
 // UpdateSettings mocks base method
 func (m *MockSchools) UpdateSettings(ctx context.Context, schoolId primitive.ObjectID, input service.UpdateSchoolSettingsInput) error {
 	m.ctrl.T.Helper()
@@ -175,6 +190,20 @@ func (m *MockSchools) UpdateSettings(ctx context.Context, schoolId primitive.Obj
 func (mr *MockSchoolsMockRecorder) UpdateSettings(ctx, schoolId, input interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateSettings", reflect.TypeOf((*MockSchools)(nil).UpdateSettings), ctx, schoolId, input)
+}
+
+// ConnectFondy mocks base method
+func (m *MockSchools) ConnectFondy(ctx context.Context, input service.ConnectFondyInput) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ConnectFondy", ctx, input)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ConnectFondy indicates an expected call of ConnectFondy
+func (mr *MockSchoolsMockRecorder) ConnectFondy(ctx, input interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConnectFondy", reflect.TypeOf((*MockSchools)(nil).ConnectFondy), ctx, input)
 }
 
 // MockStudents is a mock of Students interface
@@ -1370,10 +1399,10 @@ func (m *MockOrders) EXPECT() *MockOrdersMockRecorder {
 }
 
 // Create mocks base method
-func (m *MockOrders) Create(ctx context.Context, studentId, offerId, promocodeId primitive.ObjectID) (string, error) {
+func (m *MockOrders) Create(ctx context.Context, studentId, offerId, promocodeId primitive.ObjectID) (primitive.ObjectID, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Create", ctx, studentId, offerId, promocodeId)
-	ret0, _ := ret[0].(string)
+	ret0, _ := ret[0].(primitive.ObjectID)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -1415,6 +1444,21 @@ func (mr *MockOrdersMockRecorder) GetBySchool(ctx, schoolId, pagination interfac
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBySchool", reflect.TypeOf((*MockOrders)(nil).GetBySchool), ctx, schoolId, pagination)
 }
 
+// GetById mocks base method
+func (m *MockOrders) GetById(ctx context.Context, id primitive.ObjectID) (domain.Order, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetById", ctx, id)
+	ret0, _ := ret[0].(domain.Order)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetById indicates an expected call of GetById
+func (mr *MockOrdersMockRecorder) GetById(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetById", reflect.TypeOf((*MockOrders)(nil).GetById), ctx, id)
+}
+
 // MockPayments is a mock of Payments interface
 type MockPayments struct {
 	ctrl     *gomock.Controller
@@ -1436,6 +1480,21 @@ func NewMockPayments(ctrl *gomock.Controller) *MockPayments {
 // EXPECT returns an object that allows the caller to indicate expected use
 func (m *MockPayments) EXPECT() *MockPaymentsMockRecorder {
 	return m.recorder
+}
+
+// GeneratePaymentLink mocks base method
+func (m *MockPayments) GeneratePaymentLink(ctx context.Context, orderId primitive.ObjectID) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GeneratePaymentLink", ctx, orderId)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GeneratePaymentLink indicates an expected call of GeneratePaymentLink
+func (mr *MockPaymentsMockRecorder) GeneratePaymentLink(ctx, orderId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GeneratePaymentLink", reflect.TypeOf((*MockPayments)(nil).GeneratePaymentLink), ctx, orderId)
 }
 
 // ProcessTransaction mocks base method

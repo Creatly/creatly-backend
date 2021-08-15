@@ -12,8 +12,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// TODO: review response error messages
-
 func (h *Handler) initAdminRoutes(api *gin.RouterGroup) { //nolint:funlen
 	admins := api.Group("/admins", h.setSchoolFromRequest)
 	{
@@ -75,6 +73,7 @@ func (h *Handler) initAdminRoutes(api *gin.RouterGroup) { //nolint:funlen
 			school := authenticated.Group("/school")
 			{
 				school.PUT("/settings", h.adminUpdateSchoolSettings)
+				school.PUT("/settings/fondy", h.adminConnectFondy)
 			}
 
 			promocodes := authenticated.Group("/promocodes")
@@ -1044,10 +1043,16 @@ func (h *Handler) adminDeletePackage(c *gin.Context) {
 }
 
 type createOfferInput struct {
-	Name        string   `json:"name" binding:"required,min=3"`
-	Description string   `json:"description"`
-	Benefits    []string `json:"benefits" binding:"required"`
-	Price       price    `json:"price" binding:"required"`
+	Name          string        `json:"name" binding:"required,min=3"`
+	Description   string        `json:"description"`
+	Benefits      []string      `json:"benefits" binding:"required"`
+	Price         price         `json:"price" binding:"required"`
+	PaymentMethod paymentMethod `json:"paymentMethod" binding:"required"`
+}
+
+type paymentMethod struct {
+	UsesProvider bool   `json:"usesProvider" binding:"required"`
+	Provider     string `json:"provider"`
 }
 
 // @Summary Admin Create Offer
@@ -1086,6 +1091,10 @@ func (h *Handler) adminCreateOffer(c *gin.Context) {
 		Price: domain.Price{
 			Value:    inp.Price.Value,
 			Currency: inp.Price.Currency,
+		},
+		PaymentMethod: domain.PaymentMethod{
+			UsesProvider: inp.PaymentMethod.UsesProvider,
+			Provider:     inp.PaymentMethod.Provider,
 		},
 	})
 	if err != nil {
@@ -1159,11 +1168,12 @@ func (h *Handler) adminGetOfferById(c *gin.Context) {
 }
 
 type updateOfferInput struct {
-	Name        string   `json:"name"`
-	Description string   `json:"description"`
-	Benefits    []string `json:"benefits"`
-	Price       *price   `json:"price"`
-	Packages    []string `json:"packages"`
+	Name          string         `json:"name"`
+	Description   string         `json:"description"`
+	Benefits      []string       `json:"benefits"`
+	Price         *price         `json:"price"`
+	Packages      []string       `json:"packages"`
+	PaymentMethod *paymentMethod `json:"paymentMethod"`
 }
 
 // @Summary Admin Update Offer
@@ -1215,6 +1225,13 @@ func (h *Handler) adminUpdateOffer(c *gin.Context) {
 		updateInput.Price = &domain.Price{
 			Value:    inp.Price.Value,
 			Currency: inp.Price.Currency,
+		}
+	}
+
+	if inp.PaymentMethod != nil {
+		updateInput.PaymentMethod = &domain.PaymentMethod{
+			UsesProvider: inp.PaymentMethod.UsesProvider,
+			Provider:     inp.PaymentMethod.Provider,
 		}
 	}
 
@@ -1495,12 +1512,13 @@ type (
 	}
 
 	updateSchoolSettingsInput struct {
-		Color             string       `json:"color"`
-		Domains           []string     `json:"domains"`
-		Email             string       `json:"email"`
-		ContactInfo       *contactInfo `json:"contactInfo"`
-		Pages             *pages       `json:"pages"`
-		ShowPaymentImages *bool        `json:"showPaymentImages"`
+		Color               string       `json:"color"`
+		Domains             []string     `json:"domains"`
+		Email               string       `json:"email"`
+		ContactInfo         *contactInfo `json:"contactInfo"`
+		Pages               *pages       `json:"pages"`
+		ShowPaymentImages   *bool        `json:"showPaymentImages"`
+		GoogleAnalyticsCode string       `json:"googleAnalyticsCode"`
 	}
 )
 
@@ -1533,10 +1551,11 @@ func (h *Handler) adminUpdateSchoolSettings(c *gin.Context) {
 	}
 
 	updateInput := service.UpdateSchoolSettingsInput{
-		Color:             inp.Color,
-		Domains:           inp.Domains,
-		Email:             inp.Email,
-		ShowPaymentImages: inp.ShowPaymentImages,
+		Color:               inp.Color,
+		Domains:             inp.Domains,
+		Email:               inp.Email,
+		ShowPaymentImages:   inp.ShowPaymentImages,
+		GoogleAnalyticsCode: inp.GoogleAnalyticsCode,
 	}
 
 	if inp.Pages != nil {
@@ -1557,6 +1576,52 @@ func (h *Handler) adminUpdateSchoolSettings(c *gin.Context) {
 	}
 
 	if err := h.services.Schools.UpdateSettings(c.Request.Context(), school.ID, updateInput); err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	c.Status(http.StatusOK)
+}
+
+type connectFondyInput struct {
+	MerchantID       string `json:"merchantId"`
+	MerchantPassword string `json:"merchantPassword"`
+}
+
+// @Summary Admin Connect Fondy
+// @Security AdminAuth
+// @Tags admins-school
+// @Description admin connect fondy
+// @ModuleID adminConnectFondy
+// @Accept  json
+// @Produce  json
+// @Param input body connectFondyInput true "update school settings"
+// @Success 200 {string} string "ok"
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/school/settings/fondy [put]
+func (h *Handler) adminConnectFondy(c *gin.Context) {
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	var inp connectFondyInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+
+		return
+	}
+
+	if err := h.services.Schools.ConnectFondy(c.Request.Context(), service.ConnectFondyInput{
+		SchoolID:         school.ID,
+		MerchantID:       inp.MerchantID,
+		MerchantPassword: inp.MerchantPassword,
+	}); err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 
 		return

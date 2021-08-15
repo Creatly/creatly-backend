@@ -24,7 +24,8 @@ func (h *Handler) initStudentsRoutes(api *gin.RouterGroup) {
 			authenticated.GET("/modules/:id/offers", h.studentGetModuleOffers)
 			authenticated.POST("/modules/:id/survey", h.studentSubmitSurvey)
 			authenticated.POST("/lessons/:id/finished", h.studentSetLessonFinished)
-			authenticated.POST("/order", h.studentCreateOrder)
+			authenticated.POST("/orders", h.studentCreateOrder)
+			authenticated.GET("/orders/:id/payment", h.studentGeneratePaymentLink)
 			authenticated.GET("/account", h.studentGetAccount)
 		}
 	}
@@ -476,12 +477,12 @@ type createOrderInput struct {
 }
 
 type createOrderResponse struct {
-	PaymentLink string `json:"paymentLink"`
+	OrderId string `json:"orderId"`
 }
 
 // @Summary Student CreateOrder
 // @Security StudentsAuth
-// @Tags students-courses
+// @Tags students-orders
 // @Description student create order
 // @ModuleID studentCreateOrder
 // @Accept  json
@@ -491,7 +492,7 @@ type createOrderResponse struct {
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /students/order [post]
+// @Router /students/orders [post]
 func (h *Handler) studentCreateOrder(c *gin.Context) {
 	var inp createOrderInput
 	if err := c.BindJSON(&inp); err != nil {
@@ -527,7 +528,7 @@ func (h *Handler) studentCreateOrder(c *gin.Context) {
 		return
 	}
 
-	paymentLink, err := h.services.Orders.Create(c.Request.Context(), studentId, offerId, promoId)
+	id, err := h.services.Orders.Create(c.Request.Context(), studentId, offerId, promoId)
 	if err != nil {
 		switch err {
 		case domain.ErrPromoNotFound, domain.ErrOfferNotFound, domain.ErrUserNotFound, domain.ErrPromocodeExpired:
@@ -541,7 +542,48 @@ func (h *Handler) studentCreateOrder(c *gin.Context) {
 		}
 	}
 
-	c.JSON(http.StatusOK, createOrderResponse{paymentLink})
+	c.JSON(http.StatusOK, createOrderResponse{id.Hex()})
+}
+
+type generatePaymentLinkResponse struct {
+	URL string `json:"url"`
+}
+
+// @Summary Student Generate Payment Link
+// @Security StudentsAuth
+// @Tags students-orders
+// @Description student generate order payment link
+// @ModuleID studentGeneratePaymentLink
+// @Accept  json
+// @Produce  json
+// @Param id path string true "order id"
+// @Success 200 {object} generatePaymentLinkResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /students/orders/{id}/payment [get]
+func (h *Handler) studentGeneratePaymentLink(c *gin.Context) {
+	orderId, err := parseIdFromPath(c, "id")
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, err.Error())
+
+		return
+	}
+
+	url, err := h.services.Payments.GeneratePaymentLink(c.Request.Context(), orderId)
+	if err != nil {
+		if errors.Is(err, domain.ErrPaymentProviderNotUsed) {
+			newResponse(c, http.StatusBadRequest, err.Error())
+
+			return
+		}
+
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	c.JSON(http.StatusOK, generatePaymentLinkResponse{url})
 }
 
 type studentAccountResponse struct {

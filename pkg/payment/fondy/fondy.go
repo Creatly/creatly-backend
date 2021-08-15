@@ -187,7 +187,7 @@ func (c *Client) GeneratePaymentLink(input payment.GeneratePaymentLinkInput) (st
 		Amount:            fmt.Sprintf("%d", input.Amount),
 		Currency:          input.Currency,
 		ServerCallbackURL: input.CallbackURL,
-		ResponseURL:       input.ResponseURL,
+		ResponseURL:       input.RedirectURL,
 		Language:          languageRU,
 	}
 

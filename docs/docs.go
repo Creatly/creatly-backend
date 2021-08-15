@@ -2361,6 +2361,69 @@ var doc = `{
                 }
             }
         },
+        "/admins/school/settings/fondy": {
+            "put": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "admin connect fondy",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admins-school"
+                ],
+                "summary": "Admin Connect Fondy",
+                "parameters": [
+                    {
+                        "description": "update school settings",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.connectFondyInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
         "/admins/sign-in": {
             "post": {
                 "description": "admin sign in",
@@ -3489,7 +3552,7 @@ var doc = `{
                 }
             }
         },
-        "/students/order": {
+        "/students/orders": {
             "post": {
                 "security": [
                     {
@@ -3504,7 +3567,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "students-courses"
+                    "students-orders"
                 ],
                 "summary": "Student CreateOrder",
                 "parameters": [
@@ -3523,6 +3586,67 @@ var doc = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/v1.createOrderResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/students/orders/{id}/payment": {
+            "get": {
+                "security": [
+                    {
+                        "StudentsAuth": []
+                    }
+                ],
+                "description": "student generate order payment link",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "students-orders"
+                ],
+                "summary": "Student Generate Payment Link",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "order id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.generatePaymentLinkResponse"
                         }
                     },
                     "400": {
@@ -4096,6 +4220,20 @@ var doc = `{
                 }
             }
         },
+        "domain.Fondy": {
+            "type": "object",
+            "properties": {
+                "connected": {
+                    "type": "boolean"
+                },
+                "merchantId": {
+                    "type": "string"
+                },
+                "merchantPassword": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.Lesson": {
             "type": "object",
             "properties": {
@@ -4192,6 +4330,9 @@ var doc = `{
                         "type": "string"
                     }
                 },
+                "paymentMethod": {
+                    "$ref": "#/definitions/domain.PaymentMethod"
+                },
                 "price": {
                     "$ref": "#/definitions/domain.Price"
                 },
@@ -4240,6 +4381,17 @@ var doc = `{
                 },
                 "serviceAgreement": {
                     "type": "string"
+                }
+            }
+        },
+        "domain.PaymentMethod": {
+            "type": "object",
+            "properties": {
+                "provider": {
+                    "type": "string"
+                },
+                "usesProvider": {
+                    "type": "boolean"
                 }
             }
         },
@@ -4340,6 +4492,12 @@ var doc = `{
                     "items": {
                         "type": "string"
                     }
+                },
+                "fondy": {
+                    "$ref": "#/definitions/domain.Fondy"
+                },
+                "googleAnalyticsCode": {
+                    "type": "string"
                 },
                 "logo": {
                     "type": "string"
@@ -4509,6 +4667,17 @@ var doc = `{
                 }
             }
         },
+        "v1.connectFondyInput": {
+            "type": "object",
+            "properties": {
+                "merchantId": {
+                    "type": "string"
+                },
+                "merchantPassword": {
+                    "type": "string"
+                }
+            }
+        },
         "v1.contactInfo": {
             "type": "object",
             "properties": {
@@ -4570,6 +4739,7 @@ var doc = `{
             "required": [
                 "benefits",
                 "name",
+                "paymentMethod",
                 "price"
             ],
             "properties": {
@@ -4584,6 +4754,9 @@ var doc = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "paymentMethod": {
+                    "$ref": "#/definitions/v1.paymentMethod"
                 },
                 "price": {
                     "$ref": "#/definitions/v1.price"
@@ -4607,7 +4780,7 @@ var doc = `{
         "v1.createOrderResponse": {
             "type": "object",
             "properties": {
-                "paymentLink": {
+                "orderId": {
                     "type": "string"
                 }
             }
@@ -4713,6 +4886,14 @@ var doc = `{
                 }
             }
         },
+        "v1.generatePaymentLinkResponse": {
+            "type": "object",
+            "properties": {
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
         "v1.idResponse": {
             "type": "object",
             "properties": {
@@ -4740,6 +4921,20 @@ var doc = `{
                 },
                 "serviceAgreement": {
                     "type": "string"
+                }
+            }
+        },
+        "v1.paymentMethod": {
+            "type": "object",
+            "required": [
+                "usesProvider"
+            ],
+            "properties": {
+                "provider": {
+                    "type": "string"
+                },
+                "usesProvider": {
+                    "type": "boolean"
                 }
             }
         },
@@ -4966,6 +5161,9 @@ var doc = `{
                         "type": "string"
                     }
                 },
+                "paymentMethod": {
+                    "$ref": "#/definitions/v1.paymentMethod"
+                },
                 "price": {
                     "$ref": "#/definitions/v1.price"
                 }
@@ -5024,6 +5222,9 @@ var doc = `{
                     }
                 },
                 "email": {
+                    "type": "string"
+                },
+                "googleAnalyticsCode": {
                     "type": "string"
                 },
                 "pages": {

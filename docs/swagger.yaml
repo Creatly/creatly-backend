@@ -47,6 +47,15 @@ definitions:
       updatedAt:
         type: string
     type: object
+  domain.Fondy:
+    properties:
+      connected:
+        type: boolean
+      merchantId:
+        type: string
+      merchantPassword:
+        type: string
+    type: object
   domain.Lesson:
     properties:
       content:
@@ -110,6 +119,8 @@ definitions:
         items:
           type: string
         type: array
+      paymentMethod:
+        $ref: '#/definitions/domain.PaymentMethod'
       price:
         $ref: '#/definitions/domain.Price'
       schoolId:
@@ -142,6 +153,13 @@ definitions:
         type: string
       serviceAgreement:
         type: string
+    type: object
+  domain.PaymentMethod:
+    properties:
+      provider:
+        type: string
+      usesProvider:
+        type: boolean
     type: object
   domain.Price:
     properties:
@@ -207,6 +225,10 @@ definitions:
         items:
           type: string
         type: array
+      fondy:
+        $ref: '#/definitions/domain.Fondy'
+      googleAnalyticsCode:
+        type: string
       logo:
         type: string
       pages:
@@ -316,6 +338,13 @@ definitions:
       url:
         type: string
     type: object
+  v1.connectFondyInput:
+    properties:
+      merchantId:
+        type: string
+      merchantPassword:
+        type: string
+    type: object
   v1.contactInfo:
     properties:
       address:
@@ -362,11 +391,14 @@ definitions:
         type: string
       name:
         type: string
+      paymentMethod:
+        $ref: '#/definitions/v1.paymentMethod'
       price:
         $ref: '#/definitions/v1.price'
     required:
     - benefits
     - name
+    - paymentMethod
     - price
     type: object
   v1.createOrderInput:
@@ -380,7 +412,7 @@ definitions:
     type: object
   v1.createOrderResponse:
     properties:
-      paymentLink:
+      orderId:
         type: string
     type: object
   v1.createPackageInput:
@@ -450,6 +482,11 @@ definitions:
       data:
         type: object
     type: object
+  v1.generatePaymentLinkResponse:
+    properties:
+      url:
+        type: string
+    type: object
   v1.idResponse:
     properties:
       id:
@@ -468,6 +505,15 @@ definitions:
         type: string
       serviceAgreement:
         type: string
+    type: object
+  v1.paymentMethod:
+    properties:
+      provider:
+        type: string
+      usesProvider:
+        type: boolean
+    required:
+    - usesProvider
     type: object
   v1.price:
     properties:
@@ -615,6 +661,8 @@ definitions:
         items:
           type: string
         type: array
+      paymentMethod:
+        $ref: '#/definitions/v1.paymentMethod'
       price:
         $ref: '#/definitions/v1.price'
     type: object
@@ -653,6 +701,8 @@ definitions:
           type: string
         type: array
       email:
+        type: string
+      googleAnalyticsCode:
         type: string
       pages:
         $ref: '#/definitions/v1.pages'
@@ -2186,6 +2236,46 @@ paths:
       summary: Admin Update School settings
       tags:
       - admins-school
+  /admins/school/settings/fondy:
+    put:
+      consumes:
+      - application/json
+      description: admin connect fondy
+      parameters:
+      - description: update school settings
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.connectFondyInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Connect Fondy
+      tags:
+      - admins-school
   /admins/sign-in:
     post:
       consumes:
@@ -2915,7 +3005,7 @@ paths:
       summary: Student Submit Survey by Module ID
       tags:
       - students-courses
-  /students/order:
+  /students/orders:
     post:
       consumes:
       - application/json
@@ -2954,7 +3044,46 @@ paths:
       - StudentsAuth: []
       summary: Student CreateOrder
       tags:
-      - students-courses
+      - students-orders
+  /students/orders/{id}/payment:
+    get:
+      consumes:
+      - application/json
+      description: student generate order payment link
+      parameters:
+      - description: order id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.generatePaymentLinkResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - StudentsAuth: []
+      summary: Student Generate Payment Link
+      tags:
+      - students-orders
   /students/sign-in:
     post:
       consumes:

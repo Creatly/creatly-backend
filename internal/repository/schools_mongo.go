@@ -70,8 +70,18 @@ func (r *SchoolsRepo) UpdateSettings(ctx context.Context, inp UpdateSchoolSettin
 		updateQuery["settings.showPaymentImages"] = inp.ShowPaymentImages
 	}
 
+	if inp.GoogleAnalyticsCode != "" {
+		updateQuery["settings.googleAnalyticsCode"] = inp.GoogleAnalyticsCode
+	}
+
 	_, err := r.db.UpdateOne(ctx,
 		bson.M{"_id": inp.SchoolID}, bson.M{"$set": updateQuery})
+
+	return err
+}
+
+func (r *SchoolsRepo) SetFondyCredentials(ctx context.Context, id primitive.ObjectID, fondy domain.Fondy) error {
+	_, err := r.db.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"settings.fondy": fondy}})
 
 	return err
 }
