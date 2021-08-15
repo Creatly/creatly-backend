@@ -23,6 +23,9 @@ var (
 		},
 		Settings: domain.Settings{
 			Domains: []string{"http://localhost:1337", "workshop.zhashkevych.com", ""},
+			Fondy: domain.Fondy{
+				Connected: true,
+			},
 		},
 	}
 
