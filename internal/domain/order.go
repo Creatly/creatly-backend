@@ -7,10 +7,11 @@ import (
 )
 
 const (
-	OrderStatusCreated = "created"
-	OrderStatusPaid    = "paid"
-	OrderStatusFailed  = "failed"
-	OrderStatusOther   = "other"
+	OrderStatusCreated  = "created"
+	OrderStatusPaid     = "paid"
+	OrderStatusFailed   = "failed"
+	OrderStatusCanceled = "canceled"
+	OrderStatusOther    = "other"
 )
 
 type Order struct {

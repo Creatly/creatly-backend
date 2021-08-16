@@ -323,6 +323,7 @@ type Orders interface {
 	AddTransaction(ctx context.Context, id primitive.ObjectID, transaction domain.Transaction) (domain.Order, error)
 	GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Order, int64, error)
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.Order, error)
+	SetStatus(ctx context.Context, id primitive.ObjectID, status string) error
 }
 
 type Payments interface {

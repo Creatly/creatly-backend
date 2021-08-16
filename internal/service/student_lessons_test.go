@@ -55,7 +55,7 @@ func TestStudentLessonsServiceSetLastOpened(t *testing.T) {
 			studentID: studentID,
 			lessonID:  lessonID,
 			mock: func() {
-				studentLessonsRepo.EXPECT().SetLastOpened(ctx, studentID, lessonID)
+				studentLessonsRepo.EXPECT().SetLastOpened(ctx, studentID, lessonID).Return(nil)
 			},
 			expectedErr: nil,
 		},

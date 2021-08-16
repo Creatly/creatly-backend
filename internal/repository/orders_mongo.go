@@ -71,3 +71,9 @@ func (r *OrdersRepo) GetById(ctx context.Context, id primitive.ObjectID) (domain
 
 	return order, err
 }
+
+func (r *OrdersRepo) SetStatus(ctx context.Context, id primitive.ObjectID, status string) error {
+	_, err := r.db.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"status": status}})
+
+	return err
+}

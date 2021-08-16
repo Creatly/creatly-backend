@@ -89,6 +89,10 @@ func (s *OrdersService) GetById(ctx context.Context, id primitive.ObjectID) (dom
 	return s.repo.GetById(ctx, id)
 }
 
+func (s *OrdersService) SetStatus(ctx context.Context, id primitive.ObjectID, status string) error {
+	return s.repo.SetStatus(ctx, id, status)
+}
+
 func (s *OrdersService) getOrderPromocode(ctx context.Context, schoolId, promocodeId primitive.ObjectID) (domain.PromoCode, error) {
 	var (
 		promocode domain.PromoCode
