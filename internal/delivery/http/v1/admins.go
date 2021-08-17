@@ -1516,13 +1516,14 @@ type (
 	}
 
 	updateSchoolSettingsInput struct {
-		Color               string       `json:"color"`
+		Color               *string      `json:"color"`
 		Domains             []string     `json:"domains"`
-		Email               string       `json:"email"`
+		Email               *string      `json:"email"`
 		ContactInfo         *contactInfo `json:"contactInfo"`
 		Pages               *pages       `json:"pages"`
 		ShowPaymentImages   *bool        `json:"showPaymentImages"`
-		GoogleAnalyticsCode string       `json:"googleAnalyticsCode"`
+		GoogleAnalyticsCode *string      `json:"googleAnalyticsCode"`
+		LogoURL             *string      `json:"logo"`
 	}
 )
 
@@ -1560,6 +1561,7 @@ func (h *Handler) adminUpdateSchoolSettings(c *gin.Context) {
 		Email:               inp.Email,
 		ShowPaymentImages:   inp.ShowPaymentImages,
 		GoogleAnalyticsCode: inp.GoogleAnalyticsCode,
+		LogoURL:             inp.LogoURL,
 	}
 
 	if inp.Pages != nil {

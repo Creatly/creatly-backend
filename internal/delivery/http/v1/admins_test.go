@@ -42,7 +42,7 @@ func TestHandler_adminUpdateSchoolSettings(t *testing.T) {
 			body:   `{"color": "black", "pages": {"confidential": "some confidential info"}}`,
 			school: school,
 			input: service.UpdateSchoolSettingsInput{
-				Color: "black",
+				Color: stringPtr("black"),
 				Pages: &domain.Pages{
 					Confidential: "some confidential info",
 				},
@@ -67,7 +67,7 @@ func TestHandler_adminUpdateSchoolSettings(t *testing.T) {
 			body:   `{"color": "black", "pages": {"confidential": "some confidential info"}}`,
 			school: school,
 			input: service.UpdateSchoolSettingsInput{
-				Color: "black",
+				Color: stringPtr("black"),
 				Pages: &domain.Pages{
 					Confidential: "some confidential info",
 				},
@@ -607,4 +607,8 @@ func TestHandler_adminDeleteCourse(t *testing.T) {
 			assert.Equal(t, w.Body.String(), tt.responseBody)
 		})
 	}
+}
+
+func stringPtr(s string) *string {
+	return &s
 }

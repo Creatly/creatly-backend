@@ -56,6 +56,7 @@ func (s *SchoolsService) UpdateSettings(ctx context.Context, schoolId primitive.
 		Pages:               inp.Pages,
 		ShowPaymentImages:   inp.ShowPaymentImages,
 		GoogleAnalyticsCode: inp.GoogleAnalyticsCode,
+		LogoURL:             inp.LogoURL,
 	})
 }
 

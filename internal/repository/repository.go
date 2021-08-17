@@ -24,13 +24,14 @@ type Users interface {
 
 type UpdateSchoolSettingsInput struct {
 	SchoolID            primitive.ObjectID
-	Color               string
+	Color               *string
 	Domains             []string
-	Email               string
+	Email               *string
 	ContactInfo         *domain.ContactInfo
 	Pages               *domain.Pages
 	ShowPaymentImages   *bool
-	GoogleAnalyticsCode string
+	GoogleAnalyticsCode *string
+	LogoURL             *string
 }
 
 type Schools interface {

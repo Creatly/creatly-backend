@@ -52,13 +52,14 @@ type Users interface {
 }
 
 type UpdateSchoolSettingsInput struct {
-	Color               string
+	Color               *string
 	Domains             []string
-	Email               string
+	Email               *string
 	ContactInfo         *domain.ContactInfo
 	Pages               *domain.Pages
 	ShowPaymentImages   *bool
-	GoogleAnalyticsCode string
+	GoogleAnalyticsCode *string
+	LogoURL             *string
 }
 
 type ConnectFondyInput struct {

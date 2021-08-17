@@ -46,7 +46,7 @@ func (r *SchoolsRepo) GetById(ctx context.Context, id primitive.ObjectID) (domai
 func (r *SchoolsRepo) UpdateSettings(ctx context.Context, inp UpdateSchoolSettingsInput) error {
 	updateQuery := bson.M{}
 
-	if inp.Color != "" {
+	if inp.Color != nil {
 		updateQuery["settings.color"] = inp.Color
 	}
 
@@ -54,7 +54,7 @@ func (r *SchoolsRepo) UpdateSettings(ctx context.Context, inp UpdateSchoolSettin
 		updateQuery["settings.domains"] = inp.Domains
 	}
 
-	if inp.Email != "" {
+	if inp.Email != nil {
 		updateQuery["settings.email"] = inp.Email
 	}
 
@@ -70,8 +70,12 @@ func (r *SchoolsRepo) UpdateSettings(ctx context.Context, inp UpdateSchoolSettin
 		updateQuery["settings.showPaymentImages"] = inp.ShowPaymentImages
 	}
 
-	if inp.GoogleAnalyticsCode != "" {
-		updateQuery["settings.googleAnalyticsCode"] = inp.GoogleAnalyticsCode
+	if inp.GoogleAnalyticsCode != nil {
+		updateQuery["settings.googleAnalyticsCode"] = *inp.GoogleAnalyticsCode
+	}
+
+	if inp.LogoURL != nil {
+		updateQuery["settings.logo"] = *inp.LogoURL
 	}
 
 	_, err := r.db.UpdateOne(ctx,
