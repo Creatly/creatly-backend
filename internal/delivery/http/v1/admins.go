@@ -85,7 +85,11 @@ func (h *Handler) initAdminRoutes(api *gin.RouterGroup) { //nolint:funlen
 				promocodes.DELETE("/:id", h.adminDeletePromocode)
 			}
 
-			authenticated.GET("/orders", h.adminGetOrders)
+			orders := authenticated.Group("/orders")
+			{
+				orders.GET("", h.adminGetOrders)
+				orders.PUT("/:id", h.adminUpdateOrderStatus)
+			}
 
 			students := authenticated.Group("/students")
 			{
@@ -1670,6 +1674,62 @@ func (h *Handler) adminGetOrders(c *gin.Context) {
 		Data:  orders,
 		Count: count,
 	})
+}
+
+type orderStatusInput struct {
+	Status string `json:"status" binding:"required"`
+}
+
+func (i orderStatusInput) validate() error {
+	switch i.Status {
+	case domain.OrderStatusPaid, domain.OrderStatusCanceled:
+		return nil
+	default:
+		return errors.New("incorrect status")
+	}
+}
+
+// @Summary Admin Update Order
+// @Security AdminAuth
+// @Tags admins-orders
+// @Description admin update order status
+// @ModuleID adminUpdateOrderStatus
+// @Accept  json
+// @Param id path string true "promocode id"
+// @Param input body orderStatusInput true "update school settings"
+// @Success 200 {object} dataResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/orders/{id} [put]
+func (h *Handler) adminUpdateOrderStatus(c *gin.Context) {
+	id, err := parseIdFromPath(c, "id")
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, err.Error())
+
+		return
+	}
+
+	var inp orderStatusInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+
+		return
+	}
+
+	if err := inp.validate(); err != nil {
+		newResponse(c, http.StatusBadRequest, err.Error())
+
+		return
+	}
+
+	if err := h.services.Orders.SetStatus(c.Request.Context(), id, inp.Status); err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	c.Status(http.StatusOK)
 }
 
 func toPackagesResponse(pkgs []domain.Package) []packageResponse {

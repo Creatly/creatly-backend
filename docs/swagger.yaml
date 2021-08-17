@@ -497,6 +497,13 @@ definitions:
       available:
         type: boolean
     type: object
+  v1.orderStatusInput:
+    properties:
+      status:
+        type: string
+    required:
+    - status
+    type: object
   v1.pages:
     properties:
       confidential:
@@ -761,7 +768,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -792,7 +799,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -831,7 +838,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -870,7 +877,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -908,7 +915,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -952,7 +959,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -997,7 +1004,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1036,7 +1043,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1080,7 +1087,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1119,7 +1126,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1157,7 +1164,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1201,7 +1208,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1240,7 +1247,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1279,7 +1286,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1323,7 +1330,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1362,7 +1369,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1406,7 +1413,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1445,7 +1452,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1483,7 +1490,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1527,7 +1534,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1574,7 +1581,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1618,7 +1625,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1651,7 +1658,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1690,7 +1697,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1729,7 +1736,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1767,7 +1774,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1811,7 +1818,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1853,7 +1860,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1867,6 +1874,49 @@ paths:
       security:
       - AdminAuth: []
       summary: Admin Get Orders
+      tags:
+      - admins-orders
+  /admins/orders/{id}:
+    put:
+      consumes:
+      - application/json
+      description: admin update order status
+      parameters:
+      - description: promocode id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: update school settings
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.orderStatusInput'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.dataResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Update Order
       tags:
       - admins-orders
   /admins/packages/{id}:
@@ -1894,7 +1944,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1934,7 +1984,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1980,7 +2030,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2020,7 +2070,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2059,7 +2109,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2098,7 +2148,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2136,7 +2186,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2180,7 +2230,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2220,7 +2270,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2260,7 +2310,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2300,7 +2350,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2340,7 +2390,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2379,7 +2429,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2418,7 +2468,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2468,7 +2518,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2507,7 +2557,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2546,7 +2596,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2585,7 +2635,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2618,7 +2668,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2655,7 +2705,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2692,7 +2742,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2729,7 +2779,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2758,7 +2808,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2789,7 +2839,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2829,7 +2879,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2866,7 +2916,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "403":
-          description: Bad Request
+          description: Forbidden
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2905,7 +2955,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2944,7 +2994,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2989,7 +3039,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "403":
-          description: Bad Request
+          description: Forbidden
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -3029,7 +3079,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -3068,7 +3118,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -3108,7 +3158,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -3146,7 +3196,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -3183,7 +3233,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -3221,7 +3271,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -3259,7 +3309,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -3299,7 +3349,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -3337,7 +3387,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -3374,7 +3424,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
