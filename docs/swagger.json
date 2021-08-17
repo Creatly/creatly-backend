@@ -47,7 +47,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -99,7 +99,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -160,7 +160,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -221,7 +221,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -289,7 +289,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -348,7 +348,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -418,7 +418,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -479,7 +479,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -547,7 +547,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -608,7 +608,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -676,7 +676,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -735,7 +735,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -796,7 +796,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -866,7 +866,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -925,7 +925,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -986,7 +986,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -1054,7 +1054,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -1115,7 +1115,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -1183,7 +1183,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -1242,7 +1242,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -1315,7 +1315,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -1383,7 +1383,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -1435,7 +1435,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -1496,7 +1496,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -1557,7 +1557,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -1625,7 +1625,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -1684,7 +1684,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -1750,7 +1750,74 @@
                         }
                     },
                     "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admins/orders/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "admin update order status",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admins-orders"
+                ],
+                "summary": "Admin Update Order",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "promocode id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "update school settings",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.orderStatusInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.dataResponse"
+                        }
+                    },
+                    "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -1814,7 +1881,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -1885,7 +1952,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -1947,7 +2014,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -2014,7 +2081,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -2075,7 +2142,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -2136,7 +2203,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -2204,7 +2271,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -2263,7 +2330,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -2326,7 +2393,70 @@
                         }
                     },
                     "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admins/school/settings/fondy": {
+            "put": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "admin connect fondy",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admins-school"
+                ],
+                "summary": "Admin Connect Fondy",
+                "parameters": [
+                    {
+                        "description": "update school settings",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.connectFondyInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -2384,7 +2514,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -2450,7 +2580,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -2511,7 +2641,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -2572,7 +2702,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -2649,7 +2779,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -2710,7 +2840,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -2771,7 +2901,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -2832,7 +2962,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -2879,7 +3009,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -2935,7 +3065,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -2991,7 +3121,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -3047,7 +3177,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -3091,7 +3221,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -3143,7 +3273,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -3201,7 +3331,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -3262,7 +3392,7 @@
                         }
                     },
                     "403": {
-                        "description": "Bad Request",
+                        "description": "Forbidden",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -3323,7 +3453,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -3384,7 +3514,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -3454,7 +3584,7 @@
                         }
                     },
                     "403": {
-                        "description": "Bad Request",
+                        "description": "Forbidden",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -3474,7 +3604,7 @@
                 }
             }
         },
-        "/students/order": {
+        "/students/orders": {
             "post": {
                 "security": [
                     {
@@ -3489,7 +3619,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "students-courses"
+                    "students-orders"
                 ],
                 "summary": "Student CreateOrder",
                 "parameters": [
@@ -3517,7 +3647,68 @@
                         }
                     },
                     "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/students/orders/{id}/payment": {
+            "get": {
+                "security": [
+                    {
+                        "StudentsAuth": []
+                    }
+                ],
+                "description": "student generate order payment link",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "students-orders"
+                ],
+                "summary": "Student Generate Payment Link",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "order id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.generatePaymentLinkResponse"
+                        }
+                    },
+                    "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -3575,7 +3766,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -3633,7 +3824,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -3689,7 +3880,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -3747,7 +3938,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -3810,7 +4001,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -3868,7 +4059,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -3926,7 +4117,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -3987,7 +4178,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -4081,6 +4272,20 @@
                 }
             }
         },
+        "domain.Fondy": {
+            "type": "object",
+            "properties": {
+                "connected": {
+                    "type": "boolean"
+                },
+                "merchantId": {
+                    "type": "string"
+                },
+                "merchantPassword": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.Lesson": {
             "type": "object",
             "properties": {
@@ -4101,6 +4306,41 @@
                 },
                 "schoolId": {
                     "type": "string"
+                }
+            }
+        },
+        "domain.Module": {
+            "type": "object",
+            "properties": {
+                "courseId": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "lessons": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Lesson"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "packageId": {
+                    "type": "string"
+                },
+                "position": {
+                    "type": "integer"
+                },
+                "published": {
+                    "type": "boolean"
+                },
+                "schoolId": {
+                    "type": "string"
+                },
+                "survey": {
+                    "$ref": "#/definitions/domain.Survey"
                 }
             }
         },
@@ -4142,6 +4382,9 @@
                         "type": "string"
                     }
                 },
+                "paymentMethod": {
+                    "$ref": "#/definitions/domain.PaymentMethod"
+                },
                 "price": {
                     "$ref": "#/definitions/domain.Price"
                 },
@@ -4161,6 +4404,12 @@
                 },
                 "id": {
                     "type": "string"
+                },
+                "modules": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Module"
+                    }
                 },
                 "name": {
                     "type": "string"
@@ -4184,6 +4433,17 @@
                 },
                 "serviceAgreement": {
                     "type": "string"
+                }
+            }
+        },
+        "domain.PaymentMethod": {
+            "type": "object",
+            "properties": {
+                "provider": {
+                    "type": "string"
+                },
+                "usesProvider": {
+                    "type": "boolean"
                 }
             }
         },
@@ -4284,6 +4544,12 @@
                     "items": {
                         "type": "string"
                     }
+                },
+                "fondy": {
+                    "$ref": "#/definitions/domain.Fondy"
+                },
+                "googleAnalyticsCode": {
+                    "type": "string"
                 },
                 "logo": {
                     "type": "string"
@@ -4453,6 +4719,17 @@
                 }
             }
         },
+        "v1.connectFondyInput": {
+            "type": "object",
+            "properties": {
+                "merchantId": {
+                    "type": "string"
+                },
+                "merchantPassword": {
+                    "type": "string"
+                }
+            }
+        },
         "v1.contactInfo": {
             "type": "object",
             "properties": {
@@ -4514,6 +4791,7 @@
             "required": [
                 "benefits",
                 "name",
+                "paymentMethod",
                 "price"
             ],
             "properties": {
@@ -4528,6 +4806,9 @@
                 },
                 "name": {
                     "type": "string"
+                },
+                "paymentMethod": {
+                    "$ref": "#/definitions/v1.paymentMethod"
                 },
                 "price": {
                     "$ref": "#/definitions/v1.price"
@@ -4551,7 +4832,7 @@
         "v1.createOrderResponse": {
             "type": "object",
             "properties": {
-                "paymentLink": {
+                "orderId": {
                     "type": "string"
                 }
             }
@@ -4657,6 +4938,14 @@
                 }
             }
         },
+        "v1.generatePaymentLinkResponse": {
+            "type": "object",
+            "properties": {
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
         "v1.idResponse": {
             "type": "object",
             "properties": {
@@ -4673,6 +4962,17 @@
                 }
             }
         },
+        "v1.orderStatusInput": {
+            "type": "object",
+            "required": [
+                "status"
+            ],
+            "properties": {
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
         "v1.pages": {
             "type": "object",
             "properties": {
@@ -4684,6 +4984,20 @@
                 },
                 "serviceAgreement": {
                     "type": "string"
+                }
+            }
+        },
+        "v1.paymentMethod": {
+            "type": "object",
+            "required": [
+                "usesProvider"
+            ],
+            "properties": {
+                "provider": {
+                    "type": "string"
+                },
+                "usesProvider": {
+                    "type": "boolean"
                 }
             }
         },
@@ -4910,6 +5224,9 @@
                         "type": "string"
                     }
                 },
+                "paymentMethod": {
+                    "$ref": "#/definitions/v1.paymentMethod"
+                },
                 "price": {
                     "$ref": "#/definitions/v1.price"
                 }
@@ -4968,6 +5285,9 @@
                     }
                 },
                 "email": {
+                    "type": "string"
+                },
+                "googleAnalyticsCode": {
                     "type": "string"
                 },
                 "pages": {

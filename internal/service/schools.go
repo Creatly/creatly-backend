@@ -3,6 +3,9 @@ package service
 import (
 	"context"
 
+	"github.com/zhashkevych/creatly-backend/pkg/payment"
+	"github.com/zhashkevych/creatly-backend/pkg/payment/fondy"
+
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"github.com/zhashkevych/creatly-backend/internal/domain"
@@ -39,14 +42,44 @@ func (s *SchoolsService) GetByDomain(ctx context.Context, domainName string) (do
 	return school, err
 }
 
+func (s *SchoolsService) GetById(ctx context.Context, id primitive.ObjectID) (domain.School, error) {
+	return s.repo.GetById(ctx, id)
+}
+
 func (s *SchoolsService) UpdateSettings(ctx context.Context, schoolId primitive.ObjectID, inp UpdateSchoolSettingsInput) error {
 	return s.repo.UpdateSettings(ctx, repository.UpdateSchoolSettingsInput{
-		SchoolID:          schoolId,
-		Color:             inp.Color,
-		Domains:           inp.Domains,
-		Email:             inp.Email,
-		ContactInfo:       inp.ContactInfo,
-		Pages:             inp.Pages,
-		ShowPaymentImages: inp.ShowPaymentImages,
+		SchoolID:            schoolId,
+		Color:               inp.Color,
+		Domains:             inp.Domains,
+		Email:               inp.Email,
+		ContactInfo:         inp.ContactInfo,
+		Pages:               inp.Pages,
+		ShowPaymentImages:   inp.ShowPaymentImages,
+		GoogleAnalyticsCode: inp.GoogleAnalyticsCode,
+		LogoURL:             inp.LogoURL,
 	})
+}
+
+func (s *SchoolsService) ConnectFondy(ctx context.Context, input ConnectFondyInput) error {
+	client := fondy.NewFondyClient(input.MerchantID, input.MerchantPassword)
+
+	id := primitive.NewObjectID()
+
+	_, err := client.GeneratePaymentLink(payment.GeneratePaymentLinkInput{
+		OrderId:   id.Hex(),
+		Amount:    1000,
+		Currency:  "USD",
+		OrderDesc: "CREATLY - TESTING FONDY CREDENTIALS",
+	})
+	if err != nil {
+		return err
+	}
+
+	creds := domain.Fondy{
+		MerchantPassword: input.MerchantPassword,
+		MerchantId:       input.MerchantID,
+		Connected:        true,
+	}
+
+	return s.repo.SetFondyCredentials(ctx, input.SchoolID, creds)
 }

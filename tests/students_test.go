@@ -31,13 +31,6 @@ func (s *APITestSuite) TestStudentSignUp() {
 	signUpData := fmt.Sprintf(`{"name":"%s","email":"%s","password":"%s"}`, name, studentEmail, password)
 
 	s.mocks.otpGenerator.On("RandomSecret", 8).Return(verificationCode)
-	s.mocks.emailProvider.On("AddEmailToList", email.AddEmailInput{
-		Email:  studentEmail,
-		ListID: listId,
-		Variables: map[string]string{
-			"name": name,
-		},
-	}).Return(nil)
 	s.mocks.emailSender.On("Send", email.SendEmailInput{
 		To:      studentEmail,
 		Subject: "Спасибо за регистрацию, Test Student!",
@@ -263,7 +256,7 @@ func (s *APITestSuite) TestStudentCreateOrderWithoutPromocode() {
 
 	orderData := fmt.Sprintf(`{"offerId":"%s"}`, offers[0].(domain.Offer).ID.Hex())
 
-	req, _ := http.NewRequest("POST", "/api/v1/students/order", bytes.NewBuffer([]byte(orderData)))
+	req, _ := http.NewRequest("POST", "/api/v1/students/orders", bytes.NewBuffer([]byte(orderData)))
 	req.Header.Set("Content-type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+jwt)
 
@@ -307,7 +300,7 @@ func (s *APITestSuite) TestStudentCreateOrderWrongOffer() {
 
 	orderData := fmt.Sprintf(`{"offerId":"%s"}`, id.Hex())
 
-	req, _ := http.NewRequest("POST", "/api/v1/students/order", bytes.NewBuffer([]byte(orderData)))
+	req, _ := http.NewRequest("POST", "/api/v1/students/orders", bytes.NewBuffer([]byte(orderData)))
 	req.Header.Set("Content-type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+jwt)
 
@@ -343,7 +336,7 @@ func (s *APITestSuite) TestStudentCreateOrderWithPromocode() {
 	orderData := fmt.Sprintf(`{"offerId":"%s", "promoId": "%s"}`,
 		offers[0].(domain.Offer).ID.Hex(), promocodes[0].(domain.PromoCode).ID.Hex())
 
-	req, _ := http.NewRequest("POST", "/api/v1/students/order", bytes.NewBuffer([]byte(orderData)))
+	req, _ := http.NewRequest("POST", "/api/v1/students/orders", bytes.NewBuffer([]byte(orderData)))
 	req.Header.Set("Content-type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+jwt)
 
@@ -392,7 +385,7 @@ func (s *APITestSuite) TestStudentCreateOrderWrongPromo() {
 	orderData := fmt.Sprintf(`{"offerId":"%s", "promoId": "%s"}`,
 		offers[0].(domain.Offer).ID.Hex(), id.Hex())
 
-	req, _ := http.NewRequest("POST", "/api/v1/students/order", bytes.NewBuffer([]byte(orderData)))
+	req, _ := http.NewRequest("POST", "/api/v1/students/orders", bytes.NewBuffer([]byte(orderData)))
 	req.Header.Set("Content-type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+jwt)
 

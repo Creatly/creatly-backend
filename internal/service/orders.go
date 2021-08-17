@@ -2,13 +2,10 @@ package service
 
 import (
 	"context"
-	"errors"
 	"time"
 
 	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"github.com/zhashkevych/creatly-backend/internal/repository"
-	"github.com/zhashkevych/creatly-backend/pkg/logger"
-	"github.com/zhashkevych/creatly-backend/pkg/payment"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -17,65 +14,37 @@ type OrdersService struct {
 	promoCodesService PromoCodes
 	studentsService   Students
 
-	repo            repository.Orders
-	paymentProvider payment.Provider
-
-	callbackURL, responseURL string
+	repo repository.Orders
 }
 
-func NewOrdersService(repo repository.Orders, offersService Offers, promoCodesService PromoCodes, studentsService Students, paymentProvider payment.Provider, callbackURL, responseURL string) *OrdersService {
+func NewOrdersService(repo repository.Orders, offersService Offers, promoCodesService PromoCodes, studentsService Students) *OrdersService {
 	return &OrdersService{
 		repo:              repo,
 		offersService:     offersService,
 		promoCodesService: promoCodesService,
 		studentsService:   studentsService,
-		paymentProvider:   paymentProvider,
-		callbackURL:       callbackURL,
-		responseURL:       responseURL,
 	}
 }
 
-func (s *OrdersService) Create(ctx context.Context, studentId, offerId, promocodeId primitive.ObjectID) (string, error) { //nolint:funlen
+func (s *OrdersService) Create(ctx context.Context, studentId, offerId, promocodeId primitive.ObjectID) (primitive.ObjectID, error) { //nolint:funlen
 	offer, err := s.offersService.GetById(ctx, offerId)
 	if err != nil {
-		if errors.Is(err, domain.ErrOfferNotFound) {
-			return "", err
-		}
-
-		return "", err
+		return primitive.ObjectID{}, err
 	}
 
 	promocode, err := s.getOrderPromocode(ctx, offer.SchoolID, promocodeId)
 	if err != nil {
-		return "", err
+		return primitive.ObjectID{}, err
 	}
 
 	student, err := s.studentsService.GetById(ctx, offer.SchoolID, studentId)
 	if err != nil {
-		if errors.Is(err, domain.ErrUserNotFound) {
-			return "", err
-		}
-
-		return "", err
+		return primitive.ObjectID{}, err
 	}
 
 	orderAmount := s.calculateOrderPrice(offer.Price.Value, promocode)
 
 	id := primitive.NewObjectID()
-
-	paymentLink, err := s.paymentProvider.GeneratePaymentLink(payment.GeneratePaymentLinkInput{
-		OrderId:     id.Hex(),
-		Amount:      orderAmount,
-		Currency:    offer.Price.Currency,
-		OrderDesc:   offer.Description, // TODO proper order description
-		CallbackURL: s.callbackURL,
-		ResponseURL: s.responseURL,
-	})
-	if err != nil {
-		logger.Error("Failed to generate payment link: ", err.Error())
-
-		return "", err
-	}
 
 	order := domain.Order{
 		ID:       id,
@@ -103,11 +72,9 @@ func (s *OrdersService) Create(ctx context.Context, studentId, offerId, promocod
 		}
 	}
 
-	if err := s.repo.Create(ctx, order); err != nil {
-		return "", err
-	}
+	err = s.repo.Create(ctx, order)
 
-	return paymentLink, nil
+	return id, err
 }
 
 func (s *OrdersService) AddTransaction(ctx context.Context, id primitive.ObjectID, transaction domain.Transaction) (domain.Order, error) {
@@ -116,6 +83,14 @@ func (s *OrdersService) AddTransaction(ctx context.Context, id primitive.ObjectI
 
 func (s *OrdersService) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Order, int64, error) {
 	return s.repo.GetBySchool(ctx, schoolId, pagination)
+}
+
+func (s *OrdersService) GetById(ctx context.Context, id primitive.ObjectID) (domain.Order, error) {
+	return s.repo.GetById(ctx, id)
+}
+
+func (s *OrdersService) SetStatus(ctx context.Context, id primitive.ObjectID, status string) error {
+	return s.repo.SetStatus(ctx, id, status)
 }
 
 func (s *OrdersService) getOrderPromocode(ctx context.Context, schoolId, promocodeId primitive.ObjectID) (domain.PromoCode, error) {
