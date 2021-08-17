@@ -163,10 +163,10 @@ type Emails interface {
 type UpdateCourseInput struct {
 	CourseID    string
 	SchoolID    string
-	Name        string
-	ImageURL    string
-	Description string
-	Color       string
+	Name        *string
+	ImageURL    *string
+	Description *string
+	Color       *string
 	Published   *bool
 }
 

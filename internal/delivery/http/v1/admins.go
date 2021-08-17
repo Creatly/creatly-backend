@@ -327,11 +327,11 @@ func (h *Handler) adminGetCourseById(c *gin.Context) {
 }
 
 type updateCourseInput struct {
-	Name        string `json:"name"`
-	ImageURL    string `json:"imageUrl"`
-	Description string `json:"description"`
-	Color       string `json:"color"`
-	Published   *bool  `json:"published"`
+	Name        *string `json:"name"`
+	ImageURL    *string `json:"imageUrl"`
+	Description *string `json:"description"`
+	Color       *string `json:"color"`
+	Published   *bool   `json:"published"`
 }
 
 // @Summary Admin Update Course

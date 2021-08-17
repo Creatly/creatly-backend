@@ -30,20 +30,20 @@ func (r *CoursesRepo) Update(ctx context.Context, inp UpdateCourseInput) error {
 
 	updateQuery["courses.$.updatedAt"] = time.Now()
 
-	if inp.Name != "" {
-		updateQuery["courses.$.name"] = inp.Name
+	if inp.Name != nil {
+		updateQuery["courses.$.name"] = *inp.Name
 	}
 
-	if inp.Description != "" {
-		updateQuery["courses.$.description"] = inp.Description
+	if inp.Description != nil {
+		updateQuery["courses.$.description"] = *inp.Description
 	}
 
-	if inp.ImageURL != "" {
-		updateQuery["courses.$.imageUrl"] = inp.ImageURL
+	if inp.ImageURL != nil {
+		updateQuery["courses.$.imageUrl"] = *inp.ImageURL
 	}
 
-	if inp.Color != "" {
-		updateQuery["courses.$.color"] = inp.Color
+	if inp.Color != nil {
+		updateQuery["courses.$.color"] = *inp.Color
 	}
 
 	if inp.Published != nil {
