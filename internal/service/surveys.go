@@ -54,6 +54,6 @@ func (s *SurveysService) GetResultsByModule(ctx context.Context, moduleId primit
 	return s.surveyResultsRepo.GetAllByModule(ctx, moduleId, pagination)
 }
 
-func (s *SurveysService) GetStudentResults(ctx context.Context, moduleId, studentId primitive.ObjectID) (domain.SurveyResult, error) {
-	return s.surveyResultsRepo.GetByStudent(ctx, moduleId, studentId)
+func (s *SurveysService) GetStudentResults(ctx context.Context, moduleID, studentID primitive.ObjectID) (domain.SurveyResult, error) {
+	return s.surveyResultsRepo.GetByStudent(ctx, moduleID, studentID)
 }

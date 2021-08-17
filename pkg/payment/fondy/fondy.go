@@ -131,7 +131,7 @@ func (c *Callback) validateSignature(password string) bool {
 }
 
 func generateSignature(params map[string]interface{}, password string) string {
-	var keys []string
+	keys := make([]string, len(params))
 	for k := range params {
 		keys = append(keys, k)
 	}
