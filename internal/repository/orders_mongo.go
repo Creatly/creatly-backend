@@ -47,6 +47,8 @@ func (r *OrdersRepo) AddTransaction(ctx context.Context, id primitive.ObjectID, 
 
 func (r *OrdersRepo) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Order, int64, error) {
 	opts := getPaginationOpts(pagination)
+	opts.SetSort(bson.M{"createdAt": -1})
+
 	filter := bson.M{"schoolId": schoolId}
 
 	cur, err := r.db.Find(ctx, filter, opts)

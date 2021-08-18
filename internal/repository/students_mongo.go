@@ -77,6 +77,8 @@ func (r *StudentsRepo) GetById(ctx context.Context, schoolId, id primitive.Objec
 
 func (r *StudentsRepo) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Student, int64, error) {
 	opts := getPaginationOpts(pagination)
+	opts.SetSort(bson.M{"registeredAt": -1})
+
 	filter := bson.M{"schoolId": schoolId}
 
 	cur, err := r.db.Find(ctx, filter, opts)
