@@ -17,18 +17,18 @@ func NewStudentLessonsRepo(db *mongo.Database) *StudentLessonsRepo {
 	return &StudentLessonsRepo{db: db.Collection(studentLessonsCollection)}
 }
 
-func (r *StudentLessonsRepo) AddFinished(ctx context.Context, studentId, lessonId primitive.ObjectID) error {
-	filter := bson.M{"studentId": studentId}
-	update := bson.M{"$addToSet": bson.M{"finished": lessonId}}
+func (r *StudentLessonsRepo) AddFinished(ctx context.Context, studentID, lessonID primitive.ObjectID) error {
+	filter := bson.M{"studentId": studentID}
+	update := bson.M{"$addToSet": bson.M{"finished": lessonID}}
 
 	_, err := r.db.UpdateOne(ctx, filter, update, options.Update().SetUpsert(true))
 
 	return err
 }
 
-func (r *StudentLessonsRepo) SetLastOpened(ctx context.Context, studentId, lessonId primitive.ObjectID) error {
-	filter := bson.M{"studentId": studentId}
-	update := bson.M{"$set": bson.M{"lastOpened": lessonId}}
+func (r *StudentLessonsRepo) SetLastOpened(ctx context.Context, studentID, lessonID primitive.ObjectID) error {
+	filter := bson.M{"studentId": studentID}
+	update := bson.M{"$set": bson.M{"lastOpened": lessonID}}
 
 	_, err := r.db.UpdateOne(ctx, filter, update, options.Update().SetUpsert(true))
 

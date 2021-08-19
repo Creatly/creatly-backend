@@ -175,11 +175,7 @@ func unmarshal(cfg *Config) error {
 		return err
 	}
 
-	if err := viper.UnmarshalKey("email.subjects", &cfg.Email.Subjects); err != nil {
-		return err
-	}
-
-	return nil
+	return viper.UnmarshalKey("email.subjects", &cfg.Email.Subjects)
 }
 
 func setFromEnv(cfg *Config) {

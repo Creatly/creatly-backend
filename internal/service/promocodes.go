@@ -19,7 +19,7 @@ func NewPromoCodeService(repo repository.PromoCodes) *PromoCodeService {
 
 func (s *PromoCodeService) Create(ctx context.Context, inp CreatePromoCodeInput) (primitive.ObjectID, error) {
 	return s.repo.Create(ctx, domain.PromoCode{
-		SchoolId:           inp.SchoolID,
+		SchoolID:           inp.SchoolID,
 		Code:               inp.Code,
 		DiscountPercentage: inp.DiscountPercentage,
 		ExpiresAt:          inp.ExpiresAt,

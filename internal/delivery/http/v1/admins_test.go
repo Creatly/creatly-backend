@@ -239,7 +239,7 @@ func TestHandler_adminGetPromocodes(t *testing.T) {
 				r.EXPECT().GetBySchool(context.Background(), schoolId).Return([]domain.PromoCode{
 					{
 						ID:                 promocodeId,
-						SchoolId:           schoolId,
+						SchoolID:           schoolId,
 						Code:               "FIRSTPROMO",
 						DiscountPercentage: 15,
 						ExpiresAt:          time.Date(2022, 12, 10, 13, 49, 51, 0, time.UTC),
@@ -319,7 +319,7 @@ func TestHandler_adminGetPromocodeById(t *testing.T) {
 			mockBehavior: func(r *mock_service.MockPromoCodes, schoolId primitive.ObjectID, id primitive.ObjectID) {
 				r.EXPECT().GetById(context.Background(), schoolId, id).Return(domain.PromoCode{
 					ID:                 promocodeId,
-					SchoolId:           schoolId,
+					SchoolID:           schoolId,
 					Code:               "FIRSTPROMO",
 					DiscountPercentage: 15,
 					ExpiresAt:          time.Date(2022, 12, 10, 13, 49, 51, 0, time.UTC),

@@ -17,9 +17,9 @@ type Users interface {
 	Create(ctx context.Context, user domain.User) error
 	GetByCredentials(ctx context.Context, email, password string) (domain.User, error)
 	GetByRefreshToken(ctx context.Context, refreshToken string) (domain.User, error)
-	Verify(ctx context.Context, userId primitive.ObjectID, code string) error
-	SetSession(ctx context.Context, userId primitive.ObjectID, session domain.Session) error
-	AttachSchool(ctx context.Context, userId, schoolId primitive.ObjectID) error
+	Verify(ctx context.Context, userID primitive.ObjectID, code string) error
+	SetSession(ctx context.Context, userID primitive.ObjectID, session domain.Session) error
+	AttachSchool(ctx context.Context, userID, schoolID primitive.ObjectID) error
 }
 
 type UpdateSchoolSettingsPages struct {
@@ -118,14 +118,14 @@ type Modules interface {
 	Create(ctx context.Context, module domain.Module) (primitive.ObjectID, error)
 	GetPublishedByCourseId(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
 	GetByCourseId(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
-	GetPublishedById(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
-	GetById(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
+	GetPublishedById(ctx context.Context, moduleID primitive.ObjectID) (domain.Module, error)
+	GetById(ctx context.Context, moduleID primitive.ObjectID) (domain.Module, error)
 	GetByPackages(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Module, error)
 	Update(ctx context.Context, inp UpdateModuleInput) error
 	Delete(ctx context.Context, schoolId, id primitive.ObjectID) error
 	DeleteByCourse(ctx context.Context, schoolId, courseId primitive.ObjectID) error
 	AddLesson(ctx context.Context, schoolId, id primitive.ObjectID, lesson domain.Lesson) error
-	GetByLesson(ctx context.Context, lessonId primitive.ObjectID) (domain.Module, error)
+	GetByLesson(ctx context.Context, lessonID primitive.ObjectID) (domain.Module, error)
 	UpdateLesson(ctx context.Context, inp UpdateLessonInput) error
 	DeleteLesson(ctx context.Context, schoolId, id primitive.ObjectID) error
 	AttachPackage(ctx context.Context, schoolId, packageId primitive.ObjectID, modules []primitive.ObjectID) error
@@ -135,9 +135,9 @@ type Modules interface {
 
 type LessonContent interface {
 	GetByLessons(ctx context.Context, lessonIds []primitive.ObjectID) ([]domain.LessonContent, error)
-	GetByLesson(ctx context.Context, lessonId primitive.ObjectID) (domain.LessonContent, error)
-	Update(ctx context.Context, schoolId, lessonId primitive.ObjectID, content string) error
-	DeleteContent(ctx context.Context, schoolId primitive.ObjectID, lessonIds []primitive.ObjectID) error
+	GetByLesson(ctx context.Context, lessonID primitive.ObjectID) (domain.LessonContent, error)
+	Update(ctx context.Context, schoolID, lessonID primitive.ObjectID, content string) error
+	DeleteContent(ctx context.Context, schoolID primitive.ObjectID, lessonIds []primitive.ObjectID) error
 }
 
 type UpdatePackageInput struct {
@@ -150,8 +150,8 @@ type UpdatePackageInput struct {
 type Packages interface {
 	Create(ctx context.Context, pkg domain.Package) (primitive.ObjectID, error)
 	Update(ctx context.Context, inp UpdatePackageInput) error
-	Delete(ctx context.Context, schoolId, id primitive.ObjectID) error
-	GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Package, error)
+	Delete(ctx context.Context, schoolID, id primitive.ObjectID) error
+	GetByCourse(ctx context.Context, courseID primitive.ObjectID) ([]domain.Package, error)
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.Package, error)
 }
 
@@ -206,13 +206,13 @@ type Files interface {
 	UpdateStatus(ctx context.Context, fileName string, status domain.FileStatus) error
 	GetForUploading(ctx context.Context) (domain.File, error)
 	UpdateStatusAndSetURL(ctx context.Context, id primitive.ObjectID, url string) error
-	GetByID(ctx context.Context, id, schoolId primitive.ObjectID) (domain.File, error)
+	GetByID(ctx context.Context, id, schoolID primitive.ObjectID) (domain.File, error)
 }
 
 type SurveyResults interface {
 	Save(ctx context.Context, results domain.SurveyResult) error
-	GetAllByModule(ctx context.Context, moduleId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.SurveyResult, int64, error)
-	GetByStudent(ctx context.Context, moduleId, studentId primitive.ObjectID) (domain.SurveyResult, error)
+	GetAllByModule(ctx context.Context, moduleID primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.SurveyResult, int64, error)
+	GetByStudent(ctx context.Context, moduleID, studentId primitive.ObjectID) (domain.SurveyResult, error)
 }
 
 type Repositories struct {
