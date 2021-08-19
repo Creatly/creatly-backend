@@ -70,10 +70,10 @@ type Admins interface {
 type UpdateCourseInput struct {
 	ID          primitive.ObjectID
 	SchoolID    primitive.ObjectID
-	Name        string
-	ImageURL    string
-	Description string
-	Color       string
+	Name        *string
+	ImageURL    *string
+	Description *string
+	Color       *string
 	Published   *bool
 }
 

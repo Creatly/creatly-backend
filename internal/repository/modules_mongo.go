@@ -28,7 +28,7 @@ func (r *ModulesRepo) GetPublishedByCourseId(ctx context.Context, courseId primi
 	var modules []domain.Module
 
 	opts := options.Find()
-	opts.SetSort(bson.D{{"position", 1}}) //nolint:govet
+	opts.SetSort(bson.M{"position": 1})
 
 	cur, err := r.db.Find(ctx, bson.M{"courseId": courseId, "published": true}, opts)
 	if err != nil {
@@ -44,7 +44,7 @@ func (r *ModulesRepo) GetByCourseId(ctx context.Context, courseId primitive.Obje
 	var modules []domain.Module
 
 	opts := options.Find()
-	opts.SetSort(bson.D{{"position", 1}}) //nolint:govet
+	opts.SetSort(bson.M{"position": 1})
 
 	cur, err := r.db.Find(ctx, bson.M{"courseId": courseId}, opts)
 	if err != nil {
@@ -76,7 +76,7 @@ func (r *ModulesRepo) GetByPackages(ctx context.Context, packageIds []primitive.
 	var modules []domain.Module
 
 	opts := options.Find()
-	opts.SetSort(bson.D{{"position", 1}}) //nolint:govet
+	opts.SetSort(bson.M{"position": 1})
 
 	cur, err := r.db.Find(ctx, bson.M{"packageId": bson.M{"$in": packageIds}}, opts)
 	if err != nil {
