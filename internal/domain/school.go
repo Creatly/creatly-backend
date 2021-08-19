@@ -48,7 +48,6 @@ type ContactInfo struct {
 type Pages struct {
 	Confidential      string `json:"confidential" bson:"confidential,omitempty"`
 	ServiceAgreement  string `json:"serviceAgreement" bson:"serviceAgreement,omitempty"`
-	RefundPolicy      string `json:"refundPolicy" bson:"refundPolicy,omitempty"`
 	NewsletterConsent string `json:"newsletterConsent" bson:"newsletterConsent,omitempty"`
 }
 

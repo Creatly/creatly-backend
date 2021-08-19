@@ -4756,6 +4756,9 @@ var doc = `{
                 "email": {
                     "type": "string"
                 },
+                "phone": {
+                    "type": "string"
+                },
                 "registrationNumber": {
                     "type": "string"
                 }
@@ -4993,7 +4996,7 @@ var doc = `{
                 "confidential": {
                     "type": "string"
                 },
-                "refundPolicy": {
+                "newsletterConsent": {
                     "type": "string"
                 },
                 "serviceAgreement": {
@@ -5302,6 +5305,12 @@ var doc = `{
                     "type": "string"
                 },
                 "googleAnalyticsCode": {
+                    "type": "string"
+                },
+                "logo": {
+                    "type": "string"
+                },
+                "name": {
                     "type": "string"
                 },
                 "pages": {

@@ -1503,19 +1503,21 @@ func (h *Handler) adminDeletePromocode(c *gin.Context) {
 
 type (
 	pages struct {
-		Confidential     string `json:"confidential"`
-		ServiceAgreement string `json:"serviceAgreement"`
-		RefundPolicy     string `json:"refundPolicy"`
+		Confidential      *string `json:"confidential"`
+		ServiceAgreement  *string `json:"serviceAgreement"`
+		NewsletterConsent *string `json:"newsletterConsent"`
 	}
 
 	contactInfo struct {
-		BusinessName       string `json:"businessName"`
-		RegistrationNumber string `json:"registrationNumber"`
-		Address            string `json:"address"`
-		Email              string `json:"email"`
+		BusinessName       *string `json:"businessName"`
+		RegistrationNumber *string `json:"registrationNumber"`
+		Address            *string `json:"address"`
+		Email              *string `json:"email"`
+		Phone              *string `json:"phone"`
 	}
 
 	updateSchoolSettingsInput struct {
+		Name                *string      `json:"name"`
 		Color               *string      `json:"color"`
 		Domains             []string     `json:"domains"`
 		Email               *string      `json:"email"`
@@ -1556,6 +1558,7 @@ func (h *Handler) adminUpdateSchoolSettings(c *gin.Context) {
 	}
 
 	updateInput := service.UpdateSchoolSettingsInput{
+		Name:                inp.Name,
 		Color:               inp.Color,
 		Domains:             inp.Domains,
 		Email:               inp.Email,
@@ -1565,19 +1568,20 @@ func (h *Handler) adminUpdateSchoolSettings(c *gin.Context) {
 	}
 
 	if inp.Pages != nil {
-		updateInput.Pages = &domain.Pages{
-			Confidential:     inp.Pages.Confidential,
-			ServiceAgreement: inp.Pages.ServiceAgreement,
-			RefundPolicy:     inp.Pages.RefundPolicy,
+		updateInput.Pages = &service.UpdateSchoolSettingsPages{
+			Confidential:      inp.Pages.Confidential,
+			ServiceAgreement:  inp.Pages.ServiceAgreement,
+			NewsletterConsent: inp.Pages.NewsletterConsent,
 		}
 	}
 
 	if inp.ContactInfo != nil {
-		updateInput.ContactInfo = &domain.ContactInfo{
+		updateInput.ContactInfo = &service.UpdateSchoolSettingsContactInfo{
 			Email:              inp.ContactInfo.Email,
 			RegistrationNumber: inp.ContactInfo.RegistrationNumber,
 			Address:            inp.ContactInfo.Address,
 			BusinessName:       inp.ContactInfo.BusinessName,
+			Phone:              inp.ContactInfo.Phone,
 		}
 	}
 

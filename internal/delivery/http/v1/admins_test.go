@@ -43,8 +43,8 @@ func TestHandler_adminUpdateSchoolSettings(t *testing.T) {
 			school: school,
 			input: service.UpdateSchoolSettingsInput{
 				Color: stringPtr("black"),
-				Pages: &domain.Pages{
-					Confidential: "some confidential info",
+				Pages: &service.UpdateSchoolSettingsPages{
+					Confidential: stringPtr("some confidential info"),
 				},
 			},
 			mockBehavior: func(r *mock_service.MockSchools, schoolID primitive.ObjectID, input service.UpdateSchoolSettingsInput) {
@@ -68,8 +68,8 @@ func TestHandler_adminUpdateSchoolSettings(t *testing.T) {
 			school: school,
 			input: service.UpdateSchoolSettingsInput{
 				Color: stringPtr("black"),
-				Pages: &domain.Pages{
-					Confidential: "some confidential info",
+				Pages: &service.UpdateSchoolSettingsPages{
+					Confidential: stringPtr("some confidential info"),
 				},
 			},
 			mockBehavior: func(r *mock_service.MockSchools, schoolID primitive.ObjectID, input service.UpdateSchoolSettingsInput) {

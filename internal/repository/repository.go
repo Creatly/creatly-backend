@@ -22,13 +22,28 @@ type Users interface {
 	AttachSchool(ctx context.Context, userId, schoolId primitive.ObjectID) error
 }
 
+type UpdateSchoolSettingsPages struct {
+	Confidential      *string
+	ServiceAgreement  *string
+	NewsletterConsent *string
+}
+
+type UpdateSchoolSettingsContactInfo struct {
+	BusinessName       *string
+	RegistrationNumber *string
+	Address            *string
+	Email              *string
+	Phone              *string
+}
+
 type UpdateSchoolSettingsInput struct {
 	SchoolID            primitive.ObjectID
+	Name                *string
 	Color               *string
 	Domains             []string
 	Email               *string
-	ContactInfo         *domain.ContactInfo
-	Pages               *domain.Pages
+	ContactInfo         *UpdateSchoolSettingsContactInfo
+	Pages               *UpdateSchoolSettingsPages
 	ShowPaymentImages   *bool
 	GoogleAnalyticsCode *string
 	LogoURL             *string

@@ -4742,6 +4742,9 @@
                 "email": {
                     "type": "string"
                 },
+                "phone": {
+                    "type": "string"
+                },
                 "registrationNumber": {
                     "type": "string"
                 }
@@ -4979,7 +4982,7 @@
                 "confidential": {
                     "type": "string"
                 },
-                "refundPolicy": {
+                "newsletterConsent": {
                     "type": "string"
                 },
                 "serviceAgreement": {
@@ -5288,6 +5291,12 @@
                     "type": "string"
                 },
                 "googleAnalyticsCode": {
+                    "type": "string"
+                },
+                "logo": {
+                    "type": "string"
+                },
+                "name": {
                     "type": "string"
                 },
                 "pages": {
