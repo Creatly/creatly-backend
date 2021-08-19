@@ -55,8 +55,8 @@ func (s *ModulesService) GetById(ctx context.Context, moduleId primitive.ObjectI
 	return module, nil
 }
 
-func (s *ModulesService) GetWithContent(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error) {
-	module, err := s.repo.GetById(ctx, moduleId)
+func (s *ModulesService) GetWithContent(ctx context.Context, moduleID primitive.ObjectID) (domain.Module, error) {
+	module, err := s.repo.GetById(ctx, moduleID)
 	if err != nil {
 		return module, err
 	}
@@ -104,8 +104,8 @@ func (s *ModulesService) GetByPackages(ctx context.Context, packageIds []primiti
 	return modules, nil
 }
 
-func (s *ModulesService) GetByLesson(ctx context.Context, lessonId primitive.ObjectID) (domain.Module, error) {
-	return s.repo.GetByLesson(ctx, lessonId)
+func (s *ModulesService) GetByLesson(ctx context.Context, lessonID primitive.ObjectID) (domain.Module, error) {
+	return s.repo.GetByLesson(ctx, lessonID)
 }
 
 func (s *ModulesService) Create(ctx context.Context, inp CreateModuleInput) (primitive.ObjectID, error) {
@@ -114,7 +114,7 @@ func (s *ModulesService) Create(ctx context.Context, inp CreateModuleInput) (pri
 		return id, err
 	}
 
-	schoolId, err := primitive.ObjectIDFromHex(inp.SchoolID)
+	schoolID, err := primitive.ObjectIDFromHex(inp.SchoolID)
 	if err != nil {
 		return id, err
 	}
@@ -123,7 +123,7 @@ func (s *ModulesService) Create(ctx context.Context, inp CreateModuleInput) (pri
 		Name:     inp.Name,
 		Position: inp.Position,
 		CourseID: id,
-		SchoolID: schoolId,
+		SchoolID: schoolID,
 	}
 
 	return s.repo.Create(ctx, module)
@@ -135,14 +135,14 @@ func (s *ModulesService) Update(ctx context.Context, inp UpdateModuleInput) erro
 		return err
 	}
 
-	schoolId, err := primitive.ObjectIDFromHex(inp.SchoolID)
+	schoolID, err := primitive.ObjectIDFromHex(inp.SchoolID)
 	if err != nil {
 		return err
 	}
 
 	updateInput := repository.UpdateModuleInput{
 		ID:        id,
-		SchoolID:  schoolId,
+		SchoolID:  schoolID,
 		Name:      inp.Name,
 		Position:  inp.Position,
 		Published: inp.Published,

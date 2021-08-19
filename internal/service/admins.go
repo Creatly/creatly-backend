@@ -66,8 +66,8 @@ func (s *AdminsService) GetCourses(ctx context.Context, schoolId primitive.Objec
 	return school.Courses, nil
 }
 
-func (s *AdminsService) GetCourseById(ctx context.Context, schoolId, courseId primitive.ObjectID) (domain.Course, error) {
-	school, err := s.schoolRepo.GetById(ctx, schoolId)
+func (s *AdminsService) GetCourseById(ctx context.Context, schoolID, courseID primitive.ObjectID) (domain.Course, error) {
+	school, err := s.schoolRepo.GetById(ctx, schoolID)
 	if err != nil {
 		return domain.Course{}, err
 	}
@@ -75,7 +75,7 @@ func (s *AdminsService) GetCourseById(ctx context.Context, schoolId, courseId pr
 	var searchedCourse domain.Course
 
 	for _, course := range school.Courses {
-		if course.ID == courseId {
+		if course.ID == courseID {
 			searchedCourse = course
 		}
 	}
@@ -105,13 +105,13 @@ func (s *AdminsService) CreateStudent(ctx context.Context, inp CreateStudentInpu
 	return s.studentRepo.Create(ctx, student)
 }
 
-func (s *AdminsService) createSession(ctx context.Context, adminId primitive.ObjectID) (Tokens, error) {
+func (s *AdminsService) createSession(ctx context.Context, adminID primitive.ObjectID) (Tokens, error) {
 	var (
 		res Tokens
 		err error
 	)
 
-	res.AccessToken, err = s.tokenManager.NewJWT(adminId.Hex(), s.accessTokenTTL)
+	res.AccessToken, err = s.tokenManager.NewJWT(adminID.Hex(), s.accessTokenTTL)
 	if err != nil {
 		return res, err
 	}
@@ -126,7 +126,7 @@ func (s *AdminsService) createSession(ctx context.Context, adminId primitive.Obj
 		ExpiresAt:    time.Now().Add(s.refreshTokenTTL),
 	}
 
-	err = s.repo.SetSession(ctx, adminId, session)
+	err = s.repo.SetSession(ctx, adminID, session)
 
 	return res, err
 }

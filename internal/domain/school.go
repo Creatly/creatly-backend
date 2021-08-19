@@ -32,7 +32,7 @@ type Settings struct {
 }
 
 type Fondy struct {
-	MerchantId       string `json:"merchantId" bson:"merchantId"`
+	MerchantID       string `json:"merchantId" bson:"merchantId"`
 	MerchantPassword string `json:"merchantPassword" bson:"merchantPassword"`
 	Connected        bool   `json:"connected" bson:"connected"`
 }
@@ -57,5 +57,5 @@ type Admin struct {
 	Name     string             `json:"name" bson:"name"`
 	Email    string             `json:"email" bson:"email"`
 	Password string             `json:"password" bson:"password"`
-	SchoolId primitive.ObjectID
+	SchoolID primitive.ObjectID
 }

@@ -76,17 +76,17 @@ func (s *PaymentsService) ProcessTransaction(ctx context.Context, callback inter
 }
 
 func (s *PaymentsService) processFondyCallback(ctx context.Context, callback fondy.Callback) error {
-	orderId, err := primitive.ObjectIDFromHex(callback.OrderId)
+	orderID, err := primitive.ObjectIDFromHex(callback.OrderId)
 	if err != nil {
 		return err
 	}
 
-	order, err := s.ordersService.GetById(ctx, orderId)
+	order, err := s.ordersService.GetById(ctx, orderID)
 	if err != nil {
 		return err
 	}
 
-	school, err := s.schoolsService.GetById(ctx, order.SchoolId)
+	school, err := s.schoolsService.GetById(ctx, order.SchoolID)
 	if err != nil {
 		return err
 	}
@@ -105,7 +105,7 @@ func (s *PaymentsService) processFondyCallback(ctx context.Context, callback fon
 		return err
 	}
 
-	order, err = s.ordersService.AddTransaction(ctx, orderId, transaction)
+	order, err = s.ordersService.AddTransaction(ctx, orderID, transaction)
 	if err != nil {
 		return err
 	}
@@ -177,5 +177,5 @@ func (s *PaymentsService) getFondyClient(ctx context.Context, schoolId primitive
 		return nil, domain.ErrFondyIsNotConnected
 	}
 
-	return fondy.NewFondyClient(school.Settings.Fondy.MerchantId, school.Settings.Fondy.MerchantPassword), nil
+	return fondy.NewFondyClient(school.Settings.Fondy.MerchantID, school.Settings.Fondy.MerchantPassword), nil
 }

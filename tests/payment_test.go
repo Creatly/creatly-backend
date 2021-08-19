@@ -37,7 +37,7 @@ func (s *APITestSuite) TestFondyCallbackApproved() {
 	id, _ := primitive.ObjectIDFromHex("6008153f3dab4fb0573d1f96")
 	_, err = s.db.Collection("orders").InsertOne(context.Background(), domain.Order{
 		ID:       id,
-		SchoolId: school.ID,
+		SchoolID: school.ID,
 		Offer:    domain.OrderOfferInfo{ID: offers[0].(domain.Offer).ID, Name: offerName},
 		Student:  domain.StudentInfoShort{ID: studentId, Email: studentEmail, Name: studentName},
 		Status:   "created",
@@ -103,7 +103,7 @@ func (s *APITestSuite) TestFondyCallbackDeclined() {
 	id, _ := primitive.ObjectIDFromHex("6008153f3dab4fb0573d1f97")
 	_, err = s.db.Collection("orders").InsertOne(context.Background(), domain.Order{
 		ID:       id,
-		SchoolId: school.ID,
+		SchoolID: school.ID,
 		Offer:    domain.OrderOfferInfo{ID: offers[0].(domain.Offer).ID},
 		Student:  domain.StudentInfoShort{ID: studentId},
 		Status:   "created",
