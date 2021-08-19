@@ -184,16 +184,11 @@ func (s *StudentsService) GetLesson(ctx context.Context, studentId, lessonId pri
 }
 
 func (s *StudentsService) SetLessonFinished(ctx context.Context, studentId, lessonId primitive.ObjectID) error {
-	err := s.isLessonAvailable(ctx, studentId, lessonId)
-	if err != nil {
+	if err := s.isLessonAvailable(ctx, studentId, lessonId); err != nil {
 		return err
 	}
 
-	if err := s.studentLessonsService.AddFinished(ctx, studentId, lessonId); err != nil {
-		return err
-	}
-
-	return nil
+	return s.studentLessonsService.AddFinished(ctx, studentId, lessonId)
 }
 
 func (s *StudentsService) GiveAccessToOffer(ctx context.Context, studentId primitive.ObjectID, offer domain.Offer) error {

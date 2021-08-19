@@ -55,7 +55,7 @@ var (
 			DiscountPercentage: 25,
 			ExpiresAt:          time.Now().Add(time.Hour),
 			OfferIDs:           []primitive.ObjectID{offers[0].(domain.Offer).ID},
-			SchoolId:           school.ID,
+			SchoolID:           school.ID,
 		},
 	}
 

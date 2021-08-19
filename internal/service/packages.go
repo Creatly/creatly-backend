@@ -36,8 +36,8 @@ func (s *PackagesService) Create(ctx context.Context, inp CreatePackageInput) (p
 	})
 }
 
-func (s *PackagesService) GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Package, error) {
-	pkgs, err := s.repo.GetByCourse(ctx, courseId)
+func (s *PackagesService) GetByCourse(ctx context.Context, courseID primitive.ObjectID) ([]domain.Package, error) {
+	pkgs, err := s.repo.GetByCourse(ctx, courseID)
 	if err != nil {
 		return nil, err
 	}

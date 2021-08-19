@@ -25,9 +25,9 @@ func (r *SurveyResultsRepo) Save(ctx context.Context, results domain.SurveyResul
 	return err
 }
 
-func (r *SurveyResultsRepo) GetAllByModule(ctx context.Context, moduleId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.SurveyResult, int64, error) {
+func (r *SurveyResultsRepo) GetAllByModule(ctx context.Context, moduleID primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.SurveyResult, int64, error) {
 	opts := getPaginationOpts(pagination)
-	filter := bson.M{"moduleId": moduleId}
+	filter := bson.M{"moduleId": moduleID}
 
 	cur, err := r.db.Find(ctx, filter, opts)
 	if err != nil {
@@ -44,9 +44,9 @@ func (r *SurveyResultsRepo) GetAllByModule(ctx context.Context, moduleId primiti
 	return results, count, err
 }
 
-func (r *SurveyResultsRepo) GetByStudent(ctx context.Context, moduleID, studentId primitive.ObjectID) (domain.SurveyResult, error) {
+func (r *SurveyResultsRepo) GetByStudent(ctx context.Context, moduleID, studentID primitive.ObjectID) (domain.SurveyResult, error) {
 	var res domain.SurveyResult
-	err := r.db.FindOne(ctx, bson.M{"student.id": studentId, "moduleId": moduleID}).Decode(&res)
+	err := r.db.FindOne(ctx, bson.M{"student.id": studentID, "moduleId": moduleID}).Decode(&res)
 
 	return res, err
 }

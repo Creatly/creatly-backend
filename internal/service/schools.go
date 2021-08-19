@@ -77,7 +77,7 @@ func (s *SchoolsService) ConnectFondy(ctx context.Context, input ConnectFondyInp
 
 	creds := domain.Fondy{
 		MerchantPassword: input.MerchantPassword,
-		MerchantId:       input.MerchantID,
+		MerchantID:       input.MerchantID,
 		Connected:        true,
 	}
 
