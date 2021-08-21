@@ -114,20 +114,21 @@ func (r *checkoutRequest) setSignature(password string) {
 	r.Signature = generateSignature(params, password)
 }
 
-// func (c *Callback) validateSignature(password string) bool {
-// 	params := structs.Map(c)
+//nolint:unused
+func (c *Callback) validateSignature(password string) bool {
+	params := structs.Map(c)
 
-// 	logger.Debugf("[FONDY] callback: %+v", c)
+	logger.Debugf("[FONDY] callback: %+v", c)
 
-// 	delete(params, "Signature")
-// 	delete(params, "ResponseSignatureString")
+	delete(params, "Signature")
+	delete(params, "ResponseSignatureString")
 
-// 	signature := generateSignature(params, password)
+	signature := generateSignature(params, password)
 
-// 	logger.Debugf("[FONDY] generated signature: %s", signature)
+	logger.Debugf("[FONDY] generated signature: %s", signature)
 
-// 	return c.Signature == signature
-// }
+	return c.Signature == signature
+}
 
 func generateSignature(params map[string]interface{}, password string) string {
 	keys := make([]string, len(params))
@@ -141,7 +142,7 @@ func generateSignature(params map[string]interface{}, password string) string {
 
 	for _, key := range keys {
 		value, ok := params[key].(string)
-		if !ok {
+		if !ok && params[key] != nil {
 			values = append(values, fmt.Sprintf("%v", params[key]))
 
 			continue
