@@ -131,7 +131,7 @@ func (c *Callback) validateSignature(password string) bool {
 }
 
 func generateSignature(params map[string]interface{}, password string) string {
-	var keys []string
+	keys := make([]string, len(params))
 	for k := range params {
 		keys = append(keys, k)
 	}
@@ -142,7 +142,7 @@ func generateSignature(params map[string]interface{}, password string) string {
 
 	for _, key := range keys {
 		value, ok := params[key].(string)
-		if !ok {
+		if !ok && params[key] != nil {
 			values = append(values, fmt.Sprintf("%v", params[key]))
 
 			continue
@@ -170,24 +170,24 @@ func generateSignature(params map[string]interface{}, password string) string {
 
 // Client is a fondy payment provider API client.
 type Client struct {
-	merchantId       string
+	merchantID       string
 	merchantPassword string
 }
 
-func NewFondyClient(merchantId string, merchantPassword string) *Client {
-	return &Client{merchantId: merchantId, merchantPassword: merchantPassword}
+func NewFondyClient(merchantID string, merchantPassword string) *Client {
+	return &Client{merchantID: merchantID, merchantPassword: merchantPassword}
 }
 
 // GeneratePaymentLink returns payment URL for provided order info.
 func (c *Client) GeneratePaymentLink(input payment.GeneratePaymentLinkInput) (string, error) {
 	checkoutReq := &checkoutRequest{
 		OrderId:           input.OrderId,
-		MerchantId:        c.merchantId,
+		MerchantId:        c.merchantID,
 		OrderDesc:         input.OrderDesc,
 		Amount:            fmt.Sprintf("%d", input.Amount),
 		Currency:          input.Currency,
 		ServerCallbackURL: input.CallbackURL,
-		ResponseURL:       input.ResponseURL,
+		ResponseURL:       input.RedirectURL,
 		Language:          languageRU,
 	}
 

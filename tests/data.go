@@ -23,6 +23,9 @@ var (
 		},
 		Settings: domain.Settings{
 			Domains: []string{"http://localhost:1337", "workshop.zhashkevych.com", ""},
+			Fondy: domain.Fondy{
+				Connected: true,
+			},
 		},
 	}
 
@@ -52,7 +55,7 @@ var (
 			DiscountPercentage: 25,
 			ExpiresAt:          time.Now().Add(time.Hour),
 			OfferIDs:           []primitive.ObjectID{offers[0].(domain.Offer).ID},
-			SchoolId:           school.ID,
+			SchoolID:           school.ID,
 		},
 	}
 

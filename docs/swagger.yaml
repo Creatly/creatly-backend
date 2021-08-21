@@ -47,6 +47,18 @@ definitions:
       updatedAt:
         type: string
     type: object
+<<<<<<< HEAD
+=======
+  domain.Fondy:
+    properties:
+      connected:
+        type: boolean
+      merchantId:
+        type: string
+      merchantPassword:
+        type: string
+    type: object
+>>>>>>> develop
   domain.Lesson:
     properties:
       content:
@@ -62,6 +74,32 @@ definitions:
       schoolId:
         type: string
     type: object
+<<<<<<< HEAD
+=======
+  domain.Module:
+    properties:
+      courseId:
+        type: string
+      id:
+        type: string
+      lessons:
+        items:
+          $ref: '#/definitions/domain.Lesson'
+        type: array
+      name:
+        type: string
+      packageId:
+        type: string
+      position:
+        type: integer
+      published:
+        type: boolean
+      schoolId:
+        type: string
+      survey:
+        $ref: '#/definitions/domain.Survey'
+    type: object
+>>>>>>> develop
   domain.ModuleContent:
     properties:
       lessons:
@@ -87,6 +125,8 @@ definitions:
         items:
           type: string
         type: array
+      paymentMethod:
+        $ref: '#/definitions/domain.PaymentMethod'
       price:
         $ref: '#/definitions/domain.Price'
       schoolId:
@@ -100,6 +140,10 @@ definitions:
         type: string
       id:
         type: string
+      modules:
+        items:
+          $ref: '#/definitions/domain.Module'
+        type: array
       name:
         type: string
       schoolId:
@@ -115,6 +159,13 @@ definitions:
         type: string
       serviceAgreement:
         type: string
+    type: object
+  domain.PaymentMethod:
+    properties:
+      provider:
+        type: string
+      usesProvider:
+        type: boolean
     type: object
   domain.Price:
     properties:
@@ -180,6 +231,10 @@ definitions:
         items:
           type: string
         type: array
+      fondy:
+        $ref: '#/definitions/domain.Fondy'
+      googleAnalyticsCode:
+        type: string
       logo:
         type: string
       pages:
@@ -289,6 +344,13 @@ definitions:
       url:
         type: string
     type: object
+  v1.connectFondyInput:
+    properties:
+      merchantId:
+        type: string
+      merchantPassword:
+        type: string
+    type: object
   v1.contactInfo:
     properties:
       address:
@@ -296,6 +358,8 @@ definitions:
       businessName:
         type: string
       email:
+        type: string
+      phone:
         type: string
       registrationNumber:
         type: string
@@ -335,11 +399,14 @@ definitions:
         type: string
       name:
         type: string
+      paymentMethod:
+        $ref: '#/definitions/v1.paymentMethod'
       price:
         $ref: '#/definitions/v1.price'
     required:
     - benefits
     - name
+    - paymentMethod
     - price
     type: object
   v1.createOrderInput:
@@ -353,7 +420,7 @@ definitions:
     type: object
   v1.createOrderResponse:
     properties:
-      paymentLink:
+      orderId:
         type: string
     type: object
   v1.createPackageInput:
@@ -423,6 +490,11 @@ definitions:
       data:
         type: object
     type: object
+  v1.generatePaymentLinkResponse:
+    properties:
+      url:
+        type: string
+    type: object
   v1.idResponse:
     properties:
       id:
@@ -433,14 +505,30 @@ definitions:
       available:
         type: boolean
     type: object
+  v1.orderStatusInput:
+    properties:
+      status:
+        type: string
+    required:
+    - status
+    type: object
   v1.pages:
     properties:
       confidential:
         type: string
-      refundPolicy:
+      newsletterConsent:
         type: string
       serviceAgreement:
         type: string
+    type: object
+  v1.paymentMethod:
+    properties:
+      provider:
+        type: string
+      usesProvider:
+        type: boolean
+    required:
+    - usesProvider
     type: object
   v1.price:
     properties:
@@ -588,6 +676,8 @@ definitions:
         items:
           type: string
         type: array
+      paymentMethod:
+        $ref: '#/definitions/v1.paymentMethod'
       price:
         $ref: '#/definitions/v1.price'
     type: object
@@ -626,6 +716,12 @@ definitions:
           type: string
         type: array
       email:
+        type: string
+      googleAnalyticsCode:
+        type: string
+      logo:
+        type: string
+      name:
         type: string
       pages:
         $ref: '#/definitions/v1.pages'
@@ -684,7 +780,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -715,7 +811,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -754,7 +850,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -793,7 +889,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -831,7 +927,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -875,7 +971,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -920,7 +1016,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -959,7 +1055,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1003,7 +1099,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1042,7 +1138,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1080,7 +1176,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1124,7 +1220,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1163,7 +1259,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1202,7 +1298,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1246,7 +1342,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1285,7 +1381,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1329,7 +1425,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1344,6 +1440,219 @@ paths:
       - AdminAuth: []
       summary: Admin Create Lesson
       tags:
+      - admins-lessons
+  /admins/modules/{id}/survey:
+    delete:
+      consumes:
+      - application/json
+      description: admin delete survey
+      parameters:
+      - description: module id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Survey'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Delete Survey
+      tags:
+      - admins-surveys
+    get:
+      consumes:
+      - application/json
+      description: admin get survey
+      parameters:
+      - description: module id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Survey'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Get Survey
+      tags:
+      - admins-surveys
+    post:
+      consumes:
+      - application/json
+      description: admin create/update survey
+      parameters:
+      - description: module id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: survey info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.createSurveyInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Create/Update Survey
+      tags:
+      - admins-surveys
+  /admins/modules/{id}/survey/results:
+    get:
+      consumes:
+      - application/json
+      description: admin get all survey results
+      parameters:
+      - description: skip
+        in: query
+        name: skip
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: module id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.dataResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Get Survey Results
+      tags:
+      - admins-surveys
+  /admins/modules/{id}/survey/results/{studentId}:
+    get:
+      consumes:
+      - application/json
+      description: admin get all survey results
+      parameters:
+      - description: module id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: student id
+        in: path
+        name: studentId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.SurveyResult'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Get Survey Results
+      tags:
+<<<<<<< HEAD
       - admins-lessons
   /admins/modules/{id}/survey:
     delete:
@@ -1556,6 +1865,8 @@ paths:
       - AdminAuth: []
       summary: Admin Get Survey Results
       tags:
+=======
+>>>>>>> develop
       - admins-surveys
   /admins/offers:
     get:
@@ -1574,7 +1885,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1613,7 +1924,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1652,7 +1963,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1690,7 +2001,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1734,7 +2045,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1776,7 +2087,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1790,6 +2101,49 @@ paths:
       security:
       - AdminAuth: []
       summary: Admin Get Orders
+      tags:
+      - admins-orders
+  /admins/orders/{id}:
+    put:
+      consumes:
+      - application/json
+      description: admin update order status
+      parameters:
+      - description: promocode id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: update school settings
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.orderStatusInput'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.dataResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Update Order
       tags:
       - admins-orders
   /admins/packages/{id}:
@@ -1817,7 +2171,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1857,7 +2211,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1903,7 +2257,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1943,7 +2297,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -1982,7 +2336,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2021,7 +2375,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2059,7 +2413,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2103,7 +2457,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2143,7 +2497,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2157,6 +2511,46 @@ paths:
       security:
       - AdminAuth: []
       summary: Admin Update School settings
+      tags:
+      - admins-school
+  /admins/school/settings/fondy:
+    put:
+      consumes:
+      - application/json
+      description: admin connect fondy
+      parameters:
+      - description: update school settings
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.connectFondyInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Connect Fondy
       tags:
       - admins-school
   /admins/sign-in:
@@ -2183,7 +2577,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2223,7 +2617,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2262,7 +2656,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2301,7 +2695,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2351,7 +2745,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2390,7 +2784,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2429,7 +2823,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2468,7 +2862,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2501,7 +2895,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2538,7 +2932,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2575,7 +2969,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2612,7 +3006,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2641,7 +3035,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2672,7 +3066,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2712,7 +3106,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2749,7 +3143,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "403":
-          description: Bad Request
+          description: Forbidden
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2788,7 +3182,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2827,7 +3221,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2872,7 +3266,11 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "403":
+<<<<<<< HEAD
           description: Bad Request
+=======
+          description: Forbidden
+>>>>>>> develop
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2888,7 +3286,11 @@ paths:
       summary: Student Submit Survey by Module ID
       tags:
       - students-courses
+<<<<<<< HEAD
   /students/order:
+=======
+  /students/orders:
+>>>>>>> develop
     post:
       consumes:
       - application/json
@@ -2912,7 +3314,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2927,7 +3329,46 @@ paths:
       - StudentsAuth: []
       summary: Student CreateOrder
       tags:
-      - students-courses
+      - students-orders
+  /students/orders/{id}/payment:
+    get:
+      consumes:
+      - application/json
+      description: student generate order payment link
+      parameters:
+      - description: order id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.generatePaymentLinkResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - StudentsAuth: []
+      summary: Student Generate Payment Link
+      tags:
+      - students-orders
   /students/sign-in:
     post:
       consumes:
@@ -2952,7 +3393,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -2990,7 +3431,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -3027,7 +3468,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -3065,7 +3506,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -3103,7 +3544,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -3143,7 +3584,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -3181,7 +3622,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -3218,7 +3659,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "404":
-          description: Bad Request
+          description: Not Found
           schema:
             $ref: '#/definitions/v1.response'
         "500":

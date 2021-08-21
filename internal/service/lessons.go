@@ -20,14 +20,14 @@ func NewLessonsService(repo repository.Modules, contentRepo repository.LessonCon
 }
 
 func (s *LessonsService) Create(ctx context.Context, inp AddLessonInput) (primitive.ObjectID, error) {
-	schoolId, err := primitive.ObjectIDFromHex(inp.SchoolID)
+	schoolID, err := primitive.ObjectIDFromHex(inp.SchoolID)
 	if err != nil {
 		return primitive.ObjectID{}, err
 	}
 
 	lesson := domain.Lesson{
 		ID:       primitive.NewObjectID(),
-		SchoolID: schoolId,
+		SchoolID: schoolID,
 		Name:     inp.Name,
 		Position: inp.Position,
 	}
@@ -37,7 +37,7 @@ func (s *LessonsService) Create(ctx context.Context, inp AddLessonInput) (primit
 		return primitive.ObjectID{}, err
 	}
 
-	if err := s.repo.AddLesson(ctx, schoolId, id, lesson); err != nil {
+	if err := s.repo.AddLesson(ctx, schoolID, id, lesson); err != nil {
 		return primitive.ObjectID{}, err
 	}
 
@@ -78,7 +78,7 @@ func (s *LessonsService) Update(ctx context.Context, inp UpdateLessonInput) erro
 		return err
 	}
 
-	schoolId, err := primitive.ObjectIDFromHex(inp.SchoolID)
+	schoolID, err := primitive.ObjectIDFromHex(inp.SchoolID)
 	if err != nil {
 		return err
 	}
@@ -89,14 +89,14 @@ func (s *LessonsService) Update(ctx context.Context, inp UpdateLessonInput) erro
 			Name:      inp.Name,
 			Position:  inp.Position,
 			Published: inp.Published,
-			SchoolID:  schoolId,
+			SchoolID:  schoolID,
 		}); err != nil {
 			return err
 		}
 	}
 
 	if inp.Content != "" {
-		if err := s.contentRepo.Update(ctx, schoolId, id, inp.Content); err != nil {
+		if err := s.contentRepo.Update(ctx, schoolID, id, inp.Content); err != nil {
 			return err
 		}
 	}

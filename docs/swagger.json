@@ -47,7 +47,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -99,7 +99,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -160,7 +160,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -221,7 +221,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -289,7 +289,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -348,7 +348,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -418,7 +418,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -479,7 +479,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -547,7 +547,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -608,7 +608,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -676,7 +676,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -735,7 +735,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -796,7 +796,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -866,7 +866,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -925,7 +925,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -986,7 +986,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -1054,7 +1054,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -1075,6 +1075,7 @@
             }
         },
         "/admins/modules/{id}/survey": {
+<<<<<<< HEAD
             "get": {
                 "security": [
                     {
@@ -1404,6 +1405,337 @@
             }
         },
         "/admins/offers": {
+=======
+>>>>>>> develop
+            "get": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "admin get survey",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admins-surveys"
+                ],
+                "summary": "Admin Get Survey",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "module id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Survey"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "admin create/update survey",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admins-surveys"
+                ],
+                "summary": "Admin Create/Update Survey",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "module id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "survey info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.createSurveyInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "admin delete survey",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admins-surveys"
+                ],
+                "summary": "Admin Delete Survey",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "module id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Survey"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admins/modules/{id}/survey/results": {
+            "get": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "admin get all survey results",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admins-surveys"
+                ],
+                "summary": "Admin Get Survey Results",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "skip",
+                        "name": "skip",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "module id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.dataResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admins/modules/{id}/survey/results/{studentId}": {
+            "get": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "admin get all survey results",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admins-surveys"
+                ],
+                "summary": "Admin Get Survey Results",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "module id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "student id",
+                        "name": "studentId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.SurveyResult"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admins/offers": {
             "get": {
                 "security": [
                     {
@@ -1435,7 +1767,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -1496,7 +1828,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -1557,7 +1889,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -1625,7 +1957,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -1684,7 +2016,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -1750,7 +2082,74 @@
                         }
                     },
                     "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admins/orders/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "admin update order status",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admins-orders"
+                ],
+                "summary": "Admin Update Order",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "promocode id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "update school settings",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.orderStatusInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.dataResponse"
+                        }
+                    },
+                    "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -1814,7 +2213,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -1885,7 +2284,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -1947,7 +2346,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -2014,7 +2413,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -2075,7 +2474,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -2136,7 +2535,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -2204,7 +2603,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -2263,7 +2662,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -2326,7 +2725,70 @@
                         }
                     },
                     "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admins/school/settings/fondy": {
+            "put": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "admin connect fondy",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admins-school"
+                ],
+                "summary": "Admin Connect Fondy",
+                "parameters": [
+                    {
+                        "description": "update school settings",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.connectFondyInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -2384,7 +2846,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -2450,7 +2912,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -2511,7 +2973,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -2572,7 +3034,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -2649,7 +3111,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -2710,7 +3172,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -2771,7 +3233,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -2832,7 +3294,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -2879,7 +3341,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -2935,7 +3397,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -2991,7 +3453,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -3047,7 +3509,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -3091,7 +3553,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -3143,7 +3605,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -3201,7 +3663,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -3262,7 +3724,7 @@
                         }
                     },
                     "403": {
-                        "description": "Bad Request",
+                        "description": "Forbidden",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -3323,7 +3785,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -3384,7 +3846,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -3404,6 +3866,77 @@
                 }
             }
         },
+        "/students/modules/{id}/survey": {
+            "post": {
+                "security": [
+                    {
+                        "StudentsAuth": []
+                    }
+                ],
+                "description": "student submit survey by module id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "students-courses"
+                ],
+                "summary": "Student Submit Survey by Module ID",
+                "parameters": [
+                    {
+                        "description": "survey answers",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.submitSurveyInput"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "module id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+<<<<<<< HEAD
         "/students/modules/{id}/survey": {
             "post": {
                 "security": [
@@ -3475,6 +4008,9 @@
             }
         },
         "/students/order": {
+=======
+        "/students/orders": {
+>>>>>>> develop
             "post": {
                 "security": [
                     {
@@ -3489,7 +4025,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "students-courses"
+                    "students-orders"
                 ],
                 "summary": "Student CreateOrder",
                 "parameters": [
@@ -3517,7 +4053,68 @@
                         }
                     },
                     "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/students/orders/{id}/payment": {
+            "get": {
+                "security": [
+                    {
+                        "StudentsAuth": []
+                    }
+                ],
+                "description": "student generate order payment link",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "students-orders"
+                ],
+                "summary": "Student Generate Payment Link",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "order id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.generatePaymentLinkResponse"
+                        }
+                    },
+                    "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -3575,7 +4172,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -3633,7 +4230,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -3689,7 +4286,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -3747,7 +4344,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -3810,7 +4407,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -3868,7 +4465,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -3926,7 +4523,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -3987,7 +4584,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request",
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/v1.response"
                         }
@@ -4081,6 +4678,23 @@
                 }
             }
         },
+<<<<<<< HEAD
+=======
+        "domain.Fondy": {
+            "type": "object",
+            "properties": {
+                "connected": {
+                    "type": "boolean"
+                },
+                "merchantId": {
+                    "type": "string"
+                },
+                "merchantPassword": {
+                    "type": "string"
+                }
+            }
+        },
+>>>>>>> develop
         "domain.Lesson": {
             "type": "object",
             "properties": {
@@ -4104,6 +4718,44 @@
                 }
             }
         },
+<<<<<<< HEAD
+=======
+        "domain.Module": {
+            "type": "object",
+            "properties": {
+                "courseId": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "lessons": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Lesson"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "packageId": {
+                    "type": "string"
+                },
+                "position": {
+                    "type": "integer"
+                },
+                "published": {
+                    "type": "boolean"
+                },
+                "schoolId": {
+                    "type": "string"
+                },
+                "survey": {
+                    "$ref": "#/definitions/domain.Survey"
+                }
+            }
+        },
+>>>>>>> develop
         "domain.ModuleContent": {
             "type": "object",
             "properties": {
@@ -4142,6 +4794,9 @@
                         "type": "string"
                     }
                 },
+                "paymentMethod": {
+                    "$ref": "#/definitions/domain.PaymentMethod"
+                },
                 "price": {
                     "$ref": "#/definitions/domain.Price"
                 },
@@ -4161,6 +4816,12 @@
                 },
                 "id": {
                     "type": "string"
+                },
+                "modules": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Module"
+                    }
                 },
                 "name": {
                     "type": "string"
@@ -4184,6 +4845,17 @@
                 },
                 "serviceAgreement": {
                     "type": "string"
+                }
+            }
+        },
+        "domain.PaymentMethod": {
+            "type": "object",
+            "properties": {
+                "provider": {
+                    "type": "string"
+                },
+                "usesProvider": {
+                    "type": "boolean"
                 }
             }
         },
@@ -4284,6 +4956,12 @@
                     "items": {
                         "type": "string"
                     }
+                },
+                "fondy": {
+                    "$ref": "#/definitions/domain.Fondy"
+                },
+                "googleAnalyticsCode": {
+                    "type": "string"
                 },
                 "logo": {
                     "type": "string"
@@ -4453,6 +5131,17 @@
                 }
             }
         },
+        "v1.connectFondyInput": {
+            "type": "object",
+            "properties": {
+                "merchantId": {
+                    "type": "string"
+                },
+                "merchantPassword": {
+                    "type": "string"
+                }
+            }
+        },
         "v1.contactInfo": {
             "type": "object",
             "properties": {
@@ -4463,6 +5152,9 @@
                     "type": "string"
                 },
                 "email": {
+                    "type": "string"
+                },
+                "phone": {
                     "type": "string"
                 },
                 "registrationNumber": {
@@ -4514,6 +5206,7 @@
             "required": [
                 "benefits",
                 "name",
+                "paymentMethod",
                 "price"
             ],
             "properties": {
@@ -4528,6 +5221,9 @@
                 },
                 "name": {
                     "type": "string"
+                },
+                "paymentMethod": {
+                    "$ref": "#/definitions/v1.paymentMethod"
                 },
                 "price": {
                     "$ref": "#/definitions/v1.price"
@@ -4551,7 +5247,7 @@
         "v1.createOrderResponse": {
             "type": "object",
             "properties": {
-                "paymentLink": {
+                "orderId": {
                     "type": "string"
                 }
             }
@@ -4657,6 +5353,14 @@
                 }
             }
         },
+        "v1.generatePaymentLinkResponse": {
+            "type": "object",
+            "properties": {
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
         "v1.idResponse": {
             "type": "object",
             "properties": {
@@ -4673,17 +5377,42 @@
                 }
             }
         },
+        "v1.orderStatusInput": {
+            "type": "object",
+            "required": [
+                "status"
+            ],
+            "properties": {
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
         "v1.pages": {
             "type": "object",
             "properties": {
                 "confidential": {
                     "type": "string"
                 },
-                "refundPolicy": {
+                "newsletterConsent": {
                     "type": "string"
                 },
                 "serviceAgreement": {
                     "type": "string"
+                }
+            }
+        },
+        "v1.paymentMethod": {
+            "type": "object",
+            "required": [
+                "usesProvider"
+            ],
+            "properties": {
+                "provider": {
+                    "type": "string"
+                },
+                "usesProvider": {
+                    "type": "boolean"
                 }
             }
         },
@@ -4910,6 +5639,9 @@
                         "type": "string"
                     }
                 },
+                "paymentMethod": {
+                    "$ref": "#/definitions/v1.paymentMethod"
+                },
                 "price": {
                     "$ref": "#/definitions/v1.price"
                 }
@@ -4968,6 +5700,15 @@
                     }
                 },
                 "email": {
+                    "type": "string"
+                },
+                "googleAnalyticsCode": {
+                    "type": "string"
+                },
+                "logo": {
+                    "type": "string"
+                },
+                "name": {
                     "type": "string"
                 },
                 "pages": {

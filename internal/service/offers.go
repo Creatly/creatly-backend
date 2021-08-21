@@ -67,12 +67,19 @@ func (s *OffersService) GetByCourse(ctx context.Context, courseId primitive.Obje
 }
 
 func (s *OffersService) Create(ctx context.Context, inp CreateOfferInput) (primitive.ObjectID, error) {
+	if inp.PaymentMethod.UsesProvider {
+		if err := inp.PaymentMethod.Validate(); err != nil {
+			return primitive.ObjectID{}, err
+		}
+	}
+
 	return s.repo.Create(ctx, domain.Offer{
-		SchoolID:    inp.SchoolID,
-		Name:        inp.Name,
-		Description: inp.Description,
-		Benefits:    inp.Benefits,
-		Price:       inp.Price,
+		SchoolID:      inp.SchoolID,
+		Name:          inp.Name,
+		Description:   inp.Description,
+		Benefits:      inp.Benefits,
+		Price:         inp.Price,
+		PaymentMethod: inp.PaymentMethod,
 	})
 }
 
@@ -81,6 +88,10 @@ func (s *OffersService) GetAll(ctx context.Context, schoolId primitive.ObjectID)
 }
 
 func (s *OffersService) Update(ctx context.Context, inp UpdateOfferInput) error {
+	if err := inp.ValidatePayment(); err != nil {
+		return err
+	}
+
 	id, err := primitive.ObjectIDFromHex(inp.ID)
 	if err != nil {
 		return err
@@ -92,12 +103,13 @@ func (s *OffersService) Update(ctx context.Context, inp UpdateOfferInput) error 
 	}
 
 	updateInput := repository.UpdateOfferInput{
-		ID:          id,
-		SchoolID:    schoolId,
-		Name:        inp.Name,
-		Description: inp.Description,
-		Price:       inp.Price,
-		Benefits:    inp.Benefits,
+		ID:            id,
+		SchoolID:      schoolId,
+		Name:          inp.Name,
+		Description:   inp.Description,
+		Price:         inp.Price,
+		Benefits:      inp.Benefits,
+		PaymentMethod: inp.PaymentMethod,
 	}
 
 	if inp.Packages != nil {

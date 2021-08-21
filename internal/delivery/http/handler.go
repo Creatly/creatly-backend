@@ -13,8 +13,6 @@ import (
 	"github.com/zhashkevych/creatly-backend/internal/service"
 	"github.com/zhashkevych/creatly-backend/pkg/auth"
 	"github.com/zhashkevych/creatly-backend/pkg/limiter"
-
-	_ "github.com/zhashkevych/creatly-backend/docs"
 )
 
 type Handler struct {

@@ -28,7 +28,7 @@ func (s *APITestSuite) TestAdminCreateCourse() {
 		ID:       id,
 		Email:    adminEmail,
 		Password: passwordHash,
-		SchoolId: schoolID,
+		SchoolID: schoolID,
 	})
 	s.NoError(err)
 
@@ -64,7 +64,7 @@ func (s *APITestSuite) TestAdminGetAllCourses() {
 		ID:       id,
 		Email:    adminEmail,
 		Password: passwordHash,
-		SchoolId: schoolID,
+		SchoolID: schoolID,
 	})
 	s.NoError(err)
 
@@ -96,7 +96,7 @@ func (s *APITestSuite) TestAdminGetCourseByID() {
 		ID:       id,
 		Email:    adminEmail,
 		Password: passwordHash,
-		SchoolId: schoolID,
+		SchoolID: schoolID,
 	})
 	s.NoError(err)
 

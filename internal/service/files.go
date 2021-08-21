@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -81,7 +82,7 @@ func (s *FilesService) processUploadToStorage(ctx context.Context) {
 func (s *FilesService) uploadToStorage(ctx context.Context) error {
 	file, err := s.repo.GetForUploading(ctx)
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return nil
 		}
 

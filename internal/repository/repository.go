@@ -17,19 +17,36 @@ type Users interface {
 	Create(ctx context.Context, user domain.User) error
 	GetByCredentials(ctx context.Context, email, password string) (domain.User, error)
 	GetByRefreshToken(ctx context.Context, refreshToken string) (domain.User, error)
-	Verify(ctx context.Context, userId primitive.ObjectID, code string) error
-	SetSession(ctx context.Context, userId primitive.ObjectID, session domain.Session) error
-	AttachSchool(ctx context.Context, userId, schoolId primitive.ObjectID) error
+	Verify(ctx context.Context, userID primitive.ObjectID, code string) error
+	SetSession(ctx context.Context, userID primitive.ObjectID, session domain.Session) error
+	AttachSchool(ctx context.Context, userID, schoolID primitive.ObjectID) error
+}
+
+type UpdateSchoolSettingsPages struct {
+	Confidential      *string
+	ServiceAgreement  *string
+	NewsletterConsent *string
+}
+
+type UpdateSchoolSettingsContactInfo struct {
+	BusinessName       *string
+	RegistrationNumber *string
+	Address            *string
+	Email              *string
+	Phone              *string
 }
 
 type UpdateSchoolSettingsInput struct {
-	SchoolID          primitive.ObjectID
-	Color             string
-	Domains           []string
-	Email             string
-	ContactInfo       *domain.ContactInfo
-	Pages             *domain.Pages
-	ShowPaymentImages *bool
+	SchoolID            primitive.ObjectID
+	Name                *string
+	Color               *string
+	Domains             []string
+	Email               *string
+	ContactInfo         *UpdateSchoolSettingsContactInfo
+	Pages               *UpdateSchoolSettingsPages
+	ShowPaymentImages   *bool
+	GoogleAnalyticsCode *string
+	LogoURL             *string
 }
 
 type Schools interface {
@@ -37,6 +54,7 @@ type Schools interface {
 	GetByDomain(ctx context.Context, domainName string) (domain.School, error)
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.School, error)
 	UpdateSettings(ctx context.Context, inp UpdateSchoolSettingsInput) error
+	SetFondyCredentials(ctx context.Context, id primitive.ObjectID, fondy domain.Fondy) error
 }
 
 type Students interface {
@@ -67,10 +85,10 @@ type Admins interface {
 type UpdateCourseInput struct {
 	ID          primitive.ObjectID
 	SchoolID    primitive.ObjectID
-	Name        string
-	ImageURL    string
-	Description string
-	Color       string
+	Name        *string
+	ImageURL    *string
+	Description *string
+	Color       *string
 	Published   *bool
 }
 
@@ -100,14 +118,14 @@ type Modules interface {
 	Create(ctx context.Context, module domain.Module) (primitive.ObjectID, error)
 	GetPublishedByCourseId(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
 	GetByCourseId(ctx context.Context, courseId primitive.ObjectID) ([]domain.Module, error)
-	GetPublishedById(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
-	GetById(ctx context.Context, moduleId primitive.ObjectID) (domain.Module, error)
+	GetPublishedById(ctx context.Context, moduleID primitive.ObjectID) (domain.Module, error)
+	GetById(ctx context.Context, moduleID primitive.ObjectID) (domain.Module, error)
 	GetByPackages(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Module, error)
 	Update(ctx context.Context, inp UpdateModuleInput) error
 	Delete(ctx context.Context, schoolId, id primitive.ObjectID) error
 	DeleteByCourse(ctx context.Context, schoolId, courseId primitive.ObjectID) error
 	AddLesson(ctx context.Context, schoolId, id primitive.ObjectID, lesson domain.Lesson) error
-	GetByLesson(ctx context.Context, lessonId primitive.ObjectID) (domain.Module, error)
+	GetByLesson(ctx context.Context, lessonID primitive.ObjectID) (domain.Module, error)
 	UpdateLesson(ctx context.Context, inp UpdateLessonInput) error
 	DeleteLesson(ctx context.Context, schoolId, id primitive.ObjectID) error
 	AttachPackage(ctx context.Context, schoolId, packageId primitive.ObjectID, modules []primitive.ObjectID) error
@@ -117,9 +135,9 @@ type Modules interface {
 
 type LessonContent interface {
 	GetByLessons(ctx context.Context, lessonIds []primitive.ObjectID) ([]domain.LessonContent, error)
-	GetByLesson(ctx context.Context, lessonId primitive.ObjectID) (domain.LessonContent, error)
-	Update(ctx context.Context, schoolId, lessonId primitive.ObjectID, content string) error
-	DeleteContent(ctx context.Context, schoolId primitive.ObjectID, lessonIds []primitive.ObjectID) error
+	GetByLesson(ctx context.Context, lessonID primitive.ObjectID) (domain.LessonContent, error)
+	Update(ctx context.Context, schoolID, lessonID primitive.ObjectID, content string) error
+	DeleteContent(ctx context.Context, schoolID primitive.ObjectID, lessonIds []primitive.ObjectID) error
 }
 
 type UpdatePackageInput struct {
@@ -132,19 +150,20 @@ type UpdatePackageInput struct {
 type Packages interface {
 	Create(ctx context.Context, pkg domain.Package) (primitive.ObjectID, error)
 	Update(ctx context.Context, inp UpdatePackageInput) error
-	Delete(ctx context.Context, schoolId, id primitive.ObjectID) error
-	GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Package, error)
+	Delete(ctx context.Context, schoolID, id primitive.ObjectID) error
+	GetByCourse(ctx context.Context, courseID primitive.ObjectID) ([]domain.Package, error)
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.Package, error)
 }
 
 type UpdateOfferInput struct {
-	ID          primitive.ObjectID
-	SchoolID    primitive.ObjectID
-	Name        string
-	Description string
-	Benefits    []string
-	Price       *domain.Price
-	Packages    []primitive.ObjectID
+	ID            primitive.ObjectID
+	SchoolID      primitive.ObjectID
+	Name          string
+	Description   string
+	Benefits      []string
+	Price         *domain.Price
+	Packages      []primitive.ObjectID
+	PaymentMethod *domain.PaymentMethod
 }
 
 type Offers interface {
@@ -178,6 +197,8 @@ type Orders interface {
 	Create(ctx context.Context, order domain.Order) error
 	AddTransaction(ctx context.Context, id primitive.ObjectID, transaction domain.Transaction) (domain.Order, error)
 	GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Order, int64, error)
+	GetById(ctx context.Context, id primitive.ObjectID) (domain.Order, error)
+	SetStatus(ctx context.Context, id primitive.ObjectID, status string) error
 }
 
 type Files interface {
@@ -185,7 +206,7 @@ type Files interface {
 	UpdateStatus(ctx context.Context, fileName string, status domain.FileStatus) error
 	GetForUploading(ctx context.Context) (domain.File, error)
 	UpdateStatusAndSetURL(ctx context.Context, id primitive.ObjectID, url string) error
-	GetByID(ctx context.Context, id, schoolId primitive.ObjectID) (domain.File, error)
+	GetByID(ctx context.Context, id, schoolID primitive.ObjectID) (domain.File, error)
 }
 
 type SurveyResults interface {

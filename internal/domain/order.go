@@ -7,15 +7,16 @@ import (
 )
 
 const (
-	OrderStatusCreated = "created"
-	OrderStatusPaid    = "paid"
-	OrderStatusFailed  = "failed"
-	OrderStatusOther   = "other"
+	OrderStatusCreated  = "created"
+	OrderStatusPaid     = "paid"
+	OrderStatusFailed   = "failed"
+	OrderStatusCanceled = "canceled"
+	OrderStatusOther    = "other"
 )
 
 type Order struct {
 	ID           primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	SchoolId     primitive.ObjectID `json:"schoolId" bson:"schoolId"`
+	SchoolID     primitive.ObjectID `json:"schoolId" bson:"schoolId"`
 	Student      StudentInfoShort   `json:"student" bson:"student"`
 	Offer        OrderOfferInfo     `json:"offer" bson:"offer"`
 	Promo        OrderPromoInfo     `json:"promo" bson:"promo,omitempty"`

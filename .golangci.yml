@@ -46,7 +46,7 @@ linters:
     - wastedassign
     - promlinter
     - bodyclose
-#    - dupl
+    # - dupl
     - godot
     - funlen
     - wsl
@@ -58,7 +58,7 @@ linters:
     # - goerr113
     # - gosec
     # - noctx
-    # - prealloc
+    - prealloc
     # - stylecheck
     # - testpackage
     # - cyclop
@@ -77,7 +77,7 @@ issues:
         - funlen
         - goerr113
         #- gosec
-        #- noctx
+        - noctx
     - path: (internal/delivery/http)
       linters:
         - godot

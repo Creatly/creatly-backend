@@ -47,6 +47,8 @@ func (r *OrdersRepo) AddTransaction(ctx context.Context, id primitive.ObjectID, 
 
 func (r *OrdersRepo) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Order, int64, error) {
 	opts := getPaginationOpts(pagination)
+	opts.SetSort(bson.M{"createdAt": -1})
+
 	filter := bson.M{"schoolId": schoolId}
 
 	cur, err := r.db.Find(ctx, filter, opts)
@@ -62,4 +64,18 @@ func (r *OrdersRepo) GetBySchool(ctx context.Context, schoolId primitive.ObjectI
 	count, err := r.db.CountDocuments(ctx, filter)
 
 	return orders, count, err
+}
+
+func (r *OrdersRepo) GetById(ctx context.Context, id primitive.ObjectID) (domain.Order, error) {
+	var order domain.Order
+
+	err := r.db.FindOne(ctx, bson.M{"_id": id}).Decode(&order)
+
+	return order, err
+}
+
+func (r *OrdersRepo) SetStatus(ctx context.Context, id primitive.ObjectID, status string) error {
+	_, err := r.db.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"status": status}})
+
+	return err
 }

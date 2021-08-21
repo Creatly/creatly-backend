@@ -46,7 +46,11 @@ func (r *SchoolsRepo) GetById(ctx context.Context, id primitive.ObjectID) (domai
 func (r *SchoolsRepo) UpdateSettings(ctx context.Context, inp UpdateSchoolSettingsInput) error {
 	updateQuery := bson.M{}
 
-	if inp.Color != "" {
+	if inp.Name != nil {
+		updateQuery["name"] = *inp.Name
+	}
+
+	if inp.Color != nil {
 		updateQuery["settings.color"] = inp.Color
 	}
 
@@ -54,24 +58,74 @@ func (r *SchoolsRepo) UpdateSettings(ctx context.Context, inp UpdateSchoolSettin
 		updateQuery["settings.domains"] = inp.Domains
 	}
 
-	if inp.Email != "" {
+	if inp.Email != nil {
 		updateQuery["settings.email"] = inp.Email
 	}
 
 	if inp.ContactInfo != nil {
-		updateQuery["settings.contactInfo"] = inp.ContactInfo
+		setContactInfoUpdateQuery(&updateQuery, inp)
 	}
 
 	if inp.Pages != nil {
-		updateQuery["settings.pages"] = inp.Pages
+		setPagesUpdateQuery(&updateQuery, inp)
 	}
 
 	if inp.ShowPaymentImages != nil {
 		updateQuery["settings.showPaymentImages"] = inp.ShowPaymentImages
 	}
 
+	if inp.GoogleAnalyticsCode != nil {
+		updateQuery["settings.googleAnalyticsCode"] = *inp.GoogleAnalyticsCode
+	}
+
+	if inp.LogoURL != nil {
+		updateQuery["settings.logo"] = *inp.LogoURL
+	}
+
 	_, err := r.db.UpdateOne(ctx,
 		bson.M{"_id": inp.SchoolID}, bson.M{"$set": updateQuery})
 
 	return err
+}
+
+func (r *SchoolsRepo) SetFondyCredentials(ctx context.Context, id primitive.ObjectID, fondy domain.Fondy) error {
+	_, err := r.db.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"settings.fondy": fondy}})
+
+	return err
+}
+
+func setContactInfoUpdateQuery(updateQuery *bson.M, inp UpdateSchoolSettingsInput) {
+	if inp.ContactInfo.Address != nil {
+		(*updateQuery)["settings.contactInfo.address"] = inp.ContactInfo.Address
+	}
+
+	if inp.ContactInfo.BusinessName != nil {
+		(*updateQuery)["settings.contactInfo.businessName"] = inp.ContactInfo.BusinessName
+	}
+
+	if inp.ContactInfo.Email != nil {
+		(*updateQuery)["settings.contactInfo.email"] = inp.ContactInfo.Email
+	}
+
+	if inp.ContactInfo.Phone != nil {
+		(*updateQuery)["settings.contactInfo.phone"] = inp.ContactInfo.Phone
+	}
+
+	if inp.ContactInfo.RegistrationNumber != nil {
+		(*updateQuery)["settings.contactInfo.registrationNumber"] = inp.ContactInfo.RegistrationNumber
+	}
+}
+
+func setPagesUpdateQuery(updateQuery *bson.M, inp UpdateSchoolSettingsInput) {
+	if inp.Pages.Confidential != nil {
+		(*updateQuery)["settings.pages.confidential"] = inp.Pages.Confidential
+	}
+
+	if inp.Pages.NewsletterConsent != nil {
+		(*updateQuery)["settings.pages.newsletterConsent"] = inp.Pages.NewsletterConsent
+	}
+
+	if inp.Pages.ServiceAgreement != nil {
+		(*updateQuery)["settings.pages.serviceAgreement"] = inp.Pages.ServiceAgreement
+	}
 }

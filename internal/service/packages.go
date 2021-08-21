@@ -36,12 +36,38 @@ func (s *PackagesService) Create(ctx context.Context, inp CreatePackageInput) (p
 	})
 }
 
-func (s *PackagesService) GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Package, error) {
-	return s.repo.GetByCourse(ctx, courseId)
+func (s *PackagesService) GetByCourse(ctx context.Context, courseID primitive.ObjectID) ([]domain.Package, error) {
+	pkgs, err := s.repo.GetByCourse(ctx, courseID)
+	if err != nil {
+		return nil, err
+	}
+
+	for i := range pkgs {
+		modules, err := s.modulesRepo.GetByPackages(ctx, []primitive.ObjectID{pkgs[i].ID})
+		if err != nil {
+			return nil, err
+		}
+
+		pkgs[i].Modules = modules
+	}
+
+	return pkgs, nil
 }
 
 func (s *PackagesService) GetById(ctx context.Context, id primitive.ObjectID) (domain.Package, error) {
-	return s.repo.GetById(ctx, id)
+	pkg, err := s.repo.GetById(ctx, id)
+	if err != nil {
+		return pkg, err
+	}
+
+	modules, err := s.modulesRepo.GetByPackages(ctx, []primitive.ObjectID{pkg.ID})
+	if err != nil {
+		return pkg, err
+	}
+
+	pkg.Modules = modules
+
+	return pkg, nil
 }
 
 func (s *PackagesService) Update(ctx context.Context, inp UpdatePackageInput) error {

@@ -42,9 +42,9 @@ func TestHandler_adminUpdateSchoolSettings(t *testing.T) {
 			body:   `{"color": "black", "pages": {"confidential": "some confidential info"}}`,
 			school: school,
 			input: service.UpdateSchoolSettingsInput{
-				Color: "black",
-				Pages: &domain.Pages{
-					Confidential: "some confidential info",
+				Color: stringPtr("black"),
+				Pages: &service.UpdateSchoolSettingsPages{
+					Confidential: stringPtr("some confidential info"),
 				},
 			},
 			mockBehavior: func(r *mock_service.MockSchools, schoolID primitive.ObjectID, input service.UpdateSchoolSettingsInput) {
@@ -67,9 +67,9 @@ func TestHandler_adminUpdateSchoolSettings(t *testing.T) {
 			body:   `{"color": "black", "pages": {"confidential": "some confidential info"}}`,
 			school: school,
 			input: service.UpdateSchoolSettingsInput{
-				Color: "black",
-				Pages: &domain.Pages{
-					Confidential: "some confidential info",
+				Color: stringPtr("black"),
+				Pages: &service.UpdateSchoolSettingsPages{
+					Confidential: stringPtr("some confidential info"),
 				},
 			},
 			mockBehavior: func(r *mock_service.MockSchools, schoolID primitive.ObjectID, input service.UpdateSchoolSettingsInput) {
@@ -239,7 +239,7 @@ func TestHandler_adminGetPromocodes(t *testing.T) {
 				r.EXPECT().GetBySchool(context.Background(), schoolId).Return([]domain.PromoCode{
 					{
 						ID:                 promocodeId,
-						SchoolId:           schoolId,
+						SchoolID:           schoolId,
 						Code:               "FIRSTPROMO",
 						DiscountPercentage: 15,
 						ExpiresAt:          time.Date(2022, 12, 10, 13, 49, 51, 0, time.UTC),
@@ -319,7 +319,7 @@ func TestHandler_adminGetPromocodeById(t *testing.T) {
 			mockBehavior: func(r *mock_service.MockPromoCodes, schoolId primitive.ObjectID, id primitive.ObjectID) {
 				r.EXPECT().GetById(context.Background(), schoolId, id).Return(domain.PromoCode{
 					ID:                 promocodeId,
-					SchoolId:           schoolId,
+					SchoolID:           schoolId,
 					Code:               "FIRSTPROMO",
 					DiscountPercentage: 15,
 					ExpiresAt:          time.Date(2022, 12, 10, 13, 49, 51, 0, time.UTC),
@@ -607,4 +607,8 @@ func TestHandler_adminDeleteCourse(t *testing.T) {
 			assert.Equal(t, w.Body.String(), tt.responseBody)
 		})
 	}
+}
+
+func stringPtr(s string) *string {
+	return &s
 }
