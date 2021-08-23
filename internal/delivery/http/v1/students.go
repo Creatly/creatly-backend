@@ -398,11 +398,14 @@ func (h *Handler) studentSetLessonFinished(c *gin.Context) {
 }
 
 type studentOffer struct {
-	ID          primitive.ObjectID `json:"id"`
-	Name        string             `json:"name"`
-	Description string             `json:"description"`
-	Price       price              `json:"price"`
-	Benefits    []string           `json:"benefits"`
+	ID            primitive.ObjectID `json:"id"`
+	Name          string             `json:"name"`
+	Description   string             `json:"description"`
+	Price         price              `json:"price"`
+	Benefits      []string           `json:"benefits"`
+	PaymentMethod struct {
+		UsesProvider bool `json:"usesProvider"`
+	} `json:"paymentMethod"`
 }
 
 type price struct {
@@ -429,6 +432,11 @@ func toStudentOffer(offer domain.Offer) studentOffer {
 		Price: price{
 			Value:    offer.Price.Value,
 			Currency: offer.Price.Currency,
+		},
+		PaymentMethod: struct {
+			UsesProvider bool `json:"usesProvider"`
+		}{
+			offer.PaymentMethod.UsesProvider,
 		},
 	}
 }
