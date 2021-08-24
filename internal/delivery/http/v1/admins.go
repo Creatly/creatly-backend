@@ -819,8 +819,8 @@ func (h *Handler) adminDeleteLesson(c *gin.Context) {
 }
 
 type createPackageInput struct {
-	Name        string `json:"name" binding:"required,min=3"`
-	Description string `json:"description"`
+	Name    string   `json:"name" binding:"required,min=3"`
+	Modules []string `json:"modules"`
 }
 
 // @Summary Admin Create Package
@@ -860,10 +860,10 @@ func (h *Handler) adminCreatePackage(c *gin.Context) {
 	}
 
 	moduleId, err := h.services.Packages.Create(c.Request.Context(), service.CreatePackageInput{
-		SchoolID:    school.ID.Hex(),
-		CourseID:    id,
-		Name:        inp.Name,
-		Description: inp.Description,
+		SchoolID: school.ID.Hex(),
+		CourseID: id,
+		Name:     inp.Name,
+		Modules:  inp.Modules,
 	})
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
@@ -952,9 +952,8 @@ func (h *Handler) adminGetPackageById(c *gin.Context) {
 }
 
 type updatePackageInput struct {
-	Name        string   `json:"name"`
-	Description string   `json:"description"`
-	Modules     []string `json:"modules"`
+	Name    string   `json:"name"`
+	Modules []string `json:"modules"`
 }
 
 // @Summary Admin Update Package
@@ -994,11 +993,10 @@ func (h *Handler) adminUpdatePackage(c *gin.Context) {
 	}
 
 	if err := h.services.Packages.Update(c.Request.Context(), service.UpdatePackageInput{
-		ID:          id,
-		SchoolID:    school.ID.Hex(),
-		Name:        inp.Name,
-		Description: inp.Description,
-		Modules:     inp.Modules,
+		ID:       id,
+		SchoolID: school.ID.Hex(),
+		Name:     inp.Name,
+		Modules:  inp.Modules,
 	}); err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 

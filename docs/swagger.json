@@ -4215,7 +4215,7 @@
                 "password": {
                     "type": "string"
                 },
-                "schoolId": {
+                "schoolID": {
                     "type": "string"
                 }
             }
@@ -4399,9 +4399,6 @@
                 "courseId": {
                     "type": "string"
                 },
-                "description": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "string"
                 },
@@ -4426,9 +4423,6 @@
                     "type": "string"
                 },
                 "newsletterConsent": {
-                    "type": "string"
-                },
-                "refundPolicy": {
                     "type": "string"
                 },
                 "serviceAgreement": {
@@ -4846,8 +4840,11 @@
                 "name"
             ],
             "properties": {
-                "description": {
-                    "type": "string"
+                "modules": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "name": {
                     "type": "string"
@@ -5238,9 +5235,6 @@
         "v1.updatePackageInput": {
             "type": "object",
             "properties": {
-                "description": {
-                    "type": "string"
-                },
                 "modules": {
                     "type": "array",
                     "items": {

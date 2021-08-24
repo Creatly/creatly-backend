@@ -141,10 +141,9 @@ type LessonContent interface {
 }
 
 type UpdatePackageInput struct {
-	ID          primitive.ObjectID
-	SchoolID    primitive.ObjectID
-	Name        string
-	Description string
+	ID       primitive.ObjectID
+	SchoolID primitive.ObjectID
+	Name     string
 }
 
 type Packages interface {
