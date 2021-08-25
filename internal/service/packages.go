@@ -95,16 +95,25 @@ func (s *PackagesService) Update(ctx context.Context, inp UpdatePackageInput) er
 
 	if inp.Name != "" {
 		if err := s.repo.Update(ctx, repository.UpdatePackageInput{
-			ID:   id,
-			Name: inp.Name,
+			ID:       id,
+			SchoolID: schoolId,
+			Name:     inp.Name,
 		}); err != nil {
 			return err
 		}
 	}
 
+	/*
+		To update modules, that are a part of a package
+		First we delete all modules from package and then we add new modules to the package
+	*/
 	if inp.Modules != nil {
 		moduleIds, err := stringArrayToObjectId(inp.Modules)
 		if err != nil {
+			return err
+		}
+
+		if err := s.modulesRepo.DetachPackageFromAll(ctx, schoolId, id); err != nil {
 			return err
 		}
 

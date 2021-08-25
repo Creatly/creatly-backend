@@ -155,6 +155,12 @@ func (r *ModulesRepo) DeleteLesson(ctx context.Context, schoolId, id primitive.O
 	return err
 }
 
+func (r *ModulesRepo) DetachPackageFromAll(ctx context.Context, schoolId, packageId primitive.ObjectID) error {
+	_, err := r.db.UpdateMany(ctx, bson.M{"schoolId": schoolId, "packageId": packageId}, bson.M{"$unset": bson.M{"packageId": ""}})
+
+	return err
+}
+
 func (r *ModulesRepo) AttachPackage(ctx context.Context, schoolId, packageId primitive.ObjectID, modules []primitive.ObjectID) error {
 	_, err := r.db.UpdateMany(ctx, bson.M{"_id": bson.M{"$in": modules}, "schoolId": schoolId}, bson.M{"$set": bson.M{"packageId": packageId}})
 

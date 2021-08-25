@@ -128,6 +128,7 @@ type Modules interface {
 	GetByLesson(ctx context.Context, lessonID primitive.ObjectID) (domain.Module, error)
 	UpdateLesson(ctx context.Context, inp UpdateLessonInput) error
 	DeleteLesson(ctx context.Context, schoolId, id primitive.ObjectID) error
+	DetachPackageFromAll(ctx context.Context, schoolId, packageId primitive.ObjectID) error
 	AttachPackage(ctx context.Context, schoolId, packageId primitive.ObjectID, modules []primitive.ObjectID) error
 	AttachSurvey(ctx context.Context, schoolId, id primitive.ObjectID, survey domain.Survey) error
 	DetachSurvey(ctx context.Context, schoolId, id primitive.ObjectID) error
