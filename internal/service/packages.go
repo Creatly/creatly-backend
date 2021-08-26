@@ -18,7 +18,7 @@ func NewPackagesService(repo repository.Packages, modulesRepo repository.Modules
 }
 
 func (s *PackagesService) Create(ctx context.Context, inp CreatePackageInput) (primitive.ObjectID, error) {
-	id, err := primitive.ObjectIDFromHex(inp.CourseID)
+	courseId, err := primitive.ObjectIDFromHex(inp.CourseID)
 	if err != nil {
 		return primitive.ObjectID{}, err
 	}
@@ -28,12 +28,24 @@ func (s *PackagesService) Create(ctx context.Context, inp CreatePackageInput) (p
 		return primitive.ObjectID{}, err
 	}
 
-	return s.repo.Create(ctx, domain.Package{
-		CourseID:    id,
-		SchoolID:    schoolId,
-		Name:        inp.Name,
-		Description: inp.Description,
+	id, err := s.repo.Create(ctx, domain.Package{
+		CourseID: courseId,
+		SchoolID: schoolId,
+		Name:     inp.Name,
 	})
+
+	if inp.Modules != nil {
+		moduleIds, err := stringArrayToObjectId(inp.Modules)
+		if err != nil {
+			return primitive.ObjectID{}, err
+		}
+
+		if err := s.modulesRepo.AttachPackage(ctx, schoolId, id, moduleIds); err != nil {
+			return primitive.ObjectID{}, err
+		}
+	}
+
+	return id, err
 }
 
 func (s *PackagesService) GetByCourse(ctx context.Context, courseID primitive.ObjectID) ([]domain.Package, error) {
@@ -81,19 +93,27 @@ func (s *PackagesService) Update(ctx context.Context, inp UpdatePackageInput) er
 		return err
 	}
 
-	if inp.Name != "" || inp.Description != "" {
+	if inp.Name != "" {
 		if err := s.repo.Update(ctx, repository.UpdatePackageInput{
-			ID:          id,
-			Name:        inp.Name,
-			Description: inp.Description,
+			ID:       id,
+			SchoolID: schoolId,
+			Name:     inp.Name,
 		}); err != nil {
 			return err
 		}
 	}
 
+	/*
+		To update modules, that are a part of a package
+		First we delete all modules from package and then we add new modules to the package
+	*/
 	if inp.Modules != nil {
 		moduleIds, err := stringArrayToObjectId(inp.Modules)
 		if err != nil {
+			return err
+		}
+
+		if err := s.modulesRepo.DetachPackageFromAll(ctx, schoolId, id); err != nil {
 			return err
 		}
 

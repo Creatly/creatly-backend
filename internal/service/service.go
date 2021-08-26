@@ -97,6 +97,7 @@ type StudentSignUpInput struct {
 	Password     string
 	SchoolID     primitive.ObjectID
 	SchoolDomain string
+	Verified     bool
 }
 
 type SchoolSignInInput struct {
@@ -312,18 +313,17 @@ type Lessons interface {
 }
 
 type CreatePackageInput struct {
-	CourseID    string
-	SchoolID    string
-	Name        string
-	Description string
+	CourseID string
+	SchoolID string
+	Name     string
+	Modules  []string
 }
 
 type UpdatePackageInput struct {
-	ID          string
-	SchoolID    string
-	Name        string
-	Description string
-	Modules     []string
+	ID       string
+	SchoolID string
+	Name     string
+	Modules  []string
 }
 
 type Packages interface {

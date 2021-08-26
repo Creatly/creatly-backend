@@ -4558,7 +4558,7 @@ var doc = `{
                 "password": {
                     "type": "string"
                 },
-                "schoolId": {
+                "schoolID": {
                     "type": "string"
                 }
             }
@@ -4748,9 +4748,6 @@ var doc = `{
                 "courseId": {
                     "type": "string"
                 },
-                "description": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "string"
                 },
@@ -4775,9 +4772,6 @@ var doc = `{
                     "type": "string"
                 },
                 "newsletterConsent": {
-                    "type": "string"
-                },
-                "refundPolicy": {
                     "type": "string"
                 },
                 "serviceAgreement": {
@@ -5195,8 +5189,11 @@ var doc = `{
                 "name"
             ],
             "properties": {
-                "description": {
-                    "type": "string"
+                "modules": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "name": {
                     "type": "string"
@@ -5468,6 +5465,9 @@ var doc = `{
                 },
                 "password": {
                     "type": "string"
+                },
+                "verified": {
+                    "type": "boolean"
                 }
             }
         },
@@ -5587,9 +5587,6 @@ var doc = `{
         "v1.updatePackageInput": {
             "type": "object",
             "properties": {
-                "description": {
-                    "type": "string"
-                },
                 "modules": {
                     "type": "array",
                     "items": {

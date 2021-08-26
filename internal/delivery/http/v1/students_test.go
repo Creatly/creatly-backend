@@ -169,7 +169,7 @@ func TestHandler_studentGetModuleOffers(t *testing.T) {
 				r.EXPECT().GetByModule(context.Background(), schoolId, moduleId).Return(offers, nil)
 			},
 			statusCode:   200,
-			responseBody: `{"data":[{"id":"000000000000000000000000","name":"test offer","description":"description","price":{"value":6900,"currency":"USD"},"benefits":["benefit 1","benefit 2"]}],"count":0}`,
+			responseBody: `{"data":[{"id":"000000000000000000000000","name":"test offer","description":"description","price":{"value":6900,"currency":"USD"},"benefits":["benefit 1","benefit 2"],"paymentMethod":{"usesProvider":false}}],"count":0}`,
 		},
 		{
 			name:         "invalid module id",

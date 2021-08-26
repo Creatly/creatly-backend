@@ -10,7 +10,7 @@ definitions:
         type: string
       password:
         type: string
-      schoolId:
+      schoolID:
         type: string
     type: object
   domain.ContactInfo:
@@ -136,8 +136,6 @@ definitions:
     properties:
       courseId:
         type: string
-      description:
-        type: string
       id:
         type: string
       modules:
@@ -154,8 +152,6 @@ definitions:
       confidential:
         type: string
       newsletterConsent:
-        type: string
-      refundPolicy:
         type: string
       serviceAgreement:
         type: string
@@ -425,8 +421,10 @@ definitions:
     type: object
   v1.createPackageInput:
     properties:
-      description:
-        type: string
+      modules:
+        items:
+          type: string
+        type: array
       name:
         type: string
     required:
@@ -603,6 +601,8 @@ definitions:
         type: string
       password:
         type: string
+      verified:
+        type: boolean
     required:
     - email
     - name
@@ -683,8 +683,6 @@ definitions:
     type: object
   v1.updatePackageInput:
     properties:
-      description:
-        type: string
       modules:
         items:
           type: string

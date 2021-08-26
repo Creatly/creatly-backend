@@ -53,10 +53,6 @@ func (r *PackagesRepo) Update(ctx context.Context, inp UpdatePackageInput) error
 		updateQuery["name"] = inp.Name
 	}
 
-	if inp.Description != "" {
-		updateQuery["description"] = inp.Description
-	}
-
 	_, err := r.db.UpdateOne(ctx,
 		bson.M{"_id": inp.ID, "schoolId": inp.SchoolID}, bson.M{"$set": updateQuery})
 

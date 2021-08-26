@@ -708,6 +708,20 @@ func (mr *MockModulesMockRecorder) DeleteLesson(ctx, schoolId, id interface{}) *
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteLesson", reflect.TypeOf((*MockModules)(nil).DeleteLesson), ctx, schoolId, id)
 }
 
+// DetachPackageFromAll mocks base method.
+func (m *MockModules) DetachPackageFromAll(ctx context.Context, schoolId, packageId primitive.ObjectID) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DetachPackageFromAll", ctx, schoolId, packageId)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DetachPackageFromAll indicates an expected call of DetachPackageFromAll.
+func (mr *MockModulesMockRecorder) DetachPackageFromAll(ctx, schoolId, packageId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DetachPackageFromAll", reflect.TypeOf((*MockModules)(nil).DetachPackageFromAll), ctx, schoolId, packageId)
+}
+
 // DetachSurvey mocks base method.
 func (m *MockModules) DetachSurvey(ctx context.Context, schoolId, id primitive.ObjectID) error {
 	m.ctrl.T.Helper()
@@ -1456,9 +1470,9 @@ func (m *MockSurveyResults) EXPECT() *MockSurveyResultsMockRecorder {
 }
 
 // GetAllByModule mocks base method.
-func (m *MockSurveyResults) GetAllByModule(ctx context.Context, moduleId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.SurveyResult, int64, error) {
+func (m *MockSurveyResults) GetAllByModule(ctx context.Context, moduleID primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.SurveyResult, int64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAllByModule", ctx, moduleId, pagination)
+	ret := m.ctrl.Call(m, "GetAllByModule", ctx, moduleID, pagination)
 	ret0, _ := ret[0].([]domain.SurveyResult)
 	ret1, _ := ret[1].(int64)
 	ret2, _ := ret[2].(error)
@@ -1466,24 +1480,24 @@ func (m *MockSurveyResults) GetAllByModule(ctx context.Context, moduleId primiti
 }
 
 // GetAllByModule indicates an expected call of GetAllByModule.
-func (mr *MockSurveyResultsMockRecorder) GetAllByModule(ctx, moduleId, pagination interface{}) *gomock.Call {
+func (mr *MockSurveyResultsMockRecorder) GetAllByModule(ctx, moduleID, pagination interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllByModule", reflect.TypeOf((*MockSurveyResults)(nil).GetAllByModule), ctx, moduleId, pagination)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllByModule", reflect.TypeOf((*MockSurveyResults)(nil).GetAllByModule), ctx, moduleID, pagination)
 }
 
 // GetByStudent mocks base method.
-func (m *MockSurveyResults) GetByStudent(ctx context.Context, moduleId, studentId primitive.ObjectID) (domain.SurveyResult, error) {
+func (m *MockSurveyResults) GetByStudent(ctx context.Context, moduleID, studentId primitive.ObjectID) (domain.SurveyResult, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetByStudent", ctx, moduleId, studentId)
+	ret := m.ctrl.Call(m, "GetByStudent", ctx, moduleID, studentId)
 	ret0, _ := ret[0].(domain.SurveyResult)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetByStudent indicates an expected call of GetByStudent.
-func (mr *MockSurveyResultsMockRecorder) GetByStudent(ctx, moduleId, studentId interface{}) *gomock.Call {
+func (mr *MockSurveyResultsMockRecorder) GetByStudent(ctx, moduleID, studentId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByStudent", reflect.TypeOf((*MockSurveyResults)(nil).GetByStudent), ctx, moduleId, studentId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByStudent", reflect.TypeOf((*MockSurveyResults)(nil).GetByStudent), ctx, moduleID, studentId)
 }
 
 // Save mocks base method.

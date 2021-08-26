@@ -35,6 +35,7 @@ type studentSignUpInput struct {
 	Name     string `json:"name" binding:"required,min=2,max=64"`
 	Email    string `json:"email" binding:"required,email,max=64"`
 	Password string `json:"password" binding:"required,min=8,max=64"`
+	Verified bool   `json:"verified"`
 }
 
 // @Summary Student SignUp
@@ -77,6 +78,7 @@ func (h *Handler) studentSignUp(c *gin.Context) {
 		Password:     inp.Password,
 		SchoolID:     school.ID,
 		SchoolDomain: schoolDomain,
+		Verified:     inp.Verified,
 	}); err != nil {
 		if errors.Is(err, domain.ErrUserAlreadyExists) {
 			newResponse(c, http.StatusBadRequest, err.Error())
@@ -398,11 +400,14 @@ func (h *Handler) studentSetLessonFinished(c *gin.Context) {
 }
 
 type studentOffer struct {
-	ID          primitive.ObjectID `json:"id"`
-	Name        string             `json:"name"`
-	Description string             `json:"description"`
-	Price       price              `json:"price"`
-	Benefits    []string           `json:"benefits"`
+	ID            primitive.ObjectID `json:"id"`
+	Name          string             `json:"name"`
+	Description   string             `json:"description"`
+	Price         price              `json:"price"`
+	Benefits      []string           `json:"benefits"`
+	PaymentMethod struct {
+		UsesProvider bool `json:"usesProvider"`
+	} `json:"paymentMethod"`
 }
 
 type price struct {
@@ -429,6 +434,11 @@ func toStudentOffer(offer domain.Offer) studentOffer {
 		Price: price{
 			Value:    offer.Price.Value,
 			Currency: offer.Price.Currency,
+		},
+		PaymentMethod: struct {
+			UsesProvider bool `json:"usesProvider"`
+		}{
+			offer.PaymentMethod.UsesProvider,
 		},
 	}
 }
