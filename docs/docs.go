@@ -5130,6 +5130,9 @@ var doc = `{
                 },
                 "password": {
                     "type": "string"
+                },
+                "verified": {
+                    "type": "boolean"
                 }
             }
         },

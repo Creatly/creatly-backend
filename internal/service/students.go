@@ -54,9 +54,6 @@ func (s *StudentsService) SignUp(ctx context.Context, input StudentSignUpInput) 
 		return err
 	}
 
-	// it's possible to use OTP apps (Google Authenticator, Authy) compatibility mode here, in the future
-	verificationCode := s.otpGenerator.RandomSecret(s.verificationCodeLength)
-
 	student := domain.Student{
 		Name:         input.Name,
 		Password:     passwordHash,
@@ -64,16 +61,19 @@ func (s *StudentsService) SignUp(ctx context.Context, input StudentSignUpInput) 
 		RegisteredAt: time.Now(),
 		LastVisitAt:  time.Now(),
 		SchoolID:     input.SchoolID,
-		Verification: domain.Verification{
-			Code: verificationCode,
-		},
 	}
 
-	if err := s.repo.Create(ctx, student); err != nil {
-		if errors.Is(err, domain.ErrUserAlreadyExists) {
-			return err
-		}
+	if input.Verified {
+		student.Verification.Verified = true
 
+		return s.repo.Create(ctx, student)
+	}
+
+	// it's possible to use OTP apps (Google Authenticator, Authy) compatibility mode here, in the future
+	verificationCode := s.otpGenerator.RandomSecret(s.verificationCodeLength)
+	student.Verification.Code = verificationCode
+
+	if err := s.repo.Create(ctx, student); err != nil {
 		return err
 	}
 
