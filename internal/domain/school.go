@@ -29,12 +29,20 @@ type Settings struct {
 	Logo                string      `json:"logo" bson:"logo,omitempty"`
 	GoogleAnalyticsCode string      `json:"googleAnalyticsCode" bson:"googleAnalyticsCode,omitempty"`
 	Fondy               Fondy       `json:"fondy" bson:"fondy,omitempty"`
+	SendPulse           SendPulse   `json:"sendpulse" bson:"sendpulse,omitempty"`
 }
 
 type Fondy struct {
 	MerchantID       string `json:"merchantId" bson:"merchantId"`
 	MerchantPassword string `json:"merchantPassword" bson:"merchantPassword"`
 	Connected        bool   `json:"connected" bson:"connected"`
+}
+
+type SendPulse struct {
+	ID        string `json:"id" bson:"id"`
+	Secret    string `json:"secret" bson:"secret"`
+	ListID    string `json:"listId" bson:"listId"`
+	Connected bool   `json:"connected" bson:"connected"`
 }
 
 type ContactInfo struct {

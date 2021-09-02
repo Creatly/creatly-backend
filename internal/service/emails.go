@@ -1,10 +1,15 @@
 package service
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/zhashkevych/creatly-backend/internal/config"
+	"github.com/zhashkevych/creatly-backend/internal/domain"
+	"github.com/zhashkevych/creatly-backend/pkg/cache"
 	emailProvider "github.com/zhashkevych/creatly-backend/pkg/email"
+	"github.com/zhashkevych/creatly-backend/pkg/email/sendpulse"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 const (
@@ -12,8 +17,13 @@ const (
 )
 
 type EmailService struct {
-	sender emailProvider.Sender
-	config config.EmailConfig
+	sender  emailProvider.Sender
+	config  config.EmailConfig
+	schools SchoolsService
+
+	cache cache.Cache
+
+	sendpulseClients map[primitive.ObjectID]*sendpulse.Client
 }
 
 // Structures used for templates.
@@ -26,8 +36,14 @@ type purchaseSuccessfulEmailInput struct {
 	CourseName string
 }
 
-func NewEmailsService(sender emailProvider.Sender, config config.EmailConfig) *EmailService {
-	return &EmailService{sender: sender, config: config}
+func NewEmailsService(sender emailProvider.Sender, config config.EmailConfig, schools SchoolsService, cache cache.Cache) *EmailService {
+	return &EmailService{
+		sender:           sender,
+		config:           config,
+		schools:          schools,
+		cache:            cache,
+		sendpulseClients: make(map[primitive.ObjectID]*sendpulse.Client),
+	}
 }
 
 func (s *EmailService) SendStudentVerificationEmail(input VerificationEmailInput) error {
@@ -61,4 +77,30 @@ func (s *EmailService) SendUserVerificationEmail(input VerificationEmailInput) e
 
 func (s *EmailService) createVerificationLink(domain, code string) string {
 	return fmt.Sprintf(verificationLinkTmpl, domain, code)
+}
+
+func (s *EmailService) AddStudentToList(ctx context.Context, email, name string, schoolID primitive.ObjectID) error {
+	// TODO refactor
+	school, err := s.schools.GetById(ctx, schoolID)
+	if err != nil {
+		return err
+	}
+
+	if !school.Settings.SendPulse.Connected {
+		return domain.ErrSendPulseIsNotConnected
+	}
+
+	client, ex := s.sendpulseClients[schoolID]
+	if !ex {
+		client = sendpulse.NewClient(school.Settings.SendPulse.ID, school.Settings.SendPulse.Secret, s.cache)
+		s.sendpulseClients[schoolID] = client
+	}
+
+	return client.AddEmailToList(emailProvider.AddEmailInput{
+		Email:  email,
+		ListID: school.Settings.SendPulse.ListID,
+		Variables: map[string]string{
+			"Name": name,
+		},
+	})
 }
