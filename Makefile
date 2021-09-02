@@ -31,3 +31,7 @@ swag:
 
 lint:
 	golangci-lint run
+
+gen:
+	mockgen -source=internal/service/service.go -destination=internal/service/mocks/mock.go
+	mockgen -source=internal/repository/repository.go -destination=internal/repository/mocks/mock.go

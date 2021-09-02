@@ -74,6 +74,7 @@ func (h *Handler) initAdminRoutes(api *gin.RouterGroup) { //nolint:funlen
 			{
 				school.PUT("/settings", h.adminUpdateSchoolSettings)
 				school.PUT("/settings/fondy", h.adminConnectFondy)
+				school.PUT("/settings/sendpulse", h.adminConnectSendPulse)
 			}
 
 			promocodes := authenticated.Group("/promocodes")
@@ -1629,6 +1630,54 @@ func (h *Handler) adminConnectFondy(c *gin.Context) {
 		SchoolID:         school.ID,
 		MerchantID:       inp.MerchantID,
 		MerchantPassword: inp.MerchantPassword,
+	}); err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	c.Status(http.StatusOK)
+}
+
+type connectSendPulseInput struct {
+	ID     string `json:"id"`
+	Secret string `json:"secret"`
+	ListID string `json:"listId"`
+}
+
+// @Summary Admin Connect Fondy
+// @Security AdminAuth
+// @Tags admins-school
+// @Description admin connect fondy
+// @ModuleID adminConnectFondy
+// @Accept  json
+// @Produce  json
+// @Param input body connectSendPulseInput true "update school settings"
+// @Success 200 {string} string "ok"
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/school/settings/sendpulse [put]
+func (h *Handler) adminConnectSendPulse(c *gin.Context) {
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	var inp connectSendPulseInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+
+		return
+	}
+
+	if err := h.services.Schools.ConnectSendPulse(c.Request.Context(), service.ConnectSendPulseInput{
+		SchoolID: school.ID,
+		ID:       inp.ID,
+		Secret:   inp.Secret,
+		ListID:   inp.ListID,
 	}); err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 
