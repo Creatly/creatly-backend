@@ -39,8 +39,8 @@ type Fondy struct {
 }
 
 type SendPulse struct {
-	ApiKey    string `json:"apiKey" bson:"apiKey"`
-	ApiSecret string `json:"apiSecret" bson:"apiSecret"`
+	ID        string `json:"id" bson:"id"`
+	Secret    string `json:"secret" bson:"secret"`
 	ListID    string `json:"listId" bson:"listId"`
 	Connected bool   `json:"connected" bson:"connected"`
 }

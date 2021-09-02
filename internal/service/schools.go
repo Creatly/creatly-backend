@@ -85,6 +85,11 @@ func (s *SchoolsService) ConnectFondy(ctx context.Context, input ConnectFondyInp
 	return s.repo.SetFondyCredentials(ctx, input.SchoolID, creds)
 }
 
+func (s *SchoolsService) ConnectSendPulse(ctx context.Context, input ConnectSendPulseInput) error {
+	// todo
+	return nil
+}
+
 func toContactInfo(inp *UpdateSchoolSettingsContactInfo) *repository.UpdateSchoolSettingsContactInfo {
 	if inp == nil {
 		return nil

@@ -9,6 +9,7 @@ import (
 	"github.com/zhashkevych/creatly-backend/internal/repository"
 	"github.com/zhashkevych/creatly-backend/pkg/auth"
 	"github.com/zhashkevych/creatly-backend/pkg/hash"
+	"github.com/zhashkevych/creatly-backend/pkg/logger"
 	"github.com/zhashkevych/creatly-backend/pkg/otp"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -62,6 +63,17 @@ func (s *StudentsService) SignUp(ctx context.Context, input StudentSignUpInput) 
 		LastVisitAt:  time.Now(),
 		SchoolID:     input.SchoolID,
 	}
+
+	// TODO refactor
+	go func() {
+		if err := s.emailService.AddStudentToList(ctx, student.Email, student.Name, student.SchoolID); err != nil {
+			if err == domain.ErrSendPulseIsNotConnected {
+				return
+			}
+
+			logger.Errorf("[SENDPULSE] failed to add email to the list: %s", err.Error())
+		}
+	}()
 
 	if input.Verified {
 		student.Verification.Verified = true

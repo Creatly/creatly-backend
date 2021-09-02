@@ -13,4 +13,5 @@ var (
 	ErrPromocodeExpired        = errors.New("promocode has expired")
 	ErrTransactionInvalid      = errors.New("transaction is invalid")
 	ErrUnknownCallbackType     = errors.New("unknown callback type")
+	ErrSendPulseIsNotConnected = errors.New("sendpulse is not connected")
 )

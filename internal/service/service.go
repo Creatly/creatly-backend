@@ -83,12 +83,20 @@ type ConnectFondyInput struct {
 	MerchantPassword string
 }
 
+type ConnectSendPulseInput struct {
+	SchoolID primitive.ObjectID
+	ID       string
+	Secret   string
+	ListID   string
+}
+
 type Schools interface {
 	Create(ctx context.Context, name string) (primitive.ObjectID, error)
 	GetByDomain(ctx context.Context, domainName string) (domain.School, error)
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.School, error)
 	UpdateSettings(ctx context.Context, schoolId primitive.ObjectID, input UpdateSchoolSettingsInput) error
 	ConnectFondy(ctx context.Context, input ConnectFondyInput) error
+	ConnectSendPulse(ctx context.Context, input ConnectSendPulseInput) error
 }
 
 type StudentSignUpInput struct {
@@ -174,6 +182,7 @@ type Emails interface {
 	SendStudentVerificationEmail(VerificationEmailInput) error
 	SendUserVerificationEmail(VerificationEmailInput) error
 	SendStudentPurchaseSuccessfulEmail(StudentPurchaseSuccessfulEmailInput) error
+	AddStudentToList(ctx context.Context, email, name string, schoolID primitive.ObjectID) error
 }
 
 type UpdateCourseInput struct {
@@ -408,7 +417,8 @@ type Deps struct {
 }
 
 func NewServices(deps Deps) *Services {
-	emailsService := NewEmailsService(deps.EmailSender, deps.EmailConfig)
+	schoolsService := NewSchoolsService(deps.Repos.Schools, deps.Cache, deps.CacheTTL)
+	emailsService := NewEmailsService(deps.EmailSender, deps.EmailConfig, *schoolsService, deps.Cache)
 	modulesService := NewModulesService(deps.Repos.Modules, deps.Repos.LessonContent)
 	coursesService := NewCoursesService(deps.Repos.Courses, modulesService)
 	packagesService := NewPackagesService(deps.Repos.Packages, deps.Repos.Modules)
@@ -419,7 +429,6 @@ func NewServices(deps Deps) *Services {
 	studentsService := NewStudentsService(deps.Repos.Students, modulesService, offersService, lessonsService, deps.Hasher,
 		deps.TokenManager, emailsService, studentLessonsService, deps.AccessTokenTTL, deps.RefreshTokenTTL, deps.OtpGenerator, deps.VerificationCodeLength)
 	ordersService := NewOrdersService(deps.Repos.Orders, offersService, promoCodesService, studentsService)
-	schoolsService := NewSchoolsService(deps.Repos.Schools, deps.Cache, deps.CacheTTL)
 	usersService := NewUsersService(deps.Repos.Users, deps.Hasher, deps.TokenManager, emailsService, schoolsService, deps.DNS,
 		deps.AccessTokenTTL, deps.RefreshTokenTTL, deps.OtpGenerator, deps.VerificationCodeLength, deps.Domain)
 
