@@ -67,7 +67,7 @@ type Students interface {
 	GiveAccessToModule(ctx context.Context, studentId, moduleId primitive.ObjectID) error
 	AttachOffer(ctx context.Context, studentId, offerId primitive.ObjectID, moduleIds []primitive.ObjectID) error
 	DetachOffer(ctx context.Context, studentId, offerId primitive.ObjectID, moduleIds []primitive.ObjectID) error
-	Verify(ctx context.Context, code string) error
+	Verify(ctx context.Context, code string) (domain.Student, error)
 }
 
 type StudentLessons interface {

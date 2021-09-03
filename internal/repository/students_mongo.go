@@ -126,17 +126,16 @@ func (r *StudentsRepo) DetachOffer(ctx context.Context, studentID, offerID primi
 	return err
 }
 
-func (r *StudentsRepo) Verify(ctx context.Context, code string) error {
-	res, err := r.db.UpdateOne(ctx,
+func (r *StudentsRepo) Verify(ctx context.Context, code string) (domain.Student, error) {
+	res := r.db.FindOneAndUpdate(ctx,
 		bson.M{"verification.code": code},
 		bson.M{"$set": bson.M{"verification.verified": true, "verification.code": ""}})
-	if err != nil {
-		return err
+	if res.Err() != nil {
+		return domain.Student{}, res.Err()
 	}
 
-	if res.ModifiedCount == 0 {
-		return domain.ErrVerificationCodeInvalid
-	}
+	var student domain.Student
+	err := res.Decode(&student)
 
-	return nil
+	return student, err
 }

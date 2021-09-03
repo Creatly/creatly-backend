@@ -64,19 +64,10 @@ func (s *StudentsService) SignUp(ctx context.Context, input StudentSignUpInput) 
 		SchoolID:     input.SchoolID,
 	}
 
-	// TODO refactor
-	go func() {
-		if err := s.emailService.AddStudentToList(ctx, student.Email, student.Name, student.SchoolID); err != nil {
-			if err == domain.ErrSendPulseIsNotConnected {
-				return
-			}
-
-			logger.Errorf("[SENDPULSE] failed to add email to the list: %s", err.Error())
-		}
-	}()
-
 	if input.Verified {
 		student.Verification.Verified = true
+
+		go s.addStudentToList(context.Background(), student)
 
 		return s.repo.Create(ctx, student)
 	}
@@ -126,7 +117,7 @@ func (s *StudentsService) RefreshTokens(ctx context.Context, schoolId primitive.
 }
 
 func (s *StudentsService) Verify(ctx context.Context, hash string) error {
-	err := s.repo.Verify(ctx, hash)
+	student, err := s.repo.Verify(ctx, hash)
 	if err != nil {
 		if errors.Is(err, domain.ErrVerificationCodeInvalid) {
 			return domain.ErrVerificationCodeInvalid
@@ -134,6 +125,10 @@ func (s *StudentsService) Verify(ctx context.Context, hash string) error {
 
 		return err
 	}
+
+	logger.Info(student)
+
+	go s.addStudentToList(context.Background(), student)
 
 	return nil
 }
@@ -283,4 +278,15 @@ func (s *StudentsService) isLessonAvailable(ctx context.Context, studentId, less
 	}
 
 	return nil
+}
+
+// TODO refactor.
+func (s *StudentsService) addStudentToList(ctx context.Context, student domain.Student) {
+	if err := s.emailService.AddStudentToList(ctx, student.Email, student.Name, student.SchoolID); err != nil {
+		if err == domain.ErrSendPulseIsNotConnected {
+			return
+		}
+
+		logger.Errorf("[SENDPULSE] failed to add email to the list: %s", err.Error())
+	}
 }
