@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"time"
 
 	"github.com/zhashkevych/creatly-backend/pkg/cache"
 	"github.com/zhashkevych/creatly-backend/pkg/email"
@@ -24,7 +23,7 @@ const (
 
 	grantType = "client_credentials"
 
-	cacheTTL = int64(time.Hour) // SendPulse access tokens are valid for 1 hour
+	cacheTTL = 3600 // In seconds. SendPulse access tokens are valid for 1 hour
 )
 
 type authRequest struct {
@@ -113,6 +112,7 @@ func (c *Client) AddEmailToList(input email.AddEmailInput) error {
 }
 
 func (c *Client) getToken() (string, error) {
+	// todo set unique key (by schoolId)
 	token, err := c.cache.Get("t")
 	if err == nil {
 		return token.(string), nil
