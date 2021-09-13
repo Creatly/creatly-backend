@@ -32,6 +32,7 @@ func (h *Handler) Init(api *gin.RouterGroup) {
 
 		v1.GET("/settings", h.setSchoolFromRequest, h.getSchoolSettings)
 		v1.GET("/promocodes/:code", h.setSchoolFromRequest, h.getPromo)
+		v1.GET("/offers/:id", h.setSchoolFromRequest, h.getOffer)
 	}
 }
 
