@@ -48,12 +48,14 @@ func (r *PackagesRepo) GetById(ctx context.Context, id primitive.ObjectID) (doma
 
 func (r *PackagesRepo) GetByIds(ctx context.Context, ids []primitive.ObjectID) ([]domain.Package, error) {
 	var pkgs []domain.Package
+
 	cur, err := r.db.Find(ctx, bson.M{"_id": bson.M{"$in": ids}})
 	if err != nil {
 		return nil, err
 	}
 
 	err = cur.All(ctx, &pkgs)
+
 	return pkgs, err
 }
 

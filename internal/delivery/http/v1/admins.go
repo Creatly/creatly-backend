@@ -1147,6 +1147,7 @@ func (h *Handler) adminGetAllOffers(c *gin.Context) {
 	}
 
 	response := make([]offerResponse, len(offers))
+
 	for i, offer := range offers {
 		pkgs, err := h.services.Packages.GetByIds(c.Request.Context(), offer.PackageIDs)
 		if err != nil {
