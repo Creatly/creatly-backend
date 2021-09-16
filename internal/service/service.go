@@ -341,6 +341,7 @@ type Packages interface {
 	Delete(ctx context.Context, schoolId, id primitive.ObjectID) error
 	GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Package, error)
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.Package, error)
+	GetByIds(ctx context.Context, ids []primitive.ObjectID) ([]domain.Package, error)
 }
 
 type Orders interface {

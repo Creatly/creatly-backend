@@ -153,6 +153,7 @@ type Packages interface {
 	Delete(ctx context.Context, schoolID, id primitive.ObjectID) error
 	GetByCourse(ctx context.Context, courseID primitive.ObjectID) ([]domain.Package, error)
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.Package, error)
+	GetByIds(ctx context.Context, ids []primitive.ObjectID) ([]domain.Package, error)
 }
 
 type UpdateOfferInput struct {
