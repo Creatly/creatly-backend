@@ -1018,6 +1018,21 @@ func (mr *MockPackagesMockRecorder) GetById(ctx, id interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetById", reflect.TypeOf((*MockPackages)(nil).GetById), ctx, id)
 }
 
+// GetByIds mocks base method.
+func (m *MockPackages) GetByIds(ctx context.Context, ids []primitive.ObjectID) ([]domain.Package, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByIds", ctx, ids)
+	ret0, _ := ret[0].([]domain.Package)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByIds indicates an expected call of GetByIds.
+func (mr *MockPackagesMockRecorder) GetByIds(ctx, ids interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByIds", reflect.TypeOf((*MockPackages)(nil).GetByIds), ctx, ids)
+}
+
 // Update mocks base method.
 func (m *MockPackages) Update(ctx context.Context, inp repository.UpdatePackageInput) error {
 	m.ctrl.T.Helper()

@@ -1561,7 +1561,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Offer"
+                            "$ref": "#/definitions/v1.offerResponse"
                         }
                     },
                     "400": {
@@ -5129,6 +5129,38 @@ var doc = `{
                 }
             }
         },
+        "v1.offerResponse": {
+            "type": "object",
+            "properties": {
+                "benefits": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "packages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.packageResponse"
+                    }
+                },
+                "paymentMethod": {
+                    "$ref": "#/definitions/domain.PaymentMethod"
+                },
+                "price": {
+                    "$ref": "#/definitions/domain.Price"
+                }
+            }
+        },
         "v1.orderStatusInput": {
             "type": "object",
             "required": [
@@ -5136,6 +5168,34 @@ var doc = `{
             ],
             "properties": {
                 "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.packageModule": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.packageResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "modules": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.packageModule"
+                    }
+                },
+                "name": {
                     "type": "string"
                 }
             }

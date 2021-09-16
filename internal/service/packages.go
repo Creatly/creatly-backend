@@ -82,6 +82,14 @@ func (s *PackagesService) GetById(ctx context.Context, id primitive.ObjectID) (d
 	return pkg, nil
 }
 
+func (s *PackagesService) GetByIds(ctx context.Context, ids []primitive.ObjectID) ([]domain.Package, error) {
+	if len(ids) == 0 {
+		return nil, nil
+	}
+
+	return s.repo.GetByIds(ctx, ids)
+}
+
 func (s *PackagesService) Update(ctx context.Context, inp UpdatePackageInput) error {
 	id, err := primitive.ObjectIDFromHex(inp.ID)
 	if err != nil {

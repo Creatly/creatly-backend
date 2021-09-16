@@ -519,12 +519,51 @@ definitions:
       available:
         type: boolean
     type: object
+  v1.offerResponse:
+    properties:
+      benefits:
+        items:
+          type: string
+        type: array
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      packages:
+        items:
+          $ref: '#/definitions/v1.packageResponse'
+        type: array
+      paymentMethod:
+        $ref: '#/definitions/domain.PaymentMethod'
+      price:
+        $ref: '#/definitions/domain.Price'
+    type: object
   v1.orderStatusInput:
     properties:
       status:
         type: string
     required:
     - status
+    type: object
+  v1.packageModule:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  v1.packageResponse:
+    properties:
+      id:
+        type: string
+      modules:
+        items:
+          $ref: '#/definitions/v1.packageModule'
+        type: array
+      name:
+        type: string
     type: object
   v1.pages:
     properties:
@@ -1794,7 +1833,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.Offer'
+            $ref: '#/definitions/v1.offerResponse'
         "400":
           description: Bad Request
           schema:

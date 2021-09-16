@@ -878,7 +878,7 @@ func (h *Handler) adminCreatePackage(c *gin.Context) {
 type packageResponse struct {
 	ID      primitive.ObjectID `json:"id"`
 	Name    string             `json:"name"`
-	Modules []packageModule    `json:"modules"`
+	Modules []packageModule    `json:"modules,omitempty"`
 }
 
 type packageModule struct {
@@ -1109,6 +1109,16 @@ func (h *Handler) adminCreateOffer(c *gin.Context) {
 	c.JSON(http.StatusCreated, idResponse{id})
 }
 
+type offerResponse struct {
+	ID            primitive.ObjectID   `json:"id"`
+	Name          string               `json:"name"`
+	Description   string               `json:"description"`
+	Benefits      []string             `json:"benefits"`
+	Packages      []packageResponse    `json:"packages"`
+	Price         domain.Price         `json:"price"`
+	PaymentMethod domain.PaymentMethod `json:"paymentMethod"`
+}
+
 // @Summary Admin Get All Offers
 // @Security AdminAuth
 // @Tags admins-offers
@@ -1136,7 +1146,27 @@ func (h *Handler) adminGetAllOffers(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, dataResponse{Data: offers})
+	response := make([]offerResponse, len(offers))
+	for i, offer := range offers {
+		pkgs, err := h.services.Packages.GetByIds(c.Request.Context(), offer.PackageIDs)
+		if err != nil {
+			newResponse(c, http.StatusInternalServerError, err.Error())
+
+			return
+		}
+
+		response[i] = offerResponse{
+			ID:            offer.ID,
+			Name:          offer.Name,
+			Description:   offer.Description,
+			Benefits:      offer.Benefits,
+			Price:         offer.Price,
+			PaymentMethod: offer.PaymentMethod,
+			Packages:      toPackagesResponse(pkgs),
+		}
+	}
+
+	c.JSON(http.StatusOK, dataResponse{Data: response})
 }
 
 // @Summary Admin Get Offer By Id
@@ -1147,7 +1177,7 @@ func (h *Handler) adminGetAllOffers(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Param id path string true "offer id"
-// @Success 200 {object} domain.Offer
+// @Success 200 {object} offerResponse
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
@@ -1167,7 +1197,24 @@ func (h *Handler) adminGetOfferById(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, offer)
+	pkgs, err := h.services.Packages.GetByIds(c.Request.Context(), offer.PackageIDs)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	response := offerResponse{
+		ID:            offer.ID,
+		Name:          offer.Name,
+		Description:   offer.Description,
+		Benefits:      offer.Benefits,
+		Price:         offer.Price,
+		PaymentMethod: offer.PaymentMethod,
+		Packages:      toPackagesResponse(pkgs),
+	}
+
+	c.JSON(http.StatusOK, response)
 }
 
 type updateOfferInput struct {
