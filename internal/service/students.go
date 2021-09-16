@@ -232,8 +232,8 @@ func (s *StudentsService) GetById(ctx context.Context, schoolId, id primitive.Ob
 	return s.repo.GetById(ctx, schoolId, id)
 }
 
-func (s *StudentsService) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Student, int64, error) {
-	return s.repo.GetBySchool(ctx, schoolId, pagination)
+func (s *StudentsService) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, query *domain.GetStudentsQuery) ([]domain.Student, int64, error) {
+	return s.repo.GetBySchool(ctx, schoolId, query)
 }
 
 func (s *StudentsService) createSession(ctx context.Context, studentId primitive.ObjectID) (Tokens, error) {

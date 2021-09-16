@@ -2641,6 +2641,42 @@ var doc = `{
                         "description": "limit",
                         "name": "limit",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "search",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "verified",
+                        "name": "verified",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "registerDateFrom",
+                        "name": "registerDateFrom",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "registerDateTo",
+                        "name": "registerDateTo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lastVisitDateFrom",
+                        "name": "lastVisitDateFrom",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "registerDateTo",
+                        "name": "lastVisitDateTo",
+                        "in": "query"
                     }
                 ],
                 "responses": {

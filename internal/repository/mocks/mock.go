@@ -330,9 +330,9 @@ func (mr *MockStudentsMockRecorder) GetByRefreshToken(ctx, schoolId, refreshToke
 }
 
 // GetBySchool mocks base method.
-func (m *MockStudents) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Student, int64, error) {
+func (m *MockStudents) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, query *domain.GetStudentsQuery) ([]domain.Student, int64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetBySchool", ctx, schoolId, pagination)
+	ret := m.ctrl.Call(m, "GetBySchool", ctx, schoolId, query)
 	ret0, _ := ret[0].([]domain.Student)
 	ret1, _ := ret[1].(int64)
 	ret2, _ := ret[2].(error)
@@ -340,9 +340,9 @@ func (m *MockStudents) GetBySchool(ctx context.Context, schoolId primitive.Objec
 }
 
 // GetBySchool indicates an expected call of GetBySchool.
-func (mr *MockStudentsMockRecorder) GetBySchool(ctx, schoolId, pagination interface{}) *gomock.Call {
+func (mr *MockStudentsMockRecorder) GetBySchool(ctx, schoolId, query interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBySchool", reflect.TypeOf((*MockStudents)(nil).GetBySchool), ctx, schoolId, pagination)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBySchool", reflect.TypeOf((*MockStudents)(nil).GetBySchool), ctx, schoolId, query)
 }
 
 // GiveAccessToModule mocks base method.

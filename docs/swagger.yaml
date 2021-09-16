@@ -2444,6 +2444,30 @@ paths:
         in: query
         name: limit
         type: integer
+      - description: search
+        in: query
+        name: search
+        type: string
+      - description: verified
+        in: query
+        name: verified
+        type: string
+      - description: registerDateFrom
+        in: query
+        name: registerDateFrom
+        type: string
+      - description: registerDateTo
+        in: query
+        name: registerDateTo
+        type: string
+      - description: lastVisitDateFrom
+        in: query
+        name: lastVisitDateFrom
+        type: string
+      - description: registerDateTo
+        in: query
+        name: lastVisitDateTo
+        type: string
       produces:
       - application/json
       responses:

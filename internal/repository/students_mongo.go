@@ -75,13 +75,29 @@ func (r *StudentsRepo) GetById(ctx context.Context, schoolId, id primitive.Objec
 	return student, nil
 }
 
-func (r *StudentsRepo) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Student, int64, error) {
-	opts := getPaginationOpts(pagination)
-	opts.SetSort(bson.M{"registeredAt": -1})
+func (r *StudentsRepo) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, query *domain.GetStudentsQuery) ([]domain.Student, int64, error) {
+	paginationOpts := getPaginationOpts(&query.PaginationQuery)
+	paginationOpts.SetSort(bson.M{"registeredAt": -1})
 
 	filter := bson.M{"schoolId": schoolId}
 
-	cur, err := r.db.Find(ctx, filter, opts)
+	if query.Search != "" {
+		expression := primitive.Regex{Pattern: query.Search}
+		filter["$or"] = []bson.M{{"name": expression}, {"email": expression}}
+	}
+
+	if query.RegisterDateFrom != "" {
+		registerDateFrom, err := time.Parse(time.RFC3339, query.RegisterDateFrom)
+		if err != nil {
+			return nil, 0, err
+		}
+
+		filter["registeredAt"] = bson.M{"$gte": registerDateFrom}
+	}
+
+	// TODO: handle dates queries
+
+	cur, err := r.db.Find(ctx, filter, paginationOpts)
 	if err != nil {
 		return nil, 0, err
 	}

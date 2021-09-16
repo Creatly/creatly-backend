@@ -125,7 +125,7 @@ type Students interface {
 	GiveAccessToOffer(ctx context.Context, studentId primitive.ObjectID, offer domain.Offer) error
 	RemoveAccessToOffer(ctx context.Context, studentId primitive.ObjectID, offer domain.Offer) error
 	GetById(ctx context.Context, schoolId, id primitive.ObjectID) (domain.Student, error)
-	GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Student, int64, error)
+	GetBySchool(ctx context.Context, schoolId primitive.ObjectID, query *domain.GetStudentsQuery) ([]domain.Student, int64, error)
 }
 
 type StudentLessons interface {

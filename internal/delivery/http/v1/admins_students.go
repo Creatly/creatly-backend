@@ -43,13 +43,19 @@ func toStudentsResponse(students []domain.Student) []studentResponse {
 // @Produce  json
 // @Param skip query int false "skip"
 // @Param limit query int false "limit"
+// @Param search query string false "search"
+// @Param verified query string false "verified"
+// @Param registerDateFrom query string false "registerDateFrom"
+// @Param registerDateTo query string false "registerDateTo"
+// @Param lastVisitDateFrom query string false "lastVisitDateFrom"
+// @Param lastVisitDateTo query string false "registerDateTo"
 // @Success 200 {object} dataResponse
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
 // @Router /admins/students [get]
 func (h *Handler) adminGetStudents(c *gin.Context) {
-	var query domain.PaginationQuery
+	var query domain.GetStudentsQuery
 	if err := c.Bind(&query); err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
 
