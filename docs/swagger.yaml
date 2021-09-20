@@ -210,6 +210,17 @@ definitions:
       subtitle:
         type: string
     type: object
+  domain.SendPulse:
+    properties:
+      connected:
+        type: boolean
+      id:
+        type: string
+      listId:
+        type: string
+      secret:
+        type: string
+    type: object
   domain.Session:
     properties:
       expiresAt:
@@ -235,6 +246,8 @@ definitions:
         type: string
       pages:
         $ref: '#/definitions/domain.Pages'
+      sendpulse:
+        $ref: '#/definitions/domain.SendPulse'
       showPaymentImages:
         type: boolean
     type: object
@@ -345,6 +358,15 @@ definitions:
       merchantId:
         type: string
       merchantPassword:
+        type: string
+    type: object
+  v1.connectSendPulseInput:
+    properties:
+      id:
+        type: string
+      listId:
+        type: string
+      secret:
         type: string
     type: object
   v1.contactInfo:
@@ -503,12 +525,51 @@ definitions:
       available:
         type: boolean
     type: object
+  v1.offerResponse:
+    properties:
+      benefits:
+        items:
+          type: string
+        type: array
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      packages:
+        items:
+          $ref: '#/definitions/v1.packageResponse'
+        type: array
+      paymentMethod:
+        $ref: '#/definitions/domain.PaymentMethod'
+      price:
+        $ref: '#/definitions/domain.Price'
+    type: object
   v1.orderStatusInput:
     properties:
       status:
         type: string
     required:
     - status
+    type: object
+  v1.packageModule:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  v1.packageResponse:
+    properties:
+      id:
+        type: string
+      modules:
+        items:
+          $ref: '#/definitions/v1.packageModule'
+        type: array
+      name:
+        type: string
     type: object
   v1.pages:
     properties:
@@ -1993,7 +2054,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.Offer'
+            $ref: '#/definitions/v1.offerResponse'
         "400":
           description: Bad Request
           schema:
@@ -2551,6 +2612,46 @@ paths:
       summary: Admin Connect Fondy
       tags:
       - admins-school
+  /admins/school/settings/sendpulse:
+    put:
+      consumes:
+      - application/json
+      description: admin connect fondy
+      parameters:
+      - description: update school settings
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.connectSendPulseInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Connect Fondy
+      tags:
+      - admins-school
   /admins/sign-in:
     post:
       consumes:
@@ -2981,6 +3082,43 @@ paths:
       summary: Get Course Offers
       tags:
       - courses
+  /offers/{id}:
+    get:
+      consumes:
+      - application/json
+      description: get offer by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Offer'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      summary: Get Offer By ID
+      tags:
+      - offers
   /promocodes/{code}:
     get:
       consumes:

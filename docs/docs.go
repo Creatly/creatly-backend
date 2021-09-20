@@ -1890,7 +1890,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Offer"
+                            "$ref": "#/definitions/v1.offerResponse"
                         }
                     },
                     "400": {
@@ -2819,6 +2819,69 @@ var doc = `{
                 }
             }
         },
+        "/admins/school/settings/sendpulse": {
+            "put": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "admin connect fondy",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admins-school"
+                ],
+                "summary": "Admin Connect Fondy",
+                "parameters": [
+                    {
+                        "description": "update school settings",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.connectSendPulseInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
         "/admins/sign-in": {
             "post": {
                 "description": "admin sign in",
@@ -3455,6 +3518,62 @@ var doc = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/v1.dataResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/offers/{id}": {
+            "get": {
+                "description": "get offer by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "offers"
+                ],
+                "summary": "Get Offer By ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Offer"
                         }
                     },
                     "400": {
@@ -4862,6 +4981,23 @@ var doc = `{
                 }
             }
         },
+        "domain.SendPulse": {
+            "type": "object",
+            "properties": {
+                "connected": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "listId": {
+                    "type": "string"
+                },
+                "secret": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.Session": {
             "type": "object",
             "properties": {
@@ -4899,6 +5035,9 @@ var doc = `{
                 },
                 "pages": {
                     "$ref": "#/definitions/domain.Pages"
+                },
+                "sendpulse": {
+                    "$ref": "#/definitions/domain.SendPulse"
                 },
                 "showPaymentImages": {
                     "type": "boolean"
@@ -5069,6 +5208,20 @@ var doc = `{
                     "type": "string"
                 },
                 "merchantPassword": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.connectSendPulseInput": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "listId": {
+                    "type": "string"
+                },
+                "secret": {
                     "type": "string"
                 }
             }
@@ -5311,6 +5464,38 @@ var doc = `{
                 }
             }
         },
+        "v1.offerResponse": {
+            "type": "object",
+            "properties": {
+                "benefits": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "packages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.packageResponse"
+                    }
+                },
+                "paymentMethod": {
+                    "$ref": "#/definitions/domain.PaymentMethod"
+                },
+                "price": {
+                    "$ref": "#/definitions/domain.Price"
+                }
+            }
+        },
         "v1.orderStatusInput": {
             "type": "object",
             "required": [
@@ -5318,6 +5503,34 @@ var doc = `{
             ],
             "properties": {
                 "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.packageModule": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.packageResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "modules": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.packageModule"
+                    }
+                },
+                "name": {
                     "type": "string"
                 }
             }
