@@ -69,7 +69,7 @@ func (h *Handler) adminGetStudents(c *gin.Context) {
 		return
 	}
 
-	students, count, err := h.services.Students.GetBySchool(c.Request.Context(), school.ID, &query)
+	students, count, err := h.services.Students.GetBySchool(c.Request.Context(), school.ID, query)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 

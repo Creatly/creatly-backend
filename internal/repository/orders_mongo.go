@@ -45,11 +45,34 @@ func (r *OrdersRepo) AddTransaction(ctx context.Context, id primitive.ObjectID, 
 	return order, err
 }
 
-func (r *OrdersRepo) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Order, int64, error) {
-	opts := getPaginationOpts(pagination)
+func (r *OrdersRepo) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, query domain.GetOrdersQuery) ([]domain.Order, int64, error) {
+	opts := getPaginationOpts(&query.PaginationQuery)
 	opts.SetSort(bson.M{"createdAt": -1})
 
-	filter := bson.M{"schoolId": schoolId}
+	filter := bson.M{"$and": []bson.M{{"schoolId": schoolId}}}
+
+	if query.Search != "" {
+		expression := primitive.Regex{Pattern: query.Search}
+
+		filter["$and"] = append(filter["$and"].([]bson.M), bson.M{
+			"$or": []bson.M{
+				{"student.name": expression},
+				{"student.email": expression},
+				{"offer.name": expression},
+				{"promo.name": expression},
+			},
+		})
+	}
+
+	if query.Status != "" {
+		filter["$and"] = append(filter["$and"].([]bson.M), bson.M{
+			"status": query.Status,
+		})
+	}
+
+	if err := filterDateQueries(query.DateFrom, query.DateTo, "createdAt", filter); err != nil {
+		return nil, 0, err
+	}
 
 	cur, err := r.db.Find(ctx, filter, opts)
 	if err != nil {

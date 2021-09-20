@@ -1696,13 +1696,17 @@ func (h *Handler) adminConnectSendPulse(c *gin.Context) {
 // @Produce  json
 // @Param skip query int false "skip"
 // @Param limit query int false "limit"
+// @Param search query string false "search"
+// @Param status query string false "status"
+// @Param dateFrom query string false "dateFrom"
+// @Param dateTo query string false "dateTo"
 // @Success 200 {object} dataResponse
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
 // @Router /admins/orders [get]
 func (h *Handler) adminGetOrders(c *gin.Context) {
-	var query domain.PaginationQuery
+	var query domain.GetOrdersQuery
 	if err := c.Bind(&query); err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
 
@@ -1716,7 +1720,7 @@ func (h *Handler) adminGetOrders(c *gin.Context) {
 		return
 	}
 
-	orders, count, err := h.services.Orders.GetBySchool(c.Request.Context(), school.ID, &query)
+	orders, count, err := h.services.Orders.GetBySchool(c.Request.Context(), school.ID, query)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 

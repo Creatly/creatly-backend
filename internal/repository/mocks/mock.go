@@ -330,7 +330,7 @@ func (mr *MockStudentsMockRecorder) GetByRefreshToken(ctx, schoolId, refreshToke
 }
 
 // GetBySchool mocks base method.
-func (m *MockStudents) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, query *domain.GetStudentsQuery) ([]domain.Student, int64, error) {
+func (m *MockStudents) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, query domain.GetStudentsQuery) ([]domain.Student, int64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetBySchool", ctx, schoolId, query)
 	ret0, _ := ret[0].([]domain.Student)
@@ -1322,7 +1322,7 @@ func (mr *MockOrdersMockRecorder) GetById(ctx, id interface{}) *gomock.Call {
 }
 
 // GetBySchool mocks base method.
-func (m *MockOrders) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Order, int64, error) {
+func (m *MockOrders) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination domain.GetOrdersQuery) ([]domain.Order, int64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetBySchool", ctx, schoolId, pagination)
 	ret0, _ := ret[0].([]domain.Order)

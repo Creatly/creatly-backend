@@ -23,6 +23,18 @@ type GetStudentsQuery struct {
 	StudentFiltersQuery
 }
 
+type OrdersFiltersQuery struct {
+	DateFrom string `form:"dateFrom"`
+	DateTo   string `form:"dateTo"`
+	Status   string `form:"status"`
+}
+
+type GetOrdersQuery struct {
+	PaginationQuery
+	SearchQuery
+	OrdersFiltersQuery
+}
+
 func (p PaginationQuery) GetSkip() *int64 {
 	if p.Skip == 0 {
 		return nil

@@ -1874,6 +1874,22 @@ paths:
         in: query
         name: limit
         type: integer
+      - description: search
+        in: query
+        name: search
+        type: string
+      - description: status
+        in: query
+        name: status
+        type: string
+      - description: dateFrom
+        in: query
+        name: dateFrom
+        type: string
+      - description: dateTo
+        in: query
+        name: dateTo
+        type: string
       produces:
       - application/json
       responses:
