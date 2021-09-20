@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/zhashkevych/creatly-backend/internal/domain"
@@ -62,7 +63,7 @@ type Students interface {
 	GetByCredentials(ctx context.Context, schoolId primitive.ObjectID, email, password string) (domain.Student, error)
 	GetByRefreshToken(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (domain.Student, error)
 	GetById(ctx context.Context, schoolId, id primitive.ObjectID) (domain.Student, error)
-	GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Student, int64, error)
+	GetBySchool(ctx context.Context, schoolId primitive.ObjectID, query domain.GetStudentsQuery) ([]domain.Student, int64, error)
 	SetSession(ctx context.Context, studentId primitive.ObjectID, session domain.Session) error
 	GiveAccessToModule(ctx context.Context, studentId, moduleId primitive.ObjectID) error
 	AttachOffer(ctx context.Context, studentId, offerId primitive.ObjectID, moduleIds []primitive.ObjectID) error
@@ -197,7 +198,7 @@ type PromoCodes interface {
 type Orders interface {
 	Create(ctx context.Context, order domain.Order) error
 	AddTransaction(ctx context.Context, id primitive.ObjectID, transaction domain.Transaction) (domain.Order, error)
-	GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Order, int64, error)
+	GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination domain.GetOrdersQuery) ([]domain.Order, int64, error)
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.Order, error)
 	SetStatus(ctx context.Context, id primitive.ObjectID, status string) error
 }
@@ -262,4 +263,81 @@ func getPaginationOpts(pagination *domain.PaginationQuery) *options.FindOptions 
 	}
 
 	return opts
+}
+
+// func filterDateQueries(dateFrom, dateTo, fieldName string, filter bson.M) error {
+// 	if dateFrom != "" {
+// 		dateFrom, err := time.Parse(time.RFC3339, dateFrom)
+// 		if err != nil {
+// 			return err
+// 		}
+
+// 		if dateTo != "" {
+// 			dateTo, err := time.Parse(time.RFC3339, dateTo)
+// 			if err != nil {
+// 				return err
+// 			}
+
+// 			filter["$and"] = append(filter["$and"].([]bson.M), bson.M{
+// 				"$and": []bson.M{
+// 					{fieldName: bson.M{"$gte": dateFrom}},
+// 					{fieldName: bson.M{"$lte": dateTo}},
+// 				}})
+// 		} else {
+// 			filter["$and"] = append(filter["$and"].([]bson.M), bson.M{
+// 				fieldName: bson.M{"$gte": dateFrom}})
+// 		}
+// 	} else if dateTo != "" {
+// 		dateTo, err := time.Parse(time.RFC3339, dateTo)
+// 		if err != nil {
+// 			return err
+// 		}
+
+// 		filter["$and"] = append(filter["$and"].([]bson.M), bson.M{
+// 			fieldName: bson.M{"$lte": dateTo}})
+// 	}
+
+// 	return nil
+// }
+
+func filterDateQueries(dateFrom, dateTo, fieldName string, filter bson.M) error {
+	//nolint:gocritic,nestif
+	if dateFrom != "" && dateTo != "" {
+		dateFrom, err := time.Parse(time.RFC3339, dateFrom)
+		if err != nil {
+			return err
+		}
+
+		dateTo, err := time.Parse(time.RFC3339, dateTo)
+		if err != nil {
+			return err
+		}
+
+		filter["$and"] = append(filter["$and"].([]bson.M), bson.M{
+			"$and": []bson.M{
+				{fieldName: bson.M{"$gte": dateFrom}},
+				{fieldName: bson.M{"$lte": dateTo}},
+			},
+		})
+	} else if dateFrom != "" && dateTo == "" {
+		dateFrom, err := time.Parse(time.RFC3339, dateFrom)
+		if err != nil {
+			return err
+		}
+
+		filter["$and"] = append(filter["$and"].([]bson.M), bson.M{
+			fieldName: bson.M{"$gte": dateFrom},
+		})
+	} else {
+		dateTo, err := time.Parse(time.RFC3339, dateTo)
+		if err != nil {
+			return err
+		}
+
+		filter["$and"] = append(filter["$and"].([]bson.M), bson.M{
+			fieldName: bson.M{"$lte": dateTo},
+		})
+	}
+
+	return nil
 }

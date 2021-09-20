@@ -1913,6 +1913,22 @@ paths:
         in: query
         name: limit
         type: integer
+      - description: search
+        in: query
+        name: search
+        type: string
+      - description: status
+        in: query
+        name: status
+        type: string
+      - description: dateFrom
+        in: query
+        name: dateFrom
+        type: string
+      - description: dateTo
+        in: query
+        name: dateTo
+        type: string
       produces:
       - application/json
       responses:
@@ -2483,6 +2499,30 @@ paths:
         in: query
         name: limit
         type: integer
+      - description: search
+        in: query
+        name: search
+        type: string
+      - description: verified
+        in: query
+        name: verified
+        type: boolean
+      - description: registerDateFrom
+        in: query
+        name: registerDateFrom
+        type: string
+      - description: registerDateTo
+        in: query
+        name: registerDateTo
+        type: string
+      - description: lastVisitDateFrom
+        in: query
+        name: lastVisitDateFrom
+        type: string
+      - description: registerDateTo
+        in: query
+        name: lastVisitDateTo
+        type: string
       produces:
       - application/json
       responses:

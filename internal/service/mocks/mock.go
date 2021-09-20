@@ -259,9 +259,9 @@ func (mr *MockStudentsMockRecorder) GetById(ctx, schoolId, id interface{}) *gomo
 }
 
 // GetBySchool mocks base method.
-func (m *MockStudents) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Student, int64, error) {
+func (m *MockStudents) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, query domain.GetStudentsQuery) ([]domain.Student, int64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetBySchool", ctx, schoolId, pagination)
+	ret := m.ctrl.Call(m, "GetBySchool", ctx, schoolId, query)
 	ret0, _ := ret[0].([]domain.Student)
 	ret1, _ := ret[1].(int64)
 	ret2, _ := ret[2].(error)
@@ -269,9 +269,9 @@ func (m *MockStudents) GetBySchool(ctx context.Context, schoolId primitive.Objec
 }
 
 // GetBySchool indicates an expected call of GetBySchool.
-func (mr *MockStudentsMockRecorder) GetBySchool(ctx, schoolId, pagination interface{}) *gomock.Call {
+func (mr *MockStudentsMockRecorder) GetBySchool(ctx, schoolId, query interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBySchool", reflect.TypeOf((*MockStudents)(nil).GetBySchool), ctx, schoolId, pagination)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBySchool", reflect.TypeOf((*MockStudents)(nil).GetBySchool), ctx, schoolId, query)
 }
 
 // GetLesson mocks base method.
@@ -1473,9 +1473,9 @@ func (mr *MockOrdersMockRecorder) GetById(ctx, id interface{}) *gomock.Call {
 }
 
 // GetBySchool mocks base method.
-func (m *MockOrders) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Order, int64, error) {
+func (m *MockOrders) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, query domain.GetOrdersQuery) ([]domain.Order, int64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetBySchool", ctx, schoolId, pagination)
+	ret := m.ctrl.Call(m, "GetBySchool", ctx, schoolId, query)
 	ret0, _ := ret[0].([]domain.Order)
 	ret1, _ := ret[1].(int64)
 	ret2, _ := ret[2].(error)
@@ -1483,9 +1483,9 @@ func (m *MockOrders) GetBySchool(ctx context.Context, schoolId primitive.ObjectI
 }
 
 // GetBySchool indicates an expected call of GetBySchool.
-func (mr *MockOrdersMockRecorder) GetBySchool(ctx, schoolId, pagination interface{}) *gomock.Call {
+func (mr *MockOrdersMockRecorder) GetBySchool(ctx, schoolId, query interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBySchool", reflect.TypeOf((*MockOrders)(nil).GetBySchool), ctx, schoolId, pagination)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBySchool", reflect.TypeOf((*MockOrders)(nil).GetBySchool), ctx, schoolId, query)
 }
 
 // SetStatus mocks base method.

@@ -75,13 +75,38 @@ func (r *StudentsRepo) GetById(ctx context.Context, schoolId, id primitive.Objec
 	return student, nil
 }
 
-func (r *StudentsRepo) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Student, int64, error) {
-	opts := getPaginationOpts(pagination)
-	opts.SetSort(bson.M{"registeredAt": -1})
+func (r *StudentsRepo) GetBySchool(ctx context.Context, schoolId primitive.ObjectID, query domain.GetStudentsQuery) ([]domain.Student, int64, error) {
+	paginationOpts := getPaginationOpts(&query.PaginationQuery)
+	paginationOpts.SetSort(bson.M{"registeredAt": -1})
 
-	filter := bson.M{"schoolId": schoolId}
+	filter := bson.M{"$and": []bson.M{{"schoolId": schoolId}}}
 
-	cur, err := r.db.Find(ctx, filter, opts)
+	if query.Search != "" {
+		expression := primitive.Regex{Pattern: query.Search}
+
+		filter["$and"] = append(filter["$and"].([]bson.M), bson.M{
+			"$or": []bson.M{
+				{"name": expression},
+				{"email": expression},
+			},
+		})
+	}
+
+	if query.Verified != nil {
+		filter["$and"] = append(filter["$and"].([]bson.M), bson.M{
+			"verification.verified": *query.Verified,
+		})
+	}
+
+	if err := filterDateQueries(query.RegisterDateFrom, query.RegisterDateTo, "registeredAt", filter); err != nil {
+		return nil, 0, err
+	}
+
+	if err := filterDateQueries(query.LastVisitDateFrom, query.LastVisitDateTo, "lastVisitAt", filter); err != nil {
+		return nil, 0, err
+	}
+
+	cur, err := r.db.Find(ctx, filter, paginationOpts)
 	if err != nil {
 		return nil, 0, err
 	}
