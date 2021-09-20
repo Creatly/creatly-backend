@@ -79,23 +79,24 @@ func (r *StudentsRepo) GetBySchool(ctx context.Context, schoolId primitive.Objec
 	paginationOpts := getPaginationOpts(&query.PaginationQuery)
 	paginationOpts.SetSort(bson.M{"registeredAt": -1})
 
-	filter := bson.M{"schoolId": schoolId}
+	filter := bson.M{"$and": []bson.M{{"schoolId": schoolId}}}
 
 	if query.Search != "" {
 		expression := primitive.Regex{Pattern: query.Search}
-		filter["$or"] = []bson.M{{"name": expression}, {"email": expression}}
+		filter["$and"] = append(filter["$and"].([]bson.M), bson.M{
+			"$or": []bson.M{
+				{"name": expression},
+				{"email": expression},
+			}})
 	}
 
-	if query.RegisterDateFrom != "" {
-		registerDateFrom, err := time.Parse(time.RFC3339, query.RegisterDateFrom)
-		if err != nil {
-			return nil, 0, err
-		}
-
-		filter["registeredAt"] = bson.M{"$gte": registerDateFrom}
+	if query.Verified != nil {
+		filter["$and"] = append(filter["$and"].([]bson.M), bson.M{
+			"verification.verified": *query.Verified})
 	}
 
-	// TODO: handle dates queries
+	filterDateQueries(query.RegisterDateFrom, query.RegisterDateTo, "registeredAt", filter)
+	filterDateQueries(query.LastVisitDateFrom, query.LastVisitDateTo, "lastVisitAt", filter)
 
 	cur, err := r.db.Find(ctx, filter, paginationOpts)
 	if err != nil {

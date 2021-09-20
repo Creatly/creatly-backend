@@ -2649,7 +2649,7 @@ var doc = `{
                         "in": "query"
                     },
                     {
-                        "type": "string",
+                        "type": "boolean",
                         "description": "verified",
                         "name": "verified",
                         "in": "query"

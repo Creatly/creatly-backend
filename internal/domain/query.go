@@ -14,6 +14,7 @@ type StudentFiltersQuery struct {
 	RegisterDateTo    string `form:"registerDateTo"`
 	LastVisitDateFrom string `form:"lastVisitDateFrom"`
 	LastVisitDateTo   string `form:"lastVisitDateTo"`
+	Verified          *bool  `form:"verified"`
 }
 
 type GetStudentsQuery struct {

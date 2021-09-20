@@ -2451,7 +2451,7 @@ paths:
       - description: verified
         in: query
         name: verified
-        type: string
+        type: boolean
       - description: registerDateFrom
         in: query
         name: registerDateFrom

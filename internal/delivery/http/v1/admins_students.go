@@ -44,7 +44,7 @@ func toStudentsResponse(students []domain.Student) []studentResponse {
 // @Param skip query int false "skip"
 // @Param limit query int false "limit"
 // @Param search query string false "search"
-// @Param verified query string false "verified"
+// @Param verified query bool false "verified"
 // @Param registerDateFrom query string false "registerDateFrom"
 // @Param registerDateTo query string false "registerDateTo"
 // @Param lastVisitDateFrom query string false "lastVisitDateFrom"
