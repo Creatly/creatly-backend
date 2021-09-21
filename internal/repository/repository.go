@@ -265,43 +265,7 @@ func getPaginationOpts(pagination *domain.PaginationQuery) *options.FindOptions 
 	return opts
 }
 
-// func filterDateQueries(dateFrom, dateTo, fieldName string, filter bson.M) error {
-// 	if dateFrom != "" {
-// 		dateFrom, err := time.Parse(time.RFC3339, dateFrom)
-// 		if err != nil {
-// 			return err
-// 		}
-
-// 		if dateTo != "" {
-// 			dateTo, err := time.Parse(time.RFC3339, dateTo)
-// 			if err != nil {
-// 				return err
-// 			}
-
-// 			filter["$and"] = append(filter["$and"].([]bson.M), bson.M{
-// 				"$and": []bson.M{
-// 					{fieldName: bson.M{"$gte": dateFrom}},
-// 					{fieldName: bson.M{"$lte": dateTo}},
-// 				}})
-// 		} else {
-// 			filter["$and"] = append(filter["$and"].([]bson.M), bson.M{
-// 				fieldName: bson.M{"$gte": dateFrom}})
-// 		}
-// 	} else if dateTo != "" {
-// 		dateTo, err := time.Parse(time.RFC3339, dateTo)
-// 		if err != nil {
-// 			return err
-// 		}
-
-// 		filter["$and"] = append(filter["$and"].([]bson.M), bson.M{
-// 			fieldName: bson.M{"$lte": dateTo}})
-// 	}
-
-// 	return nil
-// }
-
 func filterDateQueries(dateFrom, dateTo, fieldName string, filter bson.M) error {
-	//nolint:gocritic,nestif
 	if dateFrom != "" && dateTo != "" {
 		dateFrom, err := time.Parse(time.RFC3339, dateFrom)
 		if err != nil {
@@ -319,7 +283,9 @@ func filterDateQueries(dateFrom, dateTo, fieldName string, filter bson.M) error 
 				{fieldName: bson.M{"$lte": dateTo}},
 			},
 		})
-	} else if dateFrom != "" && dateTo == "" {
+	}
+
+	if dateFrom != "" && dateTo == "" {
 		dateFrom, err := time.Parse(time.RFC3339, dateFrom)
 		if err != nil {
 			return err
@@ -328,7 +294,9 @@ func filterDateQueries(dateFrom, dateTo, fieldName string, filter bson.M) error 
 		filter["$and"] = append(filter["$and"].([]bson.M), bson.M{
 			fieldName: bson.M{"$gte": dateFrom},
 		})
-	} else {
+	}
+
+	if dateFrom == "" && dateTo != "" {
 		dateTo, err := time.Parse(time.RFC3339, dateTo)
 		if err != nil {
 			return err
