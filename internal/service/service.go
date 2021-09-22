@@ -233,6 +233,7 @@ type CreateOfferInput struct {
 	Benefits      []string
 	SchoolID      primitive.ObjectID
 	Price         domain.Price
+	Packages      []string
 	PaymentMethod domain.PaymentMethod
 }
 

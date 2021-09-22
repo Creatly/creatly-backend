@@ -1049,6 +1049,7 @@ type createOfferInput struct {
 	Name          string        `json:"name" binding:"required,min=3"`
 	Description   string        `json:"description"`
 	Benefits      []string      `json:"benefits" binding:"required"`
+	Packages      []string      `json:"packages"`
 	Price         price         `json:"price" binding:"required"`
 	PaymentMethod paymentMethod `json:"paymentMethod" binding:"required"`
 }
@@ -1099,6 +1100,7 @@ func (h *Handler) adminCreateOffer(c *gin.Context) {
 			UsesProvider: inp.PaymentMethod.UsesProvider,
 			Provider:     inp.PaymentMethod.Provider,
 		},
+		Packages: inp.Packages,
 	})
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())

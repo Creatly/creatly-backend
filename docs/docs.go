@@ -5031,6 +5031,12 @@ var doc = `{
                 "name": {
                     "type": "string"
                 },
+                "packages": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "paymentMethod": {
                     "$ref": "#/definitions/v1.paymentMethod"
                 },
@@ -5276,9 +5282,6 @@ var doc = `{
         },
         "v1.paymentMethod": {
             "type": "object",
-            "required": [
-                "usesProvider"
-            ],
             "properties": {
                 "provider": {
                     "type": "string"

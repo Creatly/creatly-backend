@@ -411,6 +411,10 @@ definitions:
         type: string
       name:
         type: string
+      packages:
+        items:
+          type: string
+        type: array
       paymentMethod:
         $ref: '#/definitions/v1.paymentMethod'
       price:
@@ -580,8 +584,6 @@ definitions:
         type: string
       usesProvider:
         type: boolean
-    required:
-    - usesProvider
     type: object
   v1.price:
     properties:

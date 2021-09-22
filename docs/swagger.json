@@ -5017,6 +5017,12 @@
                 "name": {
                     "type": "string"
                 },
+                "packages": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "paymentMethod": {
                     "$ref": "#/definitions/v1.paymentMethod"
                 },
@@ -5262,9 +5268,6 @@
         },
         "v1.paymentMethod": {
             "type": "object",
-            "required": [
-                "usesProvider"
-            ],
             "properties": {
                 "provider": {
                     "type": "string"
