@@ -1054,7 +1054,7 @@ type createOfferInput struct {
 }
 
 type paymentMethod struct {
-	UsesProvider bool   `json:"usesProvider" binding:"required"`
+	UsesProvider bool   `json:"usesProvider"`
 	Provider     string `json:"provider"`
 }
 
