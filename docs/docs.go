@@ -2077,6 +2077,30 @@ var doc = `{
                         "description": "limit",
                         "name": "limit",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "search",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "status",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "dateFrom",
+                        "name": "dateFrom",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "dateTo",
+                        "name": "dateTo",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -2969,6 +2993,42 @@ var doc = `{
                         "type": "integer",
                         "description": "limit",
                         "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "search",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "verified",
+                        "name": "verified",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "registerDateFrom",
+                        "name": "registerDateFrom",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "registerDateTo",
+                        "name": "registerDateTo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lastVisitDateFrom",
+                        "name": "lastVisitDateFrom",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "registerDateTo",
+                        "name": "lastVisitDateTo",
                         "in": "query"
                     }
                 ],
@@ -5306,6 +5366,12 @@ var doc = `{
                 "name": {
                     "type": "string"
                 },
+                "packages": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "paymentMethod": {
                     "$ref": "#/definitions/v1.paymentMethod"
                 },
@@ -5551,9 +5617,6 @@ var doc = `{
         },
         "v1.paymentMethod": {
             "type": "object",
-            "required": [
-                "usesProvider"
-            ],
             "properties": {
                 "provider": {
                     "type": "string"

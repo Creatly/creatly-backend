@@ -125,7 +125,7 @@ type Students interface {
 	GiveAccessToOffer(ctx context.Context, studentId primitive.ObjectID, offer domain.Offer) error
 	RemoveAccessToOffer(ctx context.Context, studentId primitive.ObjectID, offer domain.Offer) error
 	GetById(ctx context.Context, schoolId, id primitive.ObjectID) (domain.Student, error)
-	GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Student, int64, error)
+	GetBySchool(ctx context.Context, schoolId primitive.ObjectID, query domain.GetStudentsQuery) ([]domain.Student, int64, error)
 }
 
 type StudentLessons interface {
@@ -233,6 +233,7 @@ type CreateOfferInput struct {
 	Benefits      []string
 	SchoolID      primitive.ObjectID
 	Price         domain.Price
+	Packages      []string
 	PaymentMethod domain.PaymentMethod
 }
 
@@ -347,7 +348,7 @@ type Packages interface {
 type Orders interface {
 	Create(ctx context.Context, studentId, offerId, promocodeId primitive.ObjectID) (primitive.ObjectID, error)
 	AddTransaction(ctx context.Context, id primitive.ObjectID, transaction domain.Transaction) (domain.Order, error)
-	GetBySchool(ctx context.Context, schoolId primitive.ObjectID, pagination *domain.PaginationQuery) ([]domain.Order, int64, error)
+	GetBySchool(ctx context.Context, schoolId primitive.ObjectID, query domain.GetOrdersQuery) ([]domain.Order, int64, error)
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.Order, error)
 	SetStatus(ctx context.Context, id primitive.ObjectID, status string) error
 }

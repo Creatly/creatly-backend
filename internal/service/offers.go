@@ -73,6 +73,18 @@ func (s *OffersService) Create(ctx context.Context, inp CreateOfferInput) (primi
 		}
 	}
 
+	var (
+		packageIDs []primitive.ObjectID
+		err        error
+	)
+
+	if inp.Packages != nil {
+		packageIDs, err = stringArrayToObjectId(inp.Packages)
+		if err != nil {
+			return primitive.ObjectID{}, err
+		}
+	}
+
 	return s.repo.Create(ctx, domain.Offer{
 		SchoolID:      inp.SchoolID,
 		Name:          inp.Name,
@@ -80,6 +92,7 @@ func (s *OffersService) Create(ctx context.Context, inp CreateOfferInput) (primi
 		Benefits:      inp.Benefits,
 		Price:         inp.Price,
 		PaymentMethod: inp.PaymentMethod,
+		PackageIDs:    packageIDs,
 	})
 }
 
