@@ -493,6 +493,20 @@ func (mr *MockAdminsMockRecorder) CreateStudent(ctx, inp interface{}) *gomock.Ca
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateStudent", reflect.TypeOf((*MockAdmins)(nil).CreateStudent), ctx, inp)
 }
 
+// DeleteStudent mocks base method.
+func (m *MockAdmins) DeleteStudent(ctx context.Context, schoolId, studentId primitive.ObjectID) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteStudent", ctx, schoolId, studentId)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteStudent indicates an expected call of DeleteStudent.
+func (mr *MockAdminsMockRecorder) DeleteStudent(ctx, schoolId, studentId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteStudent", reflect.TypeOf((*MockAdmins)(nil).DeleteStudent), ctx, schoolId, studentId)
+}
+
 // GetCourseById mocks base method.
 func (m *MockAdmins) GetCourseById(ctx context.Context, schoolId, courseId primitive.ObjectID) (domain.Course, error) {
 	m.ctrl.T.Helper()

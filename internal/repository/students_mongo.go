@@ -60,6 +60,12 @@ func (r *StudentsRepo) Update(ctx context.Context, inp domain.UpdateStudentInput
 	return err
 }
 
+func (r *StudentsRepo) Delete(ctx context.Context, schoolId, studentId primitive.ObjectID) error {
+	_, err := r.db.DeleteOne(ctx, bson.M{"_id": studentId, "schoolId": schoolId})
+
+	return err
+}
+
 func (r *StudentsRepo) GetByCredentials(ctx context.Context, schoolId primitive.ObjectID, email, password string) (domain.Student, error) {
 	var student domain.Student
 	if err := r.db.FindOne(ctx, bson.M{"email": email, "password": password, "schoolId": schoolId, "verification.verified": true}).

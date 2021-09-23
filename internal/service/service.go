@@ -140,6 +140,7 @@ type Admins interface {
 	GetCourseById(ctx context.Context, schoolId, courseId primitive.ObjectID) (domain.Course, error)
 	CreateStudent(ctx context.Context, inp domain.CreateStudentInput) (domain.Student, error)
 	UpdateStudent(ctx context.Context, inp domain.UpdateStudentInput) error
+	DeleteStudent(ctx context.Context, schoolId, studentId primitive.ObjectID) error
 }
 
 type UploadInput struct {

@@ -110,6 +110,10 @@ func (s *AdminsService) UpdateStudent(ctx context.Context, inp domain.UpdateStud
 	return s.studentRepo.Update(ctx, inp)
 }
 
+func (s *AdminsService) DeleteStudent(ctx context.Context, schoolId, studentId primitive.ObjectID) error {
+	return s.studentRepo.Delete(ctx, schoolId, studentId)
+}
+
 func (s *AdminsService) createSession(ctx context.Context, adminID primitive.ObjectID) (Tokens, error) {
 	var (
 		res Tokens

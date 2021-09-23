@@ -250,6 +250,7 @@ func (h *Handler) adminUpdateStudent(c *gin.Context) {
 	}
 
 	var err error
+
 	inp.StudentID, err = parseIdFromPath(c, "id")
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
@@ -275,6 +276,39 @@ func (h *Handler) adminUpdateStudent(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
+// @Summary Admin Delete Student
+// @Security AdminAuth
+// @Tags admins-students
+// @Description admin delete student
+// @ModuleID adminDeleteStudent
+// @Accept  json
+// @Produce  json
+// @Param id path string true "student id"
+// @Success 200 {object} domain.Student
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/students/{id} [delete]
 func (h *Handler) adminDeleteStudent(c *gin.Context) {
+	studentId, err := parseIdFromPath(c, "id")
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, err.Error())
 
+		return
+	}
+
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	if err := h.services.Admins.DeleteStudent(c.Request.Context(), school.ID, studentId); err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	c.Status(http.StatusOK)
 }
