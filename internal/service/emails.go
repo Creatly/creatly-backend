@@ -100,7 +100,8 @@ func (s *EmailService) AddStudentToList(ctx context.Context, email, name string,
 		Email:  email,
 		ListID: school.Settings.SendPulse.ListID,
 		Variables: map[string]string{
-			"Name": name,
+			"Name":   name,
+			"source": "registration",
 		},
 	})
 }
