@@ -69,14 +69,14 @@ func (s *StudentsService) SignUp(ctx context.Context, input StudentSignUpInput) 
 
 		go s.addStudentToList(context.Background(), student)
 
-		return s.repo.Create(ctx, student)
+		return s.repo.Create(ctx, &student)
 	}
 
 	// it's possible to use OTP apps (Google Authenticator, Authy) compatibility mode here, in the future
 	verificationCode := s.otpGenerator.RandomSecret(s.verificationCodeLength)
 	student.Verification.Code = verificationCode
 
-	if err := s.repo.Create(ctx, student); err != nil {
+	if err := s.repo.Create(ctx, &student); err != nil {
 		return err
 	}
 

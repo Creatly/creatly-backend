@@ -479,11 +479,12 @@ func (m *MockAdmins) EXPECT() *MockAdminsMockRecorder {
 }
 
 // CreateStudent mocks base method.
-func (m *MockAdmins) CreateStudent(ctx context.Context, inp service.CreateStudentInput) error {
+func (m *MockAdmins) CreateStudent(ctx context.Context, inp service.CreateStudentInput) (domain.Student, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateStudent", ctx, inp)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(domain.Student)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // CreateStudent indicates an expected call of CreateStudent.

@@ -22,13 +22,15 @@ func NewStudentsRepo(db *mongo.Database) *StudentsRepo {
 	}
 }
 
-func (r *StudentsRepo) Create(ctx context.Context, student domain.Student) error {
-	_, err := r.db.InsertOne(ctx, student)
+func (r *StudentsRepo) Create(ctx context.Context, student *domain.Student) error {
+	res, err := r.db.InsertOne(ctx, student)
 	if mongodb.IsDuplicate(err) {
 		return domain.ErrUserAlreadyExists
 	}
 
-	return err
+	student.ID = res.InsertedID.(primitive.ObjectID) //nolint:forcetypeassert
+
+	return nil
 }
 
 func (r *StudentsRepo) GetByCredentials(ctx context.Context, schoolId primitive.ObjectID, email, password string) (domain.Student, error) {

@@ -257,7 +257,7 @@ func (mr *MockStudentsMockRecorder) AttachOffer(ctx, studentId, offerId, moduleI
 }
 
 // Create mocks base method.
-func (m *MockStudents) Create(ctx context.Context, student domain.Student) error {
+func (m *MockStudents) Create(ctx context.Context, student *domain.Student) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Create", ctx, student)
 	ret0, _ := ret[0].(error)

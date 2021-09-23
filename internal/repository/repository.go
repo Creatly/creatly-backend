@@ -59,7 +59,7 @@ type Schools interface {
 }
 
 type Students interface {
-	Create(ctx context.Context, student domain.Student) error
+	Create(ctx context.Context, student *domain.Student) error
 	GetByCredentials(ctx context.Context, schoolId primitive.ObjectID, email, password string) (domain.Student, error)
 	GetByRefreshToken(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (domain.Student, error)
 	GetById(ctx context.Context, schoolId, id primitive.ObjectID) (domain.Student, error)

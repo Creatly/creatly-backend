@@ -145,7 +145,7 @@ type Admins interface {
 	RefreshTokens(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (Tokens, error)
 	GetCourses(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Course, error)
 	GetCourseById(ctx context.Context, schoolId, courseId primitive.ObjectID) (domain.Course, error)
-	CreateStudent(ctx context.Context, inp CreateStudentInput) error
+	CreateStudent(ctx context.Context, inp CreateStudentInput) (domain.Student, error)
 }
 
 type UploadInput struct {

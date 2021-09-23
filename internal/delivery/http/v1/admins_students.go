@@ -154,18 +154,19 @@ func (h *Handler) adminCreateStudent(c *gin.Context) {
 		return
 	}
 
-	if err := h.services.Admins.CreateStudent(c.Request.Context(), service.CreateStudentInput{
+	student, err := h.services.Admins.CreateStudent(c.Request.Context(), service.CreateStudentInput{
 		SchoolID: school.ID,
 		Name:     inp.Name,
 		Email:    inp.Email,
 		Password: inp.Password,
-	}); err != nil {
+	})
+	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 
 		return
 	}
 
-	c.Status(http.StatusOK)
+	c.JSON(http.StatusCreated, student)
 }
 
 type manageOfferPermissionInput struct {
