@@ -4,8 +4,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/zhashkevych/creatly-backend/internal/service"
-
 	"github.com/gin-gonic/gin"
 	"github.com/zhashkevych/creatly-backend/internal/domain"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -120,12 +118,6 @@ func (h *Handler) adminGetStudentById(c *gin.Context) {
 	c.JSON(http.StatusOK, student)
 }
 
-type createStudentInput struct {
-	Name     string `json:"name" binding:"required,min=2"`
-	Email    string `json:"email" binding:"required,email"`
-	Password string `json:"password" binding:"required,min=6"`
-}
-
 // @Summary Admin Create Student
 // @Security AdminAuth
 // @Tags admins-students
@@ -133,14 +125,14 @@ type createStudentInput struct {
 // @ModuleID adminCreateStudent
 // @Accept  json
 // @Produce  json
-// @Param input body createStudentInput true "student info"
+// @Param input body domain.CreateStudentInput true "student info"
 // @Success 200 {object} domain.Student
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
 // @Router /admins/students [post]
 func (h *Handler) adminCreateStudent(c *gin.Context) {
-	var inp createStudentInput
+	var inp domain.CreateStudentInput
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
 
@@ -154,12 +146,9 @@ func (h *Handler) adminCreateStudent(c *gin.Context) {
 		return
 	}
 
-	student, err := h.services.Admins.CreateStudent(c.Request.Context(), service.CreateStudentInput{
-		SchoolID: school.ID,
-		Name:     inp.Name,
-		Email:    inp.Email,
-		Password: inp.Password,
-	})
+	inp.SchoolID = school.ID
+
+	student, err := h.services.Admins.CreateStudent(c.Request.Context(), inp)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 
@@ -236,4 +225,56 @@ func (h *Handler) adminManageOfferPermission(c *gin.Context) {
 	}
 
 	c.Status(http.StatusOK)
+}
+
+// @Summary Admin Update Student
+// @Security AdminAuth
+// @Tags admins-students
+// @Description admin update student
+// @ModuleID adminUpdateStudent
+// @Accept  json
+// @Produce  json
+// @Param input body domain.UpdateStudentInput true "update info"
+// @Param id path string true "student id"
+// @Success 200 {object} domain.Student
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/students/{id} [put]
+func (h *Handler) adminUpdateStudent(c *gin.Context) {
+	var inp domain.UpdateStudentInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+
+		return
+	}
+
+	var err error
+	inp.StudentID, err = parseIdFromPath(c, "id")
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, err.Error())
+
+		return
+	}
+
+	school, err := getSchoolFromContext(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	inp.SchoolID = school.ID
+
+	if err := h.services.Admins.UpdateStudent(c.Request.Context(), inp); err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	c.Status(http.StatusOK)
+}
+
+func (h *Handler) adminDeleteStudent(c *gin.Context) {
+
 }

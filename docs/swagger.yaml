@@ -47,6 +47,19 @@ definitions:
       updatedAt:
         type: string
     type: object
+  domain.CreateStudentInput:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - name
+    - password
+    type: object
   domain.Fondy:
     properties:
       connected:
@@ -259,6 +272,8 @@ definitions:
         items:
           type: string
         type: array
+      blocked:
+        type: boolean
       email:
         type: string
       id:
@@ -332,6 +347,17 @@ definitions:
         $ref: '#/definitions/domain.StudentInfoShort'
       submittedAt:
         type: string
+    type: object
+  domain.UpdateStudentInput:
+    properties:
+      blocked:
+        type: boolean
+      email:
+        type: string
+      name:
+        type: string
+      verified:
+        type: boolean
     type: object
   domain.Verification:
     properties:
@@ -474,19 +500,6 @@ definitions:
         type: string
     required:
     - name
-    type: object
-  v1.createStudentInput:
-    properties:
-      email:
-        type: string
-      name:
-        type: string
-      password:
-        type: string
-    required:
-    - email
-    - name
-    - password
     type: object
   v1.createSurveyInput:
     properties:
@@ -2563,7 +2576,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/v1.createStudentInput'
+          $ref: '#/definitions/domain.CreateStudentInput'
       produces:
       - application/json
       responses:
@@ -2629,6 +2642,50 @@ paths:
       security:
       - AdminAuth: []
       summary: Admin Get Student By ID
+      tags:
+      - admins-students
+    put:
+      consumes:
+      - application/json
+      description: admin update student
+      parameters:
+      - description: update info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/domain.UpdateStudentInput'
+      - description: student id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Student'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Update Student
       tags:
       - admins-students
   /admins/students/{id}/offers/{offerId}:

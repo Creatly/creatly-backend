@@ -97,6 +97,8 @@ func (h *Handler) initAdminRoutes(api *gin.RouterGroup) { //nolint:funlen
 				students.GET("", h.adminGetStudents)
 				students.POST("", h.adminCreateStudent)
 				students.GET("/:id", h.adminGetStudentById)
+				students.PUT("/:id", h.adminUpdateStudent)
+				students.DELETE("/:id", h.adminDeleteStudent)
 				students.PATCH("/:id/offers/:offerId", h.adminManageOfferPermission)
 			}
 

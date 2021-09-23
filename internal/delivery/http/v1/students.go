@@ -143,6 +143,12 @@ func (h *Handler) studentSignIn(c *gin.Context) {
 			return
 		}
 
+		if errors.Is(err, domain.ErrStudentBlocked) {
+			newResponse(c, http.StatusForbidden, err.Error())
+
+			return
+		}
+
 		newResponse(c, http.StatusInternalServerError, err.Error())
 
 		return
@@ -186,6 +192,12 @@ func (h *Handler) studentRefresh(c *gin.Context) {
 
 	res, err := h.services.Students.RefreshTokens(c.Request.Context(), school.ID, inp.Token)
 	if err != nil {
+		if errors.Is(err, domain.ErrStudentBlocked) {
+			newResponse(c, http.StatusForbidden, err.Error())
+
+			return
+		}
+
 		newResponse(c, http.StatusInternalServerError, err.Error())
 
 		return

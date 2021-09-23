@@ -373,6 +373,20 @@ func (mr *MockStudentsMockRecorder) SetSession(ctx, studentId, session interface
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetSession", reflect.TypeOf((*MockStudents)(nil).SetSession), ctx, studentId, session)
 }
 
+// Update mocks base method.
+func (m *MockStudents) Update(ctx context.Context, inp domain.UpdateStudentInput) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Update", ctx, inp)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Update indicates an expected call of Update.
+func (mr *MockStudentsMockRecorder) Update(ctx, inp interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockStudents)(nil).Update), ctx, inp)
+}
+
 // Verify mocks base method.
 func (m *MockStudents) Verify(ctx context.Context, code string) (domain.Student, error) {
 	m.ctrl.T.Helper()
