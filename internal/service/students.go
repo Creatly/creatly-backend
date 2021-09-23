@@ -104,6 +104,10 @@ func (s *StudentsService) SignIn(ctx context.Context, input SchoolSignInInput) (
 		return Tokens{}, err
 	}
 
+	if student.Blocked {
+		return Tokens{}, domain.ErrStudentBlocked
+	}
+
 	return s.createSession(ctx, student.ID)
 }
 
@@ -111,6 +115,10 @@ func (s *StudentsService) RefreshTokens(ctx context.Context, schoolId primitive.
 	student, err := s.repo.GetByRefreshToken(ctx, schoolId, refreshToken)
 	if err != nil {
 		return Tokens{}, err
+	}
+
+	if student.Blocked {
+		return Tokens{}, domain.ErrStudentBlocked
 	}
 
 	return s.createSession(ctx, student.ID)

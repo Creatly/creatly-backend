@@ -479,7 +479,7 @@ func (m *MockAdmins) EXPECT() *MockAdminsMockRecorder {
 }
 
 // CreateStudent mocks base method.
-func (m *MockAdmins) CreateStudent(ctx context.Context, inp service.CreateStudentInput) (domain.Student, error) {
+func (m *MockAdmins) CreateStudent(ctx context.Context, inp domain.CreateStudentInput) (domain.Student, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateStudent", ctx, inp)
 	ret0, _ := ret[0].(domain.Student)
@@ -491,6 +491,20 @@ func (m *MockAdmins) CreateStudent(ctx context.Context, inp service.CreateStuden
 func (mr *MockAdminsMockRecorder) CreateStudent(ctx, inp interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateStudent", reflect.TypeOf((*MockAdmins)(nil).CreateStudent), ctx, inp)
+}
+
+// DeleteStudent mocks base method.
+func (m *MockAdmins) DeleteStudent(ctx context.Context, schoolId, studentId primitive.ObjectID) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteStudent", ctx, schoolId, studentId)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteStudent indicates an expected call of DeleteStudent.
+func (mr *MockAdminsMockRecorder) DeleteStudent(ctx, schoolId, studentId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteStudent", reflect.TypeOf((*MockAdmins)(nil).DeleteStudent), ctx, schoolId, studentId)
 }
 
 // GetCourseById mocks base method.
@@ -551,6 +565,20 @@ func (m *MockAdmins) SignIn(ctx context.Context, input service.SchoolSignInInput
 func (mr *MockAdminsMockRecorder) SignIn(ctx, input interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SignIn", reflect.TypeOf((*MockAdmins)(nil).SignIn), ctx, input)
+}
+
+// UpdateStudent mocks base method.
+func (m *MockAdmins) UpdateStudent(ctx context.Context, inp domain.UpdateStudentInput) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateStudent", ctx, inp)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateStudent indicates an expected call of UpdateStudent.
+func (mr *MockAdminsMockRecorder) UpdateStudent(ctx, inp interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateStudent", reflect.TypeOf((*MockAdmins)(nil).UpdateStudent), ctx, inp)
 }
 
 // MockFiles is a mock of Files interface.

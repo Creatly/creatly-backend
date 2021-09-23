@@ -33,6 +33,39 @@ func (r *StudentsRepo) Create(ctx context.Context, student *domain.Student) erro
 	return nil
 }
 
+func (r *StudentsRepo) Update(ctx context.Context, inp domain.UpdateStudentInput) error {
+	updateQuery := bson.M{}
+
+	if inp.Name != "" {
+		updateQuery["name"] = inp.Name
+	}
+
+	if inp.Email != "" {
+		updateQuery["email"] = inp.Email
+	}
+
+	if inp.Verified != nil {
+		updateQuery["verification"] = domain.Verification{
+			Verified: *inp.Verified,
+		}
+	}
+
+	if inp.Blocked != nil {
+		updateQuery["blocked"] = *inp.Blocked
+	}
+
+	_, err := r.db.UpdateOne(ctx,
+		bson.M{"_id": inp.StudentID, "schoolId": inp.SchoolID}, bson.M{"$set": updateQuery})
+
+	return err
+}
+
+func (r *StudentsRepo) Delete(ctx context.Context, schoolId, studentId primitive.ObjectID) error {
+	_, err := r.db.DeleteOne(ctx, bson.M{"_id": studentId, "schoolId": schoolId})
+
+	return err
+}
+
 func (r *StudentsRepo) GetByCredentials(ctx context.Context, schoolId primitive.ObjectID, email, password string) (domain.Student, error) {
 	var student domain.Student
 	if err := r.db.FindOne(ctx, bson.M{"email": email, "password": password, "schoolId": schoolId, "verification.verified": true}).
@@ -66,7 +99,7 @@ func (r *StudentsRepo) GetByRefreshToken(ctx context.Context, schoolId primitive
 func (r *StudentsRepo) GetById(ctx context.Context, schoolId, id primitive.ObjectID) (domain.Student, error) {
 	var student domain.Student
 
-	if err := r.db.FindOne(ctx, bson.M{"_id": id, "schoolId": schoolId, "verification.verified": true}).Decode(&student); err != nil {
+	if err := r.db.FindOne(ctx, bson.M{"_id": id, "schoolId": schoolId}).Decode(&student); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return domain.Student{}, domain.ErrUserNotFound
 		}

@@ -87,7 +87,7 @@ func (s *AdminsService) GetCourseById(ctx context.Context, schoolID, courseID pr
 	return searchedCourse, nil
 }
 
-func (s *AdminsService) CreateStudent(ctx context.Context, inp CreateStudentInput) (domain.Student, error) {
+func (s *AdminsService) CreateStudent(ctx context.Context, inp domain.CreateStudentInput) (domain.Student, error) {
 	passwordHash, err := s.hasher.Hash(inp.Password)
 	if err != nil {
 		return domain.Student{}, err
@@ -104,6 +104,14 @@ func (s *AdminsService) CreateStudent(ctx context.Context, inp CreateStudentInpu
 	err = s.studentRepo.Create(ctx, &student)
 
 	return student, err
+}
+
+func (s *AdminsService) UpdateStudent(ctx context.Context, inp domain.UpdateStudentInput) error {
+	return s.studentRepo.Update(ctx, inp)
+}
+
+func (s *AdminsService) DeleteStudent(ctx context.Context, schoolId, studentId primitive.ObjectID) error {
+	return s.studentRepo.Delete(ctx, schoolId, studentId)
 }
 
 func (s *AdminsService) createSession(ctx context.Context, adminID primitive.ObjectID) (Tokens, error) {

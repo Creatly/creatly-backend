@@ -2760,7 +2760,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.createStudentInput"
+                            "$ref": "#/definitions/domain.CreateStudentInput"
                         }
                     }
                 ],
@@ -2816,6 +2816,133 @@ var doc = `{
                     "admins-students"
                 ],
                 "summary": "Admin Get Student By ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "student id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Student"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "admin update student",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admins-students"
+                ],
+                "summary": "Admin Update Student",
+                "parameters": [
+                    {
+                        "description": "update info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.UpdateStudentInput"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "student id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Student"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "admin delete student",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admins-students"
+                ],
+                "summary": "Admin Delete Student",
                 "parameters": [
                     {
                         "type": "string",
@@ -4465,6 +4592,25 @@ var doc = `{
                 }
             }
         },
+        "domain.CreateStudentInput": {
+            "type": "object",
+            "required": [
+                "email",
+                "name",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.Fondy": {
             "type": "object",
             "properties": {
@@ -4790,6 +4936,9 @@ var doc = `{
                         "type": "string"
                     }
                 },
+                "blocked": {
+                    "type": "boolean"
+                },
                 "email": {
                     "type": "string"
                 },
@@ -4901,6 +5050,23 @@ var doc = `{
                 },
                 "submittedAt": {
                     "type": "string"
+                }
+            }
+        },
+        "domain.UpdateStudentInput": {
+            "type": "object",
+            "properties": {
+                "blocked": {
+                    "type": "boolean"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "verified": {
+                    "type": "boolean"
                 }
             }
         },
@@ -5117,25 +5283,6 @@ var doc = `{
             ],
             "properties": {
                 "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "v1.createStudentInput": {
-            "type": "object",
-            "required": [
-                "email",
-                "name",
-                "password"
-            ],
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "password": {
                     "type": "string"
                 }
             }
