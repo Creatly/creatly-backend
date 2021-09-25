@@ -404,7 +404,6 @@ type Deps struct {
 	AccessTokenTTL         time.Duration
 	RefreshTokenTTL        time.Duration
 	FondyCallbackURL       string
-	PaymentRedirectURL     string
 	CacheTTL               int64
 	OtpGenerator           otp.Generator
 	VerificationCodeLength int
@@ -438,7 +437,7 @@ func NewServices(deps Deps) *Services {
 		Offers:         offersService,
 		Modules:        modulesService,
 		Payments: NewPaymentsService(ordersService, offersService, studentsService, emailsService, schoolsService,
-			deps.FondyCallbackURL, deps.PaymentRedirectURL),
+			deps.FondyCallbackURL),
 		Orders: ordersService,
 		Admins: NewAdminsService(deps.Hasher, deps.TokenManager, deps.Repos.Admins, deps.Repos.Schools, deps.Repos.Students,
 			deps.AccessTokenTTL, deps.RefreshTokenTTL),

@@ -115,7 +115,6 @@ func Run(configPath string) {
 		EmailConfig:            cfg.Email,
 		AccessTokenTTL:         cfg.Auth.JWT.AccessTokenTTL,
 		RefreshTokenTTL:        cfg.Auth.JWT.RefreshTokenTTL,
-		PaymentRedirectURL:     cfg.Payment.RedicrectURL,
 		FondyCallbackURL:       cfg.Payment.FondyCallbackURL,
 		CacheTTL:               int64(cfg.CacheTTL.Seconds()),
 		OtpGenerator:           otpGenerator,

@@ -19,7 +19,6 @@ func TestInit(t *testing.T) {
 		sendpulseSecret       string
 		host                  string
 		fondyCallbackURL      string
-		paymentResponseURL    string
 		frontendUrl           string
 		smtpPassword          string
 		appEnv                string
@@ -49,7 +48,6 @@ func TestInit(t *testing.T) {
 		os.Setenv("SENDPULSE_SECRET", env.sendpulseSecret)
 		os.Setenv("HTTP_HOST", env.host)
 		os.Setenv("FONDY_CALLBACK_URL", env.fondyCallbackURL)
-		os.Setenv("PAYMENT_REDIRECT_URL", env.paymentResponseURL)
 		os.Setenv("FRONTEND_URL", env.frontendUrl)
 		os.Setenv("SMTP_PASSWORD", env.smtpPassword)
 		os.Setenv("APP_ENV", env.appEnv)
@@ -83,7 +81,6 @@ func TestInit(t *testing.T) {
 					sendpulseId:           "id",
 					sendpulseListId:       "listId",
 					host:                  "localhost",
-					paymentResponseURL:    "https://zhashkevych.com/",
 					fondyCallbackURL:      "https://zhashkevych.com/callback",
 					frontendUrl:           "http://localhost:1337",
 					smtpPassword:          "qwerty123",
@@ -146,7 +143,6 @@ func TestInit(t *testing.T) {
 				},
 				Payment: PaymentConfig{
 					FondyCallbackURL: "https://zhashkevych.com/callback",
-					RedicrectURL:     "https://zhashkevych.com/",
 				},
 				Limiter: LimiterConfig{
 					RPS:   10,
