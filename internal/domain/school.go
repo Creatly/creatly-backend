@@ -32,6 +32,10 @@ type Settings struct {
 	SendPulse           SendPulse   `json:"sendpulse" bson:"sendpulse,omitempty"`
 }
 
+func (s Settings) GetDomain() string {
+	return s.Domains[0]
+}
+
 type Fondy struct {
 	MerchantID       string `json:"merchantId" bson:"merchantId"`
 	MerchantPassword string `json:"merchantPassword" bson:"merchantPassword"`

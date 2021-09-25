@@ -87,7 +87,6 @@ type (
 
 	PaymentConfig struct {
 		FondyCallbackURL string
-		RedicrectURL     string
 	}
 
 	HTTPConfig struct {
@@ -179,6 +178,7 @@ func unmarshal(cfg *Config) error {
 }
 
 func setFromEnv(cfg *Config) {
+	// TODO use envconfig https://github.com/kelseyhightower/envconfig
 	cfg.Mongo.URI = os.Getenv("MONGO_URI")
 	cfg.Mongo.User = os.Getenv("MONGO_USER")
 	cfg.Mongo.Password = os.Getenv("MONGO_PASS")
@@ -193,7 +193,6 @@ func setFromEnv(cfg *Config) {
 	cfg.HTTP.Host = os.Getenv("HTTP_HOST")
 
 	cfg.Payment.FondyCallbackURL = os.Getenv("FONDY_CALLBACK_URL")
-	cfg.Payment.RedicrectURL = os.Getenv("PAYMENT_REDIRECT_URL")
 
 	cfg.SMTP.Pass = os.Getenv("SMTP_PASSWORD")
 
