@@ -273,7 +273,12 @@ func (h *Handler) adminGetAllCourses(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, dataResponse{Data: courses})
+	response := make([]domain.Course, len(courses))
+	if courses != nil {
+		response = courses
+	}
+
+	c.JSON(http.StatusOK, dataResponse{Data: response})
 }
 
 type adminGetCourseByIdResponse struct {
