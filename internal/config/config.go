@@ -64,15 +64,8 @@ type (
 	}
 
 	EmailConfig struct {
-		SendPulse SendPulseConfig
 		Templates EmailTemplates
 		Subjects  EmailSubjects
-	}
-
-	SendPulseConfig struct {
-		ListID       string
-		ClientID     string
-		ClientSecret string
 	}
 
 	EmailTemplates struct {
@@ -185,10 +178,6 @@ func setFromEnv(cfg *Config) {
 
 	cfg.Auth.PasswordSalt = os.Getenv("PASSWORD_SALT")
 	cfg.Auth.JWT.SigningKey = os.Getenv("JWT_SIGNING_KEY")
-
-	cfg.Email.SendPulse.ClientSecret = os.Getenv("SENDPULSE_SECRET")
-	cfg.Email.SendPulse.ClientID = os.Getenv("SENDPULSE_ID")
-	cfg.Email.SendPulse.ListID = os.Getenv("SENDPULSE_LISTID")
 
 	cfg.HTTP.Host = os.Getenv("HTTP_HOST")
 
