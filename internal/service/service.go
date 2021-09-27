@@ -263,6 +263,7 @@ type Offers interface {
 	GetByModule(ctx context.Context, schoolId, moduleId primitive.ObjectID) ([]domain.Offer, error)
 	GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Offer, error)
 	GetAll(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Offer, error)
+	GetByIds(ctx context.Context, ids []primitive.ObjectID) ([]domain.Offer, error)
 }
 
 type CreateModuleInput struct {

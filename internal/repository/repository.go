@@ -177,6 +177,7 @@ type Offers interface {
 	GetBySchool(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Offer, error)
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.Offer, error)
 	GetByPackages(ctx context.Context, packageIds []primitive.ObjectID) ([]domain.Offer, error)
+	GetByIds(ctx context.Context, ids []primitive.ObjectID) ([]domain.Offer, error)
 }
 
 type UpdatePromoCodeInput struct {

@@ -1393,6 +1393,19 @@ func (h *Handler) adminCreatePromocode(c *gin.Context) {
 	c.JSON(http.StatusCreated, idResponse{id})
 }
 
+type promocodeReponse struct {
+	ID                 primitive.ObjectID  `json:"id"`
+	Code               string              `json:"code"`
+	DiscountPercentage int                 `json:"discountPercentage"`
+	ExpiresAt          time.Time           `json:"expiresAt"`
+	Offers             []offerShortReponse `json:"offers"`
+}
+
+type offerShortReponse struct {
+	ID   primitive.ObjectID `json:"id"`
+	Name string             `json:"name"`
+}
+
 // @Summary Admin Get All Promocodes
 // @Security AdminAuth
 // @Tags admins-promocodes
@@ -1420,7 +1433,26 @@ func (h *Handler) adminGetPromocodes(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, dataResponse{Data: promocodes})
+	response := make([]promocodeReponse, len(promocodes))
+
+	for i, promocode := range promocodes {
+		offers, err := h.services.Offers.GetByIds(c.Request.Context(), promocode.OfferIDs)
+		if err != nil {
+			newResponse(c, http.StatusInternalServerError, err.Error())
+
+			return
+		}
+
+		response[i] = promocodeReponse{
+			ID:                 promocode.ID,
+			Code:               promocode.Code,
+			DiscountPercentage: promocode.DiscountPercentage,
+			ExpiresAt:          promocode.ExpiresAt,
+			Offers:             toOffersReponse(offers),
+		}
+	}
+
+	c.JSON(http.StatusOK, dataResponse{Data: response})
 }
 
 // @Summary Admin Get Promocode By Id
@@ -1458,7 +1490,22 @@ func (h *Handler) adminGetPromocodeById(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, promoCode)
+	offers, err := h.services.Offers.GetByIds(c.Request.Context(), promoCode.OfferIDs)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	response := promocodeReponse{
+		ID:                 promoCode.ID,
+		Code:               promoCode.Code,
+		DiscountPercentage: promoCode.DiscountPercentage,
+		ExpiresAt:          promoCode.ExpiresAt,
+		Offers:             toOffersReponse(offers),
+	}
+
+	c.JSON(http.StatusOK, response)
 }
 
 type updatePromocodeInput struct {
@@ -1867,6 +1914,19 @@ func toPackageModules(modules []domain.Module) []packageModule {
 		out[i] = packageModule{
 			ID:   module.ID,
 			Name: module.Name,
+		}
+	}
+
+	return out
+}
+
+func toOffersReponse(offers []domain.Offer) []offerShortReponse {
+	out := make([]offerShortReponse, len(offers))
+
+	for i, offer := range offers {
+		out[i] = offerShortReponse{
+			ID:   offer.ID,
+			Name: offer.Name,
 		}
 	}
 
