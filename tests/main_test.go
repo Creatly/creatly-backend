@@ -20,10 +20,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-const (
-	listId = "123456"
-)
-
 var dbURI, dbName string
 
 func init() {
@@ -96,9 +92,6 @@ func (s *APITestSuite) initDeps() {
 		TokenManager: tokenManager,
 		EmailSender:  s.mocks.emailSender,
 		EmailConfig: config.EmailConfig{
-			SendPulse: config.SendPulseConfig{
-				ListID: listId,
-			},
 			Templates: config.EmailTemplates{
 				Verification:       "../templates/verification_email.html",
 				PurchaseSuccessful: "../templates/purchase_successful.html",

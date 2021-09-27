@@ -64,15 +64,8 @@ type (
 	}
 
 	EmailConfig struct {
-		SendPulse SendPulseConfig
 		Templates EmailTemplates
 		Subjects  EmailSubjects
-	}
-
-	SendPulseConfig struct {
-		ListID       string
-		ClientID     string
-		ClientSecret string
 	}
 
 	EmailTemplates struct {
@@ -87,7 +80,6 @@ type (
 
 	PaymentConfig struct {
 		FondyCallbackURL string
-		RedicrectURL     string
 	}
 
 	HTTPConfig struct {
@@ -179,6 +171,7 @@ func unmarshal(cfg *Config) error {
 }
 
 func setFromEnv(cfg *Config) {
+	// TODO use envconfig https://github.com/kelseyhightower/envconfig
 	cfg.Mongo.URI = os.Getenv("MONGO_URI")
 	cfg.Mongo.User = os.Getenv("MONGO_USER")
 	cfg.Mongo.Password = os.Getenv("MONGO_PASS")
@@ -186,14 +179,9 @@ func setFromEnv(cfg *Config) {
 	cfg.Auth.PasswordSalt = os.Getenv("PASSWORD_SALT")
 	cfg.Auth.JWT.SigningKey = os.Getenv("JWT_SIGNING_KEY")
 
-	cfg.Email.SendPulse.ClientSecret = os.Getenv("SENDPULSE_SECRET")
-	cfg.Email.SendPulse.ClientID = os.Getenv("SENDPULSE_ID")
-	cfg.Email.SendPulse.ListID = os.Getenv("SENDPULSE_LISTID")
-
 	cfg.HTTP.Host = os.Getenv("HTTP_HOST")
 
 	cfg.Payment.FondyCallbackURL = os.Getenv("FONDY_CALLBACK_URL")
-	cfg.Payment.RedicrectURL = os.Getenv("PAYMENT_REDIRECT_URL")
 
 	cfg.SMTP.Pass = os.Getenv("SMTP_PASSWORD")
 

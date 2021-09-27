@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/zhashkevych/creatly-backend/internal/domain"
@@ -10,6 +11,10 @@ import (
 	"github.com/zhashkevych/creatly-backend/pkg/payment"
 	"github.com/zhashkevych/creatly-backend/pkg/payment/fondy"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+)
+
+const (
+	redirectURLTmpl = "https://%s/" // TODO: generate link with URL params for popup on frontend ?
 )
 
 type PaymentsService struct {
@@ -20,11 +25,10 @@ type PaymentsService struct {
 	schoolsService  Schools
 
 	fondyCallbackURL string
-	redirectURL      string
 }
 
 func NewPaymentsService(ordersService Orders, offersService Offers, studentsService Students,
-	emailService Emails, schoolsService Schools, fondyCallbackURL, redirectURL string) *PaymentsService {
+	emailService Emails, schoolsService Schools, fondyCallbackURL string) *PaymentsService {
 	return &PaymentsService{
 		ordersService:    ordersService,
 		offersService:    offersService,
@@ -32,7 +36,6 @@ func NewPaymentsService(ordersService Orders, offersService Offers, studentsServ
 		emailService:     emailService,
 		schoolsService:   schoolsService,
 		fondyCallbackURL: fondyCallbackURL,
-		redirectURL:      redirectURL,
 	}
 }
 
@@ -91,7 +94,7 @@ func (s *PaymentsService) processFondyCallback(ctx context.Context, callback fon
 		return err
 	}
 
-	client, err := s.getFondyClient(ctx, school.ID)
+	client, err := s.getFondyClient(school.Settings.Fondy)
 	if err != nil {
 		return err
 	}
@@ -132,13 +135,20 @@ func (s *PaymentsService) processFondyCallback(ctx context.Context, callback fon
 
 func (s *PaymentsService) generateFondyPaymentLink(ctx context.Context, schoolId primitive.ObjectID,
 	input payment.GeneratePaymentLinkInput) (string, error) {
-	client, err := s.getFondyClient(ctx, schoolId)
+	school, err := s.schoolsService.GetById(ctx, schoolId)
+	if err != nil {
+		return "", err
+	}
+
+	client, err := s.getFondyClient(school.Settings.Fondy)
 	if err != nil {
 		return "", err
 	}
 
 	input.CallbackURL = s.fondyCallbackURL
-	input.RedirectURL = s.redirectURL
+	input.RedirectURL = getRedirectURL(school.Settings.GetDomain())
+
+	logger.Infof("%+v", input)
 
 	return client.GeneratePaymentLink(input)
 }
@@ -167,15 +177,14 @@ func createTransaction(callbackData fondy.Callback) (domain.Transaction, error) 
 	}, nil
 }
 
-func (s *PaymentsService) getFondyClient(ctx context.Context, schoolId primitive.ObjectID) (*fondy.Client, error) {
-	school, err := s.schoolsService.GetById(ctx, schoolId)
-	if err != nil {
-		return nil, err
-	}
-
-	if !school.Settings.Fondy.Connected {
+func (s *PaymentsService) getFondyClient(fondyConnectionInfo domain.Fondy) (*fondy.Client, error) {
+	if !fondyConnectionInfo.Connected {
 		return nil, domain.ErrFondyIsNotConnected
 	}
 
-	return fondy.NewFondyClient(school.Settings.Fondy.MerchantID, school.Settings.Fondy.MerchantPassword), nil
+	return fondy.NewFondyClient(fondyConnectionInfo.MerchantID, fondyConnectionInfo.MerchantPassword), nil
+}
+
+func getRedirectURL(domain string) string {
+	return fmt.Sprintf(redirectURLTmpl, domain)
 }

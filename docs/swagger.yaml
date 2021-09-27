@@ -47,8 +47,19 @@ definitions:
       updatedAt:
         type: string
     type: object
-<<<<<<< HEAD
-=======
+  domain.CreateStudentInput:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - name
+    - password
+    type: object
   domain.Fondy:
     properties:
       connected:
@@ -58,7 +69,6 @@ definitions:
       merchantPassword:
         type: string
     type: object
->>>>>>> develop
   domain.Lesson:
     properties:
       content:
@@ -74,8 +84,6 @@ definitions:
       schoolId:
         type: string
     type: object
-<<<<<<< HEAD
-=======
   domain.Module:
     properties:
       courseId:
@@ -99,7 +107,6 @@ definitions:
       survey:
         $ref: '#/definitions/domain.Survey'
     type: object
->>>>>>> develop
   domain.ModuleContent:
     properties:
       lessons:
@@ -265,6 +272,8 @@ definitions:
         items:
           type: string
         type: array
+      blocked:
+        type: boolean
       email:
         type: string
       id:
@@ -338,6 +347,17 @@ definitions:
         $ref: '#/definitions/domain.StudentInfoShort'
       submittedAt:
         type: string
+    type: object
+  domain.UpdateStudentInput:
+    properties:
+      blocked:
+        type: boolean
+      email:
+        type: string
+      name:
+        type: string
+      verified:
+        type: boolean
     type: object
   domain.Verification:
     properties:
@@ -480,19 +500,6 @@ definitions:
         type: string
     required:
     - name
-    type: object
-  v1.createStudentInput:
-    properties:
-      email:
-        type: string
-      name:
-        type: string
-      password:
-        type: string
-    required:
-    - email
-    - name
-    - password
     type: object
   v1.createSurveyInput:
     properties:
@@ -1713,221 +1720,6 @@ paths:
       - AdminAuth: []
       summary: Admin Get Survey Results
       tags:
-<<<<<<< HEAD
-      - admins-lessons
-  /admins/modules/{id}/survey:
-    delete:
-      consumes:
-      - application/json
-      description: admin delete survey
-      parameters:
-      - description: module id
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/domain.Survey'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/v1.response'
-        "404":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/v1.response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/v1.response'
-        default:
-          description: ""
-          schema:
-            $ref: '#/definitions/v1.response'
-      security:
-      - AdminAuth: []
-      summary: Admin Delete Survey
-      tags:
-      - admins-surveys
-    get:
-      consumes:
-      - application/json
-      description: admin get survey
-      parameters:
-      - description: module id
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/domain.Survey'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/v1.response'
-        "404":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/v1.response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/v1.response'
-        default:
-          description: ""
-          schema:
-            $ref: '#/definitions/v1.response'
-      security:
-      - AdminAuth: []
-      summary: Admin Get Survey
-      tags:
-      - admins-surveys
-    post:
-      consumes:
-      - application/json
-      description: admin create/update survey
-      parameters:
-      - description: module id
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: survey info
-        in: body
-        name: input
-        required: true
-        schema:
-          $ref: '#/definitions/v1.createSurveyInput'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            type: string
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/v1.response'
-        "404":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/v1.response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/v1.response'
-        default:
-          description: ""
-          schema:
-            $ref: '#/definitions/v1.response'
-      security:
-      - AdminAuth: []
-      summary: Admin Create/Update Survey
-      tags:
-      - admins-surveys
-  /admins/modules/{id}/survey/results:
-    get:
-      consumes:
-      - application/json
-      description: admin get all survey results
-      parameters:
-      - description: skip
-        in: query
-        name: skip
-        type: integer
-      - description: limit
-        in: query
-        name: limit
-        type: integer
-      - description: module id
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/v1.dataResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/v1.response'
-        "404":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/v1.response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/v1.response'
-        default:
-          description: ""
-          schema:
-            $ref: '#/definitions/v1.response'
-      security:
-      - AdminAuth: []
-      summary: Admin Get Survey Results
-      tags:
-      - admins-surveys
-  /admins/modules/{id}/survey/results/{studentId}:
-    get:
-      consumes:
-      - application/json
-      description: admin get all survey results
-      parameters:
-      - description: module id
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: student id
-        in: path
-        name: studentId
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/domain.SurveyResult'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/v1.response'
-        "404":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/v1.response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/v1.response'
-        default:
-          description: ""
-          schema:
-            $ref: '#/definitions/v1.response'
-      security:
-      - AdminAuth: []
-      summary: Admin Get Survey Results
-      tags:
-=======
->>>>>>> develop
       - admins-surveys
   /admins/offers:
     get:
@@ -2784,7 +2576,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/v1.createStudentInput'
+          $ref: '#/definitions/domain.CreateStudentInput'
       produces:
       - application/json
       responses:
@@ -2814,6 +2606,44 @@ paths:
       tags:
       - admins-students
   /admins/students/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: admin delete student
+      parameters:
+      - description: student id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Student'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Delete Student
+      tags:
+      - admins-students
     get:
       consumes:
       - application/json
@@ -2850,6 +2680,50 @@ paths:
       security:
       - AdminAuth: []
       summary: Admin Get Student By ID
+      tags:
+      - admins-students
+    put:
+      consumes:
+      - application/json
+      description: admin update student
+      parameters:
+      - description: update info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/domain.UpdateStudentInput'
+      - description: student id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Student'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: Admin Update Student
       tags:
       - admins-students
   /admins/students/{id}/offers/{offerId}:
@@ -3444,11 +3318,7 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
         "403":
-<<<<<<< HEAD
-          description: Bad Request
-=======
           description: Forbidden
->>>>>>> develop
           schema:
             $ref: '#/definitions/v1.response'
         "500":
@@ -3464,11 +3334,7 @@ paths:
       summary: Student Submit Survey by Module ID
       tags:
       - students-courses
-<<<<<<< HEAD
-  /students/order:
-=======
   /students/orders:
->>>>>>> develop
     post:
       consumes:
       - application/json

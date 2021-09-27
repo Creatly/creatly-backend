@@ -133,19 +133,14 @@ type StudentLessons interface {
 	SetLastOpened(ctx context.Context, studentId, lessonId primitive.ObjectID) error
 }
 
-type CreateStudentInput struct {
-	Name     string
-	Email    string
-	Password string
-	SchoolID primitive.ObjectID
-}
-
 type Admins interface {
 	SignIn(ctx context.Context, input SchoolSignInInput) (Tokens, error)
 	RefreshTokens(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (Tokens, error)
 	GetCourses(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Course, error)
 	GetCourseById(ctx context.Context, schoolId, courseId primitive.ObjectID) (domain.Course, error)
-	CreateStudent(ctx context.Context, inp CreateStudentInput) error
+	CreateStudent(ctx context.Context, inp domain.CreateStudentInput) (domain.Student, error)
+	UpdateStudent(ctx context.Context, inp domain.UpdateStudentInput) error
+	DeleteStudent(ctx context.Context, schoolId, studentId primitive.ObjectID) error
 }
 
 type UploadInput struct {
@@ -409,7 +404,6 @@ type Deps struct {
 	AccessTokenTTL         time.Duration
 	RefreshTokenTTL        time.Duration
 	FondyCallbackURL       string
-	PaymentRedirectURL     string
 	CacheTTL               int64
 	OtpGenerator           otp.Generator
 	VerificationCodeLength int
@@ -443,7 +437,7 @@ func NewServices(deps Deps) *Services {
 		Offers:         offersService,
 		Modules:        modulesService,
 		Payments: NewPaymentsService(ordersService, offersService, studentsService, emailsService, schoolsService,
-			deps.FondyCallbackURL, deps.PaymentRedirectURL),
+			deps.FondyCallbackURL),
 		Orders: ordersService,
 		Admins: NewAdminsService(deps.Hasher, deps.TokenManager, deps.Repos.Admins, deps.Repos.Schools, deps.Repos.Students,
 			deps.AccessTokenTTL, deps.RefreshTokenTTL),

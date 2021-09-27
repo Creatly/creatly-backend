@@ -97,6 +97,8 @@ func (h *Handler) initAdminRoutes(api *gin.RouterGroup) { //nolint:funlen
 				students.GET("", h.adminGetStudents)
 				students.POST("", h.adminCreateStudent)
 				students.GET("/:id", h.adminGetStudentById)
+				students.PUT("/:id", h.adminUpdateStudent)
+				students.DELETE("/:id", h.adminDeleteStudent)
 				students.PATCH("/:id/offers/:offerId", h.adminManageOfferPermission)
 			}
 
@@ -271,7 +273,12 @@ func (h *Handler) adminGetAllCourses(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, dataResponse{Data: courses})
+	response := make([]domain.Course, len(courses))
+	if courses != nil {
+		response = courses
+	}
+
+	c.JSON(http.StatusOK, dataResponse{Data: response})
 }
 
 type adminGetCourseByIdResponse struct {

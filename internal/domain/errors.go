@@ -14,4 +14,5 @@ var (
 	ErrTransactionInvalid      = errors.New("transaction is invalid")
 	ErrUnknownCallbackType     = errors.New("unknown callback type")
 	ErrSendPulseIsNotConnected = errors.New("sendpulse is not connected")
+	ErrStudentBlocked          = errors.New("student is blocked by the admin")
 )
