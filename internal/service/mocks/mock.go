@@ -1028,6 +1028,21 @@ func (mr *MockOffersMockRecorder) GetById(ctx, id interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetById", reflect.TypeOf((*MockOffers)(nil).GetById), ctx, id)
 }
 
+// GetByIds mocks base method.
+func (m *MockOffers) GetByIds(ctx context.Context, ids []primitive.ObjectID) ([]domain.Offer, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByIds", ctx, ids)
+	ret0, _ := ret[0].([]domain.Offer)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByIds indicates an expected call of GetByIds.
+func (mr *MockOffersMockRecorder) GetByIds(ctx, ids interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByIds", reflect.TypeOf((*MockOffers)(nil).GetByIds), ctx, ids)
+}
+
 // GetByModule mocks base method.
 func (m *MockOffers) GetByModule(ctx context.Context, schoolId, moduleId primitive.ObjectID) ([]domain.Offer, error) {
 	m.ctrl.T.Helper()
