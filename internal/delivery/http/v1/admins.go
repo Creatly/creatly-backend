@@ -1629,6 +1629,7 @@ type (
 		ShowPaymentImages   *bool        `json:"showPaymentImages"`
 		GoogleAnalyticsCode *string      `json:"googleAnalyticsCode"`
 		LogoURL             *string      `json:"logo"`
+		DisableRegistration *bool        `json:"disableRegistration"`
 	}
 )
 
@@ -1660,7 +1661,7 @@ func (h *Handler) adminUpdateSchoolSettings(c *gin.Context) {
 		return
 	}
 
-	updateInput := service.UpdateSchoolSettingsInput{
+	updateInput := domain.UpdateSchoolSettingsInput{
 		Name:                inp.Name,
 		Color:               inp.Color,
 		Domains:             inp.Domains,
@@ -1668,10 +1669,11 @@ func (h *Handler) adminUpdateSchoolSettings(c *gin.Context) {
 		ShowPaymentImages:   inp.ShowPaymentImages,
 		GoogleAnalyticsCode: inp.GoogleAnalyticsCode,
 		LogoURL:             inp.LogoURL,
+		DisableRegistration: inp.DisableRegistration,
 	}
 
 	if inp.Pages != nil {
-		updateInput.Pages = &service.UpdateSchoolSettingsPages{
+		updateInput.Pages = &domain.UpdateSchoolSettingsPages{
 			Confidential:      inp.Pages.Confidential,
 			ServiceAgreement:  inp.Pages.ServiceAgreement,
 			NewsletterConsent: inp.Pages.NewsletterConsent,
@@ -1679,7 +1681,7 @@ func (h *Handler) adminUpdateSchoolSettings(c *gin.Context) {
 	}
 
 	if inp.ContactInfo != nil {
-		updateInput.ContactInfo = &service.UpdateSchoolSettingsContactInfo{
+		updateInput.ContactInfo = &domain.UpdateSchoolSettingsContactInfo{
 			Email:              inp.ContactInfo.Email,
 			RegistrationNumber: inp.ContactInfo.RegistrationNumber,
 			Address:            inp.ContactInfo.Address,

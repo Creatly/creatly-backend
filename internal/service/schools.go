@@ -46,19 +46,8 @@ func (s *SchoolsService) GetById(ctx context.Context, id primitive.ObjectID) (do
 	return s.repo.GetById(ctx, id)
 }
 
-func (s *SchoolsService) UpdateSettings(ctx context.Context, schoolId primitive.ObjectID, inp UpdateSchoolSettingsInput) error {
-	return s.repo.UpdateSettings(ctx, repository.UpdateSchoolSettingsInput{
-		SchoolID:            schoolId,
-		Name:                inp.Name,
-		Color:               inp.Color,
-		Domains:             inp.Domains,
-		Email:               inp.Email,
-		ContactInfo:         toContactInfo(inp.ContactInfo),
-		Pages:               toPages(inp.Pages),
-		ShowPaymentImages:   inp.ShowPaymentImages,
-		GoogleAnalyticsCode: inp.GoogleAnalyticsCode,
-		LogoURL:             inp.LogoURL,
-	})
+func (s *SchoolsService) UpdateSettings(ctx context.Context, schoolId primitive.ObjectID, inp domain.UpdateSchoolSettingsInput) error {
+	return s.repo.UpdateSettings(ctx, schoolId, inp)
 }
 
 func (s *SchoolsService) ConnectFondy(ctx context.Context, input ConnectFondyInput) error {
@@ -88,56 +77,4 @@ func (s *SchoolsService) ConnectFondy(ctx context.Context, input ConnectFondyInp
 func (s *SchoolsService) ConnectSendPulse(ctx context.Context, input ConnectSendPulseInput) error {
 	// todo
 	return nil
-}
-
-func toContactInfo(inp *UpdateSchoolSettingsContactInfo) *repository.UpdateSchoolSettingsContactInfo {
-	if inp == nil {
-		return nil
-	}
-
-	contactInfo := new(repository.UpdateSchoolSettingsContactInfo)
-
-	if inp.Address != nil {
-		contactInfo.Address = inp.Address
-	}
-
-	if inp.BusinessName != nil {
-		contactInfo.BusinessName = inp.BusinessName
-	}
-
-	if inp.Email != nil {
-		contactInfo.Email = inp.Email
-	}
-
-	if inp.Phone != nil {
-		contactInfo.Phone = inp.Phone
-	}
-
-	if inp.RegistrationNumber != nil {
-		contactInfo.RegistrationNumber = inp.RegistrationNumber
-	}
-
-	return contactInfo
-}
-
-func toPages(inp *UpdateSchoolSettingsPages) *repository.UpdateSchoolSettingsPages {
-	if inp == nil {
-		return nil
-	}
-
-	pages := new(repository.UpdateSchoolSettingsPages)
-
-	if inp.Confidential != nil {
-		pages.Confidential = inp.Confidential
-	}
-
-	if inp.NewsletterConsent != nil {
-		pages.NewsletterConsent = inp.NewsletterConsent
-	}
-
-	if inp.ServiceAgreement != nil {
-		pages.ServiceAgreement = inp.ServiceAgreement
-	}
-
-	return pages
 }

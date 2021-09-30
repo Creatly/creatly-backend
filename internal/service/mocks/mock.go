@@ -207,7 +207,7 @@ func (mr *MockSchoolsMockRecorder) GetById(ctx, id interface{}) *gomock.Call {
 }
 
 // UpdateSettings mocks base method.
-func (m *MockSchools) UpdateSettings(ctx context.Context, schoolId primitive.ObjectID, input service.UpdateSchoolSettingsInput) error {
+func (m *MockSchools) UpdateSettings(ctx context.Context, schoolId primitive.ObjectID, input domain.UpdateSchoolSettingsInput) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateSettings", ctx, schoolId, input)
 	ret0, _ := ret[0].(error)

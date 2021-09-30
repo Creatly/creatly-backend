@@ -23,38 +23,11 @@ type Users interface {
 	AttachSchool(ctx context.Context, userID, schoolID primitive.ObjectID) error
 }
 
-type UpdateSchoolSettingsPages struct {
-	Confidential      *string
-	ServiceAgreement  *string
-	NewsletterConsent *string
-}
-
-type UpdateSchoolSettingsContactInfo struct {
-	BusinessName       *string
-	RegistrationNumber *string
-	Address            *string
-	Email              *string
-	Phone              *string
-}
-
-type UpdateSchoolSettingsInput struct {
-	SchoolID            primitive.ObjectID
-	Name                *string
-	Color               *string
-	Domains             []string
-	Email               *string
-	ContactInfo         *UpdateSchoolSettingsContactInfo
-	Pages               *UpdateSchoolSettingsPages
-	ShowPaymentImages   *bool
-	GoogleAnalyticsCode *string
-	LogoURL             *string
-}
-
 type Schools interface {
 	Create(ctx context.Context, name string) (primitive.ObjectID, error)
 	GetByDomain(ctx context.Context, domainName string) (domain.School, error)
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.School, error)
-	UpdateSettings(ctx context.Context, inp UpdateSchoolSettingsInput) error
+	UpdateSettings(ctx context.Context, id primitive.ObjectID, inp domain.UpdateSchoolSettingsInput) error
 	SetFondyCredentials(ctx context.Context, id primitive.ObjectID, fondy domain.Fondy) error
 }
 

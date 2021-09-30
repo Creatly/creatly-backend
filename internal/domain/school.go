@@ -30,6 +30,7 @@ type Settings struct {
 	GoogleAnalyticsCode string      `json:"googleAnalyticsCode" bson:"googleAnalyticsCode,omitempty"`
 	Fondy               Fondy       `json:"fondy" bson:"fondy,omitempty"`
 	SendPulse           SendPulse   `json:"sendpulse" bson:"sendpulse,omitempty"`
+	DisableRegistration bool        `json:"disableRegistration" bson:"disableRegistration,omitempty"`
 }
 
 func (s Settings) GetDomain() string {
@@ -69,4 +70,31 @@ type Admin struct {
 	Email    string             `json:"email" bson:"email"`
 	Password string             `json:"password" bson:"password"`
 	SchoolID primitive.ObjectID
+}
+
+type UpdateSchoolSettingsInput struct {
+	Name                *string
+	Color               *string
+	Domains             []string
+	Email               *string
+	ContactInfo         *UpdateSchoolSettingsContactInfo
+	Pages               *UpdateSchoolSettingsPages
+	ShowPaymentImages   *bool
+	DisableRegistration *bool
+	GoogleAnalyticsCode *string
+	LogoURL             *string
+}
+
+type UpdateSchoolSettingsPages struct {
+	Confidential      *string
+	ServiceAgreement  *string
+	NewsletterConsent *string
+}
+
+type UpdateSchoolSettingsContactInfo struct {
+	BusinessName       *string
+	RegistrationNumber *string
+	Address            *string
+	Email              *string
+	Phone              *string
 }

@@ -4889,6 +4889,9 @@ var doc = `{
                 "contactInfo": {
                     "$ref": "#/definitions/domain.ContactInfo"
                 },
+                "disableRegistration": {
+                    "type": "boolean"
+                },
                 "domains": {
                     "type": "array",
                     "items": {
@@ -5714,6 +5717,9 @@ var doc = `{
                 },
                 "contactInfo": {
                     "$ref": "#/definitions/v1.contactInfo"
+                },
+                "disableRegistration": {
+                    "type": "boolean"
                 },
                 "domains": {
                     "type": "array",

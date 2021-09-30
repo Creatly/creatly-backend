@@ -206,17 +206,17 @@ func (mr *MockSchoolsMockRecorder) SetFondyCredentials(ctx, id, fondy interface{
 }
 
 // UpdateSettings mocks base method.
-func (m *MockSchools) UpdateSettings(ctx context.Context, inp repository.UpdateSchoolSettingsInput) error {
+func (m *MockSchools) UpdateSettings(ctx context.Context, id primitive.ObjectID, inp domain.UpdateSchoolSettingsInput) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateSettings", ctx, inp)
+	ret := m.ctrl.Call(m, "UpdateSettings", ctx, id, inp)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // UpdateSettings indicates an expected call of UpdateSettings.
-func (mr *MockSchoolsMockRecorder) UpdateSettings(ctx, inp interface{}) *gomock.Call {
+func (mr *MockSchoolsMockRecorder) UpdateSettings(ctx, id, inp interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateSettings", reflect.TypeOf((*MockSchools)(nil).UpdateSettings), ctx, inp)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateSettings", reflect.TypeOf((*MockSchools)(nil).UpdateSettings), ctx, id, inp)
 }
 
 // MockStudents is a mock of Students interface.

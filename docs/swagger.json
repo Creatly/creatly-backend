@@ -4875,6 +4875,9 @@
                 "contactInfo": {
                     "$ref": "#/definitions/domain.ContactInfo"
                 },
+                "disableRegistration": {
+                    "type": "boolean"
+                },
                 "domains": {
                     "type": "array",
                     "items": {
@@ -5700,6 +5703,9 @@
                 },
                 "contactInfo": {
                     "$ref": "#/definitions/v1.contactInfo"
+                },
+                "disableRegistration": {
+                    "type": "boolean"
                 },
                 "domains": {
                     "type": "array",
