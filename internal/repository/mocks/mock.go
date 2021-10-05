@@ -206,17 +206,17 @@ func (mr *MockSchoolsMockRecorder) SetFondyCredentials(ctx, id, fondy interface{
 }
 
 // UpdateSettings mocks base method.
-func (m *MockSchools) UpdateSettings(ctx context.Context, inp repository.UpdateSchoolSettingsInput) error {
+func (m *MockSchools) UpdateSettings(ctx context.Context, id primitive.ObjectID, inp domain.UpdateSchoolSettingsInput) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateSettings", ctx, inp)
+	ret := m.ctrl.Call(m, "UpdateSettings", ctx, id, inp)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // UpdateSettings indicates an expected call of UpdateSettings.
-func (mr *MockSchoolsMockRecorder) UpdateSettings(ctx, inp interface{}) *gomock.Call {
+func (mr *MockSchoolsMockRecorder) UpdateSettings(ctx, id, inp interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateSettings", reflect.TypeOf((*MockSchools)(nil).UpdateSettings), ctx, inp)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateSettings", reflect.TypeOf((*MockSchools)(nil).UpdateSettings), ctx, id, inp)
 }
 
 // MockStudents is a mock of Students interface.
@@ -1140,6 +1140,21 @@ func (m *MockOffers) GetById(ctx context.Context, id primitive.ObjectID) (domain
 func (mr *MockOffersMockRecorder) GetById(ctx, id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetById", reflect.TypeOf((*MockOffers)(nil).GetById), ctx, id)
+}
+
+// GetByIds mocks base method.
+func (m *MockOffers) GetByIds(ctx context.Context, ids []primitive.ObjectID) ([]domain.Offer, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByIds", ctx, ids)
+	ret0, _ := ret[0].([]domain.Offer)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByIds indicates an expected call of GetByIds.
+func (mr *MockOffersMockRecorder) GetByIds(ctx, ids interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByIds", reflect.TypeOf((*MockOffers)(nil).GetByIds), ctx, ids)
 }
 
 // GetByPackages mocks base method.

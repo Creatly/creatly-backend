@@ -43,7 +43,7 @@ func (r *SchoolsRepo) GetById(ctx context.Context, id primitive.ObjectID) (domai
 	return school, err
 }
 
-func (r *SchoolsRepo) UpdateSettings(ctx context.Context, inp UpdateSchoolSettingsInput) error {
+func (r *SchoolsRepo) UpdateSettings(ctx context.Context, id primitive.ObjectID, inp domain.UpdateSchoolSettingsInput) error {
 	updateQuery := bson.M{}
 
 	if inp.Name != nil {
@@ -74,6 +74,10 @@ func (r *SchoolsRepo) UpdateSettings(ctx context.Context, inp UpdateSchoolSettin
 		updateQuery["settings.showPaymentImages"] = inp.ShowPaymentImages
 	}
 
+	if inp.DisableRegistration != nil {
+		updateQuery["settings.disableRegistration"] = inp.DisableRegistration
+	}
+
 	if inp.GoogleAnalyticsCode != nil {
 		updateQuery["settings.googleAnalyticsCode"] = *inp.GoogleAnalyticsCode
 	}
@@ -83,7 +87,7 @@ func (r *SchoolsRepo) UpdateSettings(ctx context.Context, inp UpdateSchoolSettin
 	}
 
 	_, err := r.db.UpdateOne(ctx,
-		bson.M{"_id": inp.SchoolID}, bson.M{"$set": updateQuery})
+		bson.M{"_id": id}, bson.M{"$set": updateQuery})
 
 	return err
 }
@@ -94,7 +98,7 @@ func (r *SchoolsRepo) SetFondyCredentials(ctx context.Context, id primitive.Obje
 	return err
 }
 
-func setContactInfoUpdateQuery(updateQuery *bson.M, inp UpdateSchoolSettingsInput) {
+func setContactInfoUpdateQuery(updateQuery *bson.M, inp domain.UpdateSchoolSettingsInput) {
 	if inp.ContactInfo.Address != nil {
 		(*updateQuery)["settings.contactInfo.address"] = inp.ContactInfo.Address
 	}
@@ -116,7 +120,7 @@ func setContactInfoUpdateQuery(updateQuery *bson.M, inp UpdateSchoolSettingsInpu
 	}
 }
 
-func setPagesUpdateQuery(updateQuery *bson.M, inp UpdateSchoolSettingsInput) {
+func setPagesUpdateQuery(updateQuery *bson.M, inp domain.UpdateSchoolSettingsInput) {
 	if inp.Pages.Confidential != nil {
 		(*updateQuery)["settings.pages.confidential"] = inp.Pages.Confidential
 	}

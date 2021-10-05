@@ -145,7 +145,7 @@ func (s *UsersService) CreateSchool(ctx context.Context, userId primitive.Object
 
 	schoolDomain := s.generateSchoolDomain(subdomain)
 
-	if err := s.schoolService.UpdateSettings(ctx, schoolId, UpdateSchoolSettingsInput{
+	if err := s.schoolService.UpdateSettings(ctx, schoolId, domain.UpdateSchoolSettingsInput{
 		Domains: []string{schoolDomain},
 	}); err != nil {
 		return domain.School{}, err

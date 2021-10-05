@@ -104,3 +104,16 @@ func (r *OffersRepo) Delete(ctx context.Context, schoolId, id primitive.ObjectID
 
 	return err
 }
+
+func (r OffersRepo) GetByIds(ctx context.Context, ids []primitive.ObjectID) ([]domain.Offer, error) {
+	var offers []domain.Offer
+
+	cur, err := r.db.Find(ctx, bson.M{"_id": bson.M{"$in": ids}})
+	if err != nil {
+		return nil, err
+	}
+
+	err = cur.All(ctx, &offers)
+
+	return offers, err
+}

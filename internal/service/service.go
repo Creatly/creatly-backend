@@ -51,32 +51,6 @@ type Users interface {
 	CreateSchool(ctx context.Context, userID primitive.ObjectID, schoolName string) (domain.School, error)
 }
 
-type UpdateSchoolSettingsPages struct {
-	Confidential      *string
-	ServiceAgreement  *string
-	NewsletterConsent *string
-}
-
-type UpdateSchoolSettingsContactInfo struct {
-	BusinessName       *string
-	RegistrationNumber *string
-	Address            *string
-	Email              *string
-	Phone              *string
-}
-
-type UpdateSchoolSettingsInput struct {
-	Name                *string
-	Color               *string
-	Domains             []string
-	Email               *string
-	ContactInfo         *UpdateSchoolSettingsContactInfo
-	Pages               *UpdateSchoolSettingsPages
-	ShowPaymentImages   *bool
-	GoogleAnalyticsCode *string
-	LogoURL             *string
-}
-
 type ConnectFondyInput struct {
 	SchoolID         primitive.ObjectID
 	MerchantID       string
@@ -94,7 +68,7 @@ type Schools interface {
 	Create(ctx context.Context, name string) (primitive.ObjectID, error)
 	GetByDomain(ctx context.Context, domainName string) (domain.School, error)
 	GetById(ctx context.Context, id primitive.ObjectID) (domain.School, error)
-	UpdateSettings(ctx context.Context, schoolId primitive.ObjectID, input UpdateSchoolSettingsInput) error
+	UpdateSettings(ctx context.Context, schoolId primitive.ObjectID, input domain.UpdateSchoolSettingsInput) error
 	ConnectFondy(ctx context.Context, input ConnectFondyInput) error
 	ConnectSendPulse(ctx context.Context, input ConnectSendPulseInput) error
 }
@@ -263,6 +237,7 @@ type Offers interface {
 	GetByModule(ctx context.Context, schoolId, moduleId primitive.ObjectID) ([]domain.Offer, error)
 	GetByCourse(ctx context.Context, courseId primitive.ObjectID) ([]domain.Offer, error)
 	GetAll(ctx context.Context, schoolId primitive.ObjectID) ([]domain.Offer, error)
+	GetByIds(ctx context.Context, ids []primitive.ObjectID) ([]domain.Offer, error)
 }
 
 type CreateModuleInput struct {

@@ -19,7 +19,7 @@ import (
 )
 
 func TestHandler_adminUpdateSchoolSettings(t *testing.T) {
-	type mockBehavior func(r *mock_service.MockSchools, schoolID primitive.ObjectID, input service.UpdateSchoolSettingsInput)
+	type mockBehavior func(r *mock_service.MockSchools, schoolID primitive.ObjectID, input domain.UpdateSchoolSettingsInput)
 
 	school := domain.School{
 		ID: primitive.NewObjectID(),
@@ -32,7 +32,7 @@ func TestHandler_adminUpdateSchoolSettings(t *testing.T) {
 		name         string
 		body         string
 		school       domain.School
-		input        service.UpdateSchoolSettingsInput
+		input        domain.UpdateSchoolSettingsInput
 		mockBehavior mockBehavior
 		statusCode   int
 		responseBody string
@@ -41,13 +41,13 @@ func TestHandler_adminUpdateSchoolSettings(t *testing.T) {
 			name:   "ok",
 			body:   `{"color": "black", "pages": {"confidential": "some confidential info"}}`,
 			school: school,
-			input: service.UpdateSchoolSettingsInput{
+			input: domain.UpdateSchoolSettingsInput{
 				Color: stringPtr("black"),
-				Pages: &service.UpdateSchoolSettingsPages{
+				Pages: &domain.UpdateSchoolSettingsPages{
 					Confidential: stringPtr("some confidential info"),
 				},
 			},
-			mockBehavior: func(r *mock_service.MockSchools, schoolID primitive.ObjectID, input service.UpdateSchoolSettingsInput) {
+			mockBehavior: func(r *mock_service.MockSchools, schoolID primitive.ObjectID, input domain.UpdateSchoolSettingsInput) {
 				r.EXPECT().UpdateSettings(context.Background(), schoolID, input).Return(nil)
 			},
 			statusCode:   200,
@@ -57,7 +57,7 @@ func TestHandler_adminUpdateSchoolSettings(t *testing.T) {
 			name:   "invalid input",
 			body:   `{wrong}`,
 			school: school,
-			mockBehavior: func(r *mock_service.MockSchools, schoolID primitive.ObjectID, input service.UpdateSchoolSettingsInput) {
+			mockBehavior: func(r *mock_service.MockSchools, schoolID primitive.ObjectID, input domain.UpdateSchoolSettingsInput) {
 			},
 			statusCode:   400,
 			responseBody: `{"message":"invalid input body"}`,
@@ -66,13 +66,13 @@ func TestHandler_adminUpdateSchoolSettings(t *testing.T) {
 			name:   "service error",
 			body:   `{"color": "black", "pages": {"confidential": "some confidential info"}}`,
 			school: school,
-			input: service.UpdateSchoolSettingsInput{
+			input: domain.UpdateSchoolSettingsInput{
 				Color: stringPtr("black"),
-				Pages: &service.UpdateSchoolSettingsPages{
+				Pages: &domain.UpdateSchoolSettingsPages{
 					Confidential: stringPtr("some confidential info"),
 				},
 			},
-			mockBehavior: func(r *mock_service.MockSchools, schoolID primitive.ObjectID, input service.UpdateSchoolSettingsInput) {
+			mockBehavior: func(r *mock_service.MockSchools, schoolID primitive.ObjectID, input domain.UpdateSchoolSettingsInput) {
 				r.EXPECT().UpdateSettings(context.Background(), schoolID, input).Return(errors.New("failed to update school settings"))
 			},
 			statusCode:   500,
@@ -215,6 +215,8 @@ func TestHandler_adminCreatePromocode(t *testing.T) {
 func TestHandler_adminGetPromocodes(t *testing.T) {
 	type mockBehavior func(r *mock_service.MockPromoCodes, schoolId primitive.ObjectID)
 
+	type offersMockBehavior func(r *mock_service.MockOffers, offerIds []primitive.ObjectID)
+
 	promocodeId := primitive.NewObjectID()
 	offerId := primitive.NewObjectID()
 
@@ -226,11 +228,12 @@ func TestHandler_adminGetPromocodes(t *testing.T) {
 	}
 
 	tests := []struct {
-		name         string
-		school       domain.School
-		mockBehavior mockBehavior
-		statusCode   int
-		responseBody string
+		name               string
+		school             domain.School
+		mockBehavior       mockBehavior
+		offersMockBehavior offersMockBehavior
+		statusCode         int
+		responseBody       string
 	}{
 		{
 			name:   "ok",
@@ -247,14 +250,24 @@ func TestHandler_adminGetPromocodes(t *testing.T) {
 					},
 				}, nil)
 			},
+			offersMockBehavior: func(r *mock_service.MockOffers, offerIds []primitive.ObjectID) {
+				r.EXPECT().GetByIds(context.Background(), offerIds).Return([]domain.Offer{
+					{
+						ID:   offerId,
+						Name: "offer",
+					},
+				}, nil)
+			},
 			statusCode:   200,
-			responseBody: fmt.Sprintf(`{"data":[{"id":"%s","schoolId":"%s","code":"FIRSTPROMO","discountPercentage":15,"expiresAt":"2022-12-10T13:49:51Z","offerIds":["%s"]}],"count":0}`, promocodeId.Hex(), school.ID.Hex(), offerId.Hex()),
+			responseBody: fmt.Sprintf(`{"data":[{"id":"%s","code":"FIRSTPROMO","discountPercentage":15,"expiresAt":"2022-12-10T13:49:51Z","offers":[{"id":"%s","name":"offer"}]}],"count":0}`, promocodeId.Hex(), offerId.Hex()),
 		},
 		{
 			name:   "service error",
 			school: school,
 			mockBehavior: func(r *mock_service.MockPromoCodes, schoolId primitive.ObjectID) {
 				r.EXPECT().GetBySchool(context.Background(), schoolId).Return(nil, errors.New("failed to get promocodes"))
+			},
+			offersMockBehavior: func(r *mock_service.MockOffers, offerIds []primitive.ObjectID) {
 			},
 			statusCode:   500,
 			responseBody: `{"message":"failed to get promocodes"}`,
@@ -270,7 +283,10 @@ func TestHandler_adminGetPromocodes(t *testing.T) {
 			p := mock_service.NewMockPromoCodes(c)
 			tt.mockBehavior(p, tt.school.ID)
 
-			services := &service.Services{PromoCodes: p}
+			o := mock_service.NewMockOffers(c)
+			tt.offersMockBehavior(o, []primitive.ObjectID{offerId})
+
+			services := &service.Services{PromoCodes: p, Offers: o}
 			handler := Handler{services: services}
 
 			// Init Endpoint
@@ -296,6 +312,8 @@ func TestHandler_adminGetPromocodes(t *testing.T) {
 func TestHandler_adminGetPromocodeById(t *testing.T) {
 	type mockBehavior func(r *mock_service.MockPromoCodes, schoolId primitive.ObjectID, id primitive.ObjectID)
 
+	type offersMockBehavior func(r *mock_service.MockOffers, offerIds []primitive.ObjectID)
+
 	promocodeId := primitive.NewObjectID()
 	offerId := primitive.NewObjectID()
 
@@ -307,11 +325,12 @@ func TestHandler_adminGetPromocodeById(t *testing.T) {
 	}
 
 	tests := []struct {
-		name         string
-		school       domain.School
-		mockBehavior mockBehavior
-		statusCode   int
-		responseBody string
+		name               string
+		school             domain.School
+		mockBehavior       mockBehavior
+		offersMockBehavior offersMockBehavior
+		statusCode         int
+		responseBody       string
 	}{
 		{
 			name:   "ok",
@@ -326,14 +345,24 @@ func TestHandler_adminGetPromocodeById(t *testing.T) {
 					OfferIDs:           []primitive.ObjectID{offerId},
 				}, nil)
 			},
+			offersMockBehavior: func(r *mock_service.MockOffers, offerIds []primitive.ObjectID) {
+				r.EXPECT().GetByIds(context.Background(), offerIds).Return([]domain.Offer{
+					{
+						ID:   offerId,
+						Name: "offer",
+					},
+				}, nil)
+			},
 			statusCode:   200,
-			responseBody: fmt.Sprintf(`{"id":"%s","schoolId":"%s","code":"FIRSTPROMO","discountPercentage":15,"expiresAt":"2022-12-10T13:49:51Z","offerIds":["%s"]}`, promocodeId.Hex(), school.ID.Hex(), offerId.Hex()),
+			responseBody: fmt.Sprintf(`{"id":"%s","code":"FIRSTPROMO","discountPercentage":15,"expiresAt":"2022-12-10T13:49:51Z","offers":[{"id":"%s","name":"offer"}]}`, promocodeId.Hex(), offerId.Hex()),
 		},
 		{
 			name:   "service error",
 			school: school,
 			mockBehavior: func(r *mock_service.MockPromoCodes, schoolId primitive.ObjectID, id primitive.ObjectID) {
 				r.EXPECT().GetById(context.Background(), schoolId, id).Return(domain.PromoCode{}, errors.New("failed to get promocode by id"))
+			},
+			offersMockBehavior: func(r *mock_service.MockOffers, offerIds []primitive.ObjectID) {
 			},
 			statusCode:   500,
 			responseBody: `{"message":"failed to get promocode by id"}`,
@@ -349,7 +378,10 @@ func TestHandler_adminGetPromocodeById(t *testing.T) {
 			p := mock_service.NewMockPromoCodes(c)
 			tt.mockBehavior(p, tt.school.ID, promocodeId)
 
-			services := &service.Services{PromoCodes: p}
+			o := mock_service.NewMockOffers(c)
+			tt.offersMockBehavior(o, []primitive.ObjectID{offerId})
+
+			services := &service.Services{PromoCodes: p, Offers: o}
 			handler := Handler{services: services}
 
 			// Init Endpoint

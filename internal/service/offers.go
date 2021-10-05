@@ -139,6 +139,10 @@ func (s *OffersService) Delete(ctx context.Context, schoolId, id primitive.Objec
 	return s.repo.Delete(ctx, schoolId, id)
 }
 
+func (s *OffersService) GetByIds(ctx context.Context, ids []primitive.ObjectID) ([]domain.Offer, error) {
+	return s.repo.GetByIds(ctx, ids)
+}
+
 func inArray(array []primitive.ObjectID, searchedItem primitive.ObjectID) bool {
 	for i := range array {
 		if array[i] == searchedItem {

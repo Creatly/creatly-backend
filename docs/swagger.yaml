@@ -241,6 +241,8 @@ definitions:
         type: string
       contactInfo:
         $ref: '#/definitions/domain.ContactInfo'
+      disableRegistration:
+        type: boolean
       domains:
         items:
           type: string
@@ -779,6 +781,8 @@ definitions:
         type: string
       contactInfo:
         $ref: '#/definitions/v1.contactInfo'
+      disableRegistration:
+        type: boolean
       domains:
         items:
           type: string
