@@ -18,6 +18,24 @@ services:
     env_file:
       - .env
 
+  debug:
+    image: creatly-backend-debug
+    container_name: creatly-backend-debug
+    build:
+      context: .
+      dockerfile: Dockerfile.debug
+    ports:
+      - "8000:8000"
+      - "2345:2345"
+    depends_on:
+      - mongodb
+    volumes:
+      - ./.bin/:/root/
+      - ./configs/:/root/configs/
+      - ./templates/:/root/templates/
+    env_file:
+      - .env
+
   mongodb:
     image: mongo:4.4-bionic
     container_name: mongodb

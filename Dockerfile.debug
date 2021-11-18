@@ -1,0 +1,16 @@
+FROM golang:1.17.3-alpine3.14 AS build-env
+
+ENV CGO_ENABLED 0
+
+RUN apk add --no-cache git
+RUN go install github.com/go-delve/delve/cmd/dlv@latest
+
+# final stage
+FROM alpine:3.11
+
+WORKDIR /
+COPY --from=build-env /go/bin/dlv /
+
+WORKDIR /root/
+
+CMD ["/dlv", "--listen=:2345", "--headless=true", "--api-version=2", "exec", "./app"]
