@@ -27,7 +27,7 @@ func (r *PromocodesRepo) Create(ctx context.Context, promocode domain.PromoCode)
 	return res.InsertedID.(primitive.ObjectID), nil
 }
 
-func (r *PromocodesRepo) Update(ctx context.Context, inp UpdatePromoCodeInput) error {
+func (r *PromocodesRepo) Update(ctx context.Context, inp domain.UpdatePromoCodeInput) error {
 	updateQuery := bson.M{}
 
 	if inp.Code != "" {

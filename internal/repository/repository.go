@@ -153,18 +153,9 @@ type Offers interface {
 	GetByIds(ctx context.Context, ids []primitive.ObjectID) ([]domain.Offer, error)
 }
 
-type UpdatePromoCodeInput struct {
-	ID                 primitive.ObjectID
-	SchoolID           primitive.ObjectID
-	Code               string
-	DiscountPercentage int
-	ExpiresAt          time.Time
-	OfferIDs           []primitive.ObjectID
-}
-
 type PromoCodes interface {
 	Create(ctx context.Context, promocode domain.PromoCode) (primitive.ObjectID, error)
-	Update(ctx context.Context, inp UpdatePromoCodeInput) error
+	Update(ctx context.Context, inp domain.UpdatePromoCodeInput) error
 	Delete(ctx context.Context, schoolId, id primitive.ObjectID) error
 	GetByCode(ctx context.Context, schoolId primitive.ObjectID, code string) (domain.PromoCode, error)
 	GetById(ctx context.Context, schoolId, id primitive.ObjectID) (domain.PromoCode, error)

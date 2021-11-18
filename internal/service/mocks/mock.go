@@ -918,7 +918,7 @@ func (mr *MockPromoCodesMockRecorder) GetBySchool(ctx, schoolId interface{}) *go
 }
 
 // Update mocks base method.
-func (m *MockPromoCodes) Update(ctx context.Context, inp service.UpdatePromoCodeInput) error {
+func (m *MockPromoCodes) Update(ctx context.Context, inp domain.UpdatePromoCodeInput) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Update", ctx, inp)
 	ret0, _ := ret[0].(error)
