@@ -27,7 +27,7 @@ test.integration:
 	docker stop $$TEST_CONTAINER_NAME
 
 test.coverage:
-	go tool cover -func=cover.out
+	go tool cover -func=cover.out | grep "total"
 
 swag:
 	swag init -g internal/app/app.go
