@@ -27,25 +27,8 @@ func (s *PromoCodeService) Create(ctx context.Context, inp CreatePromoCodeInput)
 	})
 }
 
-func (s *PromoCodeService) Update(ctx context.Context, inp UpdatePromoCodeInput) error {
-	updateInput := repository.UpdatePromoCodeInput{
-		ID:                 inp.ID,
-		SchoolID:           inp.SchoolID,
-		Code:               inp.Code,
-		DiscountPercentage: inp.DiscountPercentage,
-		ExpiresAt:          inp.ExpiresAt,
-	}
-
-	if inp.OfferIDs != nil {
-		var err error
-
-		updateInput.OfferIDs, err = stringArrayToObjectId(inp.OfferIDs)
-		if err != nil {
-			return err
-		}
-	}
-
-	return s.repo.Update(ctx, updateInput)
+func (s *PromoCodeService) Update(ctx context.Context, inp domain.UpdatePromoCodeInput) error {
+	return s.repo.Update(ctx, inp)
 }
 
 func (s *PromoCodeService) Delete(ctx context.Context, schoolId, id primitive.ObjectID) error {

@@ -405,7 +405,7 @@ func TestHandler_adminGetPromocodeById(t *testing.T) {
 }
 
 func TestHandler_adminUpdatePromocode(t *testing.T) {
-	type mockBehavior func(r *mock_service.MockPromoCodes, input service.UpdatePromoCodeInput)
+	type mockBehavior func(r *mock_service.MockPromoCodes, input domain.UpdatePromoCodeInput)
 
 	school := domain.School{
 		ID: primitive.NewObjectID(),
@@ -418,7 +418,7 @@ func TestHandler_adminUpdatePromocode(t *testing.T) {
 		name         string
 		body         string
 		school       domain.School
-		input        service.UpdatePromoCodeInput
+		input        domain.UpdatePromoCodeInput
 		mockBehavior mockBehavior
 		statusCode   int
 		responseBody string
@@ -427,13 +427,13 @@ func TestHandler_adminUpdatePromocode(t *testing.T) {
 			name:   "ok",
 			body:   `{"code": "TESTPROMO", "discountPercentage": 15}`,
 			school: school,
-			input: service.UpdatePromoCodeInput{
+			input: domain.UpdatePromoCodeInput{
 				ID:                 primitive.NewObjectID(),
 				SchoolID:           school.ID,
 				Code:               "TESTPROMO",
 				DiscountPercentage: 15,
 			},
-			mockBehavior: func(r *mock_service.MockPromoCodes, input service.UpdatePromoCodeInput) {
+			mockBehavior: func(r *mock_service.MockPromoCodes, input domain.UpdatePromoCodeInput) {
 				r.EXPECT().Update(context.Background(), input).Return(nil)
 			},
 			statusCode:   200,
@@ -443,7 +443,7 @@ func TestHandler_adminUpdatePromocode(t *testing.T) {
 			name:         "invalid input body",
 			body:         `{wrong}`,
 			school:       school,
-			mockBehavior: func(r *mock_service.MockPromoCodes, input service.UpdatePromoCodeInput) {},
+			mockBehavior: func(r *mock_service.MockPromoCodes, input domain.UpdatePromoCodeInput) {},
 			statusCode:   400,
 			responseBody: `{"message":"invalid input body"}`,
 		},
@@ -451,13 +451,13 @@ func TestHandler_adminUpdatePromocode(t *testing.T) {
 			name:   "service error",
 			body:   `{"code": "TESTPROMO", "discountPercentage": 15}`,
 			school: school,
-			input: service.UpdatePromoCodeInput{
+			input: domain.UpdatePromoCodeInput{
 				ID:                 primitive.NewObjectID(),
 				SchoolID:           school.ID,
 				Code:               "TESTPROMO",
 				DiscountPercentage: 15,
 			},
-			mockBehavior: func(r *mock_service.MockPromoCodes, input service.UpdatePromoCodeInput) {
+			mockBehavior: func(r *mock_service.MockPromoCodes, input domain.UpdatePromoCodeInput) {
 				r.EXPECT().Update(context.Background(), input).Return(errors.New("failed to update promocode"))
 			},
 			statusCode:   500,

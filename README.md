@@ -1,10 +1,16 @@
-# Creatly backend application
+# Creatly LMS [Backend Application] ![GO][go-badge]
+
+[go-badge]: https://img.shields.io/github/go-mod/go-version/p12s/furniture-store?style=plastic
+[go-url]: https://github.com/p12s/furniture-store/blob/master/go.mod
+
+Learn More about Creatly [here](https://zhashkevych.notion.site/About-Creatly-Creaty-8c68a310ec2347fca80ba919692fa568)
 
 ## Build & Run (Locally)
 ### Prerequisites
-- go 1.15
-- docker
-- golangci-lint (<i>optional</i>, used to run code checks)
+- go 1.17
+- docker & docker-compose
+- [golangci-lint](https://github.com/golangci/golangci-lint) (<i>optional</i>, used to run code checks)
+- [swag](https://github.com/swaggo/swag) (<i>optional</i>, used to re-generate swagger documentation)
 
 Create .env file in root directory and add following values:
 ```dotenv

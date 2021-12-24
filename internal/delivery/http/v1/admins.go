@@ -1551,13 +1551,23 @@ func (h *Handler) adminUpdatePromocode(c *gin.Context) {
 		return
 	}
 
-	if err := h.services.PromoCodes.Update(c.Request.Context(), service.UpdatePromoCodeInput{
+	var offerIds []primitive.ObjectID
+	if inp.OfferIDs != nil {
+		offerIds, err = stringArrayToObjectId(inp.OfferIDs)
+		if err != nil {
+			newResponse(c, http.StatusBadRequest, err.Error())
+
+			return
+		}
+	}
+
+	if err := h.services.PromoCodes.Update(c.Request.Context(), domain.UpdatePromoCodeInput{
 		ID:                 id,
 		SchoolID:           school.ID,
 		Code:               inp.Code,
 		DiscountPercentage: inp.DiscountPercentage,
 		ExpiresAt:          inp.ExpiresAt,
-		OfferIDs:           inp.OfferIDs,
+		OfferIDs:           offerIds,
 	}); err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 
@@ -1933,4 +1943,19 @@ func toOffersReponse(offers []domain.Offer) []offerShortReponse {
 	}
 
 	return out
+}
+
+func stringArrayToObjectId(stringIds []string) ([]primitive.ObjectID, error) {
+	var err error
+
+	ids := make([]primitive.ObjectID, len(stringIds))
+
+	for i, id := range stringIds {
+		ids[i], err = primitive.ObjectIDFromHex(id)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return ids, nil
 }

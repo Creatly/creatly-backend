@@ -14,3 +14,12 @@ type PromoCode struct {
 	ExpiresAt          time.Time            `json:"expiresAt" bson:"expiresAt"`
 	OfferIDs           []primitive.ObjectID `json:"offerIds" bson:"offerIds"`
 }
+
+type UpdatePromoCodeInput struct {
+	ID                 primitive.ObjectID
+	SchoolID           primitive.ObjectID
+	Code               string
+	DiscountPercentage int
+	ExpiresAt          time.Time
+	OfferIDs           []primitive.ObjectID
+}

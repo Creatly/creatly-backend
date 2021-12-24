@@ -104,7 +104,7 @@ func TestHandler_getPromocode(t *testing.T) {
 			r.ServeHTTP(w, req)
 
 			// Assert
-			assert.Equal(t, w.Code, tt.statusCode)
+			assert.Equal(t, tt.statusCode, w.Code)
 			assert.Equal(t, w.Body.String(), tt.responseBody)
 		})
 	}

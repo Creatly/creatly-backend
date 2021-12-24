@@ -1,3 +1,3 @@
 auth:
   accessTokenTTL: 15m
-  refreshTokenTTL: 720h
+  refreshTokenTTL: 1h

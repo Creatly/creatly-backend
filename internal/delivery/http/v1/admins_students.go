@@ -16,6 +16,7 @@ type studentResponse struct {
 	RegisteredAt time.Time          `json:"registeredAt"`
 	LastVisitAt  time.Time          `json:"lastVisitAt"`
 	Verified     bool               `json:"verified"`
+	Blocked      bool               `json:"blocked"`
 }
 
 func toStudentsResponse(students []domain.Student) []studentResponse {
@@ -27,6 +28,7 @@ func toStudentsResponse(students []domain.Student) []studentResponse {
 		out[i].RegisteredAt = student.RegisteredAt
 		out[i].LastVisitAt = student.LastVisitAt
 		out[i].Verified = student.Verification.Verified
+		out[i].Blocked = student.Blocked
 	}
 
 	return out

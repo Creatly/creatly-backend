@@ -8,6 +8,9 @@ build:
 run: build
 	docker-compose up --remove-orphans app
 
+debug: build
+	docker-compose up --remove-orphans debug
+
 test:
 	go test --short -coverprofile=cover.out -v ./...
 	make test.coverage
@@ -24,7 +27,7 @@ test.integration:
 	docker stop $$TEST_CONTAINER_NAME
 
 test.coverage:
-	go tool cover -func=cover.out
+	go tool cover -func=cover.out | grep "total"
 
 swag:
 	swag init -g internal/app/app.go
