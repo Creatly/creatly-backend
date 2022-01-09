@@ -15,16 +15,8 @@ test:
 	go test --short -coverprofile=cover.out -v ./...
 	make test.coverage
 
-# Testing Vars
-export TEST_DB_URI=mongodb://localhost:27019
-export TEST_DB_NAME=test
-export TEST_CONTAINER_NAME=test_db
-
 test.integration:
-	docker run --rm -d -p 27019:27017 --name $$TEST_CONTAINER_NAME -e MONGODB_DATABASE=$$TEST_DB_NAME mongo:4.4-bionic
-
 	GIN_MODE=release go test -v ./tests/
-	docker stop $$TEST_CONTAINER_NAME
 
 test.coverage:
 	go tool cover -func=cover.out | grep "total"

@@ -10,9 +10,6 @@ env:
   API_IMAGE: "courses-backend"
   NGINX_IMAGE: "courses-backend-proxy"
   TAG: "staging"
-  TEST_CONTAINER_NAME: "test_db"
-  TEST_DB_NAME: "test"
-  TEST_DB_URI: "mongodb://localhost:27019"
   APP_ENV: "stage"
 
 jobs:
@@ -31,14 +28,8 @@ jobs:
       - name: Unit Tests
         run: go test --short ./...
 
-      - name: Create test db container
-        run: docker run --rm -d -p 27019:27017 --name $(echo $TEST_CONTAINER_NAME) -e MONGODB_DATABASE=$(echo $TEST_DB_NAME) mongo:4.4-bionic
-
       - name: Integration Tests
         run: GIN_MODE=release go test -v ./tests/
-
-      - name: Kill test db container
-        run: docker stop $(echo $TEST_CONTAINER_NAME)
 
   build_and_push:
     runs-on: ubuntu-latest
