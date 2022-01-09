@@ -2,6 +2,7 @@ package tests
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"testing"
 	"time"
@@ -18,23 +19,21 @@ import (
 	"github.com/zhashkevych/creatly-backend/pkg/hash"
 	"github.com/zhashkevych/creatly-backend/pkg/otp"
 	"go.mongodb.org/mongo-driver/mongo"
+
+	"github.com/testcontainers/testcontainers-go"
+	"github.com/testcontainers/testcontainers-go/wait"
 )
-
-var dbURI, dbName string
-
-func init() {
-	dbURI = os.Getenv("TEST_DB_URI")
-	dbName = os.Getenv("TEST_DB_NAME")
-}
 
 type APITestSuite struct {
 	suite.Suite
 
-	db       *mongo.Database
+	db        *mongo.Database
+	stopMongo func()
+
 	handler  *v1.Handler
 	services *service.Services
-	repos    *repository.Repositories
 
+	repos        *repository.Repositories
 	hasher       hash.PasswordHasher
 	tokenManager auth.TokenManager
 	mocks        *mocks
@@ -54,10 +53,11 @@ func TestAPISuite(t *testing.T) {
 }
 
 func (s *APITestSuite) SetupSuite() {
-	if client, err := mongodb.NewClient(dbURI, "", ""); err != nil {
+	if db, stop, err := startMongoAndConnect(context.Background()); err != nil {
 		s.FailNow("Failed to connect to mongo", err)
 	} else {
-		s.db = client.Database(dbName)
+		s.db = db
+		s.stopMongo = stop
 	}
 
 	s.initMocks()
@@ -68,8 +68,61 @@ func (s *APITestSuite) SetupSuite() {
 	}
 }
 
+//nolint: nakedret
+func startMongoAndConnect(ctx context.Context) (database *mongo.Database, stop func(), err error) {
+	req := testcontainers.ContainerRequest{
+		Image:        "mongo:4.4.11",
+		ExposedPorts: []string{"27017/tcp"},
+		WaitingFor:   wait.ForListeningPort("27017/tcp"),
+	}
+
+	container, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
+		ContainerRequest: req,
+		Started:          true,
+	})
+	if err != nil {
+		return
+	}
+
+	stop = func() {
+		_ = container.Terminate(ctx)
+	}
+
+	defer func() {
+		if err != nil {
+			stop()
+		}
+	}()
+
+	port, err := container.MappedPort(ctx, "27017")
+	if err != nil {
+		return
+	}
+
+	host, err := container.Host(ctx)
+	if err != nil {
+		return
+	}
+
+	uri := fmt.Sprintf(`mongodb://%s:%s`,
+		host,
+		port.Port(),
+	)
+
+	client, err := mongodb.NewClient(uri, "", "")
+	if err != nil {
+		return
+	}
+
+	database = client.Database("db")
+
+	return
+}
+
 func (s *APITestSuite) TearDownSuite() {
-	s.db.Client().Disconnect(context.Background()) //nolint:errcheck
+	if s.stopMongo != nil {
+		s.stopMongo()
+	}
 }
 
 func (s *APITestSuite) initDeps() {
