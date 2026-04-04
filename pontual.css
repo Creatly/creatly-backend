@@ -1,0 +1,255 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f0f0;
+    color: #333;
+    margin: 45px;
+        padding: 20px;
+    }
+    
+    :root {
+      --vermelho-pontual: #e31e24;
+      --preto-pontual: #000000;
+      --branco: #ffffff;
+    }
+
+    body {
+      margin: 10px;;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f9f9f9;
+      color: #333;
+    }
+
+    header {
+      background: var(--branco);
+      color: var(--preto-pontual);
+      padding: 30px 20px;
+      text-align: center;
+      border-bottom: 5px solid var(--vermelho-pontual);
+    }
+
+    .logo {
+      max-width: 300px;
+      height: 450;
+      margin-bottom: 15px;
+      align-self: auto;
+    box-decoration-break: var(--vermelho-pontual);
+    }
+
+    header h1 {
+      margin: 10px 0 5px 0;
+      color: var(--vermelho-pontual);
+      font-size: 2rem;
+
+    }
+
+    header p {
+      margin: 0;
+      font-weight: bold;
+      color: var(--preto-pontual);
+    }
+
+    .container {
+      padding: 40px 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    h2 {
+      text-align: center;
+      color: var(--preto-pontual);
+      border-bottom: 2px solid var(--vermelho-pontual);
+      display: inline-block;
+      width: 100%;
+      padding-bottom: 10px;
+      margin-bottom: 30px;
+    }
+
+    .services {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      border-left: 5px solid var(--vermelho-pontual);
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card h3 {
+      margin-top: 0;
+      color: var(--vermelho-pontual);
+    }
+
+    .whatsapp {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      background: #25D366;
+      color: white;
+      padding: 15px 25px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 1000;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      background: var(--preto-pontual);
+      color: white;
+      margin-top: 40px;
+    }
+
+    footer p {
+      margin: 0;
+      font-size: 0.9rem;
+    }
+
+.search-section {
+    max-width: 800px;
+    margin: 80px auto;
+    padding: 50px 40px;
+    background: #ffffff;
+    border-radius: 30px;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.06); /* Sombra suave para flutuar */
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.03);
+}
+
+/* Detalhe visual de marca no topo do cartão */
+.search-section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 6px;
+    background: linear-gradient(90deg, var(--vermelho-pontual), #ff4d4d);
+}
+
+.search-section h2 {
+    font-size: 2.2rem;
+    color: var(--preto-pontual);
+    margin-bottom: 15px;
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+.search-section p {
+    color: #666;
+    font-size: 1.1rem;
+    max-width: 500px;
+    margin: 0 auto 40px;
+    line-height: 1.6;
+}
+
+/* O "Container" da Caixa de Busca */
+.search-box {
+    display: flex;
+    align-items: center;
+    background: #f4f4f9;
+    padding: 12px;
+    border-radius: 60px; /* Bordas bem arredondadas */
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.03); /* Sombra interna */
+}
+
+/* Efeito de foco na caixa inteira */
+.search-box:focus-within {
+    background: #ffffff;
+    border-color: var(--vermelho-pontual);
+    box-shadow: 0 10px 30px rgba(227, 30, 36, 0.1);
+}
+
+/* Estilo do Campo de Texto (Input) */
+.search-box input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 15px 25px;
+    font-size: 1.1rem;
+    color: var(--preto-pontual);
+    outline: none; /* Remove a borda azul padrão */
+}
+
+.search-box input::placeholder {
+    color: #a0a0a0;
+    font-weight: 400;
+}
+
+/* Botão de Envio/WhatsApp */
+.btn-search {
+    background: #25D366; /* Verde Oficial do WhatsApp */
+    color: white;
+    border: none;
+    padding: 18px 35px;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+}
+
+.btn-search i {
+    font-size: 1.3rem;
+}
+
+.btn-search:hover {
+    background: #1eb956;
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 10px 25px rgba(37, 211, 102, 0.4);
+}
+
+.btn-search:active {
+    transform: translateY(-1px);
+}
+
+/* --- RESPONSIVIDADE (Celular) --- */
+@media (max-width: 600px) {
+    .search-section {
+        padding: 40px 20px;
+        margin: 50px 15px;
+        border-radius: 20px;
+    }
+
+    .search-section h2 {
+        font-size: 1.8rem;
+    }
+
+    .search-box {
+        flex-direction: column; /* Empilha no celular */
+        border-radius: 15px;
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .search-box input {
+        width: 100%;
+        text-align: center;
+        padding: 15px;
+    }
+
+    .btn-search {
+        width: 100%;
+        justify-content: center;
+        border-radius: 10px;
+        padding: 15px;
+    }
+}
